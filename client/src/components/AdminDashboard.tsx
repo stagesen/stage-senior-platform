@@ -54,9 +54,16 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Map type to API endpoint (handle tour-requests special case)
+  const getApiEndpoint = (type: string) => {
+    return type === "tours" ? "tour-requests" : type;
+  };
+
+  const apiEndpoint = getApiEndpoint(type);
+
   // Fetch data based on type
   const { data: items = [], isLoading } = useQuery({
-    queryKey: [`/api/${type}`],
+    queryKey: [`/api/${apiEndpoint}`],
   });
 
   const { data: communities = [] } = useQuery<Community[]>({
@@ -142,10 +149,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   // Create mutation
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
-      return await apiRequest("POST", `/api/${type}`, data);
+      return await apiRequest("POST", `/api/${apiEndpoint}`, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/${type}`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/${apiEndpoint}`] });
       setIsDialogOpen(false);
       getCurrentForm().reset();
       toast({
@@ -165,10 +172,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   // Update mutation
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
-      return await apiRequest("PUT", `/api/${type}/${id}`, data);
+      return await apiRequest("PUT", `/api/${apiEndpoint}/${id}`, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/${type}`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/${apiEndpoint}`] });
       setIsDialogOpen(false);
       setEditingItem(null);
       getCurrentForm().reset();
@@ -189,10 +196,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      return await apiRequest("DELETE", `/api/${type}/${id}`);
+      return await apiRequest("DELETE", `/api/${apiEndpoint}/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/${type}`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/${apiEndpoint}`] });
       toast({
         title: "Success",
         description: `${type.slice(0, -1)} deleted successfully.`,
