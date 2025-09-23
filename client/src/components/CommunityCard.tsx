@@ -17,9 +17,11 @@ import type { Community } from "@shared/schema";
 
 interface CommunityCardProps {
   community: Community;
+  isSelected?: boolean;
+  onSelect?: () => void;
 }
 
-export default function CommunityCard({ community }: CommunityCardProps) {
+export default function CommunityCard({ community, isSelected, onSelect }: CommunityCardProps) {
   const formatPrice = (price: number | null) => {
     if (!price) return "Contact for pricing";
     return `$${price.toLocaleString()}`;
@@ -46,7 +48,13 @@ export default function CommunityCard({ community }: CommunityCardProps) {
   };
 
   return (
-    <Card className="community-card overflow-hidden hover:shadow-lg transition-all duration-300" data-testid={`community-card-${community.slug}`}>
+    <Card 
+      className={`community-card overflow-hidden hover:shadow-lg transition-all duration-300 ${
+        isSelected ? 'ring-2 ring-primary bg-primary/5' : ''
+      }`} 
+      data-testid={`community-card-${community.slug}`}
+      onClick={onSelect}
+    >
       <CardContent className="p-0">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           {/* Image */}

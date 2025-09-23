@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, MapPin, Calendar, Phone, Info, Map, List } from "lucide-react";
 import CommunityCard from "@/components/CommunityCard";
+import CommunityMap from "@/components/CommunityMap";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -24,6 +25,7 @@ export default function Communities() {
   const [selectedCareType, setSelectedCareType] = useState("all");
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [sortBy, setSortBy] = useState("relevance");
+  const [selectedCommunityId, setSelectedCommunityId] = useState<string | undefined>();
   const [tourForm, setTourForm] = useState({
     name: "",
     phone: "",
@@ -235,45 +237,75 @@ export default function Communities() {
             </div>
             
             {/* Communities */}
-            {isLoading ? (
-              <div className="space-y-6">
-                {[...Array(3)].map((_, i) => (
-                  <Card key={i} className="overflow-hidden">
-                    <CardContent className="p-6">
-                      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                        <div className="md:col-span-2">
-                          <Skeleton className="w-full h-64" />
-                        </div>
-                        <div className="md:col-span-3 space-y-4">
-                          <Skeleton className="h-6 w-3/4" />
-                          <Skeleton className="h-4 w-1/2" />
-                          <div className="flex gap-2">
-                            <Skeleton className="h-6 w-20" />
-                            <Skeleton className="h-6 w-20" />
+            {viewMode === "list" ? (
+              isLoading ? (
+                <div className="space-y-6">
+                  {[...Array(3)].map((_, i) => (
+                    <Card key={i} className="overflow-hidden">
+                      <CardContent className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                          <div className="md:col-span-2">
+                            <Skeleton className="w-full h-64" />
                           </div>
-                          <Skeleton className="h-16 w-full" />
-                          <div className="flex gap-3">
-                            <Skeleton className="h-10 flex-1" />
-                            <Skeleton className="h-10 flex-1" />
+                          <div className="md:col-span-3 space-y-4">
+                            <Skeleton className="h-6 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                            <div className="flex gap-2">
+                              <Skeleton className="h-6 w-20" />
+                              <Skeleton className="h-6 w-20" />
+                            </div>
+                            <Skeleton className="h-16 w-full" />
+                            <div className="flex gap-3">
+                              <Skeleton className="h-10 flex-1" />
+                              <Skeleton className="h-10 flex-1" />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : sortedCommunities.length > 0 ? (
-              <div className="space-y-6">
-                {sortedCommunities.map((community) => (
-                  <CommunityCard key={community.id} community={community} />
-                ))}
-              </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : sortedCommunities.length > 0 ? (
+                <div className="space-y-6">
+                  {sortedCommunities.map((community) => (
+                    <CommunityCard 
+                      key={community.id} 
+                      community={community}
+                      isSelected={selectedCommunityId === community.id}
+                      onSelect={() => setSelectedCommunityId(community.id)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <CardContent className="text-center py-12">
+                    <p className="text-muted-foreground" data-testid="no-results">
+                      No communities found matching your criteria.
+                    </p>
+                  </CardContent>
+                </Card>
+              )
             ) : (
-              <Card>
-                <CardContent className="text-center py-12">
-                  <p className="text-muted-foreground" data-testid="no-results">
-                    No communities found matching your criteria.
-                  </p>
+              // Map View
+              <Card className="overflow-hidden">
+                <CardContent className="p-0">
+                  {isLoading ? (
+                    <div className="h-96 bg-muted flex items-center justify-center">
+                      <div className="text-center">
+                        <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-muted-foreground">Loading map...</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <CommunityMap 
+                      communities={sortedCommunities}
+                      selectedCommunityId={selectedCommunityId}
+                      onCommunitySelect={(community) => {
+                        setSelectedCommunityId(community.id);
+                        setViewMode("list");
+                      }}
+                    />
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -283,18 +315,29 @@ export default function Communities() {
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
               
-              {/* Map Placeholder */}
-              <Card>
-                <CardContent className="p-0">
-                  <div className="bg-gradient-to-br from-muted/50 to-muted h-96 relative flex items-center justify-center">
-                    <div className="text-center">
-                      <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-lg font-medium text-foreground" data-testid="map-placeholder">Interactive Map</p>
-                      <p className="text-sm text-muted-foreground">Community locations</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Interactive Map */}
+              {viewMode === "list" && (
+                <Card>
+                  <CardContent className="p-0">
+                    {isLoading ? (
+                      <div className="bg-gradient-to-br from-muted/50 to-muted h-96 relative flex items-center justify-center">
+                        <div className="text-center">
+                          <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                          <p className="text-lg font-medium text-foreground">Loading Map...</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <CommunityMap 
+                        communities={sortedCommunities}
+                        selectedCommunityId={selectedCommunityId}
+                        onCommunitySelect={(community) => {
+                          setSelectedCommunityId(community.id);
+                        }}
+                      />
+                    )}
+                  </CardContent>
+                </Card>
+              )}
               
               {/* Tour Request Form */}
               <Card>
