@@ -274,7 +274,7 @@ export default function CommunityDetail() {
               </TabsList>
 
               {/* Overview Tab */}
-              <TabsContent value="overview" className="p-8 lg:p-12 space-y-8">
+              <TabsContent value="overview" className="p-8 lg:p-12 space-y-12">
                 <div>
                   <h2 className="text-3xl font-bold mb-6" data-testid="overview-title">
                     Welcome to {community.name}
@@ -304,6 +304,51 @@ export default function CommunityDetail() {
                         <EventCard key={event.id} event={event} />
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {/* Testimonials Section - Moved from Experience Tab */}
+                {testimonials.length > 0 && (
+                  <div>
+                    <h3 className="text-2xl font-semibold mb-6">Why You'll Love {community.name}</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {testimonials.slice(0, 4).map((testimonial) => (
+                        <Card key={testimonial.id} className="p-6 hover:shadow-lg transition-shadow" data-testid={`testimonial-${testimonial.id}`}>
+                          <div className="flex flex-col h-full">
+                            <blockquote className="text-gray-700 italic flex-1 mb-4" data-testid={`testimonial-content-${testimonial.id}`}>
+                              "{testimonial.content}"
+                            </blockquote>
+                            <div className="border-t pt-4">
+                              <p className="font-semibold text-gray-900" data-testid={`testimonial-author-${testimonial.id}`}>
+                                {testimonial.authorName}
+                              </p>
+                              {testimonial.authorRelation && (
+                                <p className="text-sm text-gray-600" data-testid={`testimonial-relation-${testimonial.id}`}>
+                                  {testimonial.authorRelation}
+                                </p>
+                              )}
+                              {testimonial.rating && (
+                                <div className="flex items-center gap-1 mt-2" data-testid={`testimonial-rating-${testimonial.id}`}>
+                                  {Array.from({ length: 5 }).map((_, i) => (
+                                    <Star 
+                                      key={i} 
+                                      className={`w-4 h-4 ${i < (testimonial.rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                                    />
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                    {testimonials.length > 4 && (
+                      <div className="text-center mt-6">
+                        <p className="text-sm text-gray-600 italic">
+                          "I can't think of a better place. This is where I belong."
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </TabsContent>
@@ -353,15 +398,10 @@ export default function CommunityDetail() {
                               )}
                               {floorPlan.bathrooms !== null && (
                                 <span data-testid={`floor-plan-bathrooms-${floorPlan.id}`}>
-                                  {floorPlan.bathrooms} {floorPlan.bathrooms === 1 ? 'Bath' : 'Baths'}
+                                  {Number(floorPlan.bathrooms)} {Number(floorPlan.bathrooms) === 1 ? 'Bath' : 'Baths'}
                                 </span>
                               )}
                             </div>
-                            {floorPlan.careType && (
-                              <Badge className="mb-4" data-testid={`floor-plan-care-type-${floorPlan.id}`}>
-                                {floorPlan.careType}
-                              </Badge>
-                            )}
                             <Button className="w-full" data-testid={`button-reserve-tour-${floorPlan.id}`}>
                               Reserve Your Tour
                             </Button>
@@ -446,107 +486,118 @@ export default function CommunityDetail() {
                     Explore {community.name}
                   </h2>
                   <p className="text-gray-600 mb-8">
-                    Take a virtual tour of our community. You'll find bright, comfortable spaces throughout, as well as ample amenities and serene outdoor areas.
+                    You'll find bright, comfortable spaces throughout the community, as well as ample amenities and serene outdoor areas.
                   </p>
                 </div>
 
-                {/* Photo Gallery */}
-                {galleryImages.length > 0 ? (
-                  <div>
-                    {/* Group images by category */}
-                    {Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean))).map((category) => (
-                      <div key={category} className="mb-8">
-                        <h3 className="text-xl font-semibold mb-4" data-testid={`gallery-category-${category}`}>
-                          {category}
-                        </h3>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                          {galleryImages
-                            .filter(img => img.category === category)
-                            .map((image) => (
-                              <div key={image.id} className="group cursor-pointer" data-testid={`gallery-image-${image.id}`}>
-                                <div className="overflow-hidden rounded-lg">
-                                  <img
-                                    src={image.imageUrl}
-                                    alt={image.caption || `${community.name} - ${category}`}
-                                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                                  />
+                {/* Virtual Tour Section */}
+                <div className="mb-12">
+                  <h3 className="text-2xl font-semibold mb-6">Take a Virtual Tour</h3>
+                  
+                  {galleryImages.length > 0 ? (
+                    <div>
+                      {/* Featured Gallery Categories as Virtual Tours */}
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+                        {Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean)))
+                          .slice(0, 6)
+                          .map((category) => {
+                            const categoryImages = galleryImages.filter(img => img.category === category);
+                            const firstImage = categoryImages[0];
+                            return (
+                              <div 
+                                key={category}
+                                className="group cursor-pointer"
+                                data-testid={`virtual-tour-${category}`}
+                              >
+                                <div className="relative overflow-hidden rounded-lg aspect-video bg-gray-100">
+                                  {firstImage && (
+                                    <img
+                                      src={firstImage.url}
+                                      alt={`${category} virtual tour`}
+                                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                    />
+                                  )}
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                                    <h4 className="text-white font-semibold text-lg">{category}</h4>
+                                  </div>
                                 </div>
-                                {image.caption && (
-                                  <p className="mt-2 text-sm text-gray-600 group-hover:text-gray-900">
-                                    {image.caption}
-                                  </p>
-                                )}
                               </div>
-                            ))}
+                            );
+                          })}
+                      </div>
+
+                      {/* All Gallery Images */}
+                      <div className="border-t pt-8">
+                        <h3 className="text-xl font-semibold mb-6">Photo Gallery</h3>
+                        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                          {galleryImages.map((image) => (
+                            <div 
+                              key={image.id} 
+                              className="group cursor-pointer aspect-square"
+                              data-testid={`gallery-image-${image.id}`}
+                            >
+                              <div className="w-full h-full overflow-hidden rounded-lg bg-gray-100">
+                                <img
+                                  src={image.url}
+                                  alt={image.caption || `${community.name} gallery`}
+                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                />
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center text-gray-500 py-12" data-testid="no-gallery">
-                    Photo gallery coming soon.
-                  </p>
-                )}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 bg-gray-50 rounded-lg">
+                      <Image className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                      <p className="text-gray-500" data-testid="no-gallery">
+                        Virtual tours and photo gallery coming soon.
+                      </p>
+                    </div>
+                  )}
+                </div>
               </TabsContent>
 
-              {/* Experience Tab (Testimonials) */}
+              {/* Experience Tab - FAQs and Community Life */}
               <TabsContent value="experience" className="p-8 lg:p-12 space-y-8">
                 <div>
-                  <h2 className="text-3xl font-bold mb-6" data-testid="testimonials-title">
-                    What Families Are Saying
+                  <h2 className="text-3xl font-bold mb-6" data-testid="experience-title">
+                    Experience Life at {community.name}
                   </h2>
                   <p className="text-gray-600 mb-8">
-                    Hear directly from families who have experienced the exceptional care and vibrant lifestyle at {community.name}.
+                    Discover what makes our community special and find answers to common questions about senior living at {community.name}.
                   </p>
                 </div>
 
-                {/* Testimonials */}
-                {testimonials.length > 0 ? (
-                  <div className="space-y-6">
-                    {testimonials.map((testimonial) => (
-                      <Card key={testimonial.id} className="p-8 bg-gradient-to-r from-gray-50 to-white" data-testid={`testimonial-${testimonial.id}`}>
-                        <div className="flex items-start gap-4">
-                          <MessageSquare className="w-12 h-12 text-primary/20 flex-shrink-0 mt-2" />
-                          <div className="flex-1">
-                            <blockquote className="text-lg italic text-gray-700 mb-4" data-testid={`testimonial-content-${testimonial.id}`}>
-                              "{testimonial.content}"
-                            </blockquote>
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="font-semibold text-gray-900" data-testid={`testimonial-author-${testimonial.id}`}>
-                                  {testimonial.authorName}
-                                </p>
-                                {testimonial.authorRelation && (
-                                  <p className="text-sm text-gray-600" data-testid={`testimonial-relation-${testimonial.id}`}>
-                                    {testimonial.authorRelation}
-                                  </p>
-                                )}
-                              </div>
-                              {testimonial.rating && (
-                                <div className="flex items-center gap-1" data-testid={`testimonial-rating-${testimonial.id}`}>
-                                  {Array.from({ length: 5 }).map((_, i) => (
-                                    <Star 
-                                      key={i} 
-                                      className={`w-5 h-5 ${i < testimonial.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
-                                    />
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center text-gray-500 py-12" data-testid="no-testimonials">
-                    Testimonials coming soon.
-                  </p>
-                )}
+                {/* Community Features */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                  <Card className="p-6">
+                    <Users className="w-12 h-12 text-primary mb-4" />
+                    <h4 className="text-lg font-semibold mb-2">Vibrant Community</h4>
+                    <p className="text-gray-600 text-sm">
+                      Join a warm, welcoming community where friendships flourish and every day brings new opportunities for connection.
+                    </p>
+                  </Card>
+                  <Card className="p-6">
+                    <Heart className="w-12 h-12 text-primary mb-4" />
+                    <h4 className="text-lg font-semibold mb-2">Personalized Care</h4>
+                    <p className="text-gray-600 text-sm">
+                      Our dedicated team provides tailored support that honors your independence while ensuring your comfort and safety.
+                    </p>
+                  </Card>
+                  <Card className="p-6">
+                    <Activity className="w-12 h-12 text-primary mb-4" />
+                    <h4 className="text-lg font-semibold mb-2">Active Lifestyle</h4>
+                    <p className="text-gray-600 text-sm">
+                      From fitness classes to cultural outings, enjoy a full calendar of activities designed to keep you engaged and healthy.
+                    </p>
+                  </Card>
+                </div>
 
                 {/* FAQs Section */}
-                {faqs.length > 0 && (
-                  <div className="mt-12">
+                {faqs.length > 0 ? (
+                  <div>
                     <h3 className="text-2xl font-semibold mb-6">Frequently Asked Questions</h3>
                     <Accordion type="single" collapsible className="space-y-4">
                       {faqs.map((faq) => (
@@ -560,6 +611,18 @@ export default function CommunityDetail() {
                         </AccordionItem>
                       ))}
                     </Accordion>
+                  </div>
+                ) : (
+                  <div className="bg-gray-50 rounded-lg p-12 text-center">
+                    <MessageSquare className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                    <h3 className="text-xl font-semibold mb-2">Have Questions?</h3>
+                    <p className="text-gray-600 mb-6">
+                      We're here to help you find the perfect senior living solution for your loved one.
+                    </p>
+                    <Button size="lg" data-testid="button-contact-questions">
+                      <Phone className="w-5 h-5 mr-2" />
+                      Contact Us
+                    </Button>
                   </div>
                 )}
               </TabsContent>
