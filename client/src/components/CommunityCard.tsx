@@ -59,12 +59,14 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           {/* Image */}
           <div className="md:col-span-2 relative">
-            <img
-              src={community.heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600`}
-              alt={`${community.name} - Senior Living Community`}
-              className="w-full h-64 md:h-full object-cover"
-              data-testid={`image-${community.slug}`}
-            />
+            <Link href={`/communities/${community.slug}`}>
+              <img
+                src={community.heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600`}
+                alt={`${community.name} - Senior Living Community`}
+                className="w-full h-64 md:h-full object-cover cursor-pointer hover:opacity-95 transition-opacity"
+                data-testid={`image-${community.slug}`}
+              />
+            </Link>
             {community.featured && (
               <Badge className="absolute top-2 left-2 bg-primary text-primary-foreground" data-testid={`badge-featured-${community.slug}`}>
                 Featured
@@ -76,9 +78,11 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
           <div className="md:col-span-3 p-6">
             <div className="flex justify-between items-start mb-3">
               <div>
-                <h3 className="text-xl font-bold text-foreground mb-1" data-testid={`name-${community.slug}`}>
-                  {community.name}
-                </h3>
+                <Link href={`/communities/${community.slug}`}>
+                  <h3 className="text-xl font-bold text-foreground mb-1 hover:text-primary transition-colors cursor-pointer" data-testid={`name-${community.slug}`}>
+                    {community.name}
+                  </h3>
+                </Link>
                 <p className="text-muted-foreground flex items-center" data-testid={`location-${community.slug}`}>
                   <MapPin className="w-4 h-4 mr-1" />
                   {community.city}, {community.state}
@@ -173,12 +177,13 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
               </Button>
               <Button 
                 variant="outline" 
-                size="icon"
+                className="flex-1"
                 asChild
                 data-testid={`button-details-${community.slug}`}
               >
                 <Link href={`/communities/${community.slug}`}>
-                  <Info className="w-4 h-4" />
+                  <Info className="w-4 h-4 mr-2" />
+                  View Details
                 </Link>
               </Button>
             </div>

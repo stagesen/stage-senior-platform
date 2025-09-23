@@ -94,9 +94,8 @@ export default function CommunityMap({
       button.className = 'mt-2 px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600';
       button.textContent = 'View Details';
       button.onclick = () => {
-        if (onCommunitySelect) {
-          onCommunitySelect(community);
-        }
+        // Navigate to the community detail page
+        window.location.href = `/communities/${community.slug}`;
       };
       popupDiv.appendChild(button);
 
