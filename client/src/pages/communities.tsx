@@ -107,11 +107,11 @@ export default function Communities() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl lg:text-6xl font-bold text-foreground mb-6" data-testid="page-title">
-              Find Your Perfect <span className="text-primary">Senior Living</span> Community
+              <span className="text-primary">Locally Owned</span>, Resident-Focused <span className="text-primary">Senior Living</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto" data-testid="page-description">
-              Discover exceptional assisted living, memory care, and independent living communities across Colorado. 
-              Locally owned, resident-focused care since 2016.
+              Stage Senior provides exceptional assisted living, memory care, and independent living across Colorado. 
+              We prioritize dignity, comfort, and joy for residents with personalized care plans since 2016.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button 
@@ -422,7 +422,8 @@ export default function Communities() {
                     Need Help Choosing?
                   </h3>
                   <p className="text-sm text-muted-foreground mb-4" data-testid="contact-description">
-                    Speak with our senior living experts who can help you find the perfect community for your needs.
+                    Our Colorado senior living experts understand the urgency and importance of finding the right care. 
+                    We'll help you navigate your options with transparent pricing and fast tour scheduling.
                   </p>
                   <Button 
                     asChild

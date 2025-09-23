@@ -1,8 +1,32 @@
-# Senior Living Community Platform
+# Stage Senior Community Platform
 
 ## Overview
 
-This is a comprehensive senior living community platform built for Stage Senior, a Colorado-based senior living management company. The application serves as both a public-facing website and content management system for showcasing four flagship communities: The Gardens at Columbine, The Gardens on Quail, Golden Pond, and Stonebridge Senior. The platform supports multiple care types including Assisted Living, Memory Care, and Independent Living, with features for community discovery, event management, blog content, and tour request handling.
+This is a comprehensive senior living community platform built for Stage Senior, a locally owned Colorado-based senior living management company founded in 2016. The application serves as the unified platform for showcasing Stage Senior's four flagship communities across Colorado. Stage Senior's mission is "Locally Owned, Resident-Focused," prioritizing dignity, comfort, and joy for residents through personalized care plans and exceptional team care.
+
+## Stage Senior Communities
+
+### Four Flagship Communities:
+
+1. **The Gardens at Columbine** (Littleton, CO)
+   - AL + MC (~124 units)
+   - Known for expansive 2+ acre gardens, serene courtyards, thoughtful MC design
+   - Starting: ~$5,245/mo for AL
+
+2. **The Gardens on Quail** (Arvada, CO) 
+   - IL Plus + AL + MC continuum
+   - Upscale, custom-designed with bistro, theater, library, courtyards
+   - Starting: ~$4,695/mo for AL, ~$8,150+ for MC
+
+3. **Golden Pond** (Golden, CO)
+   - IL + AL + MC (~114 units)
+   - 20+ years locally owned, 98%+ resident satisfaction
+   - Range: ~$3,855–$8,285/mo by unit & care level
+
+4. **Stonebridge Senior** (Arvada, CO)
+   - AL + MC (formerly Ralston Creek)
+   - "Your Story First" care philosophy with family story sessions
+   - Starting: ~$5,935/mo for AL
 
 ## User Preferences
 

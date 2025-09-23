@@ -1,0 +1,57 @@
+Stage Senior — Who we are
+	•	Locally owned, Colorado-based senior living management company (founded 2016).
+	•	Mission: “Locally Owned, Resident-Focused.” We prioritize dignity, comfort, and joy for residents, and invest in staff so exceptional team care becomes exceptional resident care.
+	•	Core pillars:
+	•	Residents: Personalized plans, highest potential, homelike environment.
+	•	Families: Transparent partnership, proactive communication, peace of mind.
+	•	Team Members: Development, recognition, long-tenure, values-aligned culture.
+	•	Services footprint: Assisted Living (AL), Memory Care (MC), Independent Living / Independent Plus (IL).
+
+⸻
+
+Portfolio snapshot (4 flagship communities)
+
+The Gardens at Columbine (Littleton, CO)
+	•	AL + MC (~124 units). Known for expansive gardens (2+ acres), serene courtyards, thoughtful MC design.
+	•	Differentiators: longstanding staff tenure, “home-like” atmosphere, strong family reviews.
+	•	Pricing ballpark: AL starts ~$5,245/mo, MC higher depending on suite and care needs.
+
+The Gardens on Quail (Arvada, CO)
+	•	IL Plus + AL + MC (continuum). Upscale, custom-designed property with bistro, theater, library, courtyards; strong intergenerational ties with Arvada schools & non-profits.
+	•	Differentiators: “boutique + community integration,” points-based transparency, age-in-place transitions.
+	•	Pricing ballpark: AL starts ~$4,695/mo, MC ~$8,150+ starting points.
+
+Golden Pond (Golden, CO)
+	•	IL + AL + MC (~114 units). Locally owned with 20+ years of trust, “final home” continuum.
+	•	Differentiators: 98%+ resident satisfaction, pond/grounds, full services (dining, salon, therapy, library).
+	•	Pricing ballpark: ~$3,855–$8,285/mo range by unit & care level.
+
+Stonebridge Senior (Arvada, CO)
+	•	AL + MC. Former Ralston Creek, re-energized under Stage Senior.
+	•	Differentiators: “Your Story First” care philosophy (family story sessions, traditions, personalized routines), modern amenities, highly rated staff.
+	•	Pricing ballpark: AL starts ~$5,935/mo, MC higher due to staffing ratio.
+
+Tone for all four: upscale-but-warm, resident-centered, staff-led excellence, families as partners.
+
+⸻
+
+Audience & journeys
+	•	Adult child decision-maker (often daughter/son, 45–65): urgent info, trust signals, clear pricing expectations, fast tour scheduling, reassurance about staff quality & safety.
+	•	Prospective resident (70–90): lifestyle, community warmth, autonomy + support, photos/floor plans, sample menus, activities.
+	•	Referrers (case managers, social workers, clinicians): speed to answer, program clarity (MC/AL), availability, documentation, confidence in care model.
+
+Common intents
+	•	“Assisted living near me” / city + care type
+	•	“Memory care for Alzheimer’s” (local)
+	•	“Independent living cost” / “how to pay”
+	•	“Best assisted living in [City]” / reviews
+	•	“Tour today” / “availability now” (high intent)
+
+⸻
+
+Business & product goals
+	1.	Unify the experience under one domain: stagesenior.com/communities (replace scattered microsites).
+	2.	Grow qualified tours (primary KPI): click-to-call, schedule visit, submit inquiry.
+	3.	Improve lead quality & ROAS for PPC/retargeting with programmatic, geo-specific landing pages.
+	4.	SEO expansion: rank for local/long-tail (city + “assisted living”, “memory care”, “independent living cost”, “[community] reviews”).
+	5.	Operational clarity: Webflow for static marketing; Replit for data/control; Webflow Cloud for app runtime; GitHub for CI/CD.

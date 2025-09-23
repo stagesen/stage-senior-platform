@@ -58,11 +58,11 @@ export default function Events() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-6" data-testid="page-title">
-              Community <span className="text-primary">Events</span>
+              Community <span className="text-primary">Events</span> & Programming
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto" data-testid="page-description">
-              Join us for engaging activities, educational programs, and social gatherings designed to enrich 
-              the lives of our residents and their families.
+              Experience meaningful activities and social connections at Stage Senior communities. Our resident-focused 
+              programming promotes dignity, comfort, and joy through engaging events designed for residents and families.
             </p>
           </div>
         </div>
