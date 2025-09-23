@@ -34,7 +34,7 @@ export default function Communities() {
   const { toast } = useToast();
 
   const { data: communities = [], isLoading } = useQuery<Community[]>({
-    queryKey: ["/api/communities", { active: true }],
+    queryKey: ["/api/communities"],
   });
 
   const filteredCommunities = communities.filter((community) => {
