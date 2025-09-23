@@ -4,14 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, MapPin, Filter } from "lucide-react";
+import { Calendar, Clock, MapPin, Filter, List, Grid } from "lucide-react";
 import EventCard from "@/components/EventCard";
+import EventCalendar from "@/components/EventCalendar";
+import EventDetailsModal from "@/components/EventDetailsModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Event, Community } from "@shared/schema";
 
 export default function Events() {
   const [selectedCommunity, setSelectedCommunity] = useState("all");
   const [timeFilter, setTimeFilter] = useState("upcoming");
+  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
+  const [calendarMode, setCalendarMode] = useState<"month" | "week">("month");
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   const { data: communities = [] } = useQuery<Community[]>({
     queryKey: ["/api/communities", { active: true }],
@@ -72,7 +77,34 @@ export default function Events() {
               <span className="text-sm font-medium text-foreground">Filters:</span>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 items-center">
+              {/* View Toggle */}
+              <div className="flex items-center space-x-2">
+                <label className="text-sm font-medium text-foreground">View:</label>
+                <div className="flex border border-border rounded-md overflow-hidden">
+                  <Button
+                    variant={viewMode === "list" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("list")}
+                    className="rounded-none border-0"
+                    data-testid="view-list"
+                  >
+                    <List className="w-4 h-4 mr-1" />
+                    List
+                  </Button>
+                  <Button
+                    variant={viewMode === "calendar" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("calendar")}
+                    className="rounded-none border-0 border-l border-border"
+                    data-testid="view-calendar"
+                  >
+                    <Calendar className="w-4 h-4 mr-1" />
+                    Calendar
+                  </Button>
+                </div>
+              </div>
+
               <div className="flex items-center space-x-2">
                 <label htmlFor="community-filter" className="text-sm font-medium text-foreground">
                   Community:
@@ -139,6 +171,13 @@ export default function Events() {
                   </Card>
                 ))}
               </div>
+            ) : viewMode === "calendar" ? (
+              <EventCalendar 
+                events={filteredEvents} 
+                onEventClick={setSelectedEvent}
+                mode={calendarMode}
+                onModeChange={setCalendarMode}
+              />
             ) : Object.keys(groupedEvents).length > 0 ? (
               <div className="space-y-8">
                 {Object.entries(groupedEvents)
@@ -247,6 +286,13 @@ export default function Events() {
           </div>
         </div>
       </main>
+
+      {/* Event Details Modal */}
+      <EventDetailsModal 
+        event={selectedEvent}
+        isOpen={!!selectedEvent}
+        onClose={() => setSelectedEvent(null)}
+      />
     </div>
   );
 }
