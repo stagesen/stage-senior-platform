@@ -116,6 +116,57 @@ export const tourRequests = pgTable("tour_requests", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const floorPlans = pgTable("floor_plans", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  communityId: uuid("community_id").references(() => communities.id),
+  name: varchar("name", { length: 255 }).notNull(),
+  bedrooms: integer("bedrooms").notNull(),
+  bathrooms: decimal("bathrooms", { precision: 3, scale: 1 }).notNull(),
+  squareFeet: integer("square_feet"),
+  description: text("description"),
+  highlights: jsonb("highlights").$type<string[]>().default([]),
+  imageUrl: text("image_url"),
+  planImageUrl: text("plan_image_url"),
+  pdfUrl: text("pdf_url"),
+  startingPrice: integer("starting_price"),
+  availability: varchar("availability", { length: 50 }).default("available"),
+  sortOrder: integer("sort_order").default(0),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const testimonials = pgTable("testimonials", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  communityId: uuid("community_id").references(() => communities.id),
+  authorName: varchar("author_name", { length: 255 }).notNull(),
+  authorRelation: varchar("author_relation", { length: 100 }),
+  content: text("content").notNull(),
+  rating: integer("rating"),
+  featured: boolean("featured").default(false),
+  approved: boolean("approved").default(false),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const galleryImages = pgTable("gallery_images", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  communityId: uuid("community_id").references(() => communities.id),
+  url: text("url").notNull(),
+  alt: text("alt").notNull(),
+  caption: text("caption"),
+  category: varchar("category", { length: 100 }),
+  tags: jsonb("tags").$type<string[]>().default([]),
+  width: integer("width"),
+  height: integer("height"),
+  featured: boolean("featured").default(false),
+  sortOrder: integer("sort_order").default(0),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const communitiesRelations = relations(communities, ({ many }) => ({
   posts: many(posts),
@@ -123,6 +174,9 @@ export const communitiesRelations = relations(communities, ({ many }) => ({
   faqs: many(faqs),
   galleries: many(galleries),
   tourRequests: many(tourRequests),
+  floorPlans: many(floorPlans),
+  testimonials: many(testimonials),
+  galleryImages: many(galleryImages),
 }));
 
 export const postsRelations = relations(posts, ({ one }) => ({
@@ -156,6 +210,27 @@ export const galleriesRelations = relations(galleries, ({ one }) => ({
 export const tourRequestsRelations = relations(tourRequests, ({ one }) => ({
   community: one(communities, {
     fields: [tourRequests.communityId],
+    references: [communities.id],
+  }),
+}));
+
+export const floorPlansRelations = relations(floorPlans, ({ one }) => ({
+  community: one(communities, {
+    fields: [floorPlans.communityId],
+    references: [communities.id],
+  }),
+}));
+
+export const testimonialsRelations = relations(testimonials, ({ one }) => ({
+  community: one(communities, {
+    fields: [testimonials.communityId],
+    references: [communities.id],
+  }),
+}));
+
+export const galleryImagesRelations = relations(galleryImages, ({ one }) => ({
+  community: one(communities, {
+    fields: [galleryImages.communityId],
     references: [communities.id],
   }),
 }));
@@ -197,6 +272,24 @@ export const insertTourRequestSchema = createInsertSchema(tourRequests).omit({
   updatedAt: true,
 });
 
+export const insertFloorPlanSchema = createInsertSchema(floorPlans).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertTestimonialSchema = createInsertSchema(testimonials).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertGalleryImageSchema = createInsertSchema(galleryImages).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type Community = typeof communities.$inferSelect;
 export type InsertCommunity = z.infer<typeof insertCommunitySchema>;
@@ -210,3 +303,9 @@ export type Gallery = typeof galleries.$inferSelect;
 export type InsertGallery = z.infer<typeof insertGallerySchema>;
 export type TourRequest = typeof tourRequests.$inferSelect;
 export type InsertTourRequest = z.infer<typeof insertTourRequestSchema>;
+export type FloorPlan = typeof floorPlans.$inferSelect;
+export type InsertFloorPlan = z.infer<typeof insertFloorPlanSchema>;
+export type Testimonial = typeof testimonials.$inferSelect;
+export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
+export type GalleryImage = typeof galleryImages.$inferSelect;
+export type InsertGalleryImage = z.infer<typeof insertGalleryImageSchema>;

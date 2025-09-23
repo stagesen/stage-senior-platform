@@ -5,6 +5,9 @@ import {
   faqs,
   galleries,
   tourRequests,
+  floorPlans,
+  testimonials,
+  galleryImages,
   type Community,
   type InsertCommunity,
   type Post,
@@ -17,6 +20,12 @@ import {
   type InsertGallery,
   type TourRequest,
   type InsertTourRequest,
+  type FloorPlan,
+  type InsertFloorPlan,
+  type Testimonial,
+  type InsertTestimonial,
+  type GalleryImage,
+  type InsertGalleryImage,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, and, like, isNull, or, sql } from "drizzle-orm";
@@ -89,6 +98,39 @@ export interface IStorage {
   createTourRequest(tourRequest: InsertTourRequest): Promise<TourRequest>;
   updateTourRequest(id: string, tourRequest: Partial<InsertTourRequest>): Promise<TourRequest>;
   deleteTourRequest(id: string): Promise<void>;
+
+  // Floor plan operations
+  getFloorPlans(filters?: {
+    communityId?: string;
+    active?: boolean;
+  }): Promise<FloorPlan[]>;
+  getFloorPlan(id: string): Promise<FloorPlan | undefined>;
+  createFloorPlan(floorPlan: InsertFloorPlan): Promise<FloorPlan>;
+  updateFloorPlan(id: string, floorPlan: Partial<InsertFloorPlan>): Promise<FloorPlan>;
+  deleteFloorPlan(id: string): Promise<void>;
+
+  // Testimonial operations
+  getTestimonials(filters?: {
+    communityId?: string;
+    featured?: boolean;
+    approved?: boolean;
+  }): Promise<Testimonial[]>;
+  getTestimonial(id: string): Promise<Testimonial | undefined>;
+  createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
+  updateTestimonial(id: string, testimonial: Partial<InsertTestimonial>): Promise<Testimonial>;
+  deleteTestimonial(id: string): Promise<void>;
+
+  // Gallery image operations
+  getGalleryImages(filters?: {
+    communityId?: string;
+    category?: string;
+    featured?: boolean;
+    active?: boolean;
+  }): Promise<GalleryImage[]>;
+  getGalleryImage(id: string): Promise<GalleryImage | undefined>;
+  createGalleryImage(galleryImage: InsertGalleryImage): Promise<GalleryImage>;
+  updateGalleryImage(id: string, galleryImage: Partial<InsertGalleryImage>): Promise<GalleryImage>;
+  deleteGalleryImage(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -445,6 +487,171 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTourRequest(id: string): Promise<void> {
     await db.delete(tourRequests).where(eq(tourRequests.id, id));
+  }
+
+  // Floor plan operations
+  async getFloorPlans(filters?: {
+    communityId?: string;
+    active?: boolean;
+  }): Promise<FloorPlan[]> {
+    let query = db.select().from(floorPlans);
+    
+    const conditions = [];
+    if (filters?.communityId) {
+      conditions.push(eq(floorPlans.communityId, filters.communityId));
+    }
+    if (filters?.active !== undefined) {
+      conditions.push(eq(floorPlans.active, filters.active));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    return await query.orderBy(asc(floorPlans.sortOrder), asc(floorPlans.name));
+  }
+
+  async getFloorPlan(id: string): Promise<FloorPlan | undefined> {
+    const [floorPlan] = await db
+      .select()
+      .from(floorPlans)
+      .where(eq(floorPlans.id, id));
+    return floorPlan;
+  }
+
+  async createFloorPlan(floorPlan: InsertFloorPlan): Promise<FloorPlan> {
+    const [created] = await db
+      .insert(floorPlans)
+      .values(floorPlan)
+      .returning();
+    return created;
+  }
+
+  async updateFloorPlan(id: string, floorPlan: Partial<InsertFloorPlan>): Promise<FloorPlan> {
+    const [updated] = await db
+      .update(floorPlans)
+      .set(floorPlan)
+      .where(eq(floorPlans.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteFloorPlan(id: string): Promise<void> {
+    await db.delete(floorPlans).where(eq(floorPlans.id, id));
+  }
+
+  // Testimonial operations
+  async getTestimonials(filters?: {
+    communityId?: string;
+    featured?: boolean;
+    approved?: boolean;
+  }): Promise<Testimonial[]> {
+    let query = db.select().from(testimonials);
+    
+    const conditions = [];
+    if (filters?.communityId) {
+      conditions.push(eq(testimonials.communityId, filters.communityId));
+    }
+    if (filters?.featured !== undefined) {
+      conditions.push(eq(testimonials.featured, filters.featured));
+    }
+    if (filters?.approved !== undefined) {
+      conditions.push(eq(testimonials.approved, filters.approved));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    return await query.orderBy(desc(testimonials.featured), asc(testimonials.sortOrder), desc(testimonials.createdAt));
+  }
+
+  async getTestimonial(id: string): Promise<Testimonial | undefined> {
+    const [testimonial] = await db
+      .select()
+      .from(testimonials)
+      .where(eq(testimonials.id, id));
+    return testimonial;
+  }
+
+  async createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial> {
+    const [created] = await db
+      .insert(testimonials)
+      .values(testimonial)
+      .returning();
+    return created;
+  }
+
+  async updateTestimonial(id: string, testimonial: Partial<InsertTestimonial>): Promise<Testimonial> {
+    const [updated] = await db
+      .update(testimonials)
+      .set(testimonial)
+      .where(eq(testimonials.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteTestimonial(id: string): Promise<void> {
+    await db.delete(testimonials).where(eq(testimonials.id, id));
+  }
+
+  // Gallery image operations
+  async getGalleryImages(filters?: {
+    communityId?: string;
+    category?: string;
+    featured?: boolean;
+    active?: boolean;
+  }): Promise<GalleryImage[]> {
+    let query = db.select().from(galleryImages);
+    
+    const conditions = [];
+    if (filters?.communityId) {
+      conditions.push(eq(galleryImages.communityId, filters.communityId));
+    }
+    if (filters?.category) {
+      conditions.push(eq(galleryImages.category, filters.category));
+    }
+    if (filters?.featured !== undefined) {
+      conditions.push(eq(galleryImages.featured, filters.featured));
+    }
+    if (filters?.active !== undefined) {
+      conditions.push(eq(galleryImages.active, filters.active));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    return await query.orderBy(desc(galleryImages.featured), asc(galleryImages.sortOrder), desc(galleryImages.createdAt));
+  }
+
+  async getGalleryImage(id: string): Promise<GalleryImage | undefined> {
+    const [galleryImage] = await db
+      .select()
+      .from(galleryImages)
+      .where(eq(galleryImages.id, id));
+    return galleryImage;
+  }
+
+  async createGalleryImage(galleryImage: InsertGalleryImage): Promise<GalleryImage> {
+    const [created] = await db
+      .insert(galleryImages)
+      .values(galleryImage)
+      .returning();
+    return created;
+  }
+
+  async updateGalleryImage(id: string, galleryImage: Partial<InsertGalleryImage>): Promise<GalleryImage> {
+    const [updated] = await db
+      .update(galleryImages)
+      .set(galleryImage)
+      .where(eq(galleryImages.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteGalleryImage(id: string): Promise<void> {
+    await db.delete(galleryImages).where(eq(galleryImages.id, id));
   }
 }
 

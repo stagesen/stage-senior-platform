@@ -1,0 +1,59 @@
+Community page blueprint (one page, modular sections)
+
+Route: /communities/[slug] (Next.js app on Webflow Cloud, mounted at /communities; set basePath:'/communities' and consume BASE_URL for links).  ￼
+
+0) Global shell (DevLink + layout)
+	•	Header & Footer: import via DevLink (export Webflow components into React so UX matches the marketing site exactly).  ￼
+	•	Sticky CTAs (mobile first): floating Call and Schedule a Tour buttons that persist as the user scrolls (high-intent). Industry guidance: use explicit tour/availability CTAs, not vague “Learn more.”  ￼
+
+1) Hero band
+	•	Elements: community name, city/state, care types, short promise line; primary CTA “Reserve/Book a Tour” and secondary CTA “Call for Availability.”
+	•	Optional price teaser (“Starting at …” when policy allows).
+	•	Background: hero image from gallery.
+	•	Behavior: first paint is text + CTA (image lazy-loads to protect LCP).
+
+2) Navigator (tabs/anchors)
+
+Mirror the proven information architecture you see on Sunrise/Sky Active: “Life / Apartments / Services & Amenities / Tour & Gallery / Experience”. Our labels:
+	•	Overview (default)
+	•	Floor Plans
+	•	Amenities & Services
+	•	Photos & Tours
+	•	FAQs
+	•	Events
+	•	Contact/Book a Tour
+
+Keep tabs as anchors on a single page so there’s only one URL to track in ads/SEO.  ￼
+
+3) Overview (slug #overview)
+	•	2–3 digestible paragraphs that reflect Stage Senior’s positioning (locally owned, resident-focused, staff excellence, “highest potential”).  ￼
+	•	Quick facts: address (map link), phone, visiting hours, pet policy.
+	•	Care chips: AL / MC / IL (from data).
+
+4) Floor plans (slug #floor-plans)
+	•	Grid (3–9 items) with plan name, beds/baths/SF, highlights, thumbnail (plan image if available, else staged photo), “Ask Availability” button that scrolls to #tour.
+	•	Modal per plan: larger images carousel + spec PDF link.
+	•	(Optional) “See all floor plans” opens a dedicated route /communities/[slug]/floor-plans.
+	•	Sunrise pages consistently highlight plan choices and make them scannable; emulate that density & clarity.  ￼
+
+5) Amenities & Services (slug #amenities)
+	•	Two lists: Included vs Available on request; iconized list exported via DevLink.
+	•	Add a short “What’s it like here?” paragraph (dining, activities, transportation).
+
+6) Photos & Tours (slug #photos)
+	•	Gallery grid (12–24 images) with tag filters (Outdoors, Dining, Apartments, Memory Care).
+	•	Lightbox with keyboard/esc support; captions from image alt.
+	•	(Optional) Virtual tour embed (hosted elsewhere) + “Tour & Gallery” label parity with Sunrise.  ￼
+
+7) FAQs (slug #faq)
+	•	Accordion with 8–12 top questions (pricing, pets, age-in-place, transportation, memory care).
+	•	Output FAQPage JSON-LD.
+
+8) Events (slug #events)
+	•	“This month at [Community]”: upcoming events (3–6) + View all.
+	•	ICS feed download (optional).
+
+9) Tour & lead capture (slug #tour)
+	•	Sticky page-level CTA targets this anchor.
+	•	Offer both: Book a Tour (scheduler or form) and Click-to-Call (unique tracking number suggested).
+	•	Keep this section short (name/phone/email + preference). Strong CTA language aligns with senior-living conversion best-practices.

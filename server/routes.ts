@@ -8,6 +8,9 @@ import {
   insertFaqSchema,
   insertGallerySchema,
   insertTourRequestSchema,
+  insertFloorPlanSchema,
+  insertTestimonialSchema,
+  insertGalleryImageSchema,
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -381,6 +384,213 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting tour request:", error);
       res.status(500).json({ message: "Failed to delete tour request" });
+    }
+  });
+
+  // Floor plan routes
+  app.get("/api/floor-plans", async (req, res) => {
+    try {
+      const { communityId, active } = req.query;
+      const filters: any = {};
+      
+      if (communityId) {
+        filters.communityId = communityId as string;
+      }
+      if (active !== undefined) {
+        filters.active = active === 'true';
+      }
+      
+      const floorPlans = await storage.getFloorPlans(filters);
+      res.json(floorPlans);
+    } catch (error) {
+      console.error("Error fetching floor plans:", error);
+      res.status(500).json({ message: "Failed to fetch floor plans" });
+    }
+  });
+
+  app.get("/api/floor-plans/:id", async (req, res) => {
+    try {
+      const floorPlan = await storage.getFloorPlan(req.params.id);
+      if (!floorPlan) {
+        return res.status(404).json({ message: "Floor plan not found" });
+      }
+      res.json(floorPlan);
+    } catch (error) {
+      console.error("Error fetching floor plan:", error);
+      res.status(500).json({ message: "Failed to fetch floor plan" });
+    }
+  });
+
+  app.post("/api/floor-plans", async (req, res) => {
+    try {
+      const validatedData = insertFloorPlanSchema.parse(req.body);
+      const floorPlan = await storage.createFloorPlan(validatedData);
+      res.status(201).json(floorPlan);
+    } catch (error) {
+      console.error("Error creating floor plan:", error);
+      res.status(400).json({ message: "Failed to create floor plan" });
+    }
+  });
+
+  app.put("/api/floor-plans/:id", async (req, res) => {
+    try {
+      const validatedData = insertFloorPlanSchema.partial().parse(req.body);
+      const floorPlan = await storage.updateFloorPlan(req.params.id, validatedData);
+      res.json(floorPlan);
+    } catch (error) {
+      console.error("Error updating floor plan:", error);
+      res.status(400).json({ message: "Failed to update floor plan" });
+    }
+  });
+
+  app.delete("/api/floor-plans/:id", async (req, res) => {
+    try {
+      await storage.deleteFloorPlan(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting floor plan:", error);
+      res.status(500).json({ message: "Failed to delete floor plan" });
+    }
+  });
+
+  // Testimonial routes
+  app.get("/api/testimonials", async (req, res) => {
+    try {
+      const { communityId, featured, approved } = req.query;
+      const filters: any = {};
+      
+      if (communityId) {
+        filters.communityId = communityId as string;
+      }
+      if (featured !== undefined) {
+        filters.featured = featured === 'true';
+      }
+      if (approved !== undefined) {
+        filters.approved = approved === 'true';
+      }
+      
+      const testimonials = await storage.getTestimonials(filters);
+      res.json(testimonials);
+    } catch (error) {
+      console.error("Error fetching testimonials:", error);
+      res.status(500).json({ message: "Failed to fetch testimonials" });
+    }
+  });
+
+  app.get("/api/testimonials/:id", async (req, res) => {
+    try {
+      const testimonial = await storage.getTestimonial(req.params.id);
+      if (!testimonial) {
+        return res.status(404).json({ message: "Testimonial not found" });
+      }
+      res.json(testimonial);
+    } catch (error) {
+      console.error("Error fetching testimonial:", error);
+      res.status(500).json({ message: "Failed to fetch testimonial" });
+    }
+  });
+
+  app.post("/api/testimonials", async (req, res) => {
+    try {
+      const validatedData = insertTestimonialSchema.parse(req.body);
+      const testimonial = await storage.createTestimonial(validatedData);
+      res.status(201).json(testimonial);
+    } catch (error) {
+      console.error("Error creating testimonial:", error);
+      res.status(400).json({ message: "Failed to create testimonial" });
+    }
+  });
+
+  app.put("/api/testimonials/:id", async (req, res) => {
+    try {
+      const validatedData = insertTestimonialSchema.partial().parse(req.body);
+      const testimonial = await storage.updateTestimonial(req.params.id, validatedData);
+      res.json(testimonial);
+    } catch (error) {
+      console.error("Error updating testimonial:", error);
+      res.status(400).json({ message: "Failed to update testimonial" });
+    }
+  });
+
+  app.delete("/api/testimonials/:id", async (req, res) => {
+    try {
+      await storage.deleteTestimonial(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting testimonial:", error);
+      res.status(500).json({ message: "Failed to delete testimonial" });
+    }
+  });
+
+  // Gallery image routes
+  app.get("/api/gallery-images", async (req, res) => {
+    try {
+      const { communityId, category, featured, active } = req.query;
+      const filters: any = {};
+      
+      if (communityId) {
+        filters.communityId = communityId as string;
+      }
+      if (category) {
+        filters.category = category as string;
+      }
+      if (featured !== undefined) {
+        filters.featured = featured === 'true';
+      }
+      if (active !== undefined) {
+        filters.active = active === 'true';
+      }
+      
+      const galleryImages = await storage.getGalleryImages(filters);
+      res.json(galleryImages);
+    } catch (error) {
+      console.error("Error fetching gallery images:", error);
+      res.status(500).json({ message: "Failed to fetch gallery images" });
+    }
+  });
+
+  app.get("/api/gallery-images/:id", async (req, res) => {
+    try {
+      const galleryImage = await storage.getGalleryImage(req.params.id);
+      if (!galleryImage) {
+        return res.status(404).json({ message: "Gallery image not found" });
+      }
+      res.json(galleryImage);
+    } catch (error) {
+      console.error("Error fetching gallery image:", error);
+      res.status(500).json({ message: "Failed to fetch gallery image" });
+    }
+  });
+
+  app.post("/api/gallery-images", async (req, res) => {
+    try {
+      const validatedData = insertGalleryImageSchema.parse(req.body);
+      const galleryImage = await storage.createGalleryImage(validatedData);
+      res.status(201).json(galleryImage);
+    } catch (error) {
+      console.error("Error creating gallery image:", error);
+      res.status(400).json({ message: "Failed to create gallery image" });
+    }
+  });
+
+  app.put("/api/gallery-images/:id", async (req, res) => {
+    try {
+      const validatedData = insertGalleryImageSchema.partial().parse(req.body);
+      const galleryImage = await storage.updateGalleryImage(req.params.id, validatedData);
+      res.json(galleryImage);
+    } catch (error) {
+      console.error("Error updating gallery image:", error);
+      res.status(400).json({ message: "Failed to update gallery image" });
+    }
+  });
+
+  app.delete("/api/gallery-images/:id", async (req, res) => {
+    try {
+      await storage.deleteGalleryImage(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting gallery image:", error);
+      res.status(500).json({ message: "Failed to delete gallery image" });
     }
   });
 

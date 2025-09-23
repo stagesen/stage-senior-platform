@@ -18,7 +18,7 @@ import {
   ChevronLeft
 } from "lucide-react";
 import { Link } from "wouter";
-import type { Community, Event, Faq, Gallery } from "@shared/schema";
+import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryImage } from "@shared/schema";
 
 export default function CommunityDetail() {
   const params = useParams();
@@ -41,6 +41,21 @@ export default function CommunityDetail() {
 
   const { data: galleries = [] } = useQuery<Gallery[]>({
     queryKey: [`/api/galleries?communityId=${community?.id}&active=true`],
+    enabled: !!community?.id,
+  });
+
+  const { data: floorPlans = [] } = useQuery<FloorPlan[]>({
+    queryKey: [`/api/floor-plans?communityId=${community?.id}&active=true`],
+    enabled: !!community?.id,
+  });
+
+  const { data: testimonials = [] } = useQuery<Testimonial[]>({
+    queryKey: [`/api/testimonials?communityId=${community?.id}&approved=true`],
+    enabled: !!community?.id,
+  });
+
+  const { data: galleryImages = [] } = useQuery<GalleryImage[]>({
+    queryKey: [`/api/gallery-images?communityId=${community?.id}&active=true`],
     enabled: !!community?.id,
   });
 
@@ -177,8 +192,10 @@ export default function CommunityDetail() {
           {/* Main Content */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="overview" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-4" data-testid="tabs-list">
+              <TabsList className="grid w-full grid-cols-6" data-testid="tabs-list">
                 <TabsTrigger value="overview" data-testid="tab-overview">Overview</TabsTrigger>
+                <TabsTrigger value="floor-plans" data-testid="tab-floor-plans">Floor Plans</TabsTrigger>
+                <TabsTrigger value="testimonials" data-testid="tab-testimonials">Testimonials</TabsTrigger>
                 <TabsTrigger value="events" data-testid="tab-events">Events</TabsTrigger>
                 <TabsTrigger value="gallery" data-testid="tab-gallery">Gallery</TabsTrigger>
                 <TabsTrigger value="faq" data-testid="tab-faq">FAQ</TabsTrigger>
@@ -244,6 +261,147 @@ export default function CommunityDetail() {
                   </CardContent>
                 </Card>
               </TabsContent>
+
+              <TabsContent value="floor-plans" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle data-testid="floor-plans-title">Available Floor Plans</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {floorPlans.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {floorPlans.map((floorPlan) => (
+                          <Card key={floorPlan.id} className="border hover:shadow-md transition-shadow" data-testid={`floor-plan-${floorPlan.id}`}>
+                            <CardContent className="p-0">
+                              {floorPlan.imageUrl && (
+                                <img
+                                  src={floorPlan.imageUrl}
+                                  alt={`${floorPlan.name} floor plan`}
+                                  className="w-full h-48 object-cover rounded-t-lg"
+                                  data-testid={`floor-plan-image-${floorPlan.id}`}
+                                />
+                              )}
+                              <div className="p-4">
+                                <div className="flex justify-between items-start mb-3">
+                                  <h3 className="font-semibold text-lg" data-testid={`floor-plan-name-${floorPlan.id}`}>
+                                    {floorPlan.name}
+                                  </h3>
+                                  {floorPlan.startingPrice && (
+                                    <Badge variant="secondary" data-testid={`floor-plan-price-${floorPlan.id}`}>
+                                      {formatPrice(floorPlan.startingPrice)}
+                                    </Badge>
+                                  )}
+                                </div>
+                                <div className="grid grid-cols-3 gap-4 mb-3 text-sm">
+                                  <div className="text-center">
+                                    <div className="font-medium" data-testid={`floor-plan-bedrooms-${floorPlan.id}`}>
+                                      {floorPlan.bedrooms}
+                                    </div>
+                                    <div className="text-muted-foreground">Bedrooms</div>
+                                  </div>
+                                  <div className="text-center">
+                                    <div className="font-medium" data-testid={`floor-plan-bathrooms-${floorPlan.id}`}>
+                                      {floorPlan.bathrooms}
+                                    </div>
+                                    <div className="text-muted-foreground">Bathrooms</div>
+                                  </div>
+                                  {floorPlan.squareFeet && (
+                                    <div className="text-center">
+                                      <div className="font-medium" data-testid={`floor-plan-sqft-${floorPlan.id}`}>
+                                        {floorPlan.squareFeet}
+                                      </div>
+                                      <div className="text-muted-foreground">Sq Ft</div>
+                                    </div>
+                                  )}
+                                </div>
+                                {floorPlan.description && (
+                                  <p className="text-sm text-muted-foreground mb-3" data-testid={`floor-plan-description-${floorPlan.id}`}>
+                                    {floorPlan.description}
+                                  </p>
+                                )}
+                                {floorPlan.highlights && floorPlan.highlights.length > 0 && (
+                                  <div className="space-y-1 mb-3">
+                                    {floorPlan.highlights.map((highlight, index) => (
+                                      <div key={index} className="flex items-center text-sm" data-testid={`floor-plan-highlight-${floorPlan.id}-${index}`}>
+                                        <Star className="w-3 h-3 text-primary mr-2 flex-shrink-0" />
+                                        <span>{highlight}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                <div className="flex gap-2">
+                                  <Button size="sm" className="flex-1" data-testid={`button-inquire-${floorPlan.id}`}>
+                                    Inquire Now
+                                  </Button>
+                                  {floorPlan.planImageUrl && (
+                                    <Button variant="outline" size="sm" data-testid={`button-view-plan-${floorPlan.id}`}>
+                                      View Plan
+                                    </Button>
+                                  )}
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-muted-foreground text-center py-8" data-testid="no-floor-plans">
+                        Floor plans coming soon. Contact us for current availability.
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="testimonials" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle data-testid="testimonials-title">What Families Are Saying</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {testimonials.length > 0 ? (
+                      <div className="space-y-6">
+                        {testimonials.map((testimonial) => (
+                          <Card key={testimonial.id} className="bg-muted/50" data-testid={`testimonial-${testimonial.id}`}>
+                            <CardContent className="p-6">
+                              <div className="flex items-start space-x-4">
+                                <div className="flex-1">
+                                  <blockquote className="text-lg italic mb-4" data-testid={`testimonial-content-${testimonial.id}`}>
+                                    "{testimonial.content}"
+                                  </blockquote>
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <div className="font-semibold" data-testid={`testimonial-author-${testimonial.id}`}>
+                                        {testimonial.authorName}
+                                      </div>
+                                      {testimonial.authorRelation && (
+                                        <div className="text-sm text-muted-foreground" data-testid={`testimonial-relation-${testimonial.id}`}>
+                                          {testimonial.authorRelation}
+                                        </div>
+                                      )}
+                                    </div>
+                                    {testimonial.rating && (
+                                      <div className="flex items-center" data-testid={`testimonial-rating-${testimonial.id}`}>
+                                        {Array.from({ length: testimonial.rating }).map((_, i) => (
+                                          <Star key={i} className="w-4 h-4 fill-primary text-primary" />
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-muted-foreground text-center py-8" data-testid="no-testimonials">
+                        Testimonials coming soon.
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
               
               <TabsContent value="events" className="space-y-6">
                 <Card>
@@ -272,11 +430,73 @@ export default function CommunityDetail() {
                     <CardTitle data-testid="gallery-title">Photo Gallery</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {galleries.length > 0 ? (
-                      <div className="space-y-6">
-                        {galleries.map((gallery) => (
-                          <GalleryLightbox key={gallery.id} gallery={gallery} />
+                    {galleryImages.length > 0 ? (
+                      <div className="space-y-8">
+                        {/* Group images by category */}
+                        {Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean))).map((category) => (
+                          <div key={category} className="space-y-4">
+                            <h3 className="text-lg font-semibold text-foreground" data-testid={`gallery-category-${category}`}>
+                              {category}
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                              {galleryImages
+                                .filter(img => img.category === category)
+                                .map((image) => (
+                                  <div 
+                                    key={image.id} 
+                                    className="group relative overflow-hidden rounded-lg cursor-pointer hover:shadow-lg transition-shadow"
+                                    data-testid={`gallery-image-${image.id}`}
+                                  >
+                                    <img
+                                      src={image.url}
+                                      alt={image.alt}
+                                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                                    />
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
+                                    {image.caption && (
+                                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                                        <p className="text-white text-sm" data-testid={`gallery-caption-${image.id}`}>
+                                          {image.caption}
+                                        </p>
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
                         ))}
+                        
+                        {/* Images without categories */}
+                        {galleryImages.filter(img => !img.category).length > 0 && (
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-semibold text-foreground">Community Photos</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                              {galleryImages
+                                .filter(img => !img.category)
+                                .map((image) => (
+                                  <div 
+                                    key={image.id} 
+                                    className="group relative overflow-hidden rounded-lg cursor-pointer hover:shadow-lg transition-shadow"
+                                    data-testid={`gallery-image-${image.id}`}
+                                  >
+                                    <img
+                                      src={image.url}
+                                      alt={image.alt}
+                                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                                    />
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
+                                    {image.caption && (
+                                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                                        <p className="text-white text-sm" data-testid={`gallery-caption-${image.id}`}>
+                                          {image.caption}
+                                        </p>
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <p className="text-muted-foreground text-center py-8" data-testid="no-gallery">
