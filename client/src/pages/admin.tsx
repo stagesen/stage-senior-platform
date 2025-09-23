@@ -1,0 +1,283 @@
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import AdminDashboard from "@/components/AdminDashboard";
+import { 
+  Users, 
+  Calendar, 
+  FileText, 
+  HelpCircle, 
+  Camera, 
+  TrendingUp,
+  Phone,
+  Mail
+} from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import type { Community, Post, Event, TourRequest, Faq, Gallery } from "@shared/schema";
+
+export default function Admin() {
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  // Fetch data for dashboard stats
+  const { data: communities = [] } = useQuery<Community[]>({
+    queryKey: ["/api/communities"],
+  });
+
+  const { data: posts = [] } = useQuery<Post[]>({
+    queryKey: ["/api/posts"],
+  });
+
+  const { data: events = [] } = useQuery<Event[]>({
+    queryKey: ["/api/events"],
+  });
+
+  const { data: tourRequests = [] } = useQuery<TourRequest[]>({
+    queryKey: ["/api/tour-requests"],
+  });
+
+  const { data: faqs = [] } = useQuery<Faq[]>({
+    queryKey: ["/api/faqs"],
+  });
+
+  const { data: galleries = [] } = useQuery<Gallery[]>({
+    queryKey: ["/api/galleries"],
+  });
+
+  // Calculate stats
+  const stats = {
+    totalCommunities: communities.length,
+    activeCommunities: communities.filter(c => c.active).length,
+    totalPosts: posts.length,
+    publishedPosts: posts.filter(p => p.published).length,
+    upcomingEvents: events.filter(e => new Date(e.startsAt) > new Date()).length,
+    totalEvents: events.length,
+    pendingTours: tourRequests.filter(t => t.status === "pending").length,
+    totalTours: tourRequests.length,
+    activeFaqs: faqs.filter(f => f.active).length,
+    totalFaqs: faqs.length,
+    activeGalleries: galleries.filter(g => g.active).length,
+    totalGalleries: galleries.length,
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="bg-card border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="py-6">
+            <h1 className="text-3xl font-bold text-foreground" data-testid="admin-title">
+              Stage Senior Admin
+            </h1>
+            <p className="text-muted-foreground mt-2" data-testid="admin-description">
+              Manage communities, content, and user inquiries
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-7" data-testid="admin-tabs">
+            <TabsTrigger value="dashboard" data-testid="tab-dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="communities" data-testid="tab-communities">Communities</TabsTrigger>
+            <TabsTrigger value="posts" data-testid="tab-posts">Blog Posts</TabsTrigger>
+            <TabsTrigger value="events" data-testid="tab-events">Events</TabsTrigger>
+            <TabsTrigger value="tours" data-testid="tab-tours">Tour Requests</TabsTrigger>
+            <TabsTrigger value="faqs" data-testid="tab-faqs">FAQs</TabsTrigger>
+            <TabsTrigger value="galleries" data-testid="tab-galleries">Galleries</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="dashboard" className="space-y-6">
+            {/* Dashboard Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              
+              {/* Communities Stats */}
+              <Card data-testid="stats-communities">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Communities</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.activeCommunities}</div>
+                  <p className="text-xs text-muted-foreground">
+                    {stats.activeCommunities} of {stats.totalCommunities} active
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Blog Posts Stats */}
+              <Card data-testid="stats-posts">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Blog Posts</CardTitle>
+                  <FileText className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.publishedPosts}</div>
+                  <p className="text-xs text-muted-foreground">
+                    {stats.publishedPosts} of {stats.totalPosts} published
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Events Stats */}
+              <Card data-testid="stats-events">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Events</CardTitle>
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.upcomingEvents}</div>
+                  <p className="text-xs text-muted-foreground">
+                    {stats.upcomingEvents} upcoming of {stats.totalEvents} total
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Tour Requests Stats */}
+              <Card data-testid="stats-tours">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Tour Requests</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.pendingTours}</div>
+                  <p className="text-xs text-muted-foreground">
+                    {stats.pendingTours} pending of {stats.totalTours} total
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              {/* Recent Tour Requests */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center" data-testid="recent-tours-title">
+                    <Phone className="w-5 h-5 mr-2" />
+                    Recent Tour Requests
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {tourRequests.slice(0, 5).map((request) => {
+                      const community = communities.find(c => c.id === request.communityId);
+                      return (
+                        <div key={request.id} className="flex items-center justify-between border-b border-border pb-4 last:border-0 last:pb-0">
+                          <div>
+                            <p className="font-medium text-foreground" data-testid={`tour-request-name-${request.id}`}>
+                              {request.name}
+                            </p>
+                            <p className="text-sm text-muted-foreground" data-testid={`tour-request-community-${request.id}`}>
+                              {community?.name || "General Inquiry"}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(request.createdAt || new Date()).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <Badge 
+                            variant={request.status === "pending" ? "default" : "secondary"}
+                            data-testid={`tour-request-status-${request.id}`}
+                          >
+                            {request.status}
+                          </Badge>
+                        </div>
+                      );
+                    })}
+                    {tourRequests.length === 0 && (
+                      <p className="text-muted-foreground text-center py-4" data-testid="no-tour-requests">
+                        No tour requests yet.
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick Actions */}
+              <Card>
+                <CardHeader>
+                  <CardTitle data-testid="quick-actions-title">Quick Actions</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline"
+                    onClick={() => setActiveTab("communities")}
+                    data-testid="button-add-community"
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    Add New Community
+                  </Button>
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline"
+                    onClick={() => setActiveTab("posts")}
+                    data-testid="button-add-post"
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    Create Blog Post
+                  </Button>
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline"
+                    onClick={() => setActiveTab("events")}
+                    data-testid="button-add-event"
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Schedule Event
+                  </Button>
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline"
+                    onClick={() => setActiveTab("faqs")}
+                    data-testid="button-add-faq"
+                  >
+                    <HelpCircle className="w-4 h-4 mr-2" />
+                    Add FAQ
+                  </Button>
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline"
+                    onClick={() => setActiveTab("galleries")}
+                    data-testid="button-add-gallery"
+                  >
+                    <Camera className="w-4 h-4 mr-2" />
+                    Create Gallery
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Content Management Tabs */}
+          <TabsContent value="communities">
+            <AdminDashboard type="communities" />
+          </TabsContent>
+
+          <TabsContent value="posts">
+            <AdminDashboard type="posts" />
+          </TabsContent>
+
+          <TabsContent value="events">
+            <AdminDashboard type="events" />
+          </TabsContent>
+
+          <TabsContent value="tours">
+            <AdminDashboard type="tours" />
+          </TabsContent>
+
+          <TabsContent value="faqs">
+            <AdminDashboard type="faqs" />
+          </TabsContent>
+
+          <TabsContent value="galleries">
+            <AdminDashboard type="galleries" />
+          </TabsContent>
+        </Tabs>
+      </main>
+    </div>
+  );
+}
