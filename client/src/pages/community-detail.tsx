@@ -25,22 +25,22 @@ export default function CommunityDetail() {
   const slug = params.slug;
 
   const { data: community, isLoading: communityLoading } = useQuery<Community>({
-    queryKey: ["/api/communities", slug],
+    queryKey: [`/api/communities/${slug}`],
     enabled: !!slug,
   });
 
   const { data: events = [] } = useQuery<Event[]>({
-    queryKey: ["/api/events", { communityId: community?.id, upcoming: true }],
+    queryKey: [`/api/events?communityId=${community?.id}&upcoming=true`],
     enabled: !!community?.id,
   });
 
   const { data: faqs = [] } = useQuery<Faq[]>({
-    queryKey: ["/api/faqs", { communityId: community?.id, active: true }],
+    queryKey: [`/api/faqs?communityId=${community?.id}&active=true`],
     enabled: !!community?.id,
   });
 
   const { data: galleries = [] } = useQuery<Gallery[]>({
-    queryKey: ["/api/galleries", { communityId: community?.id, active: true }],
+    queryKey: [`/api/galleries?communityId=${community?.id}&active=true`],
     enabled: !!community?.id,
   });
 
