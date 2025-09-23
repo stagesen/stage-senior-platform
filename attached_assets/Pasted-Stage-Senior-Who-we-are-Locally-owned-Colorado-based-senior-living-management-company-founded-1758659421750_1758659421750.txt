@@ -1,0 +1,308 @@
+Stage Senior — Who we are
+	•	Locally owned, Colorado-based senior living management company (founded 2016).
+	•	Mission: “Locally Owned, Resident-Focused.” We prioritize dignity, comfort, and joy for residents, and invest in staff so exceptional team care becomes exceptional resident care.
+	•	Core pillars:
+	•	Residents: Personalized plans, highest potential, homelike environment.
+	•	Families: Transparent partnership, proactive communication, peace of mind.
+	•	Team Members: Development, recognition, long-tenure, values-aligned culture.
+	•	Services footprint: Assisted Living (AL), Memory Care (MC), Independent Living / Independent Plus (IL).
+
+⸻
+
+Portfolio snapshot (4 flagship communities)
+
+The Gardens at Columbine (Littleton, CO)
+	•	AL + MC (~124 units). Known for expansive gardens (2+ acres), serene courtyards, thoughtful MC design.
+	•	Differentiators: longstanding staff tenure, “home-like” atmosphere, strong family reviews.
+	•	Pricing ballpark: AL starts ~$5,245/mo, MC higher depending on suite and care needs.
+
+The Gardens on Quail (Arvada, CO)
+	•	IL Plus + AL + MC (continuum). Upscale, custom-designed property with bistro, theater, library, courtyards; strong intergenerational ties with Arvada schools & non-profits.
+	•	Differentiators: “boutique + community integration,” points-based transparency, age-in-place transitions.
+	•	Pricing ballpark: AL starts ~$4,695/mo, MC ~$8,150+ starting points.
+
+Golden Pond (Golden, CO)
+	•	IL + AL + MC (~114 units). Locally owned with 20+ years of trust, “final home” continuum.
+	•	Differentiators: 98%+ resident satisfaction, pond/grounds, full services (dining, salon, therapy, library).
+	•	Pricing ballpark: ~$3,855–$8,285/mo range by unit & care level.
+
+Stonebridge Senior (Arvada, CO)
+	•	AL + MC. Former Ralston Creek, re-energized under Stage Senior.
+	•	Differentiators: “Your Story First” care philosophy (family story sessions, traditions, personalized routines), modern amenities, highly rated staff.
+	•	Pricing ballpark: AL starts ~$5,935/mo, MC higher due to staffing ratio.
+
+Tone for all four: upscale-but-warm, resident-centered, staff-led excellence, families as partners.
+
+⸻
+
+Audience & journeys
+	•	Adult child decision-maker (often daughter/son, 45–65): urgent info, trust signals, clear pricing expectations, fast tour scheduling, reassurance about staff quality & safety.
+	•	Prospective resident (70–90): lifestyle, community warmth, autonomy + support, photos/floor plans, sample menus, activities.
+	•	Referrers (case managers, social workers, clinicians): speed to answer, program clarity (MC/AL), availability, documentation, confidence in care model.
+
+Common intents
+	•	“Assisted living near me” / city + care type
+	•	“Memory care for Alzheimer’s” (local)
+	•	“Independent living cost” / “how to pay”
+	•	“Best assisted living in [City]” / reviews
+	•	“Tour today” / “availability now” (high intent)
+
+⸻
+
+Business & product goals
+	1.	Unify the experience under one domain: stagesenior.com/communities (replace scattered microsites).
+	2.	Grow qualified tours (primary KPI): click-to-call, schedule visit, submit inquiry.
+	3.	Improve lead quality & ROAS for PPC/retargeting with programmatic, geo-specific landing pages.
+	4.	SEO expansion: rank for local/long-tail (city + “assisted living”, “memory care”, “independent living cost”, “[community] reviews”).
+	5.	Operational clarity: Webflow for static marketing; Replit for data/control; Webflow Cloud for app runtime; GitHub for CI/CD.
+
+Key KPIs
+	•	Conversion rate (visit → tour/inquiry/call).
+	•	Call click-through rate (mobile).
+	•	Time to first response (lead handling).
+	•	Organic traffic growth on target intents.
+	•	PPC landing page Quality Score & CPA.
+	•	Page performance (LCP < 2.5s, CLS < 0.1).
+
+⸻
+
+Content system we’re building (what lives where)
+	•	Webflow (Designer): static marketing (home, about, contact, brand/story pages), global nav/footer source for DevLink.
+	•	Webflow Cloud (Next.js) @ /communities:
+	•	Communities index + detail (tabs: Overview, Events, FAQ, Gallery).
+	•	Blog (global + community-scoped).
+	•	Events (upcoming/past, RSVP linkouts, ICS feeds).
+	•	PPC landing templates (city + care type).
+	•	JSON/ICS/sitemaps endpoints.
+	•	Replit (DB + APIs + Orchestrator): single source of truth for Communities, Posts, Events, FAQs, Galleries; admin scripts for DevLink sync, content push/pull, revalidate, deploy orchestration.
+
+⸻
+
+Differentiation to communicate
+	•	Care philosophy: Your Story First (Stonebridge), personalized plans, highest potential mindset, chaplaincy access if desired.
+	•	Staff excellence: tenure, training, continuity; “exceptional staff care → exceptional resident care.”
+	•	Lifestyle: daily activity calendars, intergenerational programs (Quail), gardens & outdoors (Columbine), full-service amenities (Golden Pond).
+	•	Continuum + transparency: age-in-place options; clear care triggers; points-based guardrails where applicable (not nickel-and-diming).
+	•	Local trust: long-time community presence, family testimonials, 98%+ satisfaction (Golden Pond).
+
+⸻
+
+Writing & UX standards
+	•	Tone: warm, clear, non-clinical; emphasize safety + independence + connection.
+	•	Information design: short sections, accordions for FAQs, prominent CTAs (“Schedule a tour,” “Call now”).
+	•	Trust blocks: staff quotes, family testimonials, ratings/awards, staff tenure callouts.
+	•	Accessibility: large type, high contrast, keyboard navigation, descriptive alt text; avoid jargon.
+	•	Performance: edge-rendered SSR/ISR; responsive images; minimal JS on marketing pages; map loads defer/lazy.
+
+⸻
+
+PPC & SEO strategy cues
+	•	Programmatic PPC LPs: /communities/denver/assisted-living, /communities/arvada/memory-care → consistent hero, social proof, phone, tour form, proximity cues, FAQs.
+	•	SEO hubs: /communities/colorado/assisted-living, city hubs → internal linking to community pages; FAQ schema; sitemaps.
+	•	Blog themes: financing senior care, AL vs MC, preparing for transition, family communication, local resources/events.
+
+⸻
+
+Legal/compliance & safeguards
+	•	Avoid medical claims; use compassionate, factual language.
+	•	Price statements as “starting at” and route to contact for personalized quotes.
+	•	Respect privacy; no PHI; terms/consents visible for forms; ADA & WCAG considerations.
+
+⸻
+
+Roadmap highlights (why the architecture matters)
+	•	Replit = one pane of glass for content & orchestration (developer-friendly, versioned).
+	•	Webflow Cloud = edge speed + modern app flexibility under /communities.
+	•	DevLink = single design system across marketing & app (reduce drift, speed iteration).
+	•	Future-proof = can move storage (e.g., to Cloudflare D1/KV) or scale collections without redoing the site; marketing remains independent.
+
+⸻
+
+Sample acceptance criteria (business + UX)
+	•	A user in Denver searching “assisted living near me” can land on a relevant LP, see local communities, compare amenities/floor plans quickly, and book a tour or call without friction (top-of-page phone; sticky CTA; under 2.5s LCP).
+	•	A family member can visit Stonebridge page, understand Your Story First, see recent events, browse photos, open FAQs, and leave with confidence (testimonial + staff callouts).
+	•	Marketing can spin up a new Arvada Memory Care campaign without dev, using our PPC template and Replit content.
+
+⸻
+
+
+Project Brief: Stage Senior — Unified Communities Platform
+
+0) One-liner
+
+Build a unified, high-performance communities hub under stagesenior.com/communities that powers community listings, detail pages, events, blogs, FAQs, galleries and PPC landing pages—with Webflow for marketing pages, Webflow Cloud for the app runtime, and Replit as the control center + content source of truth.
+
+⸻
+
+1) Vision & Business Goals
+	•	Unified experience: Replace scattered community sites with one cohesive app at /communities.
+	•	Speed & SEO: Edge-rendered pages, structured data, sitemaps—rank for “assisted living near me” and long-tail geo/service queries.
+	•	Campaign agility: Launch PPC/SEO landing pages programmatically & safely.
+	•	Operational clarity: Webflow Designer for static marketing; Replit for data and orchestration; GitHub for code + CI/CD; Webflow Cloud for edge runtime.
+	•	Future-proof: Decoupled content; can scale or swap backend/storage with minimal friction.
+
+⸻
+
+2) Scope (What the app must do)
+
+User-facing (under /communities)
+	•	Communities index: map + filters (care type, city/region), card list, pagination.
+	•	Community detail: hero, care types, amenities, floor plans, photo/video gallery, FAQs, events list, “Schedule a tour” CTA, click-to-call.
+	•	Events: upcoming & past, RSVP link/URL, optional ICS feed per community.
+	•	Blog: index, tags, post page (hero, body, related posts).
+	•	FAQs: global + community-specific (accordion with FAQ schema).
+	•	Galleries: lightbox grid, captions/alt text.
+	•	Landing pages: lightweight templates for PPC (city + care type), customizable metadata.
+
+Admin/ops (Replit)
+	•	Canonical content DB (Communities, Posts, Events, FAQs, Galleries).
+	•	Read APIs for Next.js (secure token).
+	•	Admin scripts (DevLink sync, content push/pull, image pipeline, deploy triggers).
+
+⸻
+
+3) Non-goals (for now)
+	•	No end-user auth or portals.
+	•	No payments/e-commerce.
+	•	No public write APIs (content is admin-managed).
+	•	No reliance on Webflow CMS for dynamic data (keep a single source of truth in Replit).
+
+⸻
+
+4) Architecture (high level)
+	•	Webflow Designer: marketing pages (/, /about, /contact, etc.).
+	•	Webflow Cloud (Next.js): edge-hosted app mounted at /communities; SSR/ISR, API routes (edge runtime).
+	•	Replit (control + data):
+	•	DB: Postgres/SQLite (tables: Community, Post, Event, Faq, Gallery).
+	•	API: /api/communities, /api/communities/:slug, /api/posts, /api/events, etc. (token-protected).
+	•	Orchestrator scripts: devlink:sync, content:pull/push, images:optimize, deploy:*, revalidate:path.
+	•	GitHub CI/CD: pushes deploy to Webflow Cloud (staging/prod) automatically.
+
+Key conventions
+	•	All dynamic routes live below /communities/*.
+	•	Next config uses basePath = '/communities'.
+	•	Fetch content at runtime with fetch() (edge-compatible).
+	•	DevLink exports shared UI (header/footer, cards, buttons) to keep brand consistent.
+
+⸻
+
+5) Data Model (minimum viable)
+
+Community
+	•	id, slug, name, city, state (default CO), zip, lat, lng
+	•	heroImageUrl, seoTitle, seoDesc
+	•	Relations: events[], faqs[], galleries[], posts[]
+
+Post
+	•	id, slug, title, summary, bodyHtml (or MDX), heroImageUrl, publishedAt
+	•	Optional: communityId, tags[]
+
+Event
+	•	id, slug, title, summary, startsAt, endsAt, locationText, rsvpUrl, communityId
+
+Faq
+	•	id, question, answerHtml, category, communityId?
+
+Gallery
+	•	id, title, images: [{url, alt, w, h}], communityId
+
+⸻
+
+6) Routing Map (Next.js App Router)
+
+7) Orchestrator Tasks (Replit CLI)
+	•	devlink:sync → Export Webflow components to apps/webflow-cloud/devlink/; format & typecheck.
+	•	content:pull → Dump DB content to versioned JSON (backups, PR reviews).
+	•	content:push → Apply JSON to DB (idempotent upserts by slug).
+	•	images:optimize → Generate sizes, push to CDN/storage, patch URLs in DB.
+	•	deploy:preview → Open PR + trigger Webflow Cloud preview deploy.
+	•	deploy:prod → Merge main to trigger prod deploy.
+	•	revalidate:path → Call /communities/api/revalidate with path to refresh ISR.
+
+⸻
+
+8) Environment & Secrets
+
+Webflow Cloud env vars
+	•	REPLIT_API_URL
+	•	REPLIT_API_KEY
+	•	NEXT_PUBLIC_SITE_URL
+	•	ASSETS_PREFIX / BASE_URL (provided by Webflow Cloud; don’t override)
+
+Replit env vars
+	•	DATABASE_URL (or local file path)
+	•	ADMIN_TOKEN (internal endpoints)
+	•	CDN_* (if using external storage)
+
+⸻
+
+9) Performance & SEO
+	•	SSR for freshness; ISR for blog and less volatile pages (revalidate 5–15 min).
+	•	Optional edge caching (promote hot JSON to KV/D1 later).
+	•	<Image> for responsive images; alt text required.
+	•	Structured data (Organization, LocalBusiness for community detail, FAQPage, BlogPosting).
+	•	Sitemaps per section + canonical URLs.
+
+⸻
+
+10) Milestones
+
+M1 — Skeleton (1 week)
+	•	Repo + monorepo layout.
+	•	Next.js app with basePath /communities and a placeholder index + [slug] page.
+	•	Replit DB + minimal API for communities.
+	•	Webflow Cloud staging wired to develop.
+
+M2 — Core Content (1–2 weeks)
+	•	Communities index filters + detail page SSR.
+	•	Events & FAQs pages wired.
+	•	DevLink header/footer/cards in app.
+	•	Basic SEO + sitemaps.
+
+M3 — Media & Blog (1 week)
+	•	Galleries with lightbox + image pipeline.
+	•	Blog index/post pages (MDX or HTML).
+	•	/api/revalidate + orchestrator scripts.
+
+M4 — Launch Hardening (few days)
+	•	Accessibility pass, 404/empty states.
+	•	Perf tuning, KV/D1 trial for caching hot responses.
+	•	Prod switch + runbook.
+
+⸻
+
+11) Acceptance Tests
+	•	Routing
+	•	/communities renders SSR list within 300ms TTFB (U.S. baseline).
+	•	/communities/[slug] renders with hero, amenities, floor plans, gallery, FAQs, events.
+	•	/blog and /blog/[slug] render with correct metadata.
+	•	Content Sync
+	•	Creating a community in Replit shows on /communities within 0–2 minutes (based on SSR/ISR).
+	•	Images display responsive sizes; have non-empty alt.
+	•	DevLink
+	•	Header/footer and buttons match Webflow site 1:1 (visual QA).
+	•	SEO
+	•	Sitemaps accessible; structured data validates (Rich Results Test).
+	•	Canonicals correct; social OG tags set.
+	•	Security
+	•	App reads REPLIT_API_KEY from env; endpoints deny requests without token.
+	•	No secrets logged in client bundles.
+	•	CI/CD
+	•	Push to develop → staging deploy; to main → prod deploy.
+	•	Rollback works via reverting commit.
+
+⸻
+
+12) Risks & Mitigations
+	•	Workers runtime limits → use fetch, avoid Node-only libs; keep bundles lean.
+	•	External DB latency → batch queries; optional edge cache (KV/D1) for hot data.
+	•	Design drift → run devlink:sync on every UI change; document a source-of-truth component list.
+	•	Editor access → if non-devs need content editing, add a minimal admin UI in Replit later.
+
+⸻
+
+13) Definition of Done
+	•	Live app at stagesenior.com/communities with Communities, Events, FAQs, Galleries, Blog fully operational and SEO’d.
+	•	Webflow marketing pages remain editable and consistent in design with app via DevLink.
+	•	Replit holds canonical data/APIs and runs orchestrator tasks.
+	•	GitHub → Webflow Cloud deployments working for staging and prod with logs/rollback.
