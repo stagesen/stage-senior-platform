@@ -21,15 +21,15 @@ export default function Blog() {
   const [selectedTag, setSelectedTag] = useState("all");
 
   const { data: communities = [] } = useQuery<Community[]>({
-    queryKey: ["/api/communities", { active: true }],
+    queryKey: ["/api/communities?active=true"],
   });
 
   const { data: posts = [], isLoading: postsLoading } = useQuery<Post[]>({
-    queryKey: ["/api/posts", { published: true }],
+    queryKey: ["/api/posts?published=true"],
   });
 
   const { data: currentPost, isLoading: postLoading } = useQuery<Post>({
-    queryKey: ["/api/posts", postSlug],
+    queryKey: [`/api/posts/${postSlug}`],
     enabled: !!postSlug,
   });
 
