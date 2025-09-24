@@ -275,8 +275,8 @@ export default function Events() {
                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                     data-testid="button-contact"
                   >
-                    <a href="tel:+1-303-555-0123">
-                      Call (303) 555-0123
+                    <a href="tel:+1-303-436-2300">
+                      Call (303) 436-2300
                     </a>
                   </Button>
                 </CardContent>

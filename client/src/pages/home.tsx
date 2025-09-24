@@ -404,9 +404,9 @@ export default function Home() {
                   asChild
                   data-testid="button-call-now"
                 >
-                  <a href="tel:+1-303-555-0123">
+                  <a href="tel:+1-303-436-2300">
                     <Phone className="w-5 h-5 mr-2" />
-                    Call (303) 555‑0123
+                    Call (303) 436‑2300
                   </a>
                 </Button>
                 <Button 

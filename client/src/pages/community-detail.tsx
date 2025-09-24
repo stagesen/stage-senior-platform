@@ -789,9 +789,9 @@ export default function CommunityDetail() {
                     asChild
                     data-testid="button-call"
                   >
-                    <a href={`tel:${community.phone || '+1-303-555-0123'}`}>
+                    <a href={`tel:${community.phone || '+1-303-436-2300'}`}>
                       <Phone className="w-4 h-4 mr-3" />
-                      {community.phone || "(303) 555-0123"}
+                      {community.phone || "(303) 436-2300"}
                     </a>
                   </Button>
                   <Button 
@@ -896,9 +896,9 @@ export default function CommunityDetail() {
               asChild
               data-testid="button-call-cta"
             >
-              <a href={`tel:${community.phone || '+1-303-555-0123'}`}>
+              <a href={`tel:${community.phone || '+1-303-436-2300'}`}>
                 <Phone className="w-5 h-5 mr-2" />
-                Call {community.phone || "(303) 555-0123"}
+                Call {community.phone || "(303) 436-2300"}
               </a>
             </Button>
           </div>
