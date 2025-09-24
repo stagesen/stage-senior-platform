@@ -1,0 +1,397 @@
+import React, { useState } from "react";
+
+// Lightweight, dependency-free scaffold using Tailwind.
+// Copy sections into your Replit project / Next.js pages as needed.
+// Brand accents: tweak these once tokens are finalized.
+const brand = {
+  bg: "bg-emerald-900", // swap to Stage brand
+  text: "text-emerald-900",
+  accent: "text-emerald-600",
+  ring: "ring-emerald-500",
+  grad: "from-emerald-800 via-emerald-700 to-emerald-600",
+};
+
+function Container({ children, className = "" }) {
+  return <div className={`mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 ${className}`}>{children}</div>;
+}
+
+function Nav({ onNavigate, route }) {
+  const link = (id, label) => (
+    <button
+      onClick={() => onNavigate(id)}
+      className={`px-3 py-2 rounded-md text-sm font-medium hover:underline ${
+        route === id ? "underline" : ""
+      }`}
+    >
+      {label}
+    </button>
+  );
+  return (
+    <header className="sticky top-0 z-40 border-b border-black/10 backdrop-blur supports-[backdrop-filter]:bg-white/70">
+      <Container className="flex items-center justify-between py-3">
+        <div className="flex items-center gap-3">
+          <div className={`h-9 w-9 rounded-xl ${brand.bg} grid place-items-center text-white font-bold`}>SS</div>
+          <span className="font-semibold">Stage Senior</span>
+        </div>
+        <nav className="hidden md:flex items-center gap-3">
+          {link("home", "Home")}
+          {link("about", "About")}
+          {link("contact", "Contact")}
+          <a href="#communities" className="px-3 py-2 rounded-md text-sm font-medium hover:underline">Communities</a>
+          <a href="#resources" className="px-3 py-2 rounded-md text-sm font-medium hover:underline">Resources</a>
+        </nav>
+        <div className="flex items-center gap-3">
+          <a href="tel:+13035551234" className="hidden sm:inline text-sm font-medium">(303) 555‑1234</a>
+          <a
+            href="#lead"
+            className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-sm bg-emerald-700 hover:bg-emerald-800"
+          >
+            Book a Tour
+          </a>
+        </div>
+      </Container>
+    </header>
+  );
+}
+
+function Hero() {
+  return (
+    <section className="relative overflow-hidden">
+      <div className={`absolute inset-0 bg-gradient-to-br ${brand.grad} opacity-90`} />
+      <img
+        src="https://images.unsplash.com/photo-1548095115-45697e521e96?q=80&w=1600&auto=format&fit=crop"
+        alt="Grandparent and family enjoying the garden"
+        className="absolute inset-0 h-full w-full object-cover mix-blend-overlay"
+      />
+      <Container className="relative py-20 sm:py-28 text-white">
+        <div className="max-w-2xl">
+          <p className="uppercase tracking-widest text-white/80 text-xs mb-2">Locally Owned • Resident‑Focused</p>
+          <h1 className="text-4xl sm:text-5xl font-bold leading-tight">Colorado senior living that feels like home—and performs like a pro.</h1>
+          <p className="mt-4 text-white/90">Four Front Range communities + in‑home support. Transparent pricing, story‑first care, and a team cared for as well as they care for you.</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a href="#finder" className="rounded-xl px-5 py-3 bg-white text-emerald-800 font-semibold shadow hover:shadow-md">Find a Community</a>
+            <a href="#lead" className="rounded-xl px-5 py-3 ring-1 ring-white/60 text-white hover:bg-white/10">Check Availability</a>
+          </div>
+          <div className="mt-6 flex items-center gap-4 text-white/90">
+            <div className="flex -space-x-2">
+              <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=96&h=96&q=80&auto=format&fit=crop"/>
+              <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=96&h=96&q=80&auto=format&fit=crop"/>
+              <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=96&h=96&q=80&auto=format&fit=crop"/>
+            </div>
+            <span>4.8★ average family ratings • 98% resident satisfaction</span>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+const communities = [
+  {
+    name: "Gardens at Columbine",
+    city: "Littleton",
+    care: ["Assisted Living", "Memory Care"],
+    phone: "(303) 555-0001",
+    perks: ["3-acre gardens", "Highly tenured staff"],
+  },
+  {
+    name: "Gardens on Quail",
+    city: "Arvada",
+    care: ["Independent Plus", "Assisted Living", "Memory Care"],
+    phone: "(303) 555-0002",
+    perks: ["Upscale, boutique", "Intergenerational programs"],
+  },
+  {
+    name: "Golden Pond",
+    city: "Golden",
+    care: ["Independent Living", "Assisted Living", "Memory Care"],
+    phone: "(303) 555-0003",
+    perks: ["Continuum of care", "98% satisfaction"],
+  },
+  {
+    name: "Stonebridge Senior",
+    city: "Arvada",
+    care: ["Assisted Living", "Memory Care"],
+    phone: "(303) 555-0004",
+    perks: ["Your Story First® care", "Pet‑friendly"],
+  },
+];
+
+function Finder() {
+  const [q, setQ] = useState("");
+  const filtered = communities.filter((c) =>
+    (c.name + c.city + c.care.join(" ")).toLowerCase().includes(q.toLowerCase())
+  );
+  return (
+    <section id="finder" className="py-14 bg-white">
+      <Container>
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <h2 className="text-2xl sm:text-3xl font-bold">Find your Colorado community</h2>
+          <div className="relative">
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search city or care level (e.g., Memory Care)"
+              className="w-80 rounded-xl border border-black/10 py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+        </div>
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {filtered.map((c) => (
+            <div key={c.name} className="rounded-2xl border border-black/10 overflow-hidden bg-white">
+              <div className="h-28 bg-gray-100" />
+              <div className="p-4">
+                <h3 className="font-semibold">{c.name}</h3>
+                <p className="text-sm text-black/70">{c.city} • {c.care.join(" • ")}</p>
+                <ul className="mt-2 text-sm list-disc list-inside text-black/70">
+                  {c.perks.map((p) => (<li key={p}>{p}</li>))}
+                </ul>
+                <div className="mt-4 flex gap-2">
+                  <a href="#lead" className="flex-1 rounded-xl bg-emerald-700 text-white text-sm font-semibold px-3 py-2 text-center">Schedule a Visit</a>
+                  <a href="#pricing" className="flex-1 rounded-xl ring-1 ring-black/10 text-sm font-semibold px-3 py-2 text-center">Pricing</a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function Differentiators() {
+  const items = [
+    {
+      title: "Transparent Care Points",
+      desc: "Published menu of services. Changes only when care truly changes.",
+    },
+    {
+      title: "Your Story First®",
+      desc: "Care plans built around personal history and family traditions.",
+    },
+    {
+      title: "Staff‑First Culture",
+      desc: "Exceptional resident care starts with exceptional staff care.",
+    },
+    {
+      title: "Whole‑Person Support",
+      desc: "Mind, body, and spirit, including optional chaplaincy program.",
+    },
+    {
+      title: "Locally Owned & Operated",
+      desc: "Colorado values. Long‑tenured teams. True community feel.",
+    },
+  ];
+  return (
+    <section className="py-16 bg-gray-50">
+      <Container>
+        <h2 className="text-2xl sm:text-3xl font-bold">What makes Stage Senior different</h2>
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {items.map((it) => (
+            <div key={it.title} className="rounded-2xl border border-black/10 bg-white p-5">
+              <h3 className="font-semibold">{it.title}</h3>
+              <p className="mt-2 text-black/70">{it.desc}</p>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function PricingTeaser() {
+  return (
+    <section id="pricing" className="py-16">
+      <Container>
+        <div className="rounded-2xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 p-6 md:p-8">
+          <h2 className="text-2xl sm:text-3xl font-bold">Clear pricing, no surprises</h2>
+          <p className="mt-2 text-black/70 max-w-2xl">See starting rates by community and explore our Care Points system that prevents nickel‑and‑diming. We give advance notice and partner with families on any changes.</p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <a href="#lead" className="rounded-xl bg-emerald-700 text-white font-semibold px-4 py-2">Request Pricing</a>
+            <a href="#carepoints" className="rounded-xl ring-1 ring-black/10 font-semibold px-4 py-2">How Care Points Work</a>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function LeadPanel() {
+  return (
+    <section id="lead" className="py-16 bg-gray-50">
+      <Container>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-bold">Talk to a real local advisor today</h2>
+            <p className="mt-2 text-black/70">Urgent placement? Weekend tours? We’ve got you. Call now or get a callback in 10 minutes.</p>
+            <div className="mt-4 flex items-center gap-3">
+              <a href="tel:+13035551234" className="rounded-xl bg-emerald-700 text-white font-semibold px-4 py-2">Call (303) 555‑1234</a>
+              <a href="#" className="rounded-xl ring-1 ring-black/10 font-semibold px-4 py-2">Text Us</a>
+            </div>
+            <ul className="mt-4 text-sm text-black/70 list-disc list-inside">
+              <li>Same‑day and next‑day tours</li>
+              <li>Transparent availability & pricing</li>
+              <li>Help comparing communities</li>
+            </ul>
+          </div>
+          <form className="rounded-2xl border border-black/10 bg-white p-6">
+            <div className="grid grid-cols-1 gap-4">
+              <input className="rounded-xl border border-black/10 px-3 py-2" placeholder="Your name"/>
+              <input className="rounded-xl border border-black/10 px-3 py-2" placeholder="Phone number"/>
+              <input className="rounded-xl border border-black/10 px-3 py-2" placeholder="Email (optional)"/>
+              <select className="rounded-xl border border-black/10 px-3 py-2">
+                <option>What kind of care?</option>
+                <option>Independent Living</option>
+                <option>Assisted Living</option>
+                <option>Memory Care</option>
+                <option>In‑Home Care</option>
+              </select>
+              <textarea className="rounded-xl border border-black/10 px-3 py-2" rows={3} placeholder="Tell us what you need"></textarea>
+              <button className="rounded-xl bg-emerald-700 text-white font-semibold px-4 py-2">Get Help</button>
+              <p className="text-xs text-black/60">By submitting, you agree to our <a className="underline" href="#">Privacy Policy</a>.</p>
+            </div>
+          </form>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function HomePage() {
+  return (
+    <main>
+      <Hero />
+      <Finder />
+      <Differentiators />
+      <PricingTeaser />
+      <LeadPanel />
+    </main>
+  );
+}
+
+function AboutPage() {
+  return (
+    <main className="py-12">
+      <Container>
+        <h1 className="text-3xl font-bold">About Stage Senior</h1>
+        <p className="mt-3 text-black/70 max-w-3xl">We’re a Colorado‑founded, locally owned management company helping seniors thrive in real communities—where dignity, comfort and joy come first. We care for our teams so they can care for residents, and we partner closely with families every step of the journey.</p>
+
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {["Residents", "Families", "Team Members"].map((p) => (
+            <div key={p} className="rounded-2xl border border-black/10 p-6 bg-white">
+              <h3 className="font-semibold">{p} First</h3>
+              <p className="mt-2 text-black/70">Programs and decisions anchored to the needs of {p.toLowerCase()}.</p>
+            </div>
+          ))}
+        </div>
+
+        <div id="carepoints" className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="rounded-2xl border border-black/10 p-6 bg-white">
+            <h2 className="text-xl font-semibold">Transparent Care Points</h2>
+            <p className="mt-2 text-black/70">Published menu, clear triggers for changes, advance notice, and family partnership to avoid nickel‑and‑diming.</p>
+            <a href="#" className="mt-3 inline-block text-emerald-700 font-semibold">View example menu →</a>
+          </div>
+          <div className="rounded-2xl border border-black/10 p-6 bg-white">
+            <h2 className="text-xl font-semibold">Chaplaincy & Whole‑Person Care</h2>
+            <p className="mt-2 text-black/70">Optional, non‑denominational support for residents, families and staff—plus 24/7 crisis care.</p>
+          </div>
+        </div>
+
+        <div id="resources" className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="rounded-2xl border border-black/10 p-6 bg-white">
+            <h2 className="text-xl font-semibold">Senior Summit Series</h2>
+            <p className="mt-2 text-black/70">Expert talks and resource fairs across the Front Range covering every stage of senior care.</p>
+            <a href="#" className="mt-3 inline-block text-emerald-700 font-semibold">Upcoming events →</a>
+          </div>
+          <div className="rounded-2xl border border-black/10 p-6 bg-white">
+            <h2 className="text-xl font-semibold">Stage Cares</h2>
+            <p className="mt-2 text-black/70">Employee‑matched giving that funds Helping Hands (staff emergencies) and global projects.</p>
+            <a href="#" className="mt-3 inline-block text-emerald-700 font-semibold">See impact →</a>
+          </div>
+        </div>
+
+        <div className="mt-12">
+          <h2 className="text-xl font-semibold">Careers</h2>
+          <p className="mt-2 text-black/70">Grow with a company that invests in you. Benefits, training, advancement—and a mission that matters.</p>
+          <a href="#" className="mt-3 inline-block rounded-xl bg-emerald-700 text-white font-semibold px-4 py-2">View Open Roles</a>
+        </div>
+      </Container>
+    </main>
+  );
+}
+
+function ContactPage() {
+  return (
+    <main className="py-12">
+      <Container>
+        <h1 className="text-3xl font-bold">Contact Stage Senior</h1>
+        <p className="mt-3 text-black/70 max-w-3xl">We’ll get you the right help fast. Use the form or reach us directly—urgent placement support available.</p>
+
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <form className="lg:col-span-2 rounded-2xl border border-black/10 bg-white p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input className="rounded-xl border border-black/10 px-3 py-2" placeholder="Full name"/>
+              <input className="rounded-xl border border-black/10 px-3 py-2" placeholder="Phone"/>
+              <input className="rounded-xl border border-black/10 px-3 py-2 md:col-span-2" placeholder="Email"/>
+              <select className="rounded-xl border border-black/10 px-3 py-2 md:col-span-2">
+                <option>Topic</option>
+                <option>Tours & Availability</option>
+                <option>Pricing</option>
+                <option>Careers</option>
+                <option>Partner / Vendor</option>
+                <option>Media / Press</option>
+              </select>
+              <textarea className="rounded-xl border border-black/10 px-3 py-2 md:col-span-2" rows={5} placeholder="How can we help?" />
+              <button className="rounded-xl bg-emerald-700 text-white font-semibold px-4 py-2 md:col-span-2">Submit</button>
+              <p className="text-xs text-black/60 md:col-span-2">Prefer a human? Call (303) 555‑1234 • Mon–Sun 8a–7p MT</p>
+            </div>
+          </form>
+
+          <div className="space-y-5">
+            <div className="rounded-2xl border border-black/10 bg-white p-5">
+              <h3 className="font-semibold">Community Contacts</h3>
+              <ul className="mt-2 text-sm text-black/70 space-y-1">
+                {communities.map((c) => (
+                  <li key={c.name}><span className="font-medium">{c.name}</span> — {c.phone}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-black/10 bg-white p-5">
+              <h3 className="font-semibold">Visit Us</h3>
+              <p className="text-sm text-black/70">Corporate HQ • 1234 W Colfax Ave, Denver, CO 80204</p>
+              <a href="#" className="mt-2 inline-block rounded-xl ring-1 ring-black/10 px-3 py-2 text-sm font-semibold">Get Directions</a>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </main>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="mt-12 border-t border-black/10 py-8 text-sm">
+      <Container className="flex flex-col md:flex-row items-center justify-between gap-3">
+        <p className="text-black/60">© {new Date().getFullYear()} Stage Senior Management. All rights reserved.</p>
+        <div className="flex items-center gap-4 text-black/70">
+          <a href="#" className="hover:underline">Privacy</a>
+          <a href="#" className="hover:underline">Terms</a>
+          <a href="#" className="hover:underline">Accessibility</a>
+        </div>
+      </Container>
+    </footer>
+  );
+}
+
+export default function StageSiteScaffold() {
+  const [route, setRoute] = useState("home");
+  return (
+    <div className="min-h-screen bg-white text-gray-900">
+      <Nav onNavigate={setRoute} route={route} />
+      {route === "home" && <HomePage />}
+      {route === "about" && <AboutPage />}
+      {route === "contact" && <ContactPage />}
+      <Footer />
+    </div>
+  );
+}
