@@ -29,7 +29,7 @@ export default function Footer() {
               <img 
                 src={logoWhiteUrl} 
                 alt="Stage Senior"
-                className="h-12 w-auto"
+                className="w-auto min-w-[150px] h-12 sm:h-14 md:h-16"
               />
             </div>
             <p className="text-background/80 mb-4" data-testid="footer-description">
@@ -138,7 +138,7 @@ export default function Footer() {
               <img 
                 src={ashaLogoUrl} 
                 alt="ASHA Logo"
-                className="h-8 w-auto"
+                className="w-auto h-10 sm:h-12 md:h-14"
                 data-testid="footer-asha-logo"
               />
             </a>
