@@ -113,7 +113,6 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
                   <Badge
                     key={careType}
                     className={getCareTypeColor(careType)}
-                    variant="secondary"
                     data-testid={`care-type-${careType}-${community.slug}`}
                   >
                     {careType.split('-').map(word => 
