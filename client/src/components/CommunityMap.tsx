@@ -29,8 +29,15 @@ export default function CommunityMap({
   useEffect(() => {
     if (!mapRef.current) return;
 
-    // Initialize map centered on Colorado
-    const map = L.map(mapRef.current).setView([39.6992, -104.9375], 11);
+    // Initialize map centered on Colorado with non-scrollable interactions
+    const map = L.map(mapRef.current, {
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      dragging: false,
+      touchZoom: false,
+    }).setView([39.6992, -104.9375], 11);
     mapInstanceRef.current = map;
 
     // Add OpenStreetMap tiles
@@ -92,16 +99,25 @@ export default function CommunityMap({
 
       const button = document.createElement('button');
       button.className = 'mt-2 px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600';
-      button.textContent = 'View Details';
-      button.onclick = () => {
-        // Navigate to the community detail page
-        window.location.href = `/communities/${community.slug}`;
-      };
+      button.textContent = 'Show Community';
       popupDiv.appendChild(button);
 
       const marker = L.marker([lat, lng])
         .addTo(mapInstanceRef.current!)
         .bindPopup(popupDiv);
+
+      marker.on('click', () => {
+        if (onCommunitySelect) {
+          onCommunitySelect(community);
+        }
+        marker.openPopup();
+      });
+
+      button.onclick = () => {
+        if (onCommunitySelect) {
+          onCommunitySelect(community);
+        }
+      };
 
       // Highlight selected community
       if (selectedCommunityId === community.id) {
