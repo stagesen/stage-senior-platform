@@ -8,6 +8,10 @@ import {
   floorPlans,
   testimonials,
   galleryImages,
+  careTypes,
+  communitiesCareTypes,
+  amenities,
+  communitiesAmenities,
   type Community,
   type InsertCommunity,
   type Post,
@@ -26,9 +30,11 @@ import {
   type InsertTestimonial,
   type GalleryImage,
   type InsertGalleryImage,
+  type CareType,
+  type Amenity,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, asc, and, like, isNull, or, sql } from "drizzle-orm";
+import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // Community operations
@@ -149,18 +155,54 @@ export class DatabaseStorage implements IStorage {
     if (filters?.city) {
       conditions.push(like(communities.city, `%${filters.city}%`));
     }
-    if (filters?.careTypes && filters.careTypes.length > 0) {
-      // Use PostgreSQL JSON operator to check if any care type matches
-      conditions.push(
-        sql`${communities.careTypes} && ${JSON.stringify(filters.careTypes)}`
-      );
-    }
     
     if (conditions.length > 0) {
       query = query.where(and(...conditions));
     }
     
-    return await query.orderBy(desc(communities.featured), asc(communities.name));
+    const communitiesData = await query.orderBy(desc(communities.featured), asc(communities.name));
+    
+    // Fetch care types for all communities from junction table
+    const communityIds = communitiesData.map(c => c.id);
+    if (communityIds.length > 0) {
+      const careTypesData = await db
+        .select({
+          communityId: communitiesCareTypes.communityId,
+          careTypeSlug: careTypes.slug,
+        })
+        .from(communitiesCareTypes)
+        .leftJoin(careTypes, eq(communitiesCareTypes.careTypeId, careTypes.id))
+        .where(inArray(communitiesCareTypes.communityId, communityIds));
+      
+      // Group care types by community
+      const careTypesByCommunity: Record<string, string[]> = {};
+      for (const ct of careTypesData) {
+        if (!careTypesByCommunity[ct.communityId]) {
+          careTypesByCommunity[ct.communityId] = [];
+        }
+        if (ct.careTypeSlug) {
+          careTypesByCommunity[ct.communityId].push(ct.careTypeSlug);
+        }
+      }
+      
+      // Update communities with care types from junction table (prefer junction table data)
+      for (const community of communitiesData) {
+        const junctionCareTypes = careTypesByCommunity[community.id];
+        if (junctionCareTypes && junctionCareTypes.length > 0) {
+          community.careTypes = junctionCareTypes;
+        }
+        // Keep existing JSON data as fallback if no junction data exists
+      }
+    }
+    
+    // Filter by care types if specified
+    if (filters?.careTypes && filters.careTypes.length > 0) {
+      return communitiesData.filter(community => {
+        return filters.careTypes!.some(ct => community.careTypes?.includes(ct));
+      });
+    }
+    
+    return communitiesData;
   }
 
   async getCommunity(slug: string): Promise<Community | undefined> {

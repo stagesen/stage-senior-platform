@@ -4,6 +4,8 @@
 
 This is a comprehensive senior living community platform built for Stage Senior, a locally owned Colorado-based senior living management company founded in 2016. The application serves as the unified platform for showcasing Stage Senior's four flagship communities across Colorado. Stage Senior's mission is "Locally Owned, Resident-Focused," prioritizing dignity, comfort, and joy for residents through personalized care plans and exceptional team care.
 
+**Important Note**: This project focuses exclusively on the communities and their offerings. Marketing pages like About, Company Information, etc. are handled on the main Stage Senior Webflow marketing site. This platform is dedicated to community details, floor plans, care types, events, and resident services.
+
 ## Stage Senior Communities
 
 ### Four Flagship Communities:

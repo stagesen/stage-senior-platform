@@ -64,6 +64,12 @@ async function importData() {
   const communities = parseCSV(communitiesData);
   
   for (const community of communities) {
+    // Skip rows that are not valid communities
+    if (!community.slug || !community.name || !community.city) {
+      console.log(`  Skipping invalid row: ${JSON.stringify(community)}`);
+      continue;
+    }
+    
     try {
       // Check if community exists
       const existing = await db.select().from(schema.communities).where(eq(schema.communities.slug, community.slug));
