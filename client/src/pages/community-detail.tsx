@@ -1,6 +1,6 @@
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -48,6 +48,13 @@ export default function CommunityDetail() {
   const [selectedFloorPlan, setSelectedFloorPlan] = useState<FloorPlan | null>(null);
   const [isFloorPlanModalOpen, setIsFloorPlanModalOpen] = useState(false);
   const [selectedGalleryCategory, setSelectedGalleryCategory] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!slug || window.location.hash) return;
+
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [slug]);
 
   const { data: community, isLoading: communityLoading } = useQuery<Community>({
     queryKey: [`/api/communities/${slug}`],
