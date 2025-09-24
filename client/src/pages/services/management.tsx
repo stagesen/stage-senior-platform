@@ -4,7 +4,27 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Building2, TrendingUp, Users, Shield, Award, Star, CheckCircle, Phone, Mail, MapPin, Calendar, BarChart3, Settings, Heart } from "lucide-react";
+import { 
+  Building2, 
+  TrendingUp, 
+  Users, 
+  Shield, 
+  Award, 
+  CheckCircle, 
+  Phone, 
+  Mail, 
+  MapPin, 
+  Calendar, 
+  BarChart3, 
+  Settings, 
+  Heart,
+  Target,
+  Star,
+  Clipboard,
+  DollarSign,
+  Stethoscope,
+  UserCheck
+} from "lucide-react";
 
 export default function ProfessionalManagement() {
   useEffect(() => {
@@ -13,117 +33,72 @@ export default function ProfessionalManagement() {
     // Add meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Stage Senior Professional Management Services - Expert senior living management solutions for community owners and operators. Proven systems, staff development, and operational excellence.');
+      metaDescription.setAttribute('content', 'Stage Senior Professional Management Services - LOCAL LEADERSHIP, PROVEN EXCELLENCE. Expert senior living management with comprehensive operating systems, service excellence, and team development.');
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Stage Senior Professional Management Services - Expert senior living management solutions for community owners and operators. Proven systems, staff development, and operational excellence.';
+      meta.content = 'Stage Senior Professional Management Services - LOCAL LEADERSHIP, PROVEN EXCELLENCE. Expert senior living management with comprehensive operating systems, service excellence, and team development.';
       document.head.appendChild(meta);
     }
   }, []);
 
-  const services = [
+  const operationalPillars = [
     {
       icon: <Settings className="w-8 h-8" />,
-      title: "Operations Management",
-      description: "Comprehensive operational oversight to maximize efficiency, resident satisfaction, and financial performance.",
+      title: "Comprehensive Operating Systems",
       features: [
-        "Daily operations management and oversight",
-        "Financial management and budgeting",
-        "Quality assurance and compliance monitoring",
-        "Vendor management and cost optimization",
-        "Technology integration and system implementation",
-        "Performance metrics and reporting"
+        "Sophisticated management protocols that ensure consistency and quality",
+        "Performance tracking and transparent reporting",
+        "Proactive maintenance and property management",
+        "Integrated technology solutions for enhanced care delivery"
+      ]
+    },
+    {
+      icon: <Star className="w-8 h-8" />,
+      title: "Service Excellence",
+      features: [
+        "Premium dining experiences with chef-crafted menus",
+        "Engaging activity programs that promote social connection",
+        "Professional housekeeping and maintenance services",
+        "Personalized care plans that adapt to changing needs"
       ]
     },
     {
       icon: <Users className="w-8 h-8" />,
-      title: "Staff Development & Training",
-      description: "Building high-performing teams through comprehensive training, development, and retention programs.",
+      title: "Team Development",
       features: [
-        "Recruitment and hiring strategies",
-        "Comprehensive training programs",
-        "Leadership development and mentoring",
-        "Performance management systems",
-        "Employee retention initiatives",
-        "Values-based culture development"
-      ]
-    },
-    {
-      icon: <Heart className="w-8 h-8" />,
-      title: "Care Program Development",
-      description: "Implementing proven care models and programs that enhance resident outcomes and family satisfaction.",
-      features: [
-        "Care model implementation and training",
-        "Memory care programming",
-        "Wellness and lifestyle programs",
-        "Family engagement strategies",
-        "Resident satisfaction initiatives",
-        "Care plan optimization"
-      ]
-    },
-    {
-      icon: <TrendingUp className="w-8 h-8" />,
-      title: "Business Growth & Marketing",
-      description: "Strategic marketing and sales support to drive census growth and community reputation.",
-      features: [
-        "Marketing strategy and implementation",
-        "Sales training and support",
-        "Community outreach programs",
-        "Digital marketing and online presence",
-        "Referral relationship building",
-        "Brand development and positioning"
+        "Ongoing professional training and advancement opportunities",
+        "Competitive compensation and benefits",
+        "Supportive work environment that promotes retention",
+        "Regular team recognition and appreciation programs"
       ]
     }
   ];
 
-  const results = [
+  const businessOperations = [
     {
-      metric: "98%",
-      description: "Average resident satisfaction across managed communities"
+      icon: <DollarSign className="w-6 h-6" />,
+      title: "Financial Management & Optimization"
     },
     {
-      metric: "40%",
-      description: "Reduction in staff turnover within first year"
+      icon: <Target className="w-6 h-6" />,
+      title: "Operational Excellence"
     },
     {
-      metric: "25%",
-      description: "Average increase in census within 18 months"
+      icon: <Stethoscope className="w-6 h-6" />,
+      title: "Clinical Care Management"
     },
     {
-      metric: "15%",
-      description: "Improvement in operational efficiency metrics"
-    }
-  ];
-
-  const testimonials = [
-    {
-      quote: "Stage Senior transformed our community operations. Their systematic approach and focus on staff development created lasting positive changes.",
-      author: "Community Owner",
-      location: "Denver Metro Area"
+      icon: <Heart className="w-6 h-6" />,
+      title: "Resident Experience Enhancement"
     },
     {
-      quote: "The care quality improvements and resident satisfaction scores speak for themselves. Stage Senior delivers on their promises.",
-      author: "Board Member",
-      location: "Colorado Springs"
-    }
-  ];
-
-  const process = [
-    {
-      step: "1",
-      title: "Assessment & Planning",
-      description: "Comprehensive evaluation of current operations, staff, and systems to identify opportunities for improvement."
+      icon: <TrendingUp className="w-6 h-6" />,
+      title: "Marketing & Occupancy Growth"
     },
     {
-      step: "2",
-      title: "Implementation",
-      description: "Phased rollout of systems, training programs, and operational improvements with clear timelines and milestones."
-    },
-    {
-      step: "3",
-      title: "Ongoing Support",
-      description: "Continuous monitoring, support, and optimization to ensure sustained success and growth."
+      icon: <UserCheck className="w-6 h-6" />,
+      title: "Staffing & Human Resources"
     }
   ];
 
@@ -161,14 +136,13 @@ export default function ProfessionalManagement() {
             <div>
               <Badge className="mb-4" variant="secondary" data-testid="hero-badge">
                 <Building2 className="w-4 h-4 mr-1" />
-                B2B Services
+                Professional Services
               </Badge>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6" data-testid="page-title">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4" data-testid="page-title">
                 Professional Management Services
               </h1>
-              <p className="text-xl text-muted-foreground mb-8 leading-relaxed" data-testid="hero-description">
-                Partner with Stage Senior to transform your senior living community through proven management systems, 
-                staff development programs, and operational excellence that drive results.
+              <p className="text-2xl md:text-3xl font-semibold text-primary mb-8" data-testid="hero-subtitle">
+                LOCAL LEADERSHIP, PROVEN EXCELLENCE
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button size="lg" asChild data-testid="button-schedule-consultation">
@@ -204,93 +178,54 @@ export default function ProfessionalManagement() {
         </div>
       </section>
 
-      {/* Results Section */}
+      {/* Our Management Philosophy Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="results-title">
-              Proven Results for Our Partners
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="philosophy-title">
+              Our Management Philosophy
             </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Our management approach delivers measurable improvements in resident satisfaction, 
-              staff retention, and operational performance.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {results.map((result, index) => (
-              <Card key={index} className="text-center p-6 border-2 border-primary/20 hover:border-primary/40 transition-colors" data-testid={`result-card-${index}`}>
-                <CardContent className="pt-6">
-                  <div className="text-4xl font-bold text-primary mb-4" data-testid={`result-metric-${index}`}>
-                    {result.metric}
-                  </div>
-                  <p className="text-sm text-muted-foreground" data-testid={`result-description-${index}`}>
-                    {result.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="bg-primary/5 rounded-xl p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {testimonials.map((testimonial, index) => (
-                <Card key={index} className="border-0 bg-white/80" data-testid={`testimonial-${index}`}>
-                  <CardContent className="p-6">
-                    <blockquote className="text-foreground mb-4 italic" data-testid={`testimonial-quote-${index}`}>
-                      "{testimonial.quote}"
-                    </blockquote>
-                    <footer className="text-sm text-muted-foreground">
-                      <div className="font-semibold" data-testid={`testimonial-author-${index}`}>
-                        {testimonial.author}
-                      </div>
-                      <div data-testid={`testimonial-location-${index}`}>
-                        {testimonial.location}
-                      </div>
-                    </footer>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="max-w-4xl mx-auto">
+              <p className="text-xl text-muted-foreground leading-relaxed" data-testid="philosophy-content">
+                We believe that senior living should be a chapter of life marked by dignity, purpose, and joy. 
+                Our management approach focuses on creating environments where residents thrive, families find 
+                peace of mind, and staff members grow professionally.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Grid */}
+      {/* Operational Excellence - 3 Core Pillars */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="services-title">
-              Comprehensive Management Solutions
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="pillars-title">
+              Operational Excellence
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Our full-service management approach addresses every aspect of senior living operations, 
-              from daily care delivery to strategic business growth.
+              Our approach is built on three core pillars that ensure consistent, high-quality operations 
+              and exceptional resident experiences.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {services.map((service, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow" data-testid={`service-card-${index}`}>
-                <CardHeader>
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="p-3 rounded-lg bg-primary/10 text-primary">
-                      {service.icon}
-                    </div>
-                    <CardTitle className="text-xl" data-testid={`service-title-${index}`}>
-                      {service.title}
-                    </CardTitle>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {operationalPillars.map((pillar, index) => (
+              <Card key={index} className="hover:shadow-lg transition-shadow h-full" data-testid={`pillar-card-${index}`}>
+                <CardHeader className="text-center">
+                  <div className="p-4 rounded-lg bg-primary/10 text-primary mx-auto mb-4 w-fit">
+                    {pillar.icon}
                   </div>
-                  <p className="text-muted-foreground" data-testid={`service-description-${index}`}>
-                    {service.description}
-                  </p>
+                  <CardTitle className="text-xl mb-4" data-testid={`pillar-title-${index}`}>
+                    {pillar.title}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2">
-                    {service.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start gap-2" data-testid={`service-feature-${index}-${featureIndex}`}>
-                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-1" />
-                        <span className="text-sm text-muted-foreground">{feature}</span>
+                  <ul className="space-y-3">
+                    {pillar.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-start gap-3" data-testid={`pillar-feature-${index}-${featureIndex}`}>
+                        <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                        <span className="text-muted-foreground">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -301,36 +236,65 @@ export default function ProfessionalManagement() {
         </div>
       </section>
 
-      {/* Process Section */}
+      {/* Proven Track Record */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="process-title">
-              Our Partnership Process
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="track-record-title">
+              Proven Track Record
+            </h2>
+            <div className="max-w-4xl mx-auto">
+              <p className="text-xl text-muted-foreground leading-relaxed" data-testid="track-record-content">
+                Our hands-on management approach has created a portfolio of successful communities throughout 
+                the Denver metro area. We maintain direct accessibility to both our on-site staff and investors, 
+                ensuring alignment with our high standards of care and service.
+              </p>
+            </div>
+          </div>
+          
+          <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl p-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+              <div>
+                <div className="text-4xl font-bold text-primary mb-2">15+</div>
+                <p className="text-muted-foreground">Communities Successfully Managed</p>
+              </div>
+              <div>
+                <div className="text-4xl font-bold text-primary mb-2">Denver Metro</div>
+                <p className="text-muted-foreground">Area Coverage</p>
+              </div>
+              <div>
+                <div className="text-4xl font-bold text-primary mb-2">Direct</div>
+                <p className="text-muted-foreground">Accessibility to Leadership</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Business Operations Grid */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="operations-title">
+              Comprehensive Business Operations
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              We take a systematic approach to transforming your community operations, 
-              ensuring sustainable improvements and measurable results.
+              Our full-service approach covers all aspects of senior living operations, ensuring 
+              seamless management across every business function.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {process.map((step, index) => (
-              <Card key={index} className="text-center p-6 relative" data-testid={`process-step-${index}`}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {businessOperations.map((operation, index) => (
+              <Card key={index} className="hover:shadow-lg transition-shadow text-center p-6" data-testid={`operation-card-${index}`}>
                 <CardContent className="pt-6">
-                  <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
-                    {step.step}
+                  <div className="p-3 rounded-lg bg-primary/10 text-primary mx-auto mb-4 w-fit">
+                    {operation.icon}
                   </div>
-                  <h3 className="text-xl font-semibold mb-4" data-testid={`process-title-${index}`}>
-                    {step.title}
+                  <h3 className="text-lg font-semibold text-foreground" data-testid={`operation-title-${index}`}>
+                    {operation.title}
                   </h3>
-                  <p className="text-muted-foreground" data-testid={`process-description-${index}`}>
-                    {step.description}
-                  </p>
                 </CardContent>
-                {index < process.length - 1 && (
-                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-primary/30" />
-                )}
               </Card>
             ))}
           </div>
@@ -353,28 +317,25 @@ export default function ProfessionalManagement() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <Shield className="w-12 h-12 mx-auto mb-6 text-primary-foreground" />
-              <h3 className="text-xl font-semibold mb-4">Proven Track Record</h3>
+              <h3 className="text-xl font-semibold mb-4">Local Leadership</h3>
               <p className="text-primary-foreground/90">
-                Since 2016, we've successfully managed and transformed senior living communities 
-                across Colorado with consistently strong results.
+                Colorado-based leadership team with deep understanding of local markets and community needs.
               </p>
             </div>
             
             <div className="text-center">
               <Heart className="w-12 h-12 mx-auto mb-6 text-primary-foreground" />
-              <h3 className="text-xl font-semibold mb-4">Values-Driven Approach</h3>
+              <h3 className="text-xl font-semibold mb-4">Resident-Focused</h3>
               <p className="text-primary-foreground/90">
-                Our "Locally Owned, Resident-Focused" philosophy ensures that every decision 
-                prioritizes resident wellbeing and family satisfaction.
+                Every decision prioritizes resident wellbeing, family satisfaction, and quality of life.
               </p>
             </div>
             
             <div className="text-center">
               <BarChart3 className="w-12 h-12 mx-auto mb-6 text-primary-foreground" />
-              <h3 className="text-xl font-semibold mb-4">Measurable Results</h3>
+              <h3 className="text-xl font-semibold mb-4">Proven Results</h3>
               <p className="text-primary-foreground/90">
-                We provide transparent reporting and measurable improvements in key performance 
-                indicators that matter to your business success.
+                Transparent reporting and measurable improvements in operational performance and resident satisfaction.
               </p>
             </div>
           </div>

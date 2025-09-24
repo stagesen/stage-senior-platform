@@ -2,106 +2,53 @@ import { useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Home, Heart, Brain, Clock, Shield, Users, Star, Phone, Calendar, MapPin, CheckCircle } from "lucide-react";
+import { Building, Heart, Shield, Phone, Mail, MapPin, ArrowRight } from "lucide-react";
 
 export default function Services() {
   useEffect(() => {
-    document.title = "Our Services | Stage Senior";
+    document.title = "Our Services | Stage Management";
     
     // Add meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Discover Stage Senior\'s comprehensive senior living services including Independent Living, Assisted Living, Memory Care, and specialized care programs across Colorado communities.');
+      metaDescription.setAttribute('content', 'Stage Management delivers comprehensive senior living management solutions including expert management services, spiritual care support, and long-term care insurance excellence.');
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Discover Stage Senior\'s comprehensive senior living services including Independent Living, Assisted Living, Memory Care, and specialized care programs across Colorado communities.';
+      meta.content = 'Stage Management delivers comprehensive senior living management solutions including expert management services, spiritual care support, and long-term care insurance excellence.';
       document.head.appendChild(meta);
     }
   }, []);
 
   const services = [
     {
-      icon: <Home className="w-8 h-8" />,
-      title: "Independent Living",
-      subtitle: "Freedom with Support",
-      description: "Maintenance-free living with hospitality services, social activities, and optional support services as needs change.",
-      features: [
-        "Spacious apartments with full kitchens",
-        "Restaurant-style dining options",
-        "Housekeeping and maintenance",
-        "Transportation services",
-        "Fitness and wellness programs",
-        "Social activities and events"
-      ],
-      communities: ["The Gardens on Quail", "Golden Pond"],
-      badge: "Most Popular",
-      color: "from-blue-500 to-blue-600"
+      icon: <Building className="w-10 h-10" />,
+      title: "Expert Management Services",
+      description: "Transform your senior living community with our proven management expertise. From independent living to memory care, we optimize operations while maintaining the highest standards of resident care and satisfaction.",
+      cta: "LEARN MORE",
+      ctaLink: "/services/management",
+      color: "from-blue-500 to-blue-600",
+      bgColor: "bg-blue-50"
     },
     {
-      icon: <Heart className="w-8 h-8" />,
-      title: "Assisted Living",
-      subtitle: "Personalized Care & Support",
-      description: "24/7 assistance with daily activities while maintaining independence and dignity in a homelike environment.",
-      features: [
-        "Personalized care plans",
-        "Medication management",
-        "Assistance with daily activities",
-        "24/7 trained caregivers",
-        "Emergency response systems",
-        "Coordinated healthcare services"
-      ],
-      communities: ["All Four Communities"],
-      badge: "Comprehensive Care",
-      color: "from-green-500 to-green-600"
+      icon: <Heart className="w-10 h-10" />,
+      title: "Spiritual Care & Support",
+      description: "Our dedicated chaplaincy program provides essential spiritual and emotional support throughout your community. We build meaningful relationships that enhance the well-being of residents, families, and staff alike.",
+      cta: "EXPLORE",
+      ctaLink: "#",
+      color: "from-rose-500 to-rose-600",
+      bgColor: "bg-rose-50"
     },
     {
-      icon: <Brain className="w-8 h-8" />,
-      title: "Memory Care",
-      subtitle: "Specialized Dementia Support",
-      description: "Secure, specialized environments designed for residents with Alzheimer's disease and other forms of dementia.",
-      features: [
-        "Secure, thoughtfully designed spaces",
-        "Specialized memory care programming",
-        "Higher staff-to-resident ratios",
-        "Family education and support",
-        "Therapeutic activities",
-        "Your Story First care approach"
-      ],
-      communities: ["All Four Communities"],
-      badge: "Expert Care",
-      color: "from-purple-500 to-purple-600"
-    },
-    {
-      icon: <Clock className="w-8 h-8" />,
-      title: "Respite Care",
-      subtitle: "Short-Term Relief & Support",
-      description: "Temporary care services to give family caregivers a break while ensuring your loved one receives excellent care.",
-      features: [
-        "Flexible stay durations",
-        "All amenities and services included",
-        "Social activities and engagement",
-        "Professional care assessment",
-        "Trial opportunity for families",
-        "Emergency placement available"
-      ],
-      communities: ["Available at All Communities"],
-      badge: "Flexible Options",
-      color: "from-orange-500 to-orange-600"
+      icon: <Shield className="w-10 h-10" />,
+      title: "Long-Term Care Insurance Excellence",
+      description: "Navigate the complexities of long-term care insurance with confidence. Our specialized team handles everything from policy review to claims processing, ensuring maximum benefits and full compliance.",
+      cta: "LEARN MORE",
+      ctaLink: "#",
+      color: "from-emerald-500 to-emerald-600",
+      bgColor: "bg-emerald-50"
     }
-  ];
-
-  const additionalServices = [
-    "Chaplaincy and spiritual care",
-    "Physical and occupational therapy",
-    "Concierge physician services",
-    "Beauty salon and barber services",
-    "Pet therapy programs",
-    "Transportation to appointments",
-    "Family education and support groups",
-    "Intergenerational programs"
   ];
 
   return (
@@ -126,27 +73,31 @@ export default function Services() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 bg-gradient-to-br from-primary/10 to-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-20 lg:py-32 bg-gradient-to-br from-primary/10 via-primary/5 to-background">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6" data-testid="page-title">
               Our Services
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed" data-testid="hero-description">
-              Comprehensive senior living services designed around your unique needs and preferences. 
-              From independent living to specialized memory care, we provide exceptional support at every stage.
+            <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-8" data-testid="hero-subtitle">
+              Senior Living Management Solutions
+            </h2>
+            <p className="text-xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed" data-testid="hero-description">
+              At Stage Management, we deliver comprehensive solutions tailored to the unique needs of senior living communities. 
+              Our specialized services ensure operational excellence, compassionate care, and sustainable growth for your community.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Button size="lg" asChild data-testid="button-explore-communities">
-                <Link href="/communities">
-                  <MapPin className="w-5 h-5 mr-2" />
-                  Explore Our Communities
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" asChild data-testid="button-schedule-consultation">
+              <Button size="lg" asChild data-testid="button-contact-us">
                 <a href="tel:+1-303-436-2300">
                   <Phone className="w-5 h-5 mr-2" />
-                  Schedule Consultation
+                  Contact Us Today
+                </a>
+              </Button>
+              <Button variant="outline" size="lg" asChild data-testid="button-learn-more">
+                <a href="mailto:info@stagesenior.com">
+                  <Mail className="w-5 h-5 mr-2" />
+                  Get Information
                 </a>
               </Button>
             </div>
@@ -155,67 +106,49 @@ export default function Services() {
       </section>
 
       {/* Services Grid */}
-      <section className="py-16 bg-white">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="services-title">
-              Tailored Care for Every Stage of Life
+              Comprehensive Management Solutions
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Our continuum of care ensures you can age in place with the right level of support, 
-              maintaining your independence while receiving the assistance you need.
+              We provide end-to-end solutions that transform senior living communities through expert management, 
+              dedicated care programs, and specialized support services.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <Card key={index} className="relative overflow-hidden group hover:shadow-xl transition-all duration-300" data-testid={`service-card-${index}`}>
-                <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${service.color}`} />
-                <CardHeader className="pb-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className={`p-3 rounded-lg bg-gradient-to-r ${service.color} text-white`}>
-                        {service.icon}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <CardTitle className="text-xl" data-testid={`service-title-${index}`}>
-                            {service.title}
-                          </CardTitle>
-                          <Badge variant="secondary" className="text-xs" data-testid={`service-badge-${index}`}>
-                            {service.badge}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground font-medium" data-testid={`service-subtitle-${index}`}>
-                          {service.subtitle}
-                        </p>
-                      </div>
+              <Card key={index} className="relative overflow-hidden group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2" data-testid={`service-card-${index}`}>
+                <div className={`absolute top-0 left-0 w-full h-2 bg-gradient-to-r ${service.color}`} />
+                <div className={`absolute top-0 right-0 w-32 h-32 ${service.bgColor} rounded-full -translate-y-16 translate-x-16 opacity-20`} />
+                <CardHeader className="pb-6 pt-8">
+                  <div className="flex flex-col items-center text-center">
+                    <div className={`p-4 rounded-2xl bg-gradient-to-r ${service.color} text-white mb-4 shadow-lg`}>
+                      {service.icon}
                     </div>
+                    <CardTitle className="text-2xl font-bold mb-4" data-testid={`service-title-${index}`}>
+                      {service.title}
+                    </CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-6" data-testid={`service-description-${index}`}>
+                <CardContent className="px-6 pb-8">
+                  <p className="text-muted-foreground mb-8 text-center leading-relaxed" data-testid={`service-description-${index}`}>
                     {service.description}
                   </p>
                   
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-semibold text-sm text-foreground mb-3">Key Features:</h4>
-                      <div className="grid grid-cols-1 gap-2">
-                        {service.features.map((feature, featureIndex) => (
-                          <div key={featureIndex} className="flex items-start gap-2" data-testid={`service-feature-${index}-${featureIndex}`}>
-                            <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                            <span className="text-sm text-muted-foreground">{feature}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div className="pt-4 border-t border-gray-100">
-                      <p className="text-xs text-muted-foreground">
-                        <span className="font-medium">Available at:</span> {service.communities.join(", ")}
-                      </p>
-                    </div>
+                  <div className="text-center">
+                    <Button 
+                      asChild 
+                      className={`bg-gradient-to-r ${service.color} hover:shadow-lg transition-all duration-300 group`}
+                      data-testid={`service-cta-${index}`}
+                    >
+                      <Link href={service.ctaLink}>
+                        {service.cta}
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -224,118 +157,108 @@ export default function Services() {
         </div>
       </section>
 
-      {/* Additional Services */}
-      <section className="py-16 bg-gray-50">
+      {/* Why Choose Us Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="additional-services-title">
-              Additional Services & Amenities
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="why-choose-title">
+              Why Choose Stage Management?
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Beyond our core care services, we offer comprehensive amenities and programs to enrich daily life.
+              Our commitment to excellence and proven track record make us the trusted partner 
+              for senior living communities across Colorado.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {additionalServices.map((service, index) => (
-              <Card key={index} className="text-center p-6 hover:shadow-lg transition-shadow" data-testid={`additional-service-${index}`}>
-                <CardContent className="pt-4">
-                  <CheckCircle className="w-6 h-6 text-primary mx-auto mb-3" />
-                  <p className="text-sm font-medium text-foreground">{service}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Specialized Programs CTA */}
-      <section className="py-16 bg-primary text-primary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6" data-testid="stage-cares-title">
-                Discover Stage Cares
-              </h2>
-              <p className="text-xl text-primary-foreground/90 mb-6">
-                Our specialized care philosophy and programs that set us apart. Learn about our "Your Story First" 
-                approach and how we create personalized experiences for every resident.
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow" data-testid="benefit-1">
+              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Building className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-4">Proven Excellence</h3>
+              <p className="text-muted-foreground">
+                Years of experience in senior living management with a track record of operational success and resident satisfaction.
               </p>
-              <Button 
-                size="lg" 
-                variant="secondary"
-                className="mb-6"
-                asChild
-                data-testid="button-learn-stage-cares"
-              >
-                <Link href="/stage-cares">
-                  <Heart className="w-5 h-5 mr-2" />
-                  Learn About Stage Cares
-                </Link>
-              </Button>
             </div>
-            <div className="space-y-6">
-              <div className="flex items-center gap-4 p-4 bg-primary-foreground/10 rounded-lg">
-                <Star className="w-8 h-8 text-yellow-400" />
-                <div>
-                  <p className="font-semibold">98% Resident Satisfaction</p>
-                  <p className="text-sm text-primary-foreground/80">Across all our communities</p>
-                </div>
+
+            <div className="text-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow" data-testid="benefit-2">
+              <div className="w-16 h-16 bg-gradient-to-r from-rose-500 to-rose-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Heart className="w-8 h-8 text-white" />
               </div>
-              <div className="flex items-center gap-4 p-4 bg-primary-foreground/10 rounded-lg">
-                <Users className="w-8 h-8 text-primary-foreground" />
-                <div>
-                  <p className="font-semibold">Long-Tenure Staff</p>
-                  <p className="text-sm text-primary-foreground/80">Building lasting relationships</p>
-                </div>
+              <h3 className="text-xl font-bold text-foreground mb-4">Compassionate Care</h3>
+              <p className="text-muted-foreground">
+                We prioritize the well-being of residents, families, and staff through comprehensive support programs and personal attention.
+              </p>
+            </div>
+
+            <div className="text-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow" data-testid="benefit-3">
+              <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Shield className="w-8 h-8 text-white" />
               </div>
-              <div className="flex items-center gap-4 p-4 bg-primary-foreground/10 rounded-lg">
-                <Shield className="w-8 h-8 text-primary-foreground" />
-                <div>
-                  <p className="font-semibold">Comprehensive Care</p>
-                  <p className="text-sm text-primary-foreground/80">Mind, body, and spirit</p>
-                </div>
-              </div>
+              <h3 className="text-xl font-bold text-foreground mb-4">Trusted Partnership</h3>
+              <p className="text-muted-foreground">
+                We build lasting relationships with communities, providing reliable support and sustainable growth strategies.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Contact CTA */}
-      <section className="py-16 bg-white">
+      <section className="py-20 bg-gradient-to-r from-primary to-primary/90 text-primary-foreground">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="contact-cta-title">
-            Ready to Learn More About Our Services?
+          <h2 className="text-3xl md:text-4xl font-bold mb-6" data-testid="contact-cta-title">
+            Ready to Transform Your Community?
           </h2>
-          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            Let us help you find the perfect level of care and support for your loved one. 
-            Schedule a consultation or tour today.
+          <p className="text-xl text-primary-foreground/90 mb-10 max-w-3xl mx-auto">
+            Let's discuss how Stage Management can help your senior living community achieve operational excellence 
+            and provide exceptional care for your residents.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" asChild data-testid="button-schedule-tour-cta">
-              <Link href="/communities">
-                <Calendar className="w-5 h-5 mr-2" />
-                Schedule a Tour
-              </Link>
-            </Button>
-            <Button variant="outline" size="lg" asChild data-testid="button-call-now-cta">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <Button 
+              size="lg" 
+              variant="secondary"
+              className="bg-white text-primary hover:bg-gray-100"
+              asChild 
+              data-testid="button-schedule-consultation-cta"
+            >
               <a href="tel:+1-303-436-2300">
                 <Phone className="w-5 h-5 mr-2" />
-                Call (303) 436-2300
+                Schedule Consultation
+              </a>
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="border-white text-white hover:bg-white hover:text-primary"
+              asChild 
+              data-testid="button-email-us-cta"
+            >
+              <a href="mailto:info@stagesenior.com">
+                <Mail className="w-5 h-5 mr-2" />
+                Email Us
               </a>
             </Button>
           </div>
           
-          <div className="mt-12 pt-8 border-t border-gray-100">
-            <p className="text-muted-foreground mb-4">
-              <strong>Have questions about care levels or services?</strong><br />
-              Our care coordinators are available to discuss your specific needs and help determine 
-              the best fit for your family.
+          <div className="mt-12 pt-8 border-t border-primary-foreground/20">
+            <p className="text-primary-foreground/90 mb-4">
+              <strong>Contact Information</strong>
             </p>
-            <p className="text-sm text-muted-foreground">
-              Email us at <a href="mailto:info@stagesenior.com" className="text-primary hover:underline">info@stagesenior.com</a> 
-              or visit us at 8100 E Arapahoe Road, Suite 208, Centennial, CO 80112
-            </p>
+            <div className="flex flex-col md:flex-row justify-center items-center gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4" />
+                <a href="tel:+1-303-436-2300" className="hover:underline">(303) 436-2300</a>
+              </div>
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                <a href="mailto:info@stagesenior.com" className="hover:underline">info@stagesenior.com</a>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4" />
+                <span>8100 E Arapahoe Road, Suite 208, Centennial, CO 80112</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>

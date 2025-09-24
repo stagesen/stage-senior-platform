@@ -2,49 +2,81 @@ import { useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Shield, Heart, Users, Award, Phone, Mail, MapPin, Calendar, Star } from "lucide-react";
+import { Shield, Heart, Users, Award, Phone, Mail, MapPin, Calendar, Star, Activity, CheckCircle, Handshake, Eye } from "lucide-react";
 
 export default function AboutUs() {
   useEffect(() => {
-    document.title = "About Us | Stage Senior";
+    document.title = "More About Us | Stage Senior";
     
     // Add meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Learn about Stage Senior Management - a locally owned, Colorado-based senior living management company founded in 2016. Discover our mission, values, leadership, and commitment to exceptional resident care.');
+      metaDescription.setAttribute('content', 'Discover Stage Senior Management - creating vibrant communities where residents thrive with compassionate care, connected community, and committed service across Colorado.');
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Learn about Stage Senior Management - a locally owned, Colorado-based senior living management company founded in 2016. Discover our mission, values, leadership, and commitment to exceptional resident care.';
+      meta.content = 'Discover Stage Senior Management - creating vibrant communities where residents thrive with compassionate care, connected community, and committed service across Colorado.';
       document.head.appendChild(meta);
     }
   }, []);
 
-  const values = [
+  const coreValues = [
+    {
+      icon: <Activity className="w-8 h-8" />,
+      title: "Health",
+      description: "Promoting physical, mental, and emotional well-being for all residents and staff"
+    },
+    {
+      icon: <CheckCircle className="w-8 h-8" />,
+      title: "Accountability",
+      description: "Taking responsibility for our actions and delivering on our commitments"
+    },
     {
       icon: <Heart className="w-8 h-8" />,
-      title: "Residents First",
-      description: "Personalized care plans that honor each individual's needs and highest potential in a homelike environment."
+      title: "Relationships",
+      description: "Building meaningful connections based on trust, respect, and genuine care"
     },
     {
-      icon: <Users className="w-8 h-8" />,
-      title: "Family Partnership",
-      description: "Transparent communication, proactive updates, and treating families as partners in care for complete peace of mind."
-    },
-    {
-      icon: <Shield className="w-8 h-8" />,
-      title: "Team Excellence",
-      description: "Exceptional resident care starts with exceptional staff care through development, recognition, and values-aligned culture."
+      icon: <Eye className="w-8 h-8" />,
+      title: "Transparency",
+      description: "Open, honest communication in all our interactions and decisions"
     }
   ];
 
-  const stats = [
-    { number: "2016", label: "Founded in Colorado" },
-    { number: "4", label: "Premier Communities" },
-    { number: "98%", label: "Resident Satisfaction" },
-    { number: "100+", label: "Years of Combined Leadership Experience" }
+  const corePrinciples = [
+    {
+      title: "Compassionate Care",
+      description: "We create environments where genuine relationships flourish. Our teams go above and beyond to ensure every resident feels valued, understood, and cared for as a unique individual."
+    },
+    {
+      title: "Connected Community",
+      description: "We foster meaningful connections between residents, families, and staff. By celebrating the legacy of those who have lived with us, we strengthen the bonds that make our communities truly special."
+    },
+    {
+      title: "Committed Service",
+      description: "Our dedication extends beyond basic care to embrace life's daily moments. We empower our staff to serve with heart, creating a culture where going the extra mile isn't exceptional—it's who we are."
+    }
   ];
+
+  const teamMembers = [
+    { name: "Jonathan Hachmeister", title: "Managing Partner" },
+    { name: "Troy McClymonds", title: "Managing Partner" },
+    { name: "Jeff Ippen", title: "Partner" },
+    { name: "Ben Chandler", title: "Regional Director" },
+    { name: "Colleen Emery", title: "Director of Operations" },
+    { name: "Marci Gerke", title: "Director of Memory Care Services" },
+    { name: "Natasha Barba", title: "Benefits Administrator" },
+    { name: "Josh Kavinsky", title: "Regional Maintenance Director" },
+    { name: "Bob Burden", title: "Community Chef" },
+    { name: "Trevor Harwood", title: "Digital Marketing" }
+  ];
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(word => word[0]).join('').toUpperCase();
+  };
+
 
   return (
     <div className="min-h-screen bg-white">
@@ -73,7 +105,7 @@ export default function AboutUs() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6" data-testid="page-title">
-                About Stage Senior
+                More About Us
               </h1>
               <p className="text-xl text-muted-foreground mb-8 leading-relaxed" data-testid="hero-description">
                 Since 2016, we've been transforming senior living communities into vibrant homes where dignity, 
@@ -114,118 +146,114 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* Mission & Values */}
+      {/* Mission Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="mission-title">
-              Our Mission: Locally Owned, Resident-Focused
+              Our Mission
             </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              We combine a personal, local touch with sophisticated operating systems to ensure high-quality 
-              care and consistency across all our properties. Our mission centers on personalized care and 
-              community connection in every aspect of our operations.
+            <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed mb-8" data-testid="mission-content">
+              To create vibrant communities where residents thrive, families find peace of mind, and staff members are empowered to deliver exceptional care. We believe in preserving independence while providing the perfect balance of support, comfort, and engagement that makes every day meaningful.
+            </p>
+            <Button size="lg" asChild data-testid="button-get-in-touch">
+              <a href="tel:+1-303-436-2300">
+                <Phone className="w-5 h-5 mr-2" />
+                GET IN TOUCH
+              </a>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Vision Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="vision-title">
+              Our Vision
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed" data-testid="vision-content">
+              We build and manage purposeful communities that honor the dignity of senior living. Our approach is founded on three core principles:
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            {values.map((value, index) => (
-              <Card key={index} className="text-center p-6 hover:shadow-lg transition-shadow" data-testid={`value-card-${index}`}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {corePrinciples.map((principle, index) => (
+              <Card key={index} className="p-6 hover:shadow-lg transition-shadow" data-testid={`principle-card-${index}`}>
                 <CardContent className="pt-6">
-                  <div className="text-primary mb-4 flex justify-center">
-                    {value.icon}
-                  </div>
-                  <h3 className="text-xl font-semibold mb-4" data-testid={`value-title-${index}`}>
-                    {value.title}
+                  <h3 className="text-xl font-semibold mb-4 text-primary" data-testid={`principle-title-${index}`}>
+                    {principle.title}
                   </h3>
-                  <p className="text-muted-foreground" data-testid={`value-description-${index}`}>
-                    {value.description}
+                  <p className="text-muted-foreground leading-relaxed" data-testid={`principle-description-${index}`}>
+                    {principle.description}
                   </p>
                 </CardContent>
               </Card>
             ))}
           </div>
+        </div>
+      </section>
 
-          {/* Stats */}
-          <div className="bg-primary/5 rounded-xl p-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              {stats.map((stat, index) => (
-                <div key={index} data-testid={`stat-${index}`}>
-                  <div className="text-3xl md:text-4xl font-bold text-primary mb-2" data-testid={`stat-number-${index}`}>
-                    {stat.number}
-                  </div>
-                  <div className="text-sm text-muted-foreground" data-testid={`stat-label-${index}`}>
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
+      {/* Our Team Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="team-title">
+              Our Team
+            </h2>
+            <p className="text-lg text-muted-foreground" data-testid="team-subtitle">
+              Elevating Senior Care Across Colorado
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            {teamMembers.map((member, index) => (
+              <Card key={index} className="text-center p-6 hover:shadow-lg transition-shadow" data-testid={`team-member-${index}`}>
+                <CardContent className="pt-6">
+                  <Avatar className="w-20 h-20 mx-auto mb-4" data-testid={`avatar-${index}`}>
+                    <AvatarFallback className="text-lg font-semibold bg-primary/10 text-primary">
+                      {getInitials(member.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <h3 className="font-semibold text-lg mb-2" data-testid={`member-name-${index}`}>
+                    {member.name}
+                  </h3>
+                  <p className="text-muted-foreground text-sm" data-testid={`member-title-${index}`}>
+                    {member.title}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Our Story */}
+      {/* Core Values Section */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="story-title">
-                Our Colorado Story
-              </h2>
-              <div className="space-y-4 text-muted-foreground">
-                <p data-testid="story-paragraph-1">
-                  Founded in 2016, Stage Senior Management emerged from a vision to transform senior living 
-                  across Colorado's Front Range. We saw an opportunity to combine the warmth and authenticity 
-                  of local ownership with the sophistication and consistency of professional management systems.
-                </p>
-                <p data-testid="story-paragraph-2">
-                  Today, we proudly manage four premier communities from the foothills of Golden to the 
-                  suburbs of Littleton and Arvada. Each location reflects our commitment to creating true 
-                  homes where seniors can thrive with dignity, surrounded by caring staff who know their 
-                  stories and honor their preferences.
-                </p>
-                <p data-testid="story-paragraph-3">
-                  Our approach is different because we believe exceptional resident care starts with 
-                  exceptional staff care. By investing in our team through development, transparent 
-                  communication, and recognition, we create stable, long-tenured staff who build 
-                  meaningful relationships with residents and families.
-                </p>
-              </div>
-            </div>
-            <div className="space-y-6">
-              <Card className="p-6">
-                <CardContent className="pt-0">
-                  <div className="flex items-start gap-4">
-                    <Award className="w-8 h-8 text-primary flex-shrink-0 mt-1" />
-                    <div>
-                      <h3 className="font-semibold text-lg mb-2" data-testid="leadership-title">
-                        Experienced Leadership
-                      </h3>
-                      <p className="text-muted-foreground text-sm">
-                        Our executive team brings over 100 years of combined experience in senior living, 
-                        healthcare administration, and community management across Colorado.
-                      </p>
-                    </div>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="core-values-title">
+              Our Core Values
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {coreValues.map((value, index) => (
+              <Card key={index} className="text-center p-6 hover:shadow-lg transition-shadow" data-testid={`core-value-card-${index}`}>
+                <CardContent className="pt-6">
+                  <div className="text-primary mb-4 flex justify-center">
+                    {value.icon}
                   </div>
+                  <h3 className="text-xl font-semibold mb-4" data-testid={`core-value-title-${index}`}>
+                    {value.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm" data-testid={`core-value-description-${index}`}>
+                    {value.description}
+                  </p>
                 </CardContent>
               </Card>
-              <Card className="p-6">
-                <CardContent className="pt-0">
-                  <div className="flex items-start gap-4">
-                    <Users className="w-8 h-8 text-primary flex-shrink-0 mt-1" />
-                    <div>
-                      <h3 className="font-semibold text-lg mb-2" data-testid="community-focus-title">
-                        Community Integration
-                      </h3>
-                      <p className="text-muted-foreground text-sm">
-                        We actively participate in local chambers of commerce, sponsor community events, 
-                        and create intergenerational programs that keep our residents connected to Colorado life.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            ))}
           </div>
         </div>
       </section>
