@@ -79,6 +79,9 @@ export default function CommunityDetailNavigation({ sections }: CommunityDetailN
   }, [navigationItems]);
 
   const scrollToSection = (sectionId: string) => {
+    // Immediately set the active section when clicked
+    setActiveSection(sectionId);
+    
     const element = document.getElementById(sectionId);
     if (element) {
       // Dynamic offset calculation based on actual header and sticky nav heights
@@ -123,7 +126,7 @@ export default function CommunityDetailNavigation({ sections }: CommunityDetailN
                     : 'hover:bg-gray-100 text-gray-700 hover:text-gray-900'
                   }
                 `}
-                data-testid={`nav-${item.id}`}
+                data-testid={`community-nav-${item.id}`}
               >
                 <IconComponent className="w-4 h-4" />
                 <span className="hidden sm:inline">{item.label}</span>
