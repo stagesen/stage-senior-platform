@@ -162,9 +162,10 @@ export class DatabaseStorage implements IStorage {
     
     const communitiesData = await query.orderBy(desc(communities.featured), asc(communities.name));
     
-    // Fetch care types for all communities from junction table
+    // Fetch care types and amenities for all communities from junction tables
     const communityIds = communitiesData.map(c => c.id);
     if (communityIds.length > 0) {
+      // Fetch care types
       const careTypesData = await db
         .select({
           communityId: communitiesCareTypes.communityId,
@@ -185,11 +186,58 @@ export class DatabaseStorage implements IStorage {
         }
       }
       
-      // Update communities with care types from junction table (prefer junction table data)
+      // Fetch amenities with full data including imageUrl
+      const amenitiesData = await db
+        .select({
+          communityId: communitiesAmenities.communityId,
+          amenityName: amenities.name,
+          amenityIcon: amenities.icon,
+          amenityImageUrl: amenities.imageUrl,
+          amenityDescription: amenities.description,
+          amenityCategory: amenities.category,
+          amenitySortOrder: amenities.sortOrder,
+        })
+        .from(communitiesAmenities)
+        .leftJoin(amenities, eq(communitiesAmenities.amenityId, amenities.id))
+        .where(
+          and(
+            inArray(communitiesAmenities.communityId, communityIds),
+            eq(amenities.active, true)
+          )
+        )
+        .orderBy(asc(amenities.sortOrder), asc(amenities.name));
+      
+      // Group amenities by community
+      const amenitiesByCommunity: Record<string, any[]> = {};
+      for (const am of amenitiesData) {
+        if (!amenitiesByCommunity[am.communityId]) {
+          amenitiesByCommunity[am.communityId] = [];
+        }
+        if (am.amenityName) {
+          amenitiesByCommunity[am.communityId].push({
+            name: am.amenityName,
+            icon: am.amenityIcon,
+            imageUrl: am.amenityImageUrl,
+            description: am.amenityDescription,
+            category: am.amenityCategory,
+            sortOrder: am.amenitySortOrder,
+          });
+        }
+      }
+      
+      // Update communities with data from junction tables
       for (const community of communitiesData) {
         const junctionCareTypes = careTypesByCommunity[community.id];
         if (junctionCareTypes && junctionCareTypes.length > 0) {
           community.careTypes = junctionCareTypes;
+        }
+        
+        const junctionAmenities = amenitiesByCommunity[community.id];
+        if (junctionAmenities && junctionAmenities.length > 0) {
+          // Use full amenity objects from junction table
+          (community as any).amenitiesData = junctionAmenities;
+          // Keep simple string array for backward compatibility
+          community.amenities = junctionAmenities.map((a: any) => a.name);
         }
         // Keep existing JSON data as fallback if no junction data exists
       }
@@ -210,6 +258,62 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(communities)
       .where(eq(communities.slug, slug));
+    
+    if (community) {
+      // Fetch care types from junction table
+      const careTypesData = await db
+        .select({
+          careTypeSlug: careTypes.slug,
+        })
+        .from(communitiesCareTypes)
+        .leftJoin(careTypes, eq(communitiesCareTypes.careTypeId, careTypes.id))
+        .where(eq(communitiesCareTypes.communityId, community.id));
+      
+      if (careTypesData.length > 0) {
+        community.careTypes = careTypesData
+          .filter(ct => ct.careTypeSlug !== null)
+          .map(ct => ct.careTypeSlug!);
+      }
+      
+      // Fetch amenities with full data including imageUrl
+      const amenitiesData = await db
+        .select({
+          amenityName: amenities.name,
+          amenityIcon: amenities.icon,
+          amenityImageUrl: amenities.imageUrl,
+          amenityDescription: amenities.description,
+          amenityCategory: amenities.category,
+          amenitySortOrder: amenities.sortOrder,
+        })
+        .from(communitiesAmenities)
+        .leftJoin(amenities, eq(communitiesAmenities.amenityId, amenities.id))
+        .where(
+          and(
+            eq(communitiesAmenities.communityId, community.id),
+            eq(amenities.active, true)
+          )
+        )
+        .orderBy(asc(amenities.sortOrder), asc(amenities.name));
+      
+      if (amenitiesData.length > 0) {
+        const fullAmenities = amenitiesData
+          .filter(am => am.amenityName !== null)
+          .map(am => ({
+            name: am.amenityName!,
+            icon: am.amenityIcon,
+            imageUrl: am.amenityImageUrl,
+            description: am.amenityDescription,
+            category: am.amenityCategory,
+            sortOrder: am.amenitySortOrder,
+          }));
+        
+        // Use full amenity objects
+        (community as any).amenitiesData = fullAmenities;
+        // Keep simple string array for backward compatibility
+        community.amenities = fullAmenities.map(a => a.name);
+      }
+    }
+    
     return community;
   }
 
