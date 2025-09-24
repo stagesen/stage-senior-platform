@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import EventCard from "@/components/EventCard";
 import FloorPlanModal from "@/components/FloorPlanModal";
+import CommunityMap from "@/components/CommunityMap";
 import { 
   MapPin, 
   Phone, 
@@ -41,7 +42,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import ScrollToTop from "@/components/ScrollToTop";
-import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryImage, Post } from "@shared/schema";
+import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryImage, Post, BlogPost } from "@shared/schema";
 
 export default function CommunityDetail() {
   const params = useParams();
@@ -94,6 +95,11 @@ export default function CommunityDetail() {
 
   const { data: posts = [] } = useQuery<Post[]>({
     queryKey: [`/api/posts?communityId=${community?.id}&published=true`],
+    enabled: !!community?.id,
+  });
+
+  const { data: blogPosts = [] } = useQuery<BlogPost[]>({
+    queryKey: [`/api/blog-posts?communityId=${community?.id}&published=true`],
     enabled: !!community?.id,
   });
 
@@ -382,6 +388,94 @@ export default function CommunityDetail() {
               </section>
             )}
 
+            {/* Features Highlights Section */}
+            <section>
+              <h2 className="text-3xl font-bold mb-8">Experience the Difference</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Extraordinary Dining */}
+                <Card className="overflow-hidden hover:shadow-xl transition-shadow group" data-testid="feature-extraordinary-dining">
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1577308856961-1d3371de3c2b?q=80&w=800&auto=format&fit=crop"
+                      alt="Extraordinary dining experience featuring seniors enjoying nutritious, homestyle cuisine in a beautiful dining room"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      data-testid="feature-dining-image"
+                    />
+                  </div>
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-semibold mb-3" data-testid="feature-dining-title">
+                      Extraordinary Dining
+                    </h3>
+                    <p className="text-gray-600 mb-4 leading-relaxed" data-testid="feature-dining-description">
+                      There's no need to worry about cooking. You can dine on nutritious, homestyle cuisine in our beautiful dining room—complete with great conversation.
+                    </p>
+                    <Button variant="outline" className="w-full" data-testid="button-sample-menu">
+                      Sample Menu
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Engaging Lifestyle */}
+                <Card className="overflow-hidden hover:shadow-xl transition-shadow group" data-testid="feature-engaging-lifestyle">
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop"
+                      alt="Engaging lifestyle activities featuring seniors staying active, getting creative, and learning new skills"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      data-testid="feature-lifestyle-image"
+                    />
+                  </div>
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-semibold mb-3" data-testid="feature-lifestyle-title">
+                      Engaging Lifestyle
+                    </h3>
+                    <p className="text-gray-600 mb-4 leading-relaxed" data-testid="feature-lifestyle-description">
+                      From staying active to getting creative to learning new skills, we offer a diverse variety of ways for you to pursue your hobbies and interests.
+                    </p>
+                    <Button variant="outline" className="w-full" asChild data-testid="button-engagement-calendar">
+                      <Link href={`/events?community=${community.slug || community.id}`}>
+                        Engagement Calendar
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Ideal Location */}
+                <Card className="overflow-hidden hover:shadow-xl transition-shadow group" data-testid="feature-ideal-location">
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800&auto=format&fit=crop"
+                      alt="Seniors enjoying ideal location lifestyle with access to golf courses, local eateries, and parks"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      data-testid="feature-location-image"
+                    />
+                  </div>
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-semibold mb-3" data-testid="feature-location-title">
+                      Ideal Location
+                    </h3>
+                    <p className="text-gray-600 mb-4 leading-relaxed" data-testid="feature-location-description">
+                      You can easily enjoy the area with nearby attractions, dining options, and recreational activities perfectly suited for an active lifestyle.
+                    </p>
+                    <Button variant="outline" className="w-full" asChild data-testid="button-map-directions">
+                      <a 
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                          community.address || `${community.city}, ${community.state} ${community.zipCode}`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Map and Directions
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </a>
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </section>
+
             {/* Floor Plans Section */}
             {floorPlans.length > 0 && (
               <section>
@@ -591,62 +685,154 @@ export default function CommunityDetail() {
               </section>
             )}
 
-            {/* Blog Posts */}
+            {/* Latest News - Blog Posts */}
+            {blogPosts.length > 0 && (
+              <section className="py-8">
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h2 className="text-3xl font-bold mb-2">Latest News & Activities</h2>
+                    <p className="text-lg text-gray-600">
+                      Discover what's happening in our vibrant {community.name} community
+                    </p>
+                  </div>
+                  <Badge className="bg-primary/10 text-primary border-0">
+                    <Sparkles className="w-3 h-3 mr-1" />
+                    {blogPosts.length} Stories
+                  </Badge>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {blogPosts.slice(0, 6).map((post) => (
+                    <Card key={post.id} className="group hover:shadow-2xl transition-all duration-300 border-0 overflow-hidden bg-white" data-testid={`blog-post-${post.id}`}>
+                      <div className="relative">
+                        {(post.mainImage || post.thumbnailImage) ? (
+                          <div className="h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                            <img
+                              src={post.thumbnailImage || post.mainImage}
+                              alt={post.title}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                              loading="lazy"
+                            />
+                          </div>
+                        ) : (
+                          <div className="h-56 bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center">
+                            <Image className="w-16 h-16 text-primary/30" />
+                          </div>
+                        )}
+                        {post.featured && (
+                          <Badge className="absolute top-4 left-4 bg-yellow-500 text-white border-0">
+                            <Star className="w-3 h-3 mr-1 fill-current" />
+                            Featured
+                          </Badge>
+                        )}
+                        {post.category && (
+                          <Badge className="absolute top-4 right-4 bg-white/90 text-gray-700 backdrop-blur-sm">
+                            {post.category}
+                          </Badge>
+                        )}
+                      </div>
+                      <CardContent className="p-6">
+                        <div className="flex items-center gap-3 mb-3 text-sm text-gray-500">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            <span>{new Date(post.publishedAt || post.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                          </div>
+                          {post.author && (
+                            <div className="flex items-center gap-1">
+                              <Users className="w-3 h-3" />
+                              <span className="capitalize">{post.author.replace(/-/g, ' ')}</span>
+                            </div>
+                          )}
+                        </div>
+                        <h3 className="text-lg font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors" data-testid={`blog-post-title-${post.id}`}>
+                          {post.title}
+                        </h3>
+                        <p className="text-gray-600 text-sm line-clamp-3 mb-4" data-testid={`blog-post-summary-${post.id}`}>
+                          {post.summary || post.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <div className="flex gap-1">
+                            {post.tags && post.tags.slice(0, 2).map((tag, idx) => (
+                              <Badge key={idx} variant="secondary" className="text-xs bg-gray-100 text-gray-600">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                          <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/5 group/btn" asChild>
+                            <Link href={`/blog/${post.slug}`}>
+                              <span className="mr-1">Read</span>
+                              <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+                            </Link>
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+                {blogPosts.length > 6 && (
+                  <div className="text-center mt-10">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="group border-2 hover:bg-primary hover:text-white hover:border-primary transition-all"
+                      asChild
+                      data-testid="button-view-all-posts"
+                    >
+                      <Link href="/blog">
+                        <BookOpen className="w-4 h-4 mr-2" />
+                        Explore All {blogPosts.length} Stories
+                        <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* Resources Section - Regular Posts */}
             {posts.length > 0 && (
-              <section>
-                <h2 className="text-3xl font-bold mb-8">News & Updates from {community.name}</h2>
+              <section className="py-8">
+                <h2 className="text-3xl font-bold mb-8">Helpful Resources</h2>
                 <p className="text-lg text-gray-600 mb-8">
-                  Stay informed about the latest happenings, stories, and updates from our community.
+                  Educational articles about senior living, health tips, and care guidance.
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {posts.slice(0, 4).map((post) => (
-                    <Card key={post.id} className="hover:shadow-xl transition-shadow cursor-pointer" data-testid={`blog-post-${post.id}`}>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {posts.slice(0, 3).map((post) => (
+                    <Card key={post.id} className="hover:shadow-lg transition-shadow" data-testid={`resource-${post.id}`}>
                       {post.heroImageUrl && (
-                        <div className="h-48 overflow-hidden">
-                          <img 
-                            src={post.heroImageUrl} 
+                        <div className="h-40 overflow-hidden bg-gray-100">
+                          <img
+                            src={post.heroImageUrl}
                             alt={post.title}
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            className="w-full h-full object-cover"
+                            loading="lazy"
                           />
                         </div>
                       )}
-                      <CardContent className="p-6">
-                        <div className="flex items-center gap-2 mb-3">
-                          <Badge variant="secondary" className="text-xs">
-                            {new Date(post.publishedAt || post.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                          </Badge>
-                          {post.tags && post.tags.length > 0 && (
-                            <Badge variant="outline" className="text-xs">
+                      <CardContent className="p-5">
+                        <div className="flex items-center gap-2 mb-2 text-xs text-gray-500">
+                          <Clock className="w-3 h-3" />
+                          <span>{new Date(post.publishedAt || post.createdAt || Date.now()).toLocaleDateString()}</span>
+                          {post.tags && post.tags[0] && (
+                            <Badge variant="outline" className="text-xs ml-auto">
                               {post.tags[0]}
                             </Badge>
                           )}
                         </div>
-                        <h3 className="text-xl font-semibold mb-2 line-clamp-2" data-testid={`blog-post-title-${post.id}`}>
+                        <h3 className="font-semibold mb-2 line-clamp-2" data-testid={`resource-title-${post.id}`}>
                           {post.title}
                         </h3>
-                        <p className="text-gray-600 line-clamp-3 mb-4" data-testid={`blog-post-summary-${post.id}`}>
-                          {post.summary || post.content.substring(0, 150) + '...'}
+                        <p className="text-sm text-gray-600 line-clamp-2 mb-3" data-testid={`resource-summary-${post.id}`}>
+                          {post.summary || post.content.substring(0, 100) + '...'}
                         </p>
-                        <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80" asChild>
-                          <Link href={`/blog/${post.slug}`}>
-                            Read More
-                            <ArrowRight className="w-4 h-4 ml-1" />
+                        <Button variant="link" className="p-0 h-auto text-sm text-primary hover:text-primary/80" asChild>
+                          <Link href={`/resources/${post.slug}`}>
+                            Learn More →
                           </Link>
                         </Button>
                       </CardContent>
                     </Card>
                   ))}
                 </div>
-                {posts.length > 4 && (
-                  <div className="text-center mt-8">
-                    <Button variant="outline" size="lg" asChild data-testid="button-view-all-posts">
-                      <Link href="/blog">
-                        View All Articles
-                        <ChevronRight className="w-4 h-4 ml-2" />
-                      </Link>
-                    </Button>
-                  </div>
-                )}
               </section>
             )}
 

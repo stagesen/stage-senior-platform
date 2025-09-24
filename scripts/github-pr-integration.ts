@@ -13,6 +13,35 @@ interface PullRequestFile {
   previous_filename?: string; // For renamed files
 }
 
+interface CommitDetails {
+  sha: string;
+  commit: {
+    author: {
+      name: string;
+      email: string;
+      date: string;
+    };
+    committer: {
+      name: string;
+      email: string;
+      date: string;
+    };
+    message: string;
+  };
+  author: {
+    login: string;
+  } | null;
+}
+
+interface BranchComparison {
+  status: string;
+  ahead_by: number;
+  behind_by: number;
+  total_commits: number;
+  commits: CommitDetails[];
+  files: PullRequestFile[];
+}
+
 interface PullRequestDetails {
   number: number;
   title: string;
@@ -44,7 +73,8 @@ class GitHubPRIntegration {
   private repo: string = 'stage-senior-platform';
   private baseURL: string = 'https://api.github.com';
 
-  private targetPRs = [12, 13, 15, 16, 17];
+  private targetBranch = 'Codex';  // Target branch to analyze
+  private baseBranch = 'main';     // Base branch to compare against
 
   constructor() {
     this.token = process.env.GITHUB_TOKEN || '';
@@ -69,14 +99,14 @@ class GitHubPRIntegration {
     return response.json();
   }
 
-  async fetchPRDetails(prNumber: number): Promise<PullRequestDetails> {
-    console.log(`🔍 Fetching PR #${prNumber} details...`);
-    return await this.makeRequest(`/repos/${this.owner}/${this.repo}/pulls/${prNumber}`);
+  async fetchBranchComparison(): Promise<BranchComparison> {
+    console.log(`🔍 Comparing ${this.targetBranch} branch with ${this.baseBranch}...`);
+    return await this.makeRequest(`/repos/${this.owner}/${this.repo}/compare/${this.baseBranch}...${this.targetBranch}`);
   }
 
-  async fetchPRFiles(prNumber: number): Promise<PullRequestFile[]> {
-    console.log(`📁 Fetching files changed in PR #${prNumber}...`);
-    return await this.makeRequest(`/repos/${this.owner}/${this.repo}/pulls/${prNumber}/files`);
+  async fetchCommitDetails(sha: string): Promise<CommitDetails> {
+    console.log(`📋 Fetching commit details for ${sha.substring(0, 8)}...`);
+    return await this.makeRequest(`/repos/${this.owner}/${this.repo}/commits/${sha}`);
   }
 
   async fetchFileContent(url: string): Promise<string> {
@@ -105,122 +135,152 @@ class GitHubPRIntegration {
     });
   }
 
-  async analyzeAllPRs(): Promise<void> {
-    console.log('🚀 Starting GitHub PR Integration Analysis');
+  async analyzeBranch(): Promise<void> {
+    console.log('🚀 Starting Codex Branch Integration Analysis');
     console.log(`📂 Repository: ${this.owner}/${this.repo}`);
-    console.log(`🎯 Target PRs: ${this.targetPRs.join(', ')}\n`);
+    console.log(`🎯 Target Branch: ${this.targetBranch}`);
+    console.log(`🎯 Base Branch: ${this.baseBranch}\n`);
 
-    const prAnalysis: {
-      number: number;
-      details: PullRequestDetails;
-      files: PullRequestFile[];
-    }[] = [];
+    try {
+      console.log(`\n${'='.repeat(60)}`);
+      console.log(`🔄 ANALYZING CODEX BRANCH`);
+      console.log(`${'='.repeat(60)}`);
 
-    for (const prNumber of this.targetPRs) {
-      try {
-        console.log(`\n${'='.repeat(60)}`);
-        console.log(`🔄 ANALYZING PR #${prNumber}`);
-        console.log(`${'='.repeat(60)}`);
+      const comparison = await this.fetchBranchComparison();
 
-        const [prDetails, prFiles] = await Promise.all([
-          this.fetchPRDetails(prNumber),
-          this.fetchPRFiles(prNumber)
-        ]);
+      console.log(`📊 Branch Comparison Status: ${comparison.status}`);
+      console.log(`📈 Commits ahead: ${comparison.ahead_by}`);
+      console.log(`📉 Commits behind: ${comparison.behind_by}`);
+      console.log(`📋 Total commits: ${comparison.total_commits}`);
+      console.log(`📁 Files changed: ${comparison.files.length}`);
 
-        console.log(`📋 Title: ${prDetails.title}`);
-        console.log(`👤 Author: ${prDetails.user.login}`);
-        console.log(`📅 Created: ${this.formatDate(prDetails.created_at)}`);
-        console.log(`📅 Updated: ${this.formatDate(prDetails.updated_at)}`);
-        console.log(`🚦 State: ${prDetails.state}`);
-        console.log(`✅ Mergeable: ${prDetails.mergeable === null ? 'Unknown' : prDetails.mergeable ? 'Yes' : 'No'}`);
-        console.log(`📊 Changes: +${prDetails.additions}/-${prDetails.deletions} across ${prDetails.changed_files} files`);
-        
-        if (prDetails.body && prDetails.body.trim()) {
-          console.log(`📝 Description: ${prDetails.body.substring(0, 150)}${prDetails.body.length > 150 ? '...' : ''}`);
+      console.log(`\n📋 COMMITS IN CODEX BRANCH:`);
+      console.log('-'.repeat(50));
+      
+      for (const commit of comparison.commits) {
+        console.log(`\n📝 ${commit.sha.substring(0, 8)} - ${commit.commit.message}`);
+        console.log(`   👤 Author: ${commit.commit.author.name} <${commit.commit.author.email}>`);
+        console.log(`   📅 Date: ${this.formatDate(commit.commit.author.date)}`);
+        if (commit.author) {
+          console.log(`   🐙 GitHub: ${commit.author.login}`);
         }
+      }
 
-        console.log(`\n📁 FILES CHANGED (${prFiles.length}):`);
-        console.log('-'.repeat(40));
+      console.log(`\n📁 FILES CHANGED (${comparison.files.length}):`);
+      console.log('-'.repeat(50));
 
-        for (const file of prFiles) {
-          console.log(`\n📄 ${file.filename}`);
-          console.log(`   📊 Status: ${file.status}`);
-          console.log(`   📈 Changes: +${file.additions}/-${file.deletions}`);
+      // Group files by status
+      const filesByStatus = comparison.files.reduce((acc, file) => {
+        if (!acc[file.status]) acc[file.status] = [];
+        acc[file.status].push(file);
+        return acc;
+      }, {} as Record<string, PullRequestFile[]>);
+
+      for (const [status, files] of Object.entries(filesByStatus)) {
+        console.log(`\n🔧 ${status.toUpperCase()} FILES (${files.length}):`);
+        
+        for (const file of files) {
+          console.log(`\n  📄 ${file.filename}`);
+          console.log(`     📈 Changes: +${file.additions}/-${file.deletions}`);
           
           if (file.previous_filename) {
-            console.log(`   🔄 Previous name: ${file.previous_filename}`);
+            console.log(`     🔄 Previous name: ${file.previous_filename}`);
           }
 
-          if (file.patch) {
-            console.log(`   🔧 Patch preview:`);
-            const patchLines = file.patch.split('\n').slice(0, 10);
+          if (file.patch && status !== 'added') {
+            console.log(`     🔧 Patch preview:`);
+            const patchLines = file.patch.split('\n').slice(0, 8);
             patchLines.forEach(line => {
               if (line.startsWith('@@')) {
-                console.log(`      📍 ${line}`);
+                console.log(`        📍 ${line}`);
               } else if (line.startsWith('+')) {
-                console.log(`      ✅ ${line}`);
+                console.log(`        ✅ ${line}`);
               } else if (line.startsWith('-')) {
-                console.log(`      ❌ ${line}`);
+                console.log(`        ❌ ${line}`);
               } else {
-                console.log(`         ${line}`);
+                console.log(`           ${line}`);
               }
             });
-            if (file.patch.split('\n').length > 10) {
-              console.log(`      ... ${file.patch.split('\n').length - 10} more lines`);
+            if (file.patch.split('\n').length > 8) {
+              console.log(`        ... ${file.patch.split('\n').length - 8} more lines`);
             }
           }
         }
-
-        prAnalysis.push({
-          number: prNumber,
-          details: prDetails,
-          files: prFiles
-        });
-
-      } catch (error) {
-        console.error(`❌ Error analyzing PR #${prNumber}:`, error);
       }
+
+      console.log(`\n\n${'='.repeat(80)}`);
+      console.log('📊 CODEX BRANCH INTEGRATION SUMMARY');
+      console.log(`${'='.repeat(80)}`);
+
+      const totalAdditions = comparison.files.reduce((sum, file) => sum + file.additions, 0);
+      const totalDeletions = comparison.files.reduce((sum, file) => sum + file.deletions, 0);
+
+      console.log(`\n🔄 Codex Branch Analysis:`);
+      console.log(`   📋 Total commits: ${comparison.total_commits}`);
+      console.log(`   📁 Files to modify: ${comparison.files.length}`);
+      console.log(`   📊 Total changes: +${totalAdditions}/-${totalDeletions}`);
+      console.log(`   🎯 Integration status: Ready for analysis`);
+      
+      // Integration recommendations
+      console.log(`\n💡 INTEGRATION RECOMMENDATIONS:`);
+      console.log(`   1. Review ${comparison.commits.length} commits for conflicts`);
+      console.log(`   2. Test ${filesByStatus.modified?.length || 0} modified files`);
+      console.log(`   3. Verify ${filesByStatus.added?.length || 0} new files`);
+      if (filesByStatus.removed?.length) {
+        console.log(`   4. Confirm ${filesByStatus.removed.length} file deletions`);
+      }
+
+      console.log(`\n✅ Codex branch analysis complete!`);
+      return;
+
+    } catch (error) {
+      console.error(`❌ Error analyzing Codex branch:`, error);
+      throw error;
     }
-
-    console.log(`\n\n${'='.repeat(80)}`);
-    console.log('📊 INTEGRATION SUMMARY');
-    console.log(`${'='.repeat(80)}`);
-
-    for (const analysis of prAnalysis) {
-      console.log(`\n🔄 PR #${analysis.number}: ${analysis.details.title}`);
-      console.log(`   📁 Files to modify: ${analysis.files.length}`);
-      console.log(`   📊 Total changes: +${analysis.details.additions}/-${analysis.details.deletions}`);
-      console.log(`   🎯 Integration status: Ready for application`);
-    }
-
-    console.log(`\n✅ Analysis complete! All ${prAnalysis.length} PRs analyzed.`);
-    return;
   }
 
-  async integratePR(prNumber: number): Promise<boolean> {
-    console.log(`\n🔧 Starting integration of PR #${prNumber}...`);
+  async generateIntegrationPlan(): Promise<boolean> {
+    console.log(`\n🔧 Generating integration plan for Codex branch...`);
     
     try {
-      const [prDetails, prFiles] = await Promise.all([
-        this.fetchPRDetails(prNumber),
-        this.fetchPRFiles(prNumber)
-      ]);
+      const comparison = await this.fetchBranchComparison();
 
-      console.log(`📋 Integrating: ${prDetails.title}`);
-      console.log(`📁 Files to process: ${prFiles.length}`);
+      console.log(`📋 Analyzing branch: ${this.targetBranch}`);
+      console.log(`📁 Files to process: ${comparison.files.length}`);
+      console.log(`📋 Commits to integrate: ${comparison.commits.length}`);
 
       // Store integration data for return to main process
       const integrationData = {
-        prNumber,
-        title: prDetails.title,
-        files: prFiles.map(file => ({
+        branch: this.targetBranch,
+        baseBranch: this.baseBranch,
+        aheadBy: comparison.ahead_by,
+        behindBy: comparison.behind_by,
+        totalCommits: comparison.total_commits,
+        commits: comparison.commits.map(commit => ({
+          sha: commit.sha,
+          message: commit.commit.message,
+          author: commit.commit.author.name,
+          email: commit.commit.author.email,
+          date: commit.commit.author.date,
+          githubUser: commit.author?.login
+        })),
+        files: comparison.files.map(file => ({
           filename: file.filename,
           status: file.status,
           patch: file.patch,
           additions: file.additions,
           deletions: file.deletions,
           previous_filename: file.previous_filename
-        }))
+        })),
+        summary: {
+          totalAdditions: comparison.files.reduce((sum, file) => sum + file.additions, 0),
+          totalDeletions: comparison.files.reduce((sum, file) => sum + file.deletions, 0),
+          filesByStatus: comparison.files.reduce((acc, file) => {
+            if (!acc[file.status]) acc[file.status] = 0;
+            acc[file.status]++;
+            return acc;
+          }, {} as Record<string, number>)
+        }
       };
 
       // Output integration data as JSON for processing by the main script
@@ -230,45 +290,56 @@ class GitHubPRIntegration {
 
       return true;
     } catch (error) {
-      console.error(`❌ Error integrating PR #${prNumber}:`, error);
+      console.error(`❌ Error generating integration plan:`, error);
       return false;
     }
   }
 
-  async integrateAllPRs(): Promise<void> {
-    console.log('🚀 Starting integration of all target PRs...\n');
+  async runCodexIntegration(): Promise<void> {
+    console.log('🚀 Starting Codex branch integration analysis...\n');
     
-    const results: {
-      prNumber: number;
-      success: boolean;
-    }[] = [];
-    for (const prNumber of this.targetPRs) {
-      const success = await this.integratePR(prNumber);
-      results.push({ prNumber, success });
-    }
+    console.log('Step 1: Analyzing branch differences...');
+    await this.analyzeBranch();
+    
+    console.log('\n\nStep 2: Generating integration plan...');
+    const success = await this.generateIntegrationPlan();
 
-    console.log('\n📊 INTEGRATION RESULTS:');
-    results.forEach(({ prNumber, success }) => {
-      console.log(`   PR #${prNumber}: ${success ? '✅ Success' : '❌ Failed'}`);
-    });
+    console.log('\n📊 CODEX INTEGRATION RESULTS:');
+    console.log(`   Analysis: ✅ Complete`);
+    console.log(`   Integration Plan: ${success ? '✅ Generated' : '❌ Failed'}`);
+    
+    if (success) {
+      console.log('\n🎆 Codex branch is ready for integration!');
+      console.log('Next steps:');
+      console.log('1. Review the integration plan above');
+      console.log('2. Create a merge strategy');
+      console.log('3. Test changes in a development environment');
+      console.log('4. Execute integration with proper backup');
+    }
   }
 }
 
 // Main execution
-async function main() {
+async function runGitHubPRIntegration() {
   const args = process.argv.slice(2);
   const integration = new GitHubPRIntegration();
 
   if (args.includes('--analyze')) {
-    await integration.analyzeAllPRs();
+    await integration.analyzeBranch();
   } else if (args.includes('--integrate')) {
-    await integration.integrateAllPRs();
+    await integration.runCodexIntegration();
+  } else if (args.includes('--plan')) {
+    await integration.generateIntegrationPlan();
   } else {
-    console.log('🎯 GitHub PR Integration Tool');
+    console.log('🎯 Codex Branch Integration Tool');
     console.log('Usage:');
-    console.log('  npm run github-pr -- --analyze    # Analyze PRs');
-    console.log('  npm run github-pr -- --integrate  # Integrate PRs');
+    console.log('  tsx scripts/github-pr-integration.ts --analyze     # Analyze Codex branch');
+    console.log('  tsx scripts/github-pr-integration.ts --integrate   # Full integration analysis');
+    console.log('  tsx scripts/github-pr-integration.ts --plan        # Generate integration plan only');
+    console.log('');
+    console.log('Environment Variables:');
+    console.log('  GITHUB_TOKEN  - GitHub Personal Access Token (required)');
   }
 }
 
-main().catch(console.error);
+runGitHubPRIntegration().catch(console.error);
