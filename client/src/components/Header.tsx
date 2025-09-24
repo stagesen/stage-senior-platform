@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, Phone } from "lucide-react";
 import { useState } from "react";
@@ -11,6 +11,7 @@ import logoUrl from "@assets/stagesenior-logo_1758726889154.webp";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [location] = useLocation();
 
   const navigation = [
     { name: "Communities", href: "/communities" },
@@ -34,16 +35,26 @@ export default function Header() {
           
           <nav className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-foreground hover:text-primary px-3 py-2 text-xl font-bold transition-colors"
-                  data-testid={`nav-${item.name.toLowerCase()}`}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {navigation.map((item) => {
+                // Robust route matching logic
+                const base = location.split(/[?#]/)[0];
+                const isActive = base === item.href || base.startsWith(item.href + "/") || (item.href === "/communities" && base === "/community-detail");
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`px-3 py-2 text-xl font-bold transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
+                      isActive
+                        ? "text-primary bg-primary/10 rounded-md"
+                        : "text-foreground hover:text-primary"
+                    }`}
+                    aria-current={isActive ? "page" : undefined}
+                    data-testid={`nav-${item.name.toLowerCase()}`}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
             </div>
           </nav>
           
@@ -67,17 +78,27 @@ export default function Header() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px]">
                 <nav className="flex flex-col space-y-4 mt-8">
-                  {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="text-foreground hover:text-primary px-3 py-2 text-xl font-bold transition-colors"
-                      onClick={() => setIsOpen(false)}
-                      data-testid={`mobile-nav-${item.name.toLowerCase()}`}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
+                  {navigation.map((item) => {
+                    // Robust route matching logic
+                    const base = location.split(/[?#]/)[0];
+                    const isActive = base === item.href || base.startsWith(item.href + "/") || (item.href === "/communities" && base === "/community-detail");
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className={`px-3 py-2 text-xl font-bold transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
+                          isActive
+                            ? "text-primary bg-primary/10 rounded-md"
+                            : "text-foreground hover:text-primary"
+                        }`}
+                        aria-current={isActive ? "page" : undefined}
+                        onClick={() => setIsOpen(false)}
+                        data-testid={`mobile-nav-${item.name.toLowerCase()}`}
+                      >
+                        {item.name}
+                      </Link>
+                    );
+                  })}
                 </nav>
               </SheetContent>
             </Sheet>
