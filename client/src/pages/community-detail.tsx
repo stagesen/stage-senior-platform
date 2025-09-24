@@ -42,6 +42,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import ScrollToTop from "@/components/ScrollToTop";
+import stageSeniorLogo from "@assets/stagesenior-logo_1758726889154.webp";
 import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryImage, Post, BlogPost } from "@shared/schema";
 
 export default function CommunityDetail() {
@@ -168,6 +169,14 @@ export default function CommunityDetail() {
 
   const galleryCategories = Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean)));
 
+  // Hero logo overlay functionality
+  const heroLogoSrc =
+    (community as any).logoImageUrl ||
+    (community as any).logoUrl ||
+    stageSeniorLogo;
+
+  const heroLogoAlt = (community as any).logoAlt || `${community.name} logo`;
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -179,6 +188,20 @@ export default function CommunityDetail() {
           data-testid="hero-image"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
+
+        {/* Hero Logo Overlay */}
+        {heroLogoSrc && (
+          <div className="absolute top-6 right-6 md:top-10 md:right-10 z-20">
+            <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg px-4 py-3 md:px-6 md:py-4 border border-white/60">
+              <img
+                src={heroLogoSrc}
+                alt={heroLogoAlt}
+                className="h-12 md:h-16 w-auto object-contain"
+                data-testid="community-hero-logo"
+              />
+            </div>
+          </div>
+        )}
         
         {/* Back Button */}
         <div className="absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 z-20">
