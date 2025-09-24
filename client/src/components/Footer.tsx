@@ -129,7 +129,6 @@ export default function Footer() {
                   Our Communities
                 </h3>
               </div>
-              <p className="text-background/70 mb-6">Discover our welcoming senior living communities across Colorado.</p>
               <ul className="space-y-3">
                 {communities.map((community) => (
                   <li key={community.slug}>
