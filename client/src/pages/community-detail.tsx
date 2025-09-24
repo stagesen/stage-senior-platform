@@ -274,8 +274,8 @@ export default function CommunityDetail() {
             </section>
 
             {/* Amenities Showcase */}
-            {(community.amenitiesData || community.amenities) && 
-             ((community.amenitiesData && community.amenitiesData.length > 0) || 
+            {(community.amenitiesData || community.amenities) &&
+             ((community.amenitiesData && community.amenitiesData.length > 0) ||
               (community.amenities && community.amenities.length > 0)) && (
               <section>
                 <h2 className="text-3xl font-bold mb-8">Amenities & Services</h2>
@@ -375,339 +375,6 @@ export default function CommunityDetail() {
                 </div>
               </section>
             )}
-
-            {/* Floor Plans Section */}
-            {floorPlans.length > 0 && (
-              <section>
-                <h2 className="text-3xl font-bold mb-8">Floor Plans & Pricing</h2>
-                <p className="text-lg text-gray-600 mb-8">
-                  Each apartment home is designed for comfort and independence, with modern conveniences and thoughtful layouts.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {floorPlans.slice(0, 4).map((floorPlan) => (
-                    <Card 
-                      key={floorPlan.id} 
-                      className="overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group" 
-                      onClick={() => {
-                        setSelectedFloorPlan(floorPlan);
-                        setIsFloorPlanModalOpen(true);
-                      }}
-                      data-testid={`floor-plan-${floorPlan.id}`}
-                    >
-                      {floorPlan.imageUrl && (
-                        <div className="relative h-48 bg-gray-100">
-                          <img
-                            src={floorPlan.imageUrl}
-                            alt={`${floorPlan.name} floor plan`}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            data-testid={`floor-plan-image-${floorPlan.id}`}
-                          />
-                        </div>
-                      )}
-                      <CardContent className="p-6">
-                        <h4 className="text-xl font-semibold mb-2" data-testid={`floor-plan-name-${floorPlan.id}`}>
-                          {floorPlan.name}
-                        </h4>
-                        {floorPlan.startingPrice && (
-                          <p className="text-2xl font-bold text-primary mb-4" data-testid={`floor-plan-price-${floorPlan.id}`}>
-                            {formatPrice(floorPlan.startingPrice)}<span className="text-base font-normal">/mo</span>
-                          </p>
-                        )}
-                        <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                          {floorPlan.bedrooms !== null && (
-                            <span className="flex items-center gap-1" data-testid={`floor-plan-bedrooms-${floorPlan.id}`}>
-                              <Bed className="w-4 h-4" />
-                              {floorPlan.bedrooms} {floorPlan.bedrooms === 1 ? 'Bed' : 'Beds'}
-                            </span>
-                          )}
-                          {floorPlan.bathrooms !== null && (
-                            <span className="flex items-center gap-1" data-testid={`floor-plan-bathrooms-${floorPlan.id}`}>
-                              <Bath className="w-4 h-4" />
-                              {Number(floorPlan.bathrooms)} {Number(floorPlan.bathrooms) === 1 ? 'Bath' : 'Baths'}
-                            </span>
-                          )}
-                          {floorPlan.sqft && (
-                            <span className="flex items-center gap-1" data-testid={`floor-plan-sqft-${floorPlan.id}`}>
-                              <Square className="w-4 h-4" />
-                              {floorPlan.sqft} sq ft
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center text-primary group-hover:translate-x-2 transition-transform">
-                          <span className="text-sm font-medium">View Details</span>
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-                {floorPlans.length > 4 && (
-                  <div className="text-center mt-8">
-                    <Button variant="outline" size="lg" data-testid="button-view-all-floor-plans">
-                      View All {floorPlans.length} Floor Plans
-                    </Button>
-                  </div>
-                )}
-              </section>
-            )}
-
-            {/* Featured Image Section */}
-            {community.heroImageUrl && (
-              <section>
-                <h2 className="text-3xl font-bold mb-8">Experience Our Community</h2>
-                <div className="rounded-2xl overflow-hidden shadow-2xl mb-12">
-                  <img
-                    src={community.heroImageUrl}
-                    alt={`${community.name} - Featured Image`}
-                    className="w-full h-[400px] object-cover"
-                    data-testid="featured-image"
-                  />
-                </div>
-              </section>
-            )}
-
-            {/* Photo Gallery */}
-            {galleryImages.length > 0 && (
-              <section>
-                <h2 className="text-3xl font-bold mb-8">Photo Gallery</h2>
-                <p className="text-lg text-gray-600 mb-8">
-                  Explore our bright, comfortable spaces and serene outdoor areas through our community gallery.
-                </p>
-
-                {/* Category Filters */}
-                {galleryCategories.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-8">
-                    <Button
-                      variant={selectedGalleryCategory === null ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedGalleryCategory(null)}
-                      data-testid="gallery-filter-all"
-                    >
-                      All Photos
-                    </Button>
-                    {galleryCategories.map((category) => (
-                      <Button
-                        key={category}
-                        variant={selectedGalleryCategory === category ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setSelectedGalleryCategory(category)}
-                        data-testid={`gallery-filter-${category}`}
-                      >
-                        {category}
-                      </Button>
-                    ))}
-                  </div>
-                )}
-
-                {/* Gallery Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {galleryImages
-                    .filter(img => !selectedGalleryCategory || img.category === selectedGalleryCategory)
-                    .slice(0, 9)
-                    .map((image) => (
-                      <div 
-                        key={image.id} 
-                        className="group cursor-pointer aspect-video rounded-lg overflow-hidden"
-                        data-testid={`gallery-image-${image.id}`}
-                      >
-                        <img
-                          src={image.url}
-                          alt={image.caption || `${community.name} gallery`}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                        />
-                      </div>
-                    ))}
-                </div>
-              </section>
-            )}
-
-            {/* Events & Activities - Full Width */}
-            {events.length > 0 && (
-              <section>
-                <h2 className="text-3xl font-bold mb-8">Upcoming Events</h2>
-                <div className="space-y-6">
-                  {events.slice(0, 4).map((event) => (
-                    <div key={event.id} className="w-full">
-                      <EventCard event={event} />
-                    </div>
-                  ))}
-                </div>
-                {events.length > 4 && (
-                  <div className="text-center mt-8">
-                    <Button variant="outline" size="lg" asChild data-testid="button-view-all-events">
-                      <Link href="/events">
-                        View All Events
-                        <ChevronRight className="w-4 h-4 ml-2" />
-                      </Link>
-                    </Button>
-                  </div>
-                )}
-              </section>
-            )}
-
-            {/* Testimonials */}
-            {testimonials.length > 0 && (
-              <section>
-                <h2 className="text-3xl font-bold mb-8">What Residents & Families Say</h2>
-                <div className="space-y-6">
-                  {testimonials.slice(0, 3).map((testimonial) => (
-                    <Card key={testimonial.id} className="border-l-4 border-l-primary" data-testid={`testimonial-${testimonial.id}`}>
-                      <CardContent className="p-8">
-                        <blockquote className="text-lg text-gray-700 italic mb-6" data-testid={`testimonial-content-${testimonial.id}`}>
-                          "{testimonial.content}"
-                        </blockquote>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-semibold text-gray-900" data-testid={`testimonial-author-${testimonial.id}`}>
-                              {testimonial.authorName}
-                            </p>
-                            {testimonial.authorRelation && (
-                              <p className="text-sm text-gray-600" data-testid={`testimonial-relation-${testimonial.id}`}>
-                                {testimonial.authorRelation}
-                              </p>
-                            )}
-                          </div>
-                          {testimonial.rating && (
-                            <div className="flex items-center gap-1" data-testid={`testimonial-rating-${testimonial.id}`}>
-                              {Array.from({ length: 5 }).map((_, i) => (
-                                <Star 
-                                  key={i} 
-                                  className={`w-5 h-5 ${i < (testimonial.rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
-                                />
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Blog Posts */}
-            {posts.length > 0 && (
-              <section>
-                <h2 className="text-3xl font-bold mb-8">News & Updates from {community.name}</h2>
-                <p className="text-lg text-gray-600 mb-8">
-                  Stay informed about the latest happenings, stories, and updates from our community.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {posts.slice(0, 4).map((post) => (
-                    <Card key={post.id} className="hover:shadow-xl transition-shadow cursor-pointer" data-testid={`blog-post-${post.id}`}>
-                      {post.heroImageUrl && (
-                        <div className="h-48 overflow-hidden">
-                          <img 
-                            src={post.heroImageUrl} 
-                            alt={post.title}
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                      )}
-                      <CardContent className="p-6">
-                        <div className="flex items-center gap-2 mb-3">
-                          <Badge variant="secondary" className="text-xs">
-                            {new Date(post.publishedAt || post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                          </Badge>
-                          {post.tags && post.tags.length > 0 && (
-                            <Badge variant="outline" className="text-xs">
-                              {post.tags[0]}
-                            </Badge>
-                          )}
-                        </div>
-                        <h3 className="text-xl font-semibold mb-2 line-clamp-2" data-testid={`blog-post-title-${post.id}`}>
-                          {post.title}
-                        </h3>
-                        <p className="text-gray-600 line-clamp-3 mb-4" data-testid={`blog-post-summary-${post.id}`}>
-                          {post.summary || post.content.substring(0, 150) + '...'}
-                        </p>
-                        <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80" asChild>
-                          <Link href={`/blog/${post.slug}`}>
-                            Read More
-                            <ArrowRight className="w-4 h-4 ml-1" />
-                          </Link>
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-                {posts.length > 4 && (
-                  <div className="text-center mt-8">
-                    <Button variant="outline" size="lg" asChild data-testid="button-view-all-posts">
-                      <Link href="/blog">
-                        View All Articles
-                        <ChevronRight className="w-4 h-4 ml-2" />
-                      </Link>
-                    </Button>
-                  </div>
-                )}
-              </section>
-            )}
-
-            {/* FAQs */}
-            {faqs.length > 0 && (
-              <section>
-                <h2 className="text-3xl font-bold mb-8">Frequently Asked Questions</h2>
-                <Accordion type="single" collapsible className="space-y-4">
-                  {faqs.slice(0, 6).map((faq) => (
-                    <AccordionItem key={faq.id} value={faq.id} className="border rounded-lg px-6 bg-gray-50" data-testid={`faq-${faq.id}`}>
-                      <AccordionTrigger className="text-left hover:no-underline py-4 text-lg" data-testid={`faq-question-${faq.id}`}>
-                        {faq.question}
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-4 text-gray-600" data-testid={`faq-answer-${faq.id}`}>
-                        {faq.answer}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-                {faqs.length > 6 && (
-                  <div className="text-center mt-8">
-                    <Button variant="outline" size="lg" asChild data-testid="button-view-all-faqs">
-                      <Link href="/faqs">
-                        View All FAQs
-                        <ChevronRight className="w-4 h-4 ml-2" />
-                      </Link>
-                    </Button>
-                  </div>
-                )}
-              </section>
-            )}
-
-            {/* Location & Neighborhood */}
-            <section>
-              <h2 className="text-3xl font-bold mb-8">Location & Neighborhood</h2>
-              <div className="bg-gray-100 rounded-xl h-96 mb-6" data-testid="map-placeholder">
-                <div className="w-full h-full flex items-center justify-center text-gray-500">
-                  <div className="text-center">
-                    <MapPin className="w-12 h-12 mx-auto mb-4" />
-                    <p className="text-lg font-medium">{community.address}</p>
-                    <p>{community.city}, {community.state} {community.zipCode}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardContent className="p-6">
-                    <h3 className="font-semibold mb-3">Nearby Healthcare</h3>
-                    <ul className="space-y-2 text-gray-600">
-                      <li>• St. Joseph Hospital - 5 miles</li>
-                      <li>• Kaiser Permanente - 3 miles</li>
-                      <li>• CVS Pharmacy - 0.5 miles</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-6">
-                    <h3 className="font-semibold mb-3">Local Amenities</h3>
-                    <ul className="space-y-2 text-gray-600">
-                      <li>• King Soopers - 1 mile</li>
-                      <li>• Parks & Recreation - 2 miles</li>
-                      <li>• Shopping Centers - 3 miles</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
-            </section>
           </div>
 
           {/* Sticky Sidebar */}
@@ -867,6 +534,341 @@ export default function CommunityDetail() {
               </Card>
             </div>
           </div>
+        </div>
+
+        <div className="mt-16 space-y-16">
+          {/* Floor Plans Section */}
+          {floorPlans.length > 0 && (
+            <section>
+              <h2 className="text-3xl font-bold mb-8">Floor Plans & Pricing</h2>
+              <p className="text-lg text-gray-600 mb-8">
+                Each apartment home is designed for comfort and independence, with modern conveniences and thoughtful layouts.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {floorPlans.slice(0, 4).map((floorPlan) => (
+                  <Card
+                    key={floorPlan.id}
+                    className="overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group"
+                    onClick={() => {
+                      setSelectedFloorPlan(floorPlan);
+                      setIsFloorPlanModalOpen(true);
+                    }}
+                    data-testid={`floor-plan-${floorPlan.id}`}
+                  >
+                    {floorPlan.imageUrl && (
+                      <div className="relative h-48 bg-gray-100">
+                        <img
+                          src={floorPlan.imageUrl}
+                          alt={`${floorPlan.name} floor plan`}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          data-testid={`floor-plan-image-${floorPlan.id}`}
+                        />
+                      </div>
+                    )}
+                    <CardContent className="p-6">
+                      <h4 className="text-xl font-semibold mb-2" data-testid={`floor-plan-name-${floorPlan.id}`}>
+                        {floorPlan.name}
+                      </h4>
+                      {floorPlan.startingPrice && (
+                        <p className="text-2xl font-bold text-primary mb-4" data-testid={`floor-plan-price-${floorPlan.id}`}>
+                          {formatPrice(floorPlan.startingPrice)}<span className="text-base font-normal">/mo</span>
+                        </p>
+                      )}
+                      <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                        {floorPlan.bedrooms !== null && (
+                          <span className="flex items-center gap-1" data-testid={`floor-plan-bedrooms-${floorPlan.id}`}>
+                            <Bed className="w-4 h-4" />
+                            {floorPlan.bedrooms} {floorPlan.bedrooms === 1 ? 'Bed' : 'Beds'}
+                          </span>
+                        )}
+                        {floorPlan.bathrooms !== null && (
+                          <span className="flex items-center gap-1" data-testid={`floor-plan-bathrooms-${floorPlan.id}`}>
+                            <Bath className="w-4 h-4" />
+                            {Number(floorPlan.bathrooms)} {Number(floorPlan.bathrooms) === 1 ? 'Bath' : 'Baths'}
+                          </span>
+                        )}
+                        {floorPlan.sqft && (
+                          <span className="flex items-center gap-1" data-testid={`floor-plan-sqft-${floorPlan.id}`}>
+                            <Square className="w-4 h-4" />
+                            {floorPlan.sqft} sq ft
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center text-primary group-hover:translate-x-2 transition-transform">
+                        <span className="text-sm font-medium">View Details</span>
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              {floorPlans.length > 4 && (
+                <div className="text-center mt-8">
+                  <Button variant="outline" size="lg" data-testid="button-view-all-floor-plans">
+                    View All {floorPlans.length} Floor Plans
+                  </Button>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* Featured Image Section */}
+          {community.heroImageUrl && (
+            <section>
+              <h2 className="text-3xl font-bold mb-8">Experience Our Community</h2>
+              <div className="rounded-2xl overflow-hidden shadow-2xl mb-12">
+                <img
+                  src={community.heroImageUrl}
+                  alt={`${community.name} - Featured Image`}
+                  className="w-full h-[400px] object-cover"
+                  data-testid="featured-image"
+                />
+              </div>
+            </section>
+          )}
+
+          {/* Photo Gallery */}
+          {galleryImages.length > 0 && (
+            <section>
+              <h2 className="text-3xl font-bold mb-8">Photo Gallery</h2>
+              <p className="text-lg text-gray-600 mb-8">
+                Explore our bright, comfortable spaces and serene outdoor areas through our community gallery.
+              </p>
+
+              {/* Category Filters */}
+              {galleryCategories.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-8">
+                  <Button
+                    variant={selectedGalleryCategory === null ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedGalleryCategory(null)}
+                    data-testid="gallery-filter-all"
+                  >
+                    All Photos
+                  </Button>
+                  {galleryCategories.map((category) => (
+                    <Button
+                      key={category}
+                      variant={selectedGalleryCategory === category ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedGalleryCategory(category)}
+                      data-testid={`gallery-filter-${category}`}
+                    >
+                      {category}
+                    </Button>
+                  ))}
+                </div>
+              )}
+
+              {/* Gallery Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {galleryImages
+                  .filter(img => !selectedGalleryCategory || img.category === selectedGalleryCategory)
+                  .slice(0, 9)
+                  .map((image) => (
+                    <div
+                      key={image.id}
+                      className="group cursor-pointer aspect-video rounded-lg overflow-hidden"
+                      data-testid={`gallery-image-${image.id}`}
+                    >
+                      <img
+                        src={image.url}
+                        alt={image.caption || `${community.name} gallery`}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                    </div>
+                  ))}
+              </div>
+            </section>
+          )}
+
+          {/* Events & Activities - Full Width */}
+          {events.length > 0 && (
+            <section>
+              <h2 className="text-3xl font-bold mb-8">Upcoming Events</h2>
+              <div className="space-y-6">
+                {events.slice(0, 4).map((event) => (
+                  <div key={event.id} className="w-full">
+                    <EventCard event={event} />
+                  </div>
+                ))}
+              </div>
+              {events.length > 4 && (
+                <div className="text-center mt-8">
+                  <Button variant="outline" size="lg" asChild data-testid="button-view-all-events">
+                    <Link href="/events">
+                      View All Events
+                      <ChevronRight className="w-4 h-4 ml-2" />
+                    </Link>
+                  </Button>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* Testimonials */}
+          {testimonials.length > 0 && (
+            <section>
+              <h2 className="text-3xl font-bold mb-8">What Residents & Families Say</h2>
+              <div className="space-y-6">
+                {testimonials.slice(0, 3).map((testimonial) => (
+                  <Card key={testimonial.id} className="border-l-4 border-l-primary" data-testid={`testimonial-${testimonial.id}`}>
+                    <CardContent className="p-8">
+                      <blockquote className="text-lg text-gray-700 italic mb-6" data-testid={`testimonial-content-${testimonial.id}`}>
+                        "{testimonial.content}"
+                      </blockquote>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-gray-900" data-testid={`testimonial-author-${testimonial.id}`}>
+                            {testimonial.authorName}
+                          </p>
+                          {testimonial.authorRelation && (
+                            <p className="text-sm text-gray-600" data-testid={`testimonial-relation-${testimonial.id}`}>
+                              {testimonial.authorRelation}
+                            </p>
+                          )}
+                        </div>
+                        {testimonial.rating && (
+                          <div className="flex items-center gap-1" data-testid={`testimonial-rating-${testimonial.id}`}>
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`w-5 h-5 ${i < (testimonial.rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Blog Posts */}
+          {posts.length > 0 && (
+            <section>
+              <h2 className="text-3xl font-bold mb-8">News & Updates from {community.name}</h2>
+              <p className="text-lg text-gray-600 mb-8">
+                Stay informed about the latest happenings, stories, and updates from our community.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {posts.slice(0, 4).map((post) => (
+                  <Card key={post.id} className="hover:shadow-xl transition-shadow cursor-pointer" data-testid={`blog-post-${post.id}`}>
+                    {post.heroImageUrl && (
+                      <div className="h-48 overflow-hidden">
+                        <img
+                          src={post.heroImageUrl}
+                          alt={post.title}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Badge variant="secondary" className="text-xs">
+                          {new Date(post.publishedAt || post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </Badge>
+                        {post.tags && post.tags.length > 0 && (
+                          <Badge variant="outline" className="text-xs">
+                            {post.tags[0]}
+                          </Badge>
+                        )}
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2 line-clamp-2" data-testid={`blog-post-title-${post.id}`}>
+                        {post.title}
+                      </h3>
+                      <p className="text-gray-600 line-clamp-3 mb-4" data-testid={`blog-post-summary-${post.id}`}>
+                        {post.summary || post.content.substring(0, 150) + '...'}
+                      </p>
+                      <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80" asChild>
+                        <Link href={`/blog/${post.slug}`}>
+                          Read More
+                          <ArrowRight className="w-4 h-4 ml-1" />
+                        </Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              {posts.length > 4 && (
+                <div className="text-center mt-8">
+                  <Button variant="outline" size="lg" asChild data-testid="button-view-all-posts">
+                    <Link href="/blog">
+                      View All Articles
+                      <ChevronRight className="w-4 h-4 ml-2" />
+                    </Link>
+                  </Button>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* FAQs */}
+          {faqs.length > 0 && (
+            <section>
+              <h2 className="text-3xl font-bold mb-8">Frequently Asked Questions</h2>
+              <Accordion type="single" collapsible className="space-y-4">
+                {faqs.slice(0, 6).map((faq) => (
+                  <AccordionItem key={faq.id} value={faq.id} className="border rounded-lg px-6 bg-gray-50" data-testid={`faq-${faq.id}`}>
+                    <AccordionTrigger className="text-left hover:no-underline py-4 text-lg" data-testid={`faq-question-${faq.id}`}>
+                      {faq.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="pb-4 text-gray-600" data-testid={`faq-answer-${faq.id}`}>
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+              {faqs.length > 6 && (
+                <div className="text-center mt-8">
+                  <Button variant="outline" size="lg" asChild data-testid="button-view-all-faqs">
+                    <Link href="/faqs">
+                      View All FAQs
+                      <ChevronRight className="w-4 h-4 ml-2" />
+                    </Link>
+                  </Button>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* Location & Neighborhood */}
+          <section>
+            <h2 className="text-3xl font-bold mb-8">Location & Neighborhood</h2>
+            <div className="bg-gray-100 rounded-xl h-96 mb-6" data-testid="map-placeholder">
+              <div className="w-full h-full flex items-center justify-center text-gray-500">
+                <div className="text-center">
+                  <MapPin className="w-12 h-12 mx-auto mb-4" />
+                  <p className="text-lg font-medium">{community.address}</p>
+                  <p>{community.city}, {community.state} {community.zipCode}</p>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold mb-3">Nearby Healthcare</h3>
+                  <ul className="space-y-2 text-gray-600">
+                    <li>• St. Joseph Hospital - 5 miles</li>
+                    <li>• Kaiser Permanente - 3 miles</li>
+                    <li>• CVS Pharmacy - 0.5 miles</li>
+                  </ul>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold mb-3">Local Amenities</h3>
+                  <ul className="space-y-2 text-gray-600">
+                    <li>• King Soopers - 1 mile</li>
+                    <li>• Parks & Recreation - 2 miles</li>
+                    <li>• Shopping Centers - 3 miles</li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+          </section>
         </div>
       </div>
 
