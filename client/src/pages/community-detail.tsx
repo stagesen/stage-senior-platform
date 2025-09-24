@@ -8,6 +8,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import EventCard from "@/components/EventCard";
 import FloorPlanModal from "@/components/FloorPlanModal";
 import { 
@@ -547,41 +548,50 @@ export default function CommunityDetail() {
 
             {/* Testimonials */}
             {testimonials.length > 0 && (
-              <section>
-                <h2 className="text-3xl font-bold mb-8">What Residents & Families Say</h2>
-                <div className="space-y-6">
-                  {testimonials.slice(0, 3).map((testimonial) => (
-                    <Card key={testimonial.id} className="border-l-4 border-l-primary" data-testid={`testimonial-${testimonial.id}`}>
-                      <CardContent className="p-8">
-                        <blockquote className="text-lg text-gray-700 italic mb-6" data-testid={`testimonial-content-${testimonial.id}`}>
-                          "{testimonial.content}"
-                        </blockquote>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-semibold text-gray-900" data-testid={`testimonial-author-${testimonial.id}`}>
+              <section className="bg-slate-50 rounded-3xl px-6 py-12 md:px-12">
+                <h2 className="text-3xl font-bold text-center mb-10">What Residents & Families Say</h2>
+                <Carousel className="max-w-4xl mx-auto" opts={{ loop: testimonials.length > 1 }}>
+                  <CarouselContent>
+                    {testimonials.slice(0, 3).map((testimonial) => (
+                      <CarouselItem key={testimonial.id} className="flex justify-center" data-testid={`testimonial-${testimonial.id}`}>
+                        <div className="bg-white rounded-3xl shadow-lg px-8 py-12 md:px-16 md:py-16 space-y-8 text-center max-w-3xl">
+                          <blockquote
+                            className="text-2xl md:text-4xl font-semibold leading-snug text-gray-900"
+                            data-testid={`testimonial-content-${testimonial.id}`}
+                          >
+                            “{testimonial.content}”
+                          </blockquote>
+                          <div className="space-y-2">
+                            <p className="text-lg font-semibold text-gray-900" data-testid={`testimonial-author-${testimonial.id}`}>
                               {testimonial.authorName}
                             </p>
                             {testimonial.authorRelation && (
-                              <p className="text-sm text-gray-600" data-testid={`testimonial-relation-${testimonial.id}`}>
+                              <p className="text-base text-gray-600" data-testid={`testimonial-relation-${testimonial.id}`}>
                                 {testimonial.authorRelation}
                               </p>
                             )}
                           </div>
                           {testimonial.rating && (
-                            <div className="flex items-center gap-1" data-testid={`testimonial-rating-${testimonial.id}`}>
+                            <div className="flex items-center justify-center gap-1" data-testid={`testimonial-rating-${testimonial.id}`}>
                               {Array.from({ length: 5 }).map((_, i) => (
-                                <Star 
-                                  key={i} 
-                                  className={`w-5 h-5 ${i < (testimonial.rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                                <Star
+                                  key={i}
+                                  className={`w-6 h-6 ${i < (testimonial.rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
                                 />
                               ))}
                             </div>
                           )}
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  {testimonials.length > 1 && (
+                    <>
+                      <CarouselPrevious className="-left-4 md:-left-12" />
+                      <CarouselNext className="-right-4 md:-right-12" />
+                    </>
+                  )}
+                </Carousel>
               </section>
             )}
 
