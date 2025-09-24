@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Facebook, Linkedin, Instagram, Phone, Mail, MapPin } from "lucide-react";
 import logoWhiteUrl from "@assets/stagesenior-logo-wht_1758726884711.webp";
+import ashaLogoUrl from "@assets/68af28185bce7fea2a2d6c03_ASHA_ASHA_WHITE_RGB-ezgif.com-resize_1758727665004.webp";
 
 export default function Footer() {
   const communities = [
@@ -123,17 +124,33 @@ export default function Footer() {
         </div>
         
         <div className="border-t border-background/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <div className="text-background/60 text-sm" data-testid="footer-copyright">
-            © 2024 Stage Senior Living. All rights reserved.
+          <div className="flex items-center space-x-4">
+            <div className="text-background/60 text-sm" data-testid="footer-copyright">
+              © {new Date().getFullYear()} Stage Management, LLC. All Rights Reserved.
+            </div>
+            <a 
+              href="https://ashaliving.org/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:opacity-80 transition-opacity"
+              data-testid="footer-asha-link"
+            >
+              <img 
+                src={ashaLogoUrl} 
+                alt="ASHA Logo"
+                className="h-8 w-auto"
+                data-testid="footer-asha-logo"
+              />
+            </a>
           </div>
           <div className="flex space-x-6 text-sm text-background/60 mt-4 md:mt-0">
-            <Link href="#" className="hover:text-primary transition-colors" data-testid="footer-privacy">
+            <Link href="/privacy" className="hover:text-primary transition-colors" data-testid="footer-privacy">
               Privacy Policy
             </Link>
-            <Link href="#" className="hover:text-primary transition-colors" data-testid="footer-terms">
+            <Link href="/terms" className="hover:text-primary transition-colors" data-testid="footer-terms">
               Terms of Service
             </Link>
-            <Link href="#" className="hover:text-primary transition-colors" data-testid="footer-accessibility">
+            <Link href="/accessibility" className="hover:text-primary transition-colors" data-testid="footer-accessibility">
               Accessibility
             </Link>
           </div>
