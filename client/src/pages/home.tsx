@@ -99,7 +99,7 @@ export default function Home() {
             <div className="mt-8 flex flex-wrap gap-4">
               <Button 
                 size="lg" 
-                className="bg-white text-primary hover:bg-white/90 font-semibold shadow-lg px-8 py-6 text-lg"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-lg px-8 py-6 text-lg"
                 asChild
                 data-testid="button-find-community"
               >
