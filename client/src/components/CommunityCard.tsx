@@ -49,33 +49,35 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
 
   return (
     <Card 
-      className={`community-card overflow-hidden hover:shadow-lg transition-all duration-300 ${
-        isSelected ? 'ring-2 ring-primary bg-primary/5' : ''
+      className={`community-card overflow-hidden hover:shadow-2xl shadow-md transition-all duration-300 ${
+        isSelected ? 'ring-2 ring-primary shadow-xl' : ''
       }`} 
       data-testid={`community-card-${community.slug}`}
       onClick={onSelect}
     >
       <CardContent className="p-0">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          {/* Image */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-0">
+          {/* Image - Better aspect ratio */}
           <div className="md:col-span-2 relative">
             <Link href={`/communities/${community.slug}`}>
-              <img
-                src={community.heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600`}
-                alt={`${community.name} - Senior Living Community`}
-                className="w-full h-64 md:h-full object-cover cursor-pointer hover:opacity-95 transition-opacity"
-                data-testid={`image-${community.slug}`}
-              />
+              <div className="aspect-[4/3] md:aspect-auto md:h-full">
+                <img
+                  src={community.heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600`}
+                  alt={`${community.name} - Senior Living Community`}
+                  className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
+                  data-testid={`image-${community.slug}`}
+                />
+              </div>
             </Link>
             {community.featured && (
-              <Badge className="absolute top-2 left-2 bg-primary text-primary-foreground" data-testid={`badge-featured-${community.slug}`}>
-                Featured
+              <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground shadow-lg px-3 py-1" data-testid={`badge-featured-${community.slug}`}>
+                Featured Community
               </Badge>
             )}
           </div>
           
-          {/* Content */}
-          <div className="md:col-span-3 p-6">
+          {/* Content - More spacing */}
+          <div className="md:col-span-3 p-6 md:p-8">
             <div className="flex justify-between items-start mb-3">
               <div>
                 <Link href={`/communities/${community.slug}`}>
