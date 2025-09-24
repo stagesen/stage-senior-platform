@@ -233,11 +233,11 @@ export default function AccessibilityStatement() {
                     <div>
                       <h4 className="font-semibold mb-2 flex items-center gap-2">
                         <UserCheck className="w-5 h-5 text-primary" />
-                        Wheelchair Accessibility
+                        Mobility Accessibility
                       </h4>
                       <ul className="text-sm space-y-1">
                         <li>• ADA-compliant doorways and hallways</li>
-                        <li>• Wheelchair-accessible bathrooms</li>
+                        <li>• Mobility-accessible bathrooms</li>
                         <li>• Ramps and elevator access</li>
                         <li>• Accessible parking spaces</li>
                         <li>• Lower counters and controls</li>
