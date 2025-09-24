@@ -3,6 +3,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import Home from "@/pages/home";
 import Communities from "@/pages/communities";
 import CommunityDetail from "@/pages/community-detail";
 import Events from "@/pages/events";
@@ -19,7 +20,7 @@ function Router() {
       <Header />
       <main className="flex-1">
         <Switch>
-          <Route path="/" component={Communities} />
+          <Route path="/" component={Home} />
           <Route path="/communities" component={Communities} />
           <Route path="/communities/:slug" component={CommunityDetail} />
           <Route path="/events" component={Events} />

@@ -27,7 +27,7 @@ import type { Community, InsertTourRequest } from "@shared/schema";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCareType, setSelectedCareType] = useState("");
+  const [selectedCareType, setSelectedCareType] = useState("all");
   const [showContactForm, setShowContactForm] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -48,7 +48,7 @@ export default function Home() {
       community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       community.city.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesCareType = !selectedCareType || 
+    const matchesCareType = selectedCareType === "all" || 
       community.careTypes?.includes(selectedCareType);
 
     return matchesSearch && matchesCareType;
@@ -59,12 +59,9 @@ export default function Home() {
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await apiRequest("/api/tour-requests", {
-        method: "POST",
-        body: JSON.stringify({
-          ...formData,
-          preferredDate: new Date().toISOString(),
-        }),
+      await apiRequest("POST", "/api/tour-requests", {
+        ...formData,
+        preferredDate: new Date().toISOString(),
       });
       toast({
         title: "Request Submitted",
@@ -177,7 +174,7 @@ export default function Home() {
                   <SelectValue placeholder="Care level" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Care Types</SelectItem>
+                  <SelectItem value="all">All Care Types</SelectItem>
                   <SelectItem value="independent-living">Independent Living</SelectItem>
                   <SelectItem value="assisted-living">Assisted Living</SelectItem>
                   <SelectItem value="memory-care">Memory Care</SelectItem>
@@ -204,9 +201,9 @@ export default function Home() {
               featuredCommunities.map((community) => (
                 <Card key={community.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="h-48 overflow-hidden">
-                    {community.heroImage ? (
+                    {community.heroImageUrl ? (
                       <img 
-                        src={community.heroImage} 
+                        src={community.heroImageUrl} 
                         alt={community.name}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
