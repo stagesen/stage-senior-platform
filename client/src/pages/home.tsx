@@ -177,8 +177,10 @@ export default function Home() {
       </section>
 
       {/* Community Carousel */}
-      <section id="finder" className="py-16 bg-primary/95 text-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="finder" className="py-16 bg-primary text-white relative overflow-hidden">
+        {/* Enhanced dark background overlay */}
+        <div className="absolute inset-0 bg-primary/95 z-0" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Header with Search/Filter */}
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -315,9 +317,8 @@ export default function Home() {
                                   </Link>
                                 </Button>
                                 <Button 
-                                  variant="outline" 
                                   size="sm"
-                                  className="flex-1 text-xs border-white/30 text-white hover:bg-white/10"
+                                  className="flex-1 text-xs bg-transparent border border-white/40 text-white hover:bg-white hover:text-primary transition-all duration-200 font-medium"
                                   onClick={() => setShowContactForm(true)}
                                   data-testid={`button-get-pricing-${community.id}`}
                                 >

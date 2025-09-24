@@ -5,17 +5,17 @@ import ashaLogoUrl from "@assets/68af28185bce7fea2a2d6c03_ASHA_ASHA_WHITE_RGB-ez
 
 export default function Footer() {
   const communities = [
-    "The Gardens at Columbine",
-    "The Gardens on Quail", 
-    "Golden Pond",
-    "Stonebridge Senior"
+    { name: "The Gardens at Columbine", slug: "the-gardens-at-columbine" },
+    { name: "The Gardens on Quail", slug: "the-gardens-on-quail" }, 
+    { name: "Golden Pond", slug: "golden-pond" },
+    { name: "Stonebridge Senior", slug: "stonebridge-senior" }
   ];
 
-  const services = [
-    "Independent Living",
-    "Assisted Living",
-    "Memory Care",
-    "Respite Care"
+  const quickLinks = [
+    { name: "Services", href: "/services" },
+    { name: "About Us", href: "/about-us" },
+    { name: "Stage Cares", href: "/stage-cares" },
+    { name: "Professional Management Services", href: "/services/management" }
   ];
 
   return (
@@ -67,33 +67,33 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-background/80">
               {communities.map((community) => (
-                <li key={community}>
+                <li key={community.slug}>
                   <Link 
-                    href="#" 
+                    href={`/communities/${community.slug}`} 
                     className="hover:text-primary transition-colors"
-                    data-testid={`footer-community-${community.toLowerCase().replace(/\s+/g, '-')}`}
+                    data-testid={`footer-community-${community.slug}`}
                   >
-                    {community}
+                    {community.name}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
           
-          {/* Services */}
+          {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold text-background mb-4" data-testid="footer-services-title">
-              Services
+            <h3 className="text-lg font-semibold text-background mb-4" data-testid="footer-quicklinks-title">
+              Quick Links
             </h3>
             <ul className="space-y-2 text-background/80">
-              {services.map((service) => (
-                <li key={service}>
+              {quickLinks.map((link) => (
+                <li key={link.href}>
                   <Link 
-                    href="#" 
+                    href={link.href} 
                     className="hover:text-primary transition-colors"
-                    data-testid={`footer-service-${service.toLowerCase().replace(/\s+/g, '-')}`}
+                    data-testid={`footer-quicklink-${link.name.toLowerCase().replace(/\s+/g, '-')}`}
                   >
-                    {service}
+                    {link.name}
                   </Link>
                 </li>
               ))}
