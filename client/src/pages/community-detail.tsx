@@ -40,6 +40,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { Link } from "wouter";
+import ScrollToTop from "@/components/ScrollToTop";
 import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryImage, Post } from "@shared/schema";
 
 export default function CommunityDetail() {
@@ -917,6 +918,9 @@ export default function CommunityDetail() {
           }}
         />
       )}
+      
+      {/* Scroll to Top Button */}
+      <ScrollToTop />
     </div>
   );
 }
