@@ -147,27 +147,27 @@ export default function CommunityDetail() {
           className="w-full h-full object-cover"
           data-testid="hero-image"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-        <div className="absolute inset-0 flex flex-col justify-between">
-          {/* Top Navigation */}
-          <div className="p-4 md:p-6 lg:p-8">
-            <Button 
-              variant="ghost" 
-              className="text-white hover:bg-white/20" 
-              asChild
-              data-testid="button-back"
-            >
-              <Link href="/communities">
-                <ChevronLeft className="w-4 h-4 mr-2" />
-                Back to Communities
-              </Link>
-            </Button>
-          </div>
-          
-          {/* Bottom Content */}
-          <div className="p-6 md:p-10 lg:p-16">
-            <div className="max-w-7xl mx-auto">
-              <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-end">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+        
+        {/* Top Navigation - Separated from main content */}
+        <div className="absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 z-20">
+          <Button 
+            variant="ghost" 
+            className="text-white hover:bg-white/20" 
+            asChild
+            data-testid="button-back"
+          >
+            <Link href="/communities">
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Back to Communities
+            </Link>
+          </Button>
+        </div>
+        
+        {/* Centered Content */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-full max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
+            <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center">
                 {/* Left Side - Community Info */}
                 <div className="text-white space-y-4">
                   <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight" data-testid="community-name">
@@ -226,19 +226,18 @@ export default function CommunityDetail() {
                     </Button>
                   </div>
                 </div>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Main Content with Tabs */}
-      <main className="relative -mt-8 md:-mt-12 lg:-mt-16 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-t-2xl shadow-2xl">
+      <main className="relative z-10 bg-gray-50 pt-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+          <div className="bg-white rounded-2xl shadow-2xl">
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="w-full h-auto p-0 bg-transparent rounded-none border-b" data-testid="tabs-list">
-                <div className="flex flex-wrap justify-center px-4 md:px-8">
+              <TabsList className="w-full h-auto p-0 bg-transparent rounded-t-2xl border-b overflow-hidden" data-testid="tabs-list">
+                <div className="flex flex-wrap justify-center px-4 md:px-8 rounded-t-2xl">
                   <TabsTrigger 
                     value="overview" 
                     className="px-4 md:px-6 py-4 md:py-5 text-sm md:text-base font-medium data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
