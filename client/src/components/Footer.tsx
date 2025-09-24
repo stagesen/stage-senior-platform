@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { Facebook, Linkedin, Instagram, Phone, Mail, MapPin } from "lucide-react";
+import logoWhiteUrl from "@assets/stagesenior-logo-wht_1758726884711.webp";
 
 export default function Footer() {
   const communities = [
@@ -25,7 +26,7 @@ export default function Footer() {
           <div className="md:col-span-1">
             <div className="mb-4" data-testid="footer-logo">
               <img 
-                src="@assets/stagesenior-logo-wht_1758726884711.webp" 
+                src={logoWhiteUrl} 
                 alt="Stage Senior"
                 className="h-12 w-auto"
               />

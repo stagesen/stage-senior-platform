@@ -7,6 +7,7 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import logoUrl from "@assets/stagesenior-logo_1758726889154.webp";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +27,7 @@ export default function Header() {
           <div className="flex items-center">
             <Link href="/" data-testid="logo">
               <img 
-                src="@assets/stagesenior-logo_1758726889154.webp" 
+                src={logoUrl} 
                 alt="Stage Senior"
                 className="h-10 w-auto"
               />
