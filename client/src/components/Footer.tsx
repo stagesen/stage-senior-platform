@@ -1,5 +1,7 @@
 import { Link } from "wouter";
-import { Facebook, Linkedin, Instagram, Phone, Mail, MapPin } from "lucide-react";
+import { Facebook, Linkedin, Instagram, Phone, Mail, MapPin, ArrowRight, Heart, Users, CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import logoWhiteUrl from "@assets/stagesenior-logo-wht_1758726884711.webp";
 import ashaLogoUrl from "@assets/68af28185bce7fea2a2d6c03_ASHA_ASHA_WHITE_RGB-ezgif.com-resize_1758727665004.webp";
 
@@ -19,140 +21,271 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-foreground text-background py-12" data-testid="footer">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          
-          {/* Company Info */}
-          <div className="md:col-span-1">
-            <div className="mb-4" data-testid="footer-logo">
-              <img 
-                src={logoWhiteUrl} 
-                alt="Stage Senior"
-                className="w-auto min-w-[150px] h-12 sm:h-14 md:h-16"
-              />
-            </div>
-            <p className="text-background/80 mb-4" data-testid="footer-description">
-              Locally owned, resident-focused senior living communities across Colorado since 2016.
-            </p>
-            <div className="flex space-x-4">
-              <a 
-                href="#" 
-                className="text-background/60 hover:text-primary transition-colors"
-                data-testid="social-facebook"
-              >
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a 
-                href="#" 
-                className="text-background/60 hover:text-primary transition-colors"
-                data-testid="social-linkedin"
-              >
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a 
-                href="#" 
-                className="text-background/60 hover:text-primary transition-colors"
-                data-testid="social-instagram"
-              >
-                <Instagram className="w-5 h-5" />
-              </a>
-            </div>
+    <footer className="bg-foreground text-background" data-testid="footer">
+      {/* Newsletter Section */}
+      <div className="bg-gradient-to-r from-primary to-secondary py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex justify-center mb-4">
+            <Heart className="w-8 h-8 text-background/90" />
           </div>
-          
-          {/* Communities */}
-          <div>
-            <h3 className="text-lg font-semibold text-background mb-4" data-testid="footer-communities-title">
-              Our Communities
-            </h3>
-            <ul className="space-y-2 text-background/80">
-              {communities.map((community) => (
-                <li key={community.slug}>
-                  <Link 
-                    href={`/communities/${community.slug}`} 
-                    className="hover:text-primary transition-colors"
-                    data-testid={`footer-community-${community.slug}`}
-                  >
-                    {community.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-semibold text-background mb-4" data-testid="footer-quicklinks-title">
-              Quick Links
-            </h3>
-            <ul className="space-y-2 text-background/80">
-              {quickLinks.map((link) => (
-                <li key={link.href}>
-                  <Link 
-                    href={link.href} 
-                    className="hover:text-primary transition-colors"
-                    data-testid={`footer-quicklink-${link.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          {/* Contact */}
-          <div>
-            <h3 className="text-lg font-semibold text-background mb-4" data-testid="footer-contact-title">
-              Contact
-            </h3>
-            <div className="space-y-2 text-background/80">
-              <div className="flex items-center" data-testid="footer-phone">
-                <Phone className="w-4 h-4 mr-2" />
-                <span>(303) 436-2300</span>
-              </div>
-              <div className="flex items-center" data-testid="footer-email">
-                <Mail className="w-4 h-4 mr-2" />
-                <span>info@stagesenior.com</span>
-              </div>
-              <div className="flex items-start" data-testid="footer-address">
-                <MapPin className="w-4 h-4 mr-2 mt-1" />
-                <span>8100 E Arapahoe Road, Suite 208<br />Centennial, CO 80112</span>
-              </div>
-            </div>
-          </div>
-          
-        </div>
-        
-        <div className="border-t border-background/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <div className="flex items-center space-x-4">
-            <div className="text-background/60 text-sm" data-testid="footer-copyright">
-              © {new Date().getFullYear()} Stage Management, LLC. All Rights Reserved.
-            </div>
-            <a 
-              href="https://ashaliving.org/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="hover:opacity-80 transition-opacity"
-              data-testid="footer-asha-link"
+          <h2 className="text-3xl md:text-4xl font-bold text-background mb-4" data-testid="newsletter-title">
+            Stay Connected with Our Community
+          </h2>
+          <p className="text-background/90 text-lg mb-8 max-w-2xl mx-auto" data-testid="newsletter-description">
+            Get the latest updates on events, wellness tips, and community news delivered to your inbox.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
+            <Input 
+              type="email" 
+              placeholder="Enter your email address"
+              className="bg-background text-foreground border-0 flex-1 h-12"
+              data-testid="newsletter-input"
+            />
+            <Button 
+              className="bg-background text-primary hover:bg-background/90 h-12 px-8 group"
+              data-testid="newsletter-submit"
             >
-              <img 
-                src={ashaLogoUrl} 
-                alt="ASHA Logo"
-                className="w-auto h-10 sm:h-12 md:h-14"
-                data-testid="footer-asha-logo"
-              />
-            </a>
+              Subscribe
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            </Button>
           </div>
-          <div className="flex space-x-6 text-sm text-background/60 mt-4 md:mt-0">
-            <Link href="/privacy" className="hover:text-primary transition-colors" data-testid="footer-privacy">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" className="hover:text-primary transition-colors" data-testid="footer-terms">
-              Terms of Service
-            </Link>
-            <Link href="/accessibility" className="hover:text-primary transition-colors" data-testid="footer-accessibility">
-              Accessibility
-            </Link>
+          <p className="text-background/70 text-sm mt-4">
+            <CheckCircle className="w-4 h-4 inline mr-1" />
+            No spam, unsubscribe at any time
+          </p>
+        </div>
+      </div>
+
+      {/* Main Footer Content */}
+      <div className="bg-foreground py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          
+            {/* Company Info */}
+            <div className="lg:col-span-4">
+              <div className="mb-6" data-testid="footer-logo">
+                <img 
+                  src={logoWhiteUrl} 
+                  alt="Stage Senior"
+                  className="w-auto min-w-[160px] h-14 sm:h-16 md:h-18"
+                />
+              </div>
+              <p className="text-background/90 mb-6 text-lg leading-relaxed" data-testid="footer-description">
+                Creating vibrant communities where seniors thrive. Locally owned and resident-focused since 2016.
+              </p>
+              
+              {/* Stats */}
+              <div className="grid grid-cols-2 gap-6 mb-8">
+                <div className="text-center p-4 bg-background/5 rounded-lg">
+                  <div className="text-2xl font-bold text-primary mb-1">9+</div>
+                  <div className="text-background/70 text-sm">Years Serving</div>
+                </div>
+                <div className="text-center p-4 bg-background/5 rounded-lg">
+                  <div className="text-2xl font-bold text-primary mb-1">4</div>
+                  <div className="text-background/70 text-sm">Communities</div>
+                </div>
+              </div>
+              
+              {/* Social Media with enhanced styling */}
+              <div className="space-y-4">
+                <h4 className="text-background font-semibold mb-3">Follow Our Journey</h4>
+                <div className="flex space-x-4">
+                  <a
+                    href="https://facebook.com/stagesenior"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-background/10 hover:bg-primary text-background/60 hover:text-background p-3 rounded-lg transition-all duration-300 group"
+                    data-testid="social-facebook"
+                  >
+                    <Facebook className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  </a>
+                  <a
+                    href="https://linkedin.com/company/stagesenior"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-background/10 hover:bg-primary text-background/60 hover:text-background p-3 rounded-lg transition-all duration-300 group"
+                    data-testid="social-linkedin"
+                  >
+                    <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  </a>
+                  <a
+                    href="https://instagram.com/stagesenior"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-background/10 hover:bg-primary text-background/60 hover:text-background p-3 rounded-lg transition-all duration-300 group"
+                    data-testid="social-instagram"
+                  >
+                    <Instagram className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          
+            {/* Communities */}
+            <div className="lg:col-span-3">
+              <div className="flex items-center mb-6">
+                <Users className="w-5 h-5 text-primary mr-2" />
+                <h3 className="text-xl font-semibold text-background" data-testid="footer-communities-title">
+                  Our Communities
+                </h3>
+              </div>
+              <p className="text-background/70 mb-6">Discover our welcoming senior living communities across Colorado.</p>
+              <ul className="space-y-3">
+                {communities.map((community) => (
+                  <li key={community.slug}>
+                    <Link 
+                      href={`/communities/${community.slug}`} 
+                      className="flex items-center text-background/80 hover:text-primary hover:translate-x-2 transition-all duration-300 group"
+                      data-testid={`footer-community-${community.slug}`}
+                    >
+                      <ArrowRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      {community.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-6 p-4 bg-primary/10 rounded-lg">
+                <p className="text-background/90 text-sm">
+                  <CheckCircle className="w-4 h-4 inline mr-2 text-primary" />
+                  Schedule a tour today and see why families choose Stage Senior.
+                </p>
+              </div>
+            </div>
+          
+            {/* Quick Links */}
+            <div className="lg:col-span-2">
+              <h3 className="text-xl font-semibold text-background mb-6" data-testid="footer-quicklinks-title">
+                Explore
+              </h3>
+              <ul className="space-y-3">
+                {quickLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link 
+                      href={link.href} 
+                      className="flex items-center text-background/80 hover:text-primary hover:translate-x-2 transition-all duration-300 group"
+                      data-testid={`footer-quicklink-${link.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    >
+                      <ArrowRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              
+              {/* CTA Button */}
+              <div className="mt-8">
+                <Link href="/communities">
+                  <Button 
+                    className="bg-primary hover:bg-primary/90 text-background w-full group"
+                    data-testid="footer-cta-communities"
+                  >
+                    View All Communities
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          
+            {/* Contact */}
+            <div className="lg:col-span-3">
+              <h3 className="text-xl font-semibold text-background mb-6" data-testid="footer-contact-title">
+                Get In Touch
+              </h3>
+              <p className="text-background/70 mb-6">Ready to learn more? We're here to help you find the perfect community.</p>
+              
+              <div className="space-y-4">
+                <div className="flex items-center p-3 bg-background/5 rounded-lg hover:bg-background/10 transition-colors" data-testid="footer-phone">
+                  <div className="bg-primary/20 p-2 rounded-lg mr-4">
+                    <Phone className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-background font-medium">(303) 436-2300</div>
+                    <div className="text-background/60 text-sm">Call us today</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center p-3 bg-background/5 rounded-lg hover:bg-background/10 transition-colors" data-testid="footer-email">
+                  <div className="bg-primary/20 p-2 rounded-lg mr-4">
+                    <Mail className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-background font-medium">info@stagesenior.com</div>
+                    <div className="text-background/60 text-sm">Email us anytime</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-start p-3 bg-background/5 rounded-lg hover:bg-background/10 transition-colors" data-testid="footer-address">
+                  <div className="bg-primary/20 p-2 rounded-lg mr-4 mt-0">
+                    <MapPin className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-background font-medium">8100 E Arapahoe Road, Suite 208</div>
+                    <div className="text-background/60">Centennial, CO 80112</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Contact CTA */}
+              <div className="mt-6 p-4 bg-secondary/10 rounded-lg">
+                <p className="text-background/90 text-sm mb-3">
+                  Questions about our communities or services?
+                </p>
+                <Link href="/contact">
+                  <Button 
+                    variant="outline" 
+                    className="border-background/30 text-background hover:bg-background hover:text-foreground w-full"
+                    data-testid="footer-contact-cta"
+                  >
+                    Contact Us Today
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Bottom Bar */}
+      <div className="bg-foreground/95 border-t border-background/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
+            
+            {/* Copyright and ASHA */}
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+              <div className="text-background/60 text-sm text-center sm:text-left" data-testid="footer-copyright">
+                © {new Date().getFullYear()} Stage Management, LLC. All Rights Reserved.
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="text-background/60 text-sm">Proud member of</span>
+                <a 
+                  href="https://ashaliving.org/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:opacity-80 transition-opacity"
+                  data-testid="footer-asha-link"
+                >
+                  <img 
+                    src={ashaLogoUrl} 
+                    alt="ASHA - Assisted Living Association"
+                    className="w-auto h-10 sm:h-12"
+                    data-testid="footer-asha-logo"
+                  />
+                </a>
+              </div>
+            </div>
+            
+            {/* Legal Links */}
+            <div className="flex flex-wrap justify-center lg:justify-end gap-6 text-sm text-background/60">
+              <Link href="/privacy" className="hover:text-primary transition-colors" data-testid="footer-privacy">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="hover:text-primary transition-colors" data-testid="footer-terms">
+                Terms of Service
+              </Link>
+              <Link href="/accessibility" className="hover:text-primary transition-colors" data-testid="footer-accessibility">
+                Accessibility
+              </Link>
+            </div>
           </div>
         </div>
       </div>

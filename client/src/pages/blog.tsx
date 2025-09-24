@@ -10,7 +10,7 @@ import { Search, Filter, Calendar, User, ArrowLeft } from "lucide-react";
 import BlogCard from "@/components/BlogCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
-import type { Post, Community } from "@shared/schema";
+import type { BlogPost, Community } from "@shared/schema";
 
 export default function Blog() {
   const params = useParams();
@@ -24,12 +24,12 @@ export default function Blog() {
     queryKey: ["/api/communities?active=true"],
   });
 
-  const { data: posts = [], isLoading: postsLoading } = useQuery<Post[]>({
-    queryKey: ["/api/posts?published=true"],
+  const { data: posts = [], isLoading: postsLoading } = useQuery<BlogPost[]>({
+    queryKey: ["/api/blog-posts?published=true"],
   });
 
-  const { data: currentPost, isLoading: postLoading } = useQuery<Post>({
-    queryKey: [`/api/posts/${postSlug}`],
+  const { data: currentPost, isLoading: postLoading } = useQuery<BlogPost>({
+    queryKey: [`/api/blog-posts/${postSlug}`],
     enabled: !!postSlug,
   });
 
@@ -157,9 +157,9 @@ export default function Blog() {
         {/* Post Content */}
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <article className="prose prose-lg max-w-none" data-testid="post-content">
-            {currentPost.heroImageUrl && (
+            {currentPost.mainImage && (
               <img
-                src={currentPost.heroImageUrl}
+                src={currentPost.mainImage}
                 alt={currentPost.title}
                 className="w-full h-96 object-cover rounded-lg mb-8"
                 data-testid="post-hero-image"

@@ -11,11 +11,13 @@ import {
   Check,
   Phone
 } from "lucide-react";
+import LeadCaptureForm from "@/components/LeadCaptureForm";
 import type { FloorPlan } from "@shared/schema";
 
 interface FloorPlanModalProps {
   floorPlan: FloorPlan;
   communityName: string;
+  communityId?: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -23,9 +25,11 @@ interface FloorPlanModalProps {
 export default function FloorPlanModal({ 
   floorPlan, 
   communityName,
+  communityId,
   isOpen, 
   onOpenChange 
 }: FloorPlanModalProps) {
+  const [showLeadCapture, setShowLeadCapture] = useState(false);
   // Create array of available images - floor plan first
   const images: { url: string; caption: string; type: 'plan' | 'photo' }[] = [];
   if (floorPlan.planImageUrl) {
@@ -203,17 +207,73 @@ export default function FloorPlanModal({
             )}
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-6">
-          <Button className="flex-1" data-testid={`button-schedule-tour-${floorPlan.id}`}>
-            <Calendar className="h-4 w-4 mr-2" />
-            Schedule a Tour
-          </Button>
-          <Button variant="outline" className="flex-1" data-testid={`button-contact-${floorPlan.id}`}>
-            <Phone className="h-4 w-4 mr-2" />
-            Contact Us
-          </Button>
-        </div>
+        {/* Enhanced Action Buttons with Lead Capture */}
+        {!showLeadCapture ? (
+          <div className="space-y-4 mt-6">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+              <Button 
+                variant="default" 
+                className="flex-1 h-12 text-base font-semibold" 
+                onClick={() => setShowLeadCapture(true)}
+                data-testid={`button-schedule-tour-${floorPlan.id}`}
+              >
+                <Calendar className="h-4 w-4 mr-2" />
+                Schedule a Tour
+              </Button>
+              <Button 
+                variant="outline" 
+                className="flex-1 h-12 text-base font-semibold" 
+                asChild
+                data-testid={`button-call-${floorPlan.id}`}
+              >
+                <a href="tel:+1-303-436-2300">
+                  <Phone className="h-4 w-4 mr-2" />
+                  Call Now
+                </a>
+              </Button>
+            </div>
+            
+            {/* Trust indicators */}
+            <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Check className="w-3 h-3 text-green-600" />
+                <span>Same-day tours</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Check className="w-3 h-3 text-green-600" />
+                <span>No obligation</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Check className="w-3 h-3 text-green-600" />
+                <span>Free consultation</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-6">
+            <LeadCaptureForm
+              variant="modal"
+              title="Schedule Your Tour"
+              description={`Get personalized tour of ${floorPlan.name} at ${communityName}`}
+              communityId={communityId}
+              communityName={communityName}
+              urgencyText="📞 Same-day tours available"
+              onSuccess={() => {
+                setShowLeadCapture(false);
+                onOpenChange(false);
+              }}
+              className="border-0 shadow-none bg-transparent"
+            />
+            <Button 
+              variant="ghost" 
+              onClick={() => setShowLeadCapture(false)}
+              className="w-full mt-3"
+              data-testid={`button-back-${floorPlan.id}`}
+            >
+              ← Back to Floor Plan
+            </Button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

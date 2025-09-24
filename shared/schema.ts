@@ -165,6 +165,26 @@ export const galleries = pgTable("galleries", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const blogPosts = pgTable("blog_posts", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  summary: text("summary"),
+  mainImage: text("main_image"),
+  thumbnailImage: text("thumbnail_image"),
+  galleryImages: jsonb("gallery_images").$type<string[]>().default([]),
+  featured: boolean("featured").default(false),
+  category: varchar("category", { length: 100 }),
+  author: varchar("author", { length: 255 }),
+  tags: jsonb("tags").$type<string[]>().default([]),
+  communityId: uuid("community_id").references(() => communities.id),
+  published: boolean("published").default(true),
+  publishedAt: timestamp("published_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const tourRequests = pgTable("tour_requests", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   name: varchar("name", { length: 255 }).notNull(),
@@ -249,6 +269,7 @@ export const communitiesRelations = relations(communities, ({ many }) => ({
   events: many(events),
   faqs: many(faqs),
   galleries: many(galleries),
+  blogPosts: many(blogPosts),
   tourRequests: many(tourRequests),
   floorPlans: many(floorPlans),
   testimonials: many(testimonials),
@@ -282,6 +303,13 @@ export const communitiesAmenitiesRelations = relations(communitiesAmenities, ({ 
 export const postsRelations = relations(posts, ({ one }) => ({
   community: one(communities, {
     fields: [posts.communityId],
+    references: [communities.id],
+  }),
+}));
+
+export const blogPostsRelations = relations(blogPosts, ({ one }) => ({
+  community: one(communities, {
+    fields: [blogPosts.communityId],
     references: [communities.id],
   }),
 }));
@@ -370,6 +398,12 @@ export const insertPostSchema = createInsertSchema(posts).omit({
   updatedAt: true,
 });
 
+export const insertBlogPostSchema = createInsertSchema(blogPosts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertEventSchema = createInsertSchema(events).omit({
   id: true,
   createdAt: true,
@@ -392,6 +426,12 @@ export const insertTourRequestSchema = createInsertSchema(tourRequests).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  // Enhanced validation for better UX
+  name: z.string().min(2, "Please enter at least 2 characters").max(100, "Name is too long"),
+  phone: z.string().min(10, "Please enter a valid phone number").regex(/^[\+]?[1-9][\d]{0,15}$/, "Please enter a valid phone number"),
+  email: z.string().email("Please enter a valid email address").optional().or(z.literal("")),
+  message: z.string().max(1000, "Message is too long").optional(),
 });
 
 export const insertFloorPlanSchema = createInsertSchema(floorPlans).omit({
@@ -425,6 +465,8 @@ export type CommunityAmenity = typeof communitiesAmenities.$inferSelect;
 export type InsertCommunityAmenity = z.infer<typeof insertCommunityAmenitySchema>;
 export type Post = typeof posts.$inferSelect;
 export type InsertPost = z.infer<typeof insertPostSchema>;
+export type BlogPost = typeof blogPosts.$inferSelect;
+export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
 export type Event = typeof events.$inferSelect;
 export type InsertEvent = z.infer<typeof insertEventSchema>;
 export type Faq = typeof faqs.$inferSelect;

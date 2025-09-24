@@ -38,17 +38,38 @@
   --font-sans: "Inter", system-ui, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
-  --radius: 8px;
-  --shadow-2xs: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00);
-  --shadow-xs: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00);
-  --shadow-sm: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00), 0px 1px 2px -1px hsl(142, 76%, 36% / 0.00);
-  --shadow: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00), 0px 1px 2px -1px hsl(142, 76%, 36% / 0.00);
-  --shadow-md: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00), 0px 2px 4px -1px hsl(142, 76%, 36% / 0.00);
-  --shadow-lg: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00), 0px 4px 6px -1px hsl(142, 76%, 36% / 0.00);
-  --shadow-xl: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00), 0px 8px 10px -1px hsl(142, 76%, 36% / 0.00);
-  --shadow-2xl: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00);
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --shadow-soft-xs: 0 1px 1px -1px hsl(213 35% 20% / 0.18), 0 1px 2px hsl(213 35% 20% / 0.1);
+  --shadow-soft-sm: 0 1px 2px -1px hsl(213 35% 20% / 0.16), 0 2px 4px hsl(213 35% 20% / 0.12);
+  --shadow-soft-md: 0 2px 4px -1px hsl(213 35% 20% / 0.14), 0 6px 12px hsl(213 35% 20% / 0.12);
+  --shadow-soft-lg: 0 10px 18px -5px hsl(213 35% 20% / 0.16), 0 12px 32px hsl(213 35% 20% / 0.14);
+  --shadow-soft-xl: 0 18px 30px -8px hsl(213 35% 20% / 0.18), 0 24px 48px hsl(213 35% 20% / 0.16);
+  --shadow-soft-2xl: 0 24px 40px -12px hsl(213 35% 20% / 0.22), 0 32px 64px hsl(213 35% 20% / 0.18);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
+  
+  /* Fluid Typography Scale */
+  --font-size-xs: clamp(0.75rem, 0.6944rem + 0.2778vw, 0.875rem);
+  --font-size-sm: clamp(0.875rem, 0.7639rem + 0.5556vw, 1.125rem);
+  --font-size-base: clamp(1.325rem, 1.325rem + 0vw, 1.325rem);
+  --font-size-lg: clamp(1.125rem, 0.8472rem + 1.3889vw, 1.75rem);
+  --font-size-xl: clamp(1.25rem, 0.9167rem + 1.6667vw, 2rem);
+  --font-size-2xl: clamp(1.5rem, 1.0556rem + 2.2222vw, 2.5rem);
+  --font-size-3xl: clamp(1.875rem, 1.2083rem + 3.3333vw, 3.25rem);
+  --font-size-4xl: clamp(2.25rem, 1.3056rem + 4.7222vw, 4.25rem);
+  --font-size-5xl: clamp(3rem, 1.7778rem + 6.1111vw, 5.5rem);
+  --font-size-6xl: clamp(3.75rem, 2.1944rem + 7.7778vw, 7rem);
+  
+  /* Fluid Line Heights */
+  --line-height-tight: 1.1;
+  --line-height-snug: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
 }
 
 .dark {
@@ -76,6 +97,18 @@
   --chart-3: hsl(228, 22%, 29%);
   --chart-4: hsl(213, 14%, 18%);
   --chart-5: hsl(220, 67%, 63%);
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --shadow-soft-xs: 0 1px 1px -1px hsl(213 60% 6% / 0.4), 0 1px 2px hsl(213 60% 6% / 0.28);
+  --shadow-soft-sm: 0 1px 2px -1px hsl(213 60% 6% / 0.36), 0 2px 4px hsl(213 60% 6% / 0.24);
+  --shadow-soft-md: 0 2px 4px -1px hsl(213 60% 6% / 0.34), 0 6px 12px hsl(213 60% 6% / 0.22);
+  --shadow-soft-lg: 0 10px 18px -5px hsl(213 60% 6% / 0.32), 0 12px 32px hsl(213 60% 6% / 0.28);
+  --shadow-soft-xl: 0 18px 30px -8px hsl(213 60% 6% / 0.3), 0 24px 48px hsl(213 60% 6% / 0.26);
+  --shadow-soft-2xl: 0 24px 40px -12px hsl(213 60% 6% / 0.32), 0 32px 64px hsl(213 60% 6% / 0.28);
 }
 
 @layer base {
@@ -85,7 +118,91 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
-    font-size: 1.325rem;
+    font-size: var(--font-size-base);
+  }
+  
+  /* Fluid Typography Utility Classes */
+  .text-fluid-xs { 
+    font-size: var(--font-size-xs); 
+    line-height: var(--line-height-normal);
+  }
+  .text-fluid-sm { 
+    font-size: var(--font-size-sm); 
+    line-height: var(--line-height-normal);
+  }
+  .text-fluid-base { 
+    font-size: var(--font-size-base); 
+    line-height: var(--line-height-normal);
+  }
+  .text-fluid-lg { 
+    font-size: var(--font-size-lg); 
+    line-height: var(--line-height-snug);
+  }
+  .text-fluid-xl { 
+    font-size: var(--font-size-xl); 
+    line-height: var(--line-height-snug);
+  }
+  .text-fluid-2xl { 
+    font-size: var(--font-size-2xl); 
+    line-height: var(--line-height-tight);
+  }
+  .text-fluid-3xl { 
+    font-size: var(--font-size-3xl); 
+    line-height: var(--line-height-tight);
+  }
+  .text-fluid-4xl { 
+    font-size: var(--font-size-4xl); 
+    line-height: var(--line-height-tight);
+  }
+  .text-fluid-5xl { 
+    font-size: var(--font-size-5xl); 
+    line-height: var(--line-height-tight);
+  }
+  .text-fluid-6xl { 
+    font-size: var(--font-size-6xl); 
+    line-height: var(--line-height-tight);
+  }
+  
+  /* Heading Elements with Fluid Typography */
+  h1 { 
+    font-size: var(--font-size-4xl); 
+    line-height: var(--line-height-tight);
+    font-weight: 700;
+  }
+  h2 { 
+    font-size: var(--font-size-3xl); 
+    line-height: var(--line-height-tight);
+    font-weight: 700;
+  }
+  h3 { 
+    font-size: var(--font-size-2xl); 
+    line-height: var(--line-height-snug);
+    font-weight: 600;
+  }
+  h4 { 
+    font-size: var(--font-size-xl); 
+    line-height: var(--line-height-snug);
+    font-weight: 600;
+  }
+  h5 { 
+    font-size: var(--font-size-lg); 
+    line-height: var(--line-height-snug);
+    font-weight: 600;
+  }
+  h6 { 
+    font-size: var(--font-size-base); 
+    line-height: var(--line-height-normal);
+    font-weight: 600;
+  }
+  
+  /* Large text elements for better readability */
+  .text-body-large { 
+    font-size: var(--font-size-lg); 
+    line-height: var(--line-height-relaxed);
+  }
+  .text-body-small { 
+    font-size: var(--font-size-sm); 
+    line-height: var(--line-height-normal);
   }
 }
 
@@ -110,4 +227,85 @@
 .filter-chip.active {
   background-color: var(--primary);
   color: var(--primary-foreground);
+}
+
+/* Sticky Header Enhancements */
+@supports (backdrop-filter: blur()) {
+  .sticky-header-blur {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+/* Smooth scroll behavior for the entire document */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced header transitions */
+.header-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Navigation link hover enhancements */
+.nav-link-enhanced {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease-in-out;
+}
+
+.nav-link-enhanced:hover::before {
+  left: 100%;
+}
+
+/* Mobile navigation improvements */
+@media (max-width: 768px) {
+  .header-mobile-compact {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  .mobile-nav-enhanced {
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .mobile-nav-enhanced.closing {
+    transform: translateX(100%);
+  }
+}
+
+/* Scrollbar styling for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Improve focus visibility for better accessibility */
+.focus-enhanced:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(var(--primary), 0.1);
 }

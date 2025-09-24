@@ -250,6 +250,94 @@ const CarouselNext = React.forwardRef<
 })
 CarouselNext.displayName = "CarouselNext"
 
+const CarouselDots = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & {
+    count?: number
+    current?: number
+    onDotClick?: (index: number) => void
+  }
+>(({ className, count = 0, current = 0, onDotClick, ...props }, ref) => {
+  const { api } = useCarousel()
+
+  const handleDotClick = React.useCallback((index: number) => {
+    if (onDotClick) {
+      onDotClick(index)
+    } else if (api) {
+      api.scrollTo(index)
+    }
+  }, [api, onDotClick])
+
+  if (count <= 1) return null
+
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "flex items-center justify-center gap-2 mt-4",
+        className
+      )}
+      role="tablist"
+      aria-label="Carousel pagination"
+      {...props}
+    >
+      {Array.from({ length: count }).map((_, index) => (
+        <button
+          key={index}
+          role="tab"
+          aria-selected={current === index}
+          aria-label={`Go to slide ${index + 1}`}
+          onClick={() => handleDotClick(index)}
+          className={cn(
+            "h-2 w-2 rounded-full transition-all duration-200",
+            "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+            current === index
+              ? "bg-primary w-8"
+              : "bg-primary/30 hover:bg-primary/60"
+          )}
+          data-testid={`carousel-dot-${index}`}
+        />
+      ))}
+    </div>
+  )
+})
+CarouselDots.displayName = "CarouselDots"
+
+const CarouselProgressBar = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & {
+    current?: number
+    total?: number
+  }
+>(({ className, current = 0, total = 0, ...props }, ref) => {
+  if (total <= 1) return null
+
+  const progress = total > 0 ? ((current + 1) / total) * 100 : 0
+
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "w-full h-1 bg-primary/20 rounded-full overflow-hidden mt-4",
+        className
+      )}
+      role="progressbar"
+      aria-valuenow={current + 1}
+      aria-valuemin={1}
+      aria-valuemax={total}
+      aria-label={`Slide ${current + 1} of ${total}`}
+      {...props}
+    >
+      <div
+        className="h-full bg-primary transition-all duration-300 ease-out rounded-full"
+        style={{ width: `${progress}%` }}
+        data-testid="carousel-progress-bar"
+      />
+    </div>
+  )
+})
+CarouselProgressBar.displayName = "CarouselProgressBar"
+
 export {
   type CarouselApi,
   Carousel,
@@ -257,4 +345,6 @@ export {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
+  CarouselDots,
+  CarouselProgressBar,
 }

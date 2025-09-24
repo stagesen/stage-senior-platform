@@ -1,7 +1,9 @@
 import { Link } from "wouter";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { 
   MapPin, 
   Phone, 
@@ -11,8 +13,11 @@ import {
   Shield, 
   Leaf, 
   Users, 
-  Home 
+  Home,
+  Check,
+  ChevronRight
 } from "lucide-react";
+import LeadCaptureForm from "@/components/LeadCaptureForm";
 import type { Community } from "@shared/schema";
 
 interface CommunityCardProps {
@@ -22,6 +27,7 @@ interface CommunityCardProps {
 }
 
 export default function CommunityCard({ community, isSelected, onSelect }: CommunityCardProps) {
+  const [showLeadCapture, setShowLeadCapture] = useState(false);
   const formatPrice = (price: number | null) => {
     if (!price) return "Contact for pricing";
     return `$${price.toLocaleString()}`;
@@ -157,41 +163,75 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
               </div>
             </div>
             
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3">
+            {/* Enhanced Actions with Lead Capture */}
+            <div className="space-y-3">
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button 
+                  variant="default"
+                  className="flex-1 h-11 font-semibold"
+                  onClick={() => setShowLeadCapture(true)}
+                  data-testid={`button-schedule-tour-${community.slug}`}
+                >
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Schedule Tour
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="flex-1 h-11 font-semibold" 
+                  asChild
+                  data-testid={`button-call-${community.slug}`}
+                >
+                  <a href={`tel:${community.phone || '+1-303-436-2300'}`}>
+                    <Phone className="w-4 h-4 mr-2" />
+                    Call Now
+                  </a>
+                </Button>
+              </div>
+              
               <Button 
-                className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
-                data-testid={`button-schedule-tour-${community.slug}`}
-              >
-                <Calendar className="w-4 h-4 mr-2" />
-                Schedule Tour
-              </Button>
-              <Button 
-                variant="outline" 
-                className="flex-1" 
-                asChild
-                data-testid={`button-call-${community.slug}`}
-              >
-                <a href={`tel:${community.phone || '+1-303-436-2300'}`}>
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call Now
-                </a>
-              </Button>
-              <Button 
-                variant="outline" 
-                className="flex-1"
+                variant="ghost" 
+                className="w-full h-9 text-sm"
                 asChild
                 data-testid={`button-details-${community.slug}`}
               >
                 <Link href={`/communities/${community.slug}`}>
                   <Info className="w-4 h-4 mr-2" />
-                  View Details
+                  View Full Details
+                  <ChevronRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
+              
+              {/* Trust indicators */}
+              <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground mt-2">
+                <div className="flex items-center gap-1">
+                  <Check className="w-3 h-3 text-green-600" />
+                  <span>Same-day tours</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Check className="w-3 h-3 text-green-600" />
+                  <span>No obligation</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </CardContent>
+
+      {/* Lead Capture Modal */}
+      <Dialog open={showLeadCapture} onOpenChange={setShowLeadCapture}>
+        <DialogContent className="max-w-md">
+          <LeadCaptureForm
+            variant="modal"
+            title="Schedule Your Tour"
+            description={`Get a personalized tour of ${community.name}`}
+            communityId={community.id}
+            communityName={community.name}
+            urgencyText="📞 Same-day tours available"
+            onSuccess={() => setShowLeadCapture(false)}
+            className="border-0 shadow-none bg-transparent"
+          />
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

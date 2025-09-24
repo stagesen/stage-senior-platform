@@ -2,10 +2,10 @@ import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, User, Clock } from "lucide-react";
-import type { Post, Community } from "@shared/schema";
+import type { BlogPost, Community } from "@shared/schema";
 
 interface BlogCardProps {
-  post: Post;
+  post: BlogPost;
   community?: Community;
 }
 
@@ -31,7 +31,7 @@ export default function BlogCard({ post, community }: BlogCardProps) {
           {/* Featured Image */}
           <div className="relative overflow-hidden">
             <img
-              src={post.heroImageUrl || `https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400`}
+              src={post.thumbnailImage || post.mainImage || `https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400`}
               alt={post.title}
               className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
               data-testid={`blog-image-${post.slug}`}

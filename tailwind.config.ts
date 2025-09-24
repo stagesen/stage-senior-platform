@@ -6,9 +6,20 @@ export default {
   theme: {
     extend: {
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        xs: "var(--radius-xs)",
+        sm: "var(--radius-sm)",
+        md: "var(--radius-md)",
+        lg: "var(--radius-lg)",
+        xl: "var(--radius-xl)",
+        "2xl": "var(--radius-2xl)",
+      },
+      boxShadow: {
+        "soft-xs": "var(--shadow-soft-xs)",
+        "soft-sm": "var(--shadow-soft-sm)",
+        "soft-md": "var(--shadow-soft-md)",
+        "soft-lg": "var(--shadow-soft-lg)",
+        "soft-xl": "var(--shadow-soft-xl)",
+        "soft-2xl": "var(--shadow-soft-2xl)",
       },
       colors: {
         background: "var(--background)",
