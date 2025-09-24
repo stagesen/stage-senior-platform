@@ -256,81 +256,85 @@ export default function Home() {
                 data-testid="communities-carousel"
               >
                 <CarouselContent className="-ml-2 md:-ml-4">
-                  {featuredCommunities.map((community, index) => (
-                    <CarouselItem 
-                      key={community.id} 
-                      className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3"
-                      data-testid={`carousel-item-${community.id}`}
-                    >
-                      <div 
-                        className={`relative overflow-hidden rounded-lg transition-all duration-300 ${
-                          selectedIndex === index 
-                            ? 'scale-100 opacity-100 shadow-2xl' 
-                            : 'scale-95 opacity-60'
-                        }`}
+                  {featuredCommunities.map((community, index) => {
+                    const isActive = selectedIndex === index
+
+                    return (
+                      <CarouselItem
+                        key={community.id}
+                        className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 flex justify-center"
+                        data-testid={`carousel-item-${community.id}`}
                       >
-                        <Card className="border-0 shadow-lg">
-                          <div className="relative h-80 overflow-hidden">
-                            {community.heroImageUrl ? (
-                              <img 
-                                src={community.heroImageUrl} 
-                                alt={community.name}
-                                className="w-full h-full object-cover"
-                                data-testid={`community-image-${community.id}`}
-                              />
-                            ) : (
-                              <div className="w-full h-full bg-gradient-to-br from-primary/30 to-primary/20 flex items-center justify-center">
-                                <MapPin className="w-16 h-16 text-white/60" />
-                              </div>
-                            )}
-                            {/* Gradient overlays */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
-                            
-                            {/* Content overlay */}
-                            <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                              <h3 className="text-xl font-bold mb-2" data-testid={`community-name-${community.id}`}>
-                                {community.name}
-                              </h3>
-                              <p className="text-sm text-white/90 mb-3 line-clamp-2">
-                                {community.shortDescription || community.description}
-                              </p>
-                              <div className="flex items-center gap-1 text-sm text-white/80 mb-4">
-                                <MapPin className="w-4 h-4" />
-                                <span data-testid={`community-address-${community.id}`}>
-                                  {community.street && community.city 
-                                    ? `${community.street}, ${community.city}, ${community.state}`
-                                    : `${community.city}, ${community.state}`}
-                                </span>
-                              </div>
-                              
-                              {/* CTAs */}
-                              <div className="flex gap-2">
-                                <Button 
-                                  asChild 
-                                  variant="secondary"
-                                  size="sm"
-                                  className="flex-1 text-xs"
-                                  data-testid={`button-learn-more-${community.id}`}
-                                >
-                                  <Link href={`/communities/${community.slug}`}>
-                                    Learn More
-                                  </Link>
-                                </Button>
-                                <Button 
-                                  size="sm"
-                                  className="flex-1 text-xs bg-transparent border border-white/40 text-white hover:bg-white hover:text-primary transition-all duration-200 font-medium"
-                                  onClick={() => setShowContactForm(true)}
-                                  data-testid={`button-get-pricing-${community.id}`}
-                                >
-                                  Get Pricing
-                                </Button>
+                        <div
+                          className={`relative w-full max-w-md overflow-hidden rounded-2xl transition-all duration-500 ease-out ${
+                            isActive
+                              ? 'scale-100 sm:scale-105 lg:scale-110 opacity-100 shadow-2xl z-20'
+                              : 'scale-90 sm:scale-95 opacity-60 z-10'
+                          }`}
+                        >
+                          <Card className="border-0 shadow-xl">
+                            <div className="relative h-80 overflow-hidden">
+                              {community.heroImageUrl ? (
+                                <img
+                                  src={community.heroImageUrl}
+                                  alt={community.name}
+                                  className="h-full w-full object-cover"
+                                  data-testid={`community-image-${community.id}`}
+                                />
+                              ) : (
+                                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/30 to-primary/20">
+                                  <MapPin className="h-16 w-16 text-white/60" />
+                                </div>
+                              )}
+                              {/* Gradient overlays */}
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+
+                              {/* Content overlay */}
+                              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                                <h3 className="mb-2 text-xl font-bold" data-testid={`community-name-${community.id}`}>
+                                  {community.name}
+                                </h3>
+                                <p className="mb-3 line-clamp-2 text-sm text-white/90">
+                                  {community.shortDescription || community.description}
+                                </p>
+                                <div className="mb-4 flex items-center gap-1 text-sm text-white/80">
+                                  <MapPin className="h-4 w-4" />
+                                  <span data-testid={`community-address-${community.id}`}>
+                                    {community.street && community.city
+                                      ? `${community.street}, ${community.city}, ${community.state}`
+                                      : `${community.city}, ${community.state}`}
+                                  </span>
+                                </div>
+
+                                {/* CTAs */}
+                                <div className="flex gap-2">
+                                  <Button
+                                    asChild
+                                    variant="secondary"
+                                    size="sm"
+                                    className="flex-1 text-xs"
+                                    data-testid={`button-learn-more-${community.id}`}
+                                  >
+                                    <Link href={`/communities/${community.slug}`}>
+                                      Learn More
+                                    </Link>
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    className="flex-1 text-xs border border-white/40 bg-transparent text-white transition-all duration-200 hover:bg-white hover:text-primary font-medium"
+                                    onClick={() => setShowContactForm(true)}
+                                    data-testid={`button-get-pricing-${community.id}`}
+                                  >
+                                    Get Pricing
+                                  </Button>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </Card>
-                      </div>
-                    </CarouselItem>
-                  ))}
+                          </Card>
+                        </div>
+                      </CarouselItem>
+                    )
+                  })}
                 </CarouselContent>
                 
                 {/* Navigation - only show if more than 1 community */}
