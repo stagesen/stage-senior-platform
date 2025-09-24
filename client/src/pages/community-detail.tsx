@@ -1,5 +1,6 @@
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
 import EventCard from "@/components/EventCard";
+import FloorPlanModal from "@/components/FloorPlanModal";
 import { 
   MapPin, 
   Phone, 
@@ -33,6 +35,8 @@ import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryIma
 export default function CommunityDetail() {
   const params = useParams();
   const slug = params.slug;
+  const [selectedFloorPlan, setSelectedFloorPlan] = useState<FloorPlan | null>(null);
+  const [isFloorPlanModalOpen, setIsFloorPlanModalOpen] = useState(false);
 
   const { data: community, isLoading: communityLoading } = useQuery<Community>({
     queryKey: [`/api/communities/${slug}`],
@@ -370,7 +374,15 @@ export default function CommunityDetail() {
                     <h3 className="text-2xl font-semibold mb-6">Our Floor Plans</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {floorPlans.map((floorPlan) => (
-                        <Card key={floorPlan.id} className="overflow-hidden hover:shadow-lg transition-shadow" data-testid={`floor-plan-${floorPlan.id}`}>
+                        <Card 
+                          key={floorPlan.id} 
+                          className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" 
+                          onClick={() => {
+                            setSelectedFloorPlan(floorPlan);
+                            setIsFloorPlanModalOpen(true);
+                          }}
+                          data-testid={`floor-plan-${floorPlan.id}`}
+                        >
                           {floorPlan.imageUrl && (
                             <div className="aspect-w-16 aspect-h-9">
                               <img
@@ -402,7 +414,13 @@ export default function CommunityDetail() {
                                 </span>
                               )}
                             </div>
-                            <Button className="w-full" data-testid={`button-reserve-tour-${floorPlan.id}`}>
+                            <Button 
+                              className="w-full" 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                              data-testid={`button-reserve-tour-${floorPlan.id}`}
+                            >
                               Reserve Your Tour
                             </Button>
                           </CardContent>
@@ -662,6 +680,21 @@ export default function CommunityDetail() {
           </div>
         </div>
       </section>
+      
+      {/* Floor Plan Modal */}
+      {selectedFloorPlan && (
+        <FloorPlanModal
+          floorPlan={selectedFloorPlan}
+          communityName={community?.name || ''}
+          isOpen={isFloorPlanModalOpen}
+          onOpenChange={(open) => {
+            setIsFloorPlanModalOpen(open);
+            if (!open) {
+              setSelectedFloorPlan(null);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
