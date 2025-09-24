@@ -19,7 +19,10 @@ export default function Header() {
   ];
 
   return (
-    <header className="bg-card border-b border-border sticky top-0 z-50" data-testid="header">
+    <header
+      className="bg-card/90 backdrop-blur-md border-b border-border shadow-sm sticky top-0 z-50"
+      data-testid="header"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
@@ -38,7 +41,7 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-foreground hover:text-primary px-3 py-2 text-xl font-bold transition-colors"
+                  className="text-foreground hover:text-primary px-3 py-2 text-[0.95rem] font-semibold transition-colors"
                   data-testid={`nav-${item.name.toLowerCase()}`}
                 >
                   {item.name}
@@ -71,7 +74,7 @@ export default function Header() {
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="text-foreground hover:text-primary px-3 py-2 text-xl font-bold transition-colors"
+                      className="text-foreground hover:text-primary px-3 py-2 text-base font-semibold transition-colors"
                       onClick={() => setIsOpen(false)}
                       data-testid={`mobile-nav-${item.name.toLowerCase()}`}
                     >
