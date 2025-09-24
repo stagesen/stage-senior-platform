@@ -10,6 +10,9 @@ import Events from "@/pages/events";
 import Blog from "@/pages/blog";
 import Admin from "@/pages/admin";
 import FAQs from "@/pages/faqs";
+import Privacy from "@/pages/privacy";
+import Terms from "@/pages/terms";
+import Accessibility from "@/pages/accessibility";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -27,6 +30,9 @@ function Router() {
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={Blog} />
           <Route path="/faqs" component={FAQs} />
+          <Route path="/privacy" component={Privacy} />
+          <Route path="/terms" component={Terms} />
+          <Route path="/accessibility" component={Accessibility} />
           <Route path="/admin" component={Admin} />
           <Route component={NotFound} />
         </Switch>
