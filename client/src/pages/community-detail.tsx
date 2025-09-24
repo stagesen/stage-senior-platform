@@ -274,9 +274,7 @@ export default function CommunityDetail() {
             </section>
 
             {/* Amenities Showcase */}
-            {(community.amenitiesData || community.amenities) && 
-             ((community.amenitiesData && community.amenitiesData.length > 0) || 
-              (community.amenities && community.amenities.length > 0)) && (
+            {community.amenities && community.amenities.length > 0 && (
               <section>
                 <h2 className="text-3xl font-bold mb-8">Amenities & Services</h2>
                 <div className="bg-gray-50 rounded-2xl p-8">
@@ -284,12 +282,12 @@ export default function CommunityDetail() {
                     Step into a lifestyle where every day feels like a retreat. Our community is packed with thoughtful amenities designed to make life easier and more enjoyable.
                   </p>
                   {/* Show featured amenities with images first if available */}
-                  {(community as any).amenitiesData && 
-                   (community as any).amenitiesData.filter((am: any) => am.imageUrl).length > 0 && (
+                  {(community as any).amenities && 
+                   (community as any).amenities.filter((am: any) => am.imageUrl).length > 0 && (
                     <div className="mb-8">
                       <h3 className="text-xl font-semibold mb-4">Featured Amenities</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {(community as any).amenitiesData
+                        {(community as any).amenities
                           .filter((am: any) => am.imageUrl)
                           .map((amenity: any, index: number) => {
                             const IconComponent = amenity.icon ? 
@@ -336,13 +334,13 @@ export default function CommunityDetail() {
                   
                   {/* Show all amenities in compact grid */}
                   <h3 className="text-xl font-semibold mb-4">
-                    {(community as any).amenitiesData && 
-                     (community as any).amenitiesData.filter((am: any) => am.imageUrl).length > 0 
+                    {(community as any).amenities && 
+                     (community as any).amenities.filter((am: any) => am.imageUrl).length > 0 
                       ? "All Amenities" 
                       : ""}
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                    {((community as any).amenitiesData || 
+                    {((community as any).amenities || 
                       community.amenities?.map(name => ({ name })) || []
                     ).map((amenity: any, index: number) => {
                       const amenityName = typeof amenity === 'string' ? amenity : amenity.name;
@@ -426,10 +424,10 @@ export default function CommunityDetail() {
                               {Number(floorPlan.bathrooms)} {Number(floorPlan.bathrooms) === 1 ? 'Bath' : 'Baths'}
                             </span>
                           )}
-                          {floorPlan.sqft && (
+                          {floorPlan.squareFeet && (
                             <span className="flex items-center gap-1" data-testid={`floor-plan-sqft-${floorPlan.id}`}>
                               <Square className="w-4 h-4" />
-                              {floorPlan.sqft} sq ft
+                              {floorPlan.squareFeet} sq ft
                             </span>
                           )}
                         </div>
@@ -607,7 +605,7 @@ export default function CommunityDetail() {
                       <CardContent className="p-6">
                         <div className="flex items-center gap-2 mb-3">
                           <Badge variant="secondary" className="text-xs">
-                            {new Date(post.publishedAt || post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                            {new Date(post.publishedAt || post.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                           </Badge>
                           {post.tags && post.tags.length > 0 && (
                             <Badge variant="outline" className="text-xs">
