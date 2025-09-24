@@ -846,25 +846,6 @@ export default function CommunityDetail() {
                 </CardContent>
               </Card>
 
-              {/* Mini Map */}
-              <Card className="shadow-lg">
-                <CardContent className="p-0">
-                  <div className="h-48 bg-gray-100 rounded-lg flex items-center justify-center" data-testid="mini-map">
-                    <div className="text-center text-gray-500">
-                      <MapPin className="w-8 h-8 mx-auto mb-2" />
-                      <p className="text-sm font-medium">{community.city}, {community.state}</p>
-                      <Button 
-                        variant="link" 
-                        size="sm" 
-                        className="mt-2"
-                        data-testid="button-get-directions"
-                      >
-                        Get Directions →
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </div>
