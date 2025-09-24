@@ -34,7 +34,7 @@ import {
   type Amenity,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm";
+import { eq, desc, asc, and, like, ilike, isNull, or, sql, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // Community operations
@@ -54,6 +54,7 @@ export interface IStorage {
     published?: boolean;
     communityId?: string;
     tags?: string[];
+    search?: string;
   }): Promise<Post[]>;
   getPost(slug: string): Promise<Post | undefined>;
   getPostById(id: string): Promise<Post | undefined>;
@@ -351,6 +352,7 @@ export class DatabaseStorage implements IStorage {
     published?: boolean;
     communityId?: string;
     tags?: string[];
+    search?: string;
   }): Promise<Post[]> {
     let query = db.select().from(posts);
     
@@ -364,6 +366,16 @@ export class DatabaseStorage implements IStorage {
     if (filters?.tags && filters.tags.length > 0) {
       conditions.push(
         sql`${posts.tags} && ${JSON.stringify(filters.tags)}`
+      );
+    }
+    if (filters?.search) {
+      const searchTerm = `%${filters.search}%`;
+      conditions.push(
+        or(
+          ilike(posts.title, searchTerm),
+          ilike(posts.summary, searchTerm),
+          ilike(posts.content, searchTerm)
+        )
       );
     }
     

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import BlogCard from "@/components/BlogCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 import type { Post, Community } from "@shared/schema";
+import { fetchPosts } from "@/lib/posts";
 
 export default function Blog() {
   const params = useParams();
@@ -24,8 +25,9 @@ export default function Blog() {
     queryKey: ["/api/communities?active=true"],
   });
 
-  const { data: posts = [], isLoading: postsLoading } = useQuery<Post[]>({
-    queryKey: ["/api/posts?published=true"],
+  const { data: allPosts = [] } = useQuery<Post[]>({
+    queryKey: ["posts", "all"],
+    queryFn: () => fetchPosts({ published: true }),
   });
 
   const { data: currentPost, isLoading: postLoading } = useQuery<Post>({
@@ -33,25 +35,40 @@ export default function Blog() {
     enabled: !!postSlug,
   });
 
-  // Get all unique tags
-  const allTags = Array.from(
-    new Set(posts.flatMap(post => post.tags || []))
-  ).sort();
+  const trimmedSearchTerm = searchTerm.trim();
+  const communityFilter = selectedCommunity === "all" ? undefined : selectedCommunity;
+  const tagFilter = selectedTag === "all" ? undefined : selectedTag;
 
-  // Filter posts
-  const filteredPosts = posts.filter((post) => {
-    const matchesSearch = !searchTerm || 
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.summary?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesCommunity = selectedCommunity === "all" || 
-      post.communityId === selectedCommunity;
-    
-    const matchesTag = selectedTag === "all" || 
-      post.tags?.includes(selectedTag);
+  const filteredQueryKey = [
+    "posts",
+    "filtered",
+    trimmedSearchTerm,
+    communityFilter ?? "",
+    tagFilter ?? "",
+  ] as const;
 
-    return matchesSearch && matchesCommunity && matchesTag;
+  const {
+    data: filteredPosts = [],
+    isLoading: filteredPostsLoading,
+    error: filteredPostsError,
+  } = useQuery<Post[]>({
+    queryKey: filteredQueryKey,
+    enabled: !postSlug,
+    placeholderData: (previousData) => previousData,
+    queryFn: () =>
+      fetchPosts({
+        published: true,
+        communityId: communityFilter,
+        tags: tagFilter ? [tagFilter] : undefined,
+        search: trimmedSearchTerm || undefined,
+      }),
   });
+
+  // Get all unique tags
+  const allTags = useMemo(
+    () => Array.from(new Set(allPosts.flatMap(post => post.tags || []))).sort(),
+    [allPosts]
+  );
 
   // If viewing a specific post
   if (postSlug) {
@@ -269,7 +286,7 @@ export default function Blog() {
               </h2>
             </div>
 
-            {postsLoading ? (
+            {filteredPostsLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[...Array(6)].map((_, i) => (
                   <Card key={i}>
@@ -288,6 +305,17 @@ export default function Blog() {
                   </Card>
                 ))}
               </div>
+            ) : filteredPostsError ? (
+              <Card>
+                <CardContent className="text-center py-12 space-y-3">
+                  <h3 className="text-lg font-medium text-foreground" data-testid="posts-error-title">
+                    Unable to load posts
+                  </h3>
+                  <p className="text-muted-foreground" data-testid="posts-error-description">
+                    Please try adjusting your filters or refresh the page.
+                  </p>
+                </CardContent>
+              </Card>
             ) : filteredPosts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredPosts.map((post) => (
@@ -340,7 +368,7 @@ export default function Blog() {
                   <CardTitle className="text-lg" data-testid="recent-posts-title">Recent Posts</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {posts.slice(0, 5).map((post) => (
+                  {allPosts.slice(0, 5).map((post) => (
                     <div key={post.id} className="border-b border-border last:border-0 pb-4 last:pb-0">
                       <Link href={`/blog/${post.slug}`} className="group">
                         <h4 className="font-medium text-foreground group-hover:text-primary transition-colors mb-1" data-testid={`recent-post-${post.slug}`}>

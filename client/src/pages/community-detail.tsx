@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import EventCard from "@/components/EventCard";
 import FloorPlanModal from "@/components/FloorPlanModal";
 import CommunityMap from "@/components/CommunityMap";
-import { 
+import {
   MapPin, 
   Phone, 
   Calendar, 
@@ -42,6 +42,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryImage, Post } from "@shared/schema";
+import { fetchPosts } from "@/lib/posts";
 
 // Import AI-generated neighborhood images
 import goldenColoradoNeighborhood from "@assets/generated_images/Golden_Colorado_neighborhood_view_6945dadb.png";
@@ -97,8 +98,15 @@ export default function CommunityDetail() {
   });
 
   const { data: posts = [], isLoading: postsLoading, error: postsError } = useQuery<Post[]>({
-    queryKey: ['/api/posts', community?.id, 'published'],
+    queryKey: ["posts", "community", community?.id],
     enabled: !!community?.id,
+    queryFn: ({ queryKey }) => {
+      const [, , communityId] = queryKey as [string, string, string | undefined];
+      if (!communityId) {
+        return Promise.resolve<Post[]>([]);
+      }
+      return fetchPosts({ published: true, communityId });
+    },
   });
 
   if (communityLoading) {

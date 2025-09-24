@@ -87,9 +87,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Post routes
   app.get("/api/posts", async (req, res) => {
     try {
-      const { published, communityId, tags } = req.query;
+      const { published, communityId, tags, search } = req.query;
       const filters: any = {};
-      
+
       if (published !== undefined) {
         filters.published = published === 'true';
       }
@@ -99,7 +99,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (tags) {
         filters.tags = Array.isArray(tags) ? tags : [tags];
       }
-      
+      if (typeof search === 'string' && search.trim()) {
+        filters.search = search.trim();
+      }
+
       const posts = await storage.getPosts(filters);
       res.json(posts);
     } catch (error) {
