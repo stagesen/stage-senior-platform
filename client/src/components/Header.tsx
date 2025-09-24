@@ -13,6 +13,9 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [location] = useLocation();
+  const normalizedLocation = location.split("?")[0];
+  const isCommunityDetailPage = /^\/communities\/[^/]+$/.test(normalizedLocation);
+  const showNavigation = !isCommunityDetailPage;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,30 +65,32 @@ export default function Header() {
             </Link>
           </div>
           
-          <nav className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
-              {navigation.map((item) => {
-                // Robust route matching logic
-                const base = location.split(/[?#]/)[0];
-                const isActive = base === item.href || base.startsWith(item.href + "/");
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`px-3 py-2 text-xl font-bold transition-all duration-200 ease-in-out focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none hover:scale-105 relative before:absolute before:inset-0 before:rounded-md before:transition-opacity before:duration-200 before:opacity-0 hover:before:opacity-100 before:bg-gradient-to-r before:from-primary/5 before:to-primary/10 ${
-                      isActive
-                        ? "text-primary bg-primary/10 rounded-md"
-                        : "text-foreground hover:text-primary"
-                    }`}
-                    aria-current={isActive ? "page" : undefined}
-                    data-testid={`nav-${item.name.toLowerCase()}`}
-                  >
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </div>
-          </nav>
+          {showNavigation && (
+            <nav className="hidden md:block">
+              <div className="ml-10 flex items-baseline space-x-8">
+                {navigation.map((item) => {
+                  // Robust route matching logic
+                  const base = location.split(/[?#]/)[0];
+                  const isActive = base === item.href || base.startsWith(item.href + "/");
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`px-3 py-2 text-xl font-bold transition-all duration-200 ease-in-out focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none hover:scale-105 relative before:absolute before:inset-0 before:rounded-md before:transition-opacity before:duration-200 before:opacity-0 hover:before:opacity-100 before:bg-gradient-to-r before:from-primary/5 before:to-primary/10 ${
+                        isActive
+                          ? "text-primary bg-primary/10 rounded-md"
+                          : "text-foreground hover:text-primary"
+                      }`}
+                      aria-current={isActive ? "page" : undefined}
+                      data-testid={`nav-${item.name.toLowerCase()}`}
+                    >
+                      {item.name}
+                    </Link>
+                  );
+                })}
+              </div>
+            </nav>
+          )}
           
           <div className="flex items-center space-x-4">
             <Button
@@ -99,38 +104,40 @@ export default function Header() {
               </a>
             </Button>
             
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden" data-testid="button-menu">
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[300px]">
-                <nav className="flex flex-col space-y-4 mt-8">
-                  {navigation.map((item) => {
-                    // Robust route matching logic
-                    const base = location.split(/[?#]/)[0];
-                    const isActive = base === item.href || base.startsWith(item.href + "/");
-                    return (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        className={`px-3 py-2 text-xl font-bold transition-all duration-200 ease-in-out focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none hover:scale-105 relative before:absolute before:inset-0 before:rounded-md before:transition-opacity before:duration-200 before:opacity-0 hover:before:opacity-100 before:bg-gradient-to-r before:from-primary/5 before:to-primary/10 ${
-                          isActive
-                            ? "text-primary bg-primary/10 rounded-md"
-                            : "text-foreground hover:text-primary"
-                        }`}
-                        aria-current={isActive ? "page" : undefined}
-                        onClick={() => setIsOpen(false)}
-                        data-testid={`mobile-nav-${item.name.toLowerCase()}`}
-                      >
-                        {item.name}
-                      </Link>
-                    );
-                  })}
-                </nav>
-              </SheetContent>
-            </Sheet>
+            {showNavigation && (
+              <Sheet open={isOpen} onOpenChange={setIsOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="md:hidden" data-testid="button-menu">
+                    <Menu className="h-6 w-6" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[300px]">
+                  <nav className="flex flex-col space-y-4 mt-8">
+                    {navigation.map((item) => {
+                      // Robust route matching logic
+                      const base = location.split(/[?#]/)[0];
+                      const isActive = base === item.href || base.startsWith(item.href + "/");
+                      return (
+                        <Link
+                          key={item.name}
+                          href={item.href}
+                          className={`px-3 py-2 text-xl font-bold transition-all duration-200 ease-in-out focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none hover:scale-105 relative before:absolute before:inset-0 before:rounded-md before:transition-opacity before:duration-200 before:opacity-0 hover:before:opacity-100 before:bg-gradient-to-r before:from-primary/5 before:to-primary/10 ${
+                            isActive
+                              ? "text-primary bg-primary/10 rounded-md"
+                              : "text-foreground hover:text-primary"
+                          }`}
+                          aria-current={isActive ? "page" : undefined}
+                          onClick={() => setIsOpen(false)}
+                          data-testid={`mobile-nav-${item.name.toLowerCase()}`}
+                        >
+                          {item.name}
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                </SheetContent>
+              </Sheet>
+            )}
           </div>
         </div>
       </div>

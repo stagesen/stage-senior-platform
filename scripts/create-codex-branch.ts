@@ -226,9 +226,9 @@ class CodexBranchCreator {
 }
 
 // Run the branch creation
-async function main() {
+async function createMain() {
   const creator = new CodexBranchCreator();
   await creator.createCodexBranch();
 }
 
-main().catch(console.error);
+createMain().catch(console.error);

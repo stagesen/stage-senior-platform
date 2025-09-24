@@ -174,7 +174,7 @@ class CodexCleanupManager {
   }
 }
 
-async function main() {
+async function cleanupMain() {
   const cleanup = new CodexCleanupManager();
   const result = await cleanup.performCleanup();
   cleanup.generateReport(result);
@@ -184,4 +184,4 @@ async function main() {
   }
 }
 
-main().catch(console.error);
+cleanupMain().catch(console.error);

@@ -146,9 +146,9 @@ class CodexCleanupCompleter {
 }
 
 // Main execution
-async function main() {
+async function completeMain() {
   const completer = new CodexCleanupCompleter();
   await completer.completeCodexCleanup();
 }
 
-main().catch(console.error);
+completeMain().catch(console.error);

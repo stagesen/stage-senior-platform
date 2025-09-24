@@ -18,6 +18,7 @@ interface CommitInfo {
   };
   author: {
     login: string;
+    id: number;
   } | null;
 }
 
@@ -33,7 +34,7 @@ interface FileChange {
   raw_url: string;
 }
 
-interface CompareData {
+interface MergeCompareData {
   ahead_by: number;
   behind_by: number;
   commits: CommitInfo[];
@@ -114,12 +115,12 @@ class CodexBranchMergeManager {
     return branches.map((branch: any) => branch.name);
   }
 
-  async getBranchComparison(): Promise<CompareData> {
+  async getBranchComparison(): Promise<MergeCompareData> {
     console.log(`🔍 Comparing ${this.baseBranch}...${this.existingBranch}`);
     return await this.makeRequest(`/repos/${this.owner}/${this.repo}/compare/${this.baseBranch}...${this.existingBranch}`);
   }
 
-  async fetchChangesFromBranch(): Promise<CompareData> {
+  async fetchChangesFromBranch(): Promise<MergeCompareData> {
     console.log('📋 Fetching changes from codex branch...');
     
     try {
@@ -203,7 +204,7 @@ class CodexBranchMergeManager {
     }
   }
 
-  async integrateChanges(compareData: CompareData): Promise<IntegrationResult> {
+  async integrateChanges(compareData: MergeCompareData): Promise<IntegrationResult> {
     console.log('\n🔧 Starting integration process...');
     
     const result: IntegrationResult = {
@@ -393,9 +394,9 @@ class CodexBranchMergeManager {
 }
 
 // Main execution
-async function main() {
+async function mergeMain() {
   const manager = new CodexBranchMergeManager();
   await manager.performCompleteWorkflow();
 }
 
-main().catch(console.error);
+mergeMain().catch(console.error);

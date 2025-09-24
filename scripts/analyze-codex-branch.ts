@@ -364,9 +364,9 @@ class CodexBranchAnalyzer {
 }
 
 // Run the analysis
-async function main() {
+async function analyzeMain() {
   const analyzer = new CodexBranchAnalyzer();
   await analyzer.analyzeCodexBranch();
 }
 
-main().catch(console.error);
+analyzeMain().catch(console.error);
