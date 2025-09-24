@@ -67,45 +67,204 @@ export default function CommunityDetail() {
   });
 
   const { data: events = [] } = useQuery<Event[]>({
-    queryKey: [`/api/events?communityId=${community?.id}&upcoming=true`],
-    enabled: !!community?.id,
+    queryKey: [`/api/events?communityId=${community?.id || ''}&upcoming=true`],
+    enabled: !!slug && !!community?.id,
   });
 
   const { data: faqs = [] } = useQuery<Faq[]>({
-    queryKey: [`/api/faqs?communityId=${community?.id}&active=true`],
-    enabled: !!community?.id,
+    queryKey: [`/api/faqs?communityId=${community?.id || ''}&active=true`],
+    enabled: !!slug && !!community?.id,
   });
 
   const { data: galleries = [] } = useQuery<Gallery[]>({
-    queryKey: [`/api/galleries?communityId=${community?.id}&active=true`],
-    enabled: !!community?.id,
+    queryKey: [`/api/galleries?communityId=${community?.id || ''}&active=true`],
+    enabled: !!slug && !!community?.id,
   });
 
   const { data: floorPlans = [] } = useQuery<FloorPlan[]>({
-    queryKey: [`/api/floor-plans?communityId=${community?.id}&active=true`],
-    enabled: !!community?.id,
+    queryKey: [`/api/floor-plans?communityId=${community?.id || ''}&active=true`],
+    enabled: !!slug && !!community?.id,
   });
 
   const { data: testimonials = [] } = useQuery<Testimonial[]>({
-    queryKey: [`/api/testimonials?communityId=${community?.id}&approved=true`],
-    enabled: !!community?.id,
+    queryKey: [`/api/testimonials?communityId=${community?.id || ''}&approved=true`],
+    enabled: !!slug && !!community?.id,
   });
 
   const { data: galleryImages = [] } = useQuery<GalleryImage[]>({
-    queryKey: [`/api/gallery-images?communityId=${community?.id}&active=true`],
-    enabled: !!community?.id,
+    queryKey: [`/api/gallery-images?communityId=${community?.id || ''}&active=true`],
+    enabled: !!slug && !!community?.id,
   });
 
   const { data: posts = [] } = useQuery<Post[]>({
-    queryKey: [`/api/posts?communityId=${community?.id}&published=true`],
-    enabled: !!community?.id,
+    queryKey: [`/api/posts?communityId=${community?.id || ''}&published=true`],
+    enabled: !!slug && !!community?.id,
   });
 
   const { data: blogPosts = [] } = useQuery<BlogPost[]>({
-    queryKey: [`/api/blog-posts?communityId=${community?.id}&published=true`],
-    enabled: !!community?.id,
+    queryKey: [`/api/blog-posts?communityId=${community?.id || ''}&published=true`],
+    enabled: !!slug && !!community?.id,
   });
 
+  // Computed values based on query data
+  const galleryCategories = Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean)));
+
+  const hasAmenities = Boolean(
+    (community as any)?.amenitiesData?.length || community?.amenities?.length
+  );
+  const hasFloorPlans = floorPlans.length > 0;
+  const hasGallery = galleryImages.length > 0;
+  const hasEvents = events.length > 0;
+  const hasTestimonials = testimonials.length > 0;
+  const hasPosts = posts.length > 0;
+  const hasFaqs = faqs.length > 0;
+
+  // Navigation sections memoization
+  const navSections = useMemo(() => {
+    const sections: { id: string; label: string }[] = [
+      { id: "overview", label: "Overview" },
+      { id: "highlights", label: "Highlights" },
+    ];
+
+    if (hasAmenities) {
+      sections.push({ id: "amenities", label: "Amenities" });
+    }
+
+    if (hasFloorPlans) {
+      sections.push({ id: "floor-plans", label: "Floor Plans & Pricing" });
+    }
+
+    if (hasGallery) {
+      sections.push({ id: "gallery", label: "Gallery" });
+    }
+
+    if (hasEvents) {
+      sections.push({ id: "events", label: "Events" });
+    }
+
+    if (hasTestimonials) {
+      sections.push({ id: "testimonials", label: "Testimonials" });
+    }
+
+    if (hasPosts) {
+      sections.push({ id: "news", label: "News" });
+    }
+
+    if (hasFaqs) {
+      sections.push({ id: "faqs", label: "FAQs" });
+    }
+
+    sections.push({ id: "neighborhood", label: "Neighborhood" });
+    sections.push({ id: "contact", label: "Contact" });
+
+    return sections;
+  }, [hasAmenities, hasFloorPlans, hasGallery, hasEvents, hasTestimonials, hasPosts, hasFaqs]);
+
+  // Effect to manage active section based on navigation sections
+  useEffect(() => {
+    if (!navSections.length) {
+      setActiveSection(null);
+      return;
+    }
+
+    setActiveSection((current) => {
+      if (current && navSections.some((section) => section.id === current)) {
+        return current;
+      }
+
+      return navSections[0].id;
+    });
+  }, [navSections]);
+
+  // Intersection Observer effect for active section tracking
+  useEffect(() => {
+    if (!navSections.length) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntries = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+        const fallbackEntries = [...entries].sort(
+          (a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top)
+        );
+
+        const nextActiveEntry = visibleEntries[0] ?? fallbackEntries[0];
+        const nextActiveId =
+          nextActiveEntry?.target instanceof HTMLElement ? nextActiveEntry.target.id : null;
+
+        if (nextActiveId) {
+          setActiveSection(nextActiveId);
+        }
+      },
+      {
+        rootMargin: "-150px 0px -60%",
+        threshold: [0.1, 0.25, 0.5],
+      }
+    );
+
+    const elements = navSections
+      .map((section) => document.getElementById(section.id))
+      .filter((element): element is HTMLElement => Boolean(element));
+
+    elements.forEach((element) => observer.observe(element));
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [navSections]);
+
+  // Helper functions
+  const formatPrice = (price: number | null) => {
+    if (!price) return "Contact for pricing";
+    return `$${price.toLocaleString()}`;
+  };
+
+  const getAmenityIcon = (amenity: string) => {
+    const amenityLower = amenity.toLowerCase();
+    if (amenityLower.includes('dining')) return Coffee;
+    if (amenityLower.includes('wifi') || amenityLower.includes('internet')) return Wifi;
+    if (amenityLower.includes('transport')) return Car;
+    if (amenityLower.includes('fitness') || amenityLower.includes('gym')) return Activity;
+    if (amenityLower.includes('library') || amenityLower.includes('learn')) return BookOpen;
+    if (amenityLower.includes('health') || amenityLower.includes('medical')) return Heart;
+    if (amenityLower.includes('social') || amenityLower.includes('community')) return Users;
+    return Sparkles;
+  };
+
+  const handleNavClick = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (!element) {
+      return;
+    }
+
+    const headerElement = document.querySelector<HTMLElement>('[data-testid="header"]');
+    const navElement = document.querySelector<HTMLElement>('[data-community-sticky-nav]');
+    const offset = (headerElement?.offsetHeight ?? 0) + (navElement?.offsetHeight ?? 0) + 16;
+
+    const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+    const offsetPosition = elementPosition - offset;
+
+    window.scrollTo({
+      top: offsetPosition < 0 ? 0 : offsetPosition,
+      behavior: "smooth",
+    });
+
+    setActiveSection(sectionId);
+  };
+
+  // Hero logo overlay functionality
+  const heroLogoSrc =
+    (community as any)?.logoImageUrl ||
+    (community as any)?.logoUrl ||
+    stageSeniorLogo;
+
+  const heroLogoAlt = (community as any)?.logoAlt || `${community?.name || 'Community'} logo`;
+
+  // Early returns after all hooks
   if (communityLoading) {
     return (
       <div className="min-h-screen">
@@ -152,158 +311,6 @@ export default function CommunityDetail() {
     );
   }
 
-  const formatPrice = (price: number | null) => {
-    if (!price) return "Contact for pricing";
-    return `$${price.toLocaleString()}`;
-  };
-
-  const getAmenityIcon = (amenity: string) => {
-    const amenityLower = amenity.toLowerCase();
-    if (amenityLower.includes('dining')) return Coffee;
-    if (amenityLower.includes('wifi') || amenityLower.includes('internet')) return Wifi;
-    if (amenityLower.includes('transport')) return Car;
-    if (amenityLower.includes('fitness') || amenityLower.includes('gym')) return Activity;
-    if (amenityLower.includes('library') || amenityLower.includes('learn')) return BookOpen;
-    if (amenityLower.includes('health') || amenityLower.includes('medical')) return Heart;
-    if (amenityLower.includes('social') || amenityLower.includes('community')) return Users;
-    return Sparkles;
-  };
-
-  const galleryCategories = Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean)));
-
-  const hasAmenities = Boolean(
-    (community as any).amenitiesData?.length || community.amenities?.length
-  );
-  const hasFloorPlans = floorPlans.length > 0;
-  const hasGallery = galleryImages.length > 0;
-  const hasEvents = events.length > 0;
-  const hasTestimonials = testimonials.length > 0;
-  const hasPosts = posts.length > 0;
-  const hasFaqs = faqs.length > 0;
-
-  const navSections = useMemo(() => {
-    const sections: { id: string; label: string }[] = [
-      { id: "overview", label: "Overview" },
-      { id: "highlights", label: "Highlights" },
-    ];
-
-    if (hasAmenities) {
-      sections.push({ id: "amenities", label: "Amenities" });
-    }
-
-    if (hasFloorPlans) {
-      sections.push({ id: "floor-plans", label: "Floor Plans & Pricing" });
-    }
-
-    if (hasGallery) {
-      sections.push({ id: "gallery", label: "Gallery" });
-    }
-
-    if (hasEvents) {
-      sections.push({ id: "events", label: "Events" });
-    }
-
-    if (hasTestimonials) {
-      sections.push({ id: "testimonials", label: "Testimonials" });
-    }
-
-    if (hasPosts) {
-      sections.push({ id: "news", label: "News" });
-    }
-
-    if (hasFaqs) {
-      sections.push({ id: "faqs", label: "FAQs" });
-    }
-
-    sections.push({ id: "neighborhood", label: "Neighborhood" });
-    sections.push({ id: "contact", label: "Contact" });
-
-    return sections;
-  }, [hasAmenities, hasFloorPlans, hasGallery, hasEvents, hasTestimonials, hasPosts, hasFaqs]);
-
-  useEffect(() => {
-    if (!navSections.length) {
-      setActiveSection(null);
-      return;
-    }
-
-    setActiveSection((current) => {
-      if (current && navSections.some((section) => section.id === current)) {
-        return current;
-      }
-
-      return navSections[0].id;
-    });
-  }, [navSections]);
-
-  useEffect(() => {
-    if (!navSections.length) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntries = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-
-        const fallbackEntries = [...entries].sort(
-          (a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top)
-        );
-
-        const nextActiveEntry = visibleEntries[0] ?? fallbackEntries[0];
-        const nextActiveId =
-          nextActiveEntry?.target instanceof HTMLElement ? nextActiveEntry.target.id : null;
-
-        if (nextActiveId) {
-          setActiveSection(nextActiveId);
-        }
-      },
-      {
-        rootMargin: "-150px 0px -60%",
-        threshold: [0.1, 0.25, 0.5],
-      }
-    );
-
-    const elements = navSections
-      .map((section) => document.getElementById(section.id))
-      .filter((element): element is HTMLElement => Boolean(element));
-
-    elements.forEach((element) => observer.observe(element));
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [navSections]);
-
-  const handleNavClick = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (!element) {
-      return;
-    }
-
-    const headerElement = document.querySelector<HTMLElement>('[data-testid="header"]');
-    const navElement = document.querySelector<HTMLElement>('[data-community-sticky-nav]');
-    const offset = (headerElement?.offsetHeight ?? 0) + (navElement?.offsetHeight ?? 0) + 16;
-
-    const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-    const offsetPosition = elementPosition - offset;
-
-    window.scrollTo({
-      top: offsetPosition < 0 ? 0 : offsetPosition,
-      behavior: "smooth",
-    });
-
-    setActiveSection(sectionId);
-  };
-
-  // Hero logo overlay functionality
-  const heroLogoSrc =
-    (community as any).logoImageUrl ||
-    (community as any).logoUrl ||
-    stageSeniorLogo;
-
-  const heroLogoAlt = (community as any).logoAlt || `${community.name} logo`;
 
   return (
     <div className="min-h-screen bg-white">
