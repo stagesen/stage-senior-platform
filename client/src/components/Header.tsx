@@ -15,9 +15,7 @@ export default function Header() {
   const navigation = [
     { name: "Communities", href: "/communities" },
     { name: "Events", href: "/events" },
-    { name: "Blog", href: "/blog" },
-    { name: "FAQs", href: "/faqs" },
-    { name: "Admin", href: "/admin" },
+    { name: "About Us", href: "/about-us" },
   ];
 
   return (
@@ -40,7 +38,7 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-foreground hover:text-primary px-3 py-2 text-base font-medium transition-colors"
+                  className="text-foreground hover:text-primary px-3 py-2 text-xl font-bold transition-colors"
                   data-testid={`nav-${item.name.toLowerCase()}`}
                 >
                   {item.name}
@@ -73,7 +71,7 @@ export default function Header() {
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="text-foreground hover:text-primary px-3 py-2 text-base font-medium transition-colors"
+                      className="text-foreground hover:text-primary px-3 py-2 text-xl font-bold transition-colors"
                       onClick={() => setIsOpen(false)}
                       data-testid={`mobile-nav-${item.name.toLowerCase()}`}
                     >
