@@ -15,6 +15,7 @@ export default function Header() {
     { name: "Communities", href: "/communities" },
     { name: "Events", href: "/events" },
     { name: "Blog", href: "/blog" },
+    { name: "FAQs", href: "/faqs" },
     { name: "Admin", href: "/admin" },
   ];
 
