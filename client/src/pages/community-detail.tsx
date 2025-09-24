@@ -40,7 +40,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { Link } from "wouter";
-import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryImage } from "@shared/schema";
+import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryImage, Post } from "@shared/schema";
 
 export default function CommunityDetail() {
   const params = useParams();
@@ -81,6 +81,11 @@ export default function CommunityDetail() {
 
   const { data: galleryImages = [] } = useQuery<GalleryImage[]>({
     queryKey: [`/api/gallery-images?communityId=${community?.id}&active=true`],
+    enabled: !!community?.id,
+  });
+
+  const { data: posts = [] } = useQuery<Post[]>({
+    queryKey: [`/api/posts?communityId=${community?.id}&published=true`],
     enabled: !!community?.id,
   });
 
@@ -370,6 +375,21 @@ export default function CommunityDetail() {
               </section>
             )}
 
+            {/* Featured Image Section */}
+            {community.heroImageUrl && (
+              <section>
+                <h2 className="text-3xl font-bold mb-8">Experience Our Community</h2>
+                <div className="rounded-2xl overflow-hidden shadow-2xl mb-12">
+                  <img
+                    src={community.heroImageUrl}
+                    alt={`${community.name} - Featured Image`}
+                    className="w-full h-[400px] object-cover"
+                    data-testid="featured-image"
+                  />
+                </div>
+              </section>
+            )}
+
             {/* Photo Gallery */}
             {galleryImages.length > 0 && (
               <section>
@@ -425,13 +445,15 @@ export default function CommunityDetail() {
               </section>
             )}
 
-            {/* Events & Activities */}
+            {/* Events & Activities - Full Width */}
             {events.length > 0 && (
               <section>
                 <h2 className="text-3xl font-bold mb-8">Upcoming Events</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-6">
                   {events.slice(0, 4).map((event) => (
-                    <EventCard key={event.id} event={event} />
+                    <div key={event.id} className="w-full">
+                      <EventCard event={event} />
+                    </div>
                   ))}
                 </div>
                 {events.length > 4 && (
@@ -484,6 +506,65 @@ export default function CommunityDetail() {
                     </Card>
                   ))}
                 </div>
+              </section>
+            )}
+
+            {/* Blog Posts */}
+            {posts.length > 0 && (
+              <section>
+                <h2 className="text-3xl font-bold mb-8">News & Updates from {community.name}</h2>
+                <p className="text-lg text-gray-600 mb-8">
+                  Stay informed about the latest happenings, stories, and updates from our community.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {posts.slice(0, 4).map((post) => (
+                    <Card key={post.id} className="hover:shadow-xl transition-shadow cursor-pointer" data-testid={`blog-post-${post.id}`}>
+                      {post.heroImageUrl && (
+                        <div className="h-48 overflow-hidden">
+                          <img 
+                            src={post.heroImageUrl} 
+                            alt={post.title}
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      )}
+                      <CardContent className="p-6">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Badge variant="secondary" className="text-xs">
+                            {new Date(post.publishedAt || post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </Badge>
+                          {post.tags && post.tags.length > 0 && (
+                            <Badge variant="outline" className="text-xs">
+                              {post.tags[0]}
+                            </Badge>
+                          )}
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2 line-clamp-2" data-testid={`blog-post-title-${post.id}`}>
+                          {post.title}
+                        </h3>
+                        <p className="text-gray-600 line-clamp-3 mb-4" data-testid={`blog-post-summary-${post.id}`}>
+                          {post.summary || post.content.substring(0, 150) + '...'}
+                        </p>
+                        <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80" asChild>
+                          <Link href={`/blog/${post.slug}`}>
+                            Read More
+                            <ArrowRight className="w-4 h-4 ml-1" />
+                          </Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+                {posts.length > 4 && (
+                  <div className="text-center mt-8">
+                    <Button variant="outline" size="lg" asChild data-testid="button-view-all-posts">
+                      <Link href="/blog">
+                        View All Articles
+                        <ChevronRight className="w-4 h-4 ml-2" />
+                      </Link>
+                    </Button>
+                  </div>
+                )}
               </section>
             )}
 
