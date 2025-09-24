@@ -1,0 +1,97 @@
+{
+  "url": "https://api.github.com/repos/stagesen/stage-senior-platform/compare/main...backup/recent-work-before-rollback",
+  "html_url": "https://github.com/stagesen/stage-senior-platform/compare/main...backup/recent-work-before-rollback",
+  "permalink_url": "https://github.com/stagesen/stage-senior-platform/compare/stagesen:40bfc21...stagesen:b0c0f0a",
+  "diff_url": "https://github.com/stagesen/stage-senior-platform/compare/main...backup/recent-work-before-rollback.diff",
+  "patch_url": "https://github.com/stagesen/stage-senior-platform/compare/main...backup/recent-work-before-rollback.patch",
+  "base_commit": {
+    "sha": "40bfc21f2246749cf3e07255df3d072f391a04d1",
+    "node_id": "C_kwDOP2HSs9oAKDQwYmZjMjFmMjI0Njc0OWNmM2UwNzI1NWRmM2QwNzJmMzkxYTA0ZDE",
+    "commit": {
+      "author": {
+        "name": "TrevorHarwood2",
+        "email": "20693418-TrevorHarwood2@users.noreply.replit.com",
+        "date": "2025-09-24T18:56:55Z"
+      },
+      "committer": {
+        "name": "TrevorHarwood2",
+        "email": "20693418-TrevorHarwood2@users.noreply.replit.com",
+        "date": "2025-09-24T18:56:55Z"
+      },
+      "message": "Fix visual issues with the community platform's display\n\nAddress styling inconsistencies in the carousel component and improve text readability by adjusting the color contrast for the \"Get Pricing\" button.\n\nReplit-Commit-Author: Agent\nReplit-Commit-Session-Id: 43270417-038d-4574-bbe0-de1a495c4f1f\nReplit-Commit-Checkpoint-Type: full_checkpoint",
+      "tree": {
+        "sha": "092ebead2bc37ef9c3b2a42cb9b5e6d19fa70416",
+        "url": "https://api.github.com/repos/stagesen/stage-senior-platform/git/trees/092ebead2bc37ef9c3b2a42cb9b5e6d19fa70416"
+      },
+      "url": "https://api.github.com/repos/stagesen/stage-senior-platform/git/commits/40bfc21f2246749cf3e07255df3d072f391a04d1",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/stagesen/stage-senior-platform/commits/40bfc21f2246749cf3e07255df3d072f391a04d1",
+    "html_url": "https://github.com/stagesen/stage-senior-platform/commit/40bfc21f2246749cf3e07255df3d072f391a04d1",
+    "comments_url": "https://api.github.com/repos/stagesen/stage-senior-platform/commits/40bfc21f2246749cf3e07255df3d072f391a04d1/comments",
+    "author": null,
+    "committer": null,
+    "parents": [
+      {
+        "sha": "861194cb6d8984fd3015276a72a2f594f34baa41",
+        "url": "https://api.github.com/repos/stagesen/stage-senior-platform/commits/861194cb6d8984fd3015276a72a2f594f34baa41",
+        "html_url": "https://github.com/stagesen/stage-senior-platform/commit/861194cb6d8984fd3015276a72a2f594f34baa41"
+      }
+    ]
+  },
+  "merge_base_commit": {
+    "sha": "b0c0f0a19cb1079137c6a0d04a419c0dba2b32b6",
+    "node_id": "C_kwDOP2HSs9oAKGIwYzBmMGExOWNiMTA3OTEzN2M2YTBkMDRhNDE5YzBkYmEyYjMyYjY",
+    "commit": {
+      "author": {
+        "name": "TrevorHarwood2",
+        "email": "20693418-TrevorHarwood2@users.noreply.replit.com",
+        "date": "2025-09-24T18:46:13Z"
+      },
+      "committer": {
+        "name": "TrevorHarwood2",
+        "email": "20693418-TrevorHarwood2@users.noreply.replit.com",
+        "date": "2025-09-24T18:46:13Z"
+      },
+      "message": "Make community navigation sticky and improve section highlighting\n\nUpdate CommunityDetailNavigation component to implement sticky navigation behavior and adjust data-testid attributes for community navigation items.\n\nReplit-Commit-Author: Agent\nReplit-Commit-Session-Id: 67914e12-da0c-4dc0-8296-7f10f7da25b8\nReplit-Commit-Checkpoint-Type: full_checkpoint\nReplit-Commit-Screenshot-Url: https://storage.googleapis.com/screenshot-production-us-central1/accddeac-c341-4958-aa07-9c86c0bf16e5/67914e12-da0c-4dc0-8296-7f10f7da25b8/jvfcZoV",
+      "tree": {
+        "sha": "2ff771c97eb8d5f48c91ebc04597d58bb8553b72",
+        "url": "https://api.github.com/repos/stagesen/stage-senior-platform/git/trees/2ff771c97eb8d5f48c91ebc04597d58bb8553b72"
+      },
+      "url": "https://api.github.com/repos/stagesen/stage-senior-platform/git/commits/b0c0f0a19cb1079137c6a0d04a419c0dba2b32b6",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/stagesen/stage-senior-platform/commits/b0c0f0a19cb1079137c6a0d04a419c0dba2b32b6",
+    "html_url": "https://github.com/stagesen/stage-senior-platform/commit/b0c0f0a19cb1079137c6a0d04a419c0dba2b32b6",
+    "comments_url": "https://api.github.com/repos/stagesen/stage-senior-platform/commits/b0c0f0a19cb1079137c6a0d04a419c0dba2b32b6/comments",
+    "author": null,
+    "committer": null,
+    "parents": [
+      {
+        "sha": "985d2d696c99e3a53fd9ab08d64da05b55e7075e",
+        "url": "https://api.github.com/repos/stagesen/stage-senior-platform/commits/985d2d696c99e3a53fd9ab08d64da05b55e7075e",
+        "html_url": "https://github.com/stagesen/stage-senior-platform/commit/985d2d696c99e3a53fd9ab08d64da05b55e7075e"
+      }
+    ]
+  },
+  "status": "behind",
+  "ahead_by": 0,
+  "behind_by": 3,
+  "total_commits": 0,
+  "commits": [],
+  "files": []
+}
