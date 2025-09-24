@@ -302,9 +302,9 @@ class GitHubCleanupManager {
 }
 
 // Run the cleanup
-async function main() {
+async function runCleanup() {
   const manager = new GitHubCleanupManager();
   await manager.executeCleanup();
 }
 
-main().catch(console.error);
+runCleanup().catch(console.error);

@@ -67,7 +67,7 @@ export default function Footer() {
                 <img 
                   src={logoWhiteUrl} 
                   alt="Stage Senior"
-                  className="w-auto min-w-[160px] h-14 sm:h-16 md:h-18"
+                  className="w-auto object-contain min-w-[160px] h-14 sm:h-16 md:h-18"
                 />
               </div>
               <p className="text-background/90 mb-6 text-lg leading-relaxed" data-testid="footer-description">

@@ -44,11 +44,16 @@ export default function Header() {
             isScrolled ? 'h-14' : 'h-16'
           }`}>
           <div className="flex items-center">
-            <Link href="/" data-testid="logo">
-              <img 
-                src={logoUrl} 
+            <Link
+              href="/"
+              className="inline-flex items-center"
+              aria-label="Stage Senior Living homepage"
+              data-testid="logo"
+            >
+              <img
+                src={logoUrl}
                 alt="Stage Senior"
-                className={`w-auto min-w-[150px] transition-all duration-300 ease-in-out ${
+                className={`w-auto object-contain min-w-[150px] transition-all duration-300 ease-in-out ${
                   isScrolled 
                     ? 'h-8 sm:h-9 md:h-10' 
                     : 'h-10 sm:h-12 md:h-14'

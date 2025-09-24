@@ -94,7 +94,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/95 via-primary/85 to-primary/90" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-white">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-white">
           <div className="max-w-3xl">
             <p className="uppercase tracking-widest text-white text-xs mb-2 drop-shadow-sm" data-testid="hero-tagline">
               Locally Owned • Resident‑Focused
@@ -244,10 +244,10 @@ export default function Home() {
                       data-testid={`carousel-item-${community.id}`}
                     >
                       <div 
-                        className={`relative overflow-hidden rounded-lg transition-all duration-300 ${
+                        className={`relative overflow-hidden rounded-lg transition-all duration-500 ease-out ${
                           selectedIndex === index 
-                            ? 'scale-100 opacity-100 shadow-2xl' 
-                            : 'scale-95 opacity-60'
+                            ? 'scale-110 opacity-100 shadow-2xl ring-4 ring-white/20 z-10' 
+                            : 'scale-90 opacity-75 hover:scale-95 hover:opacity-85'
                         }`}
                       >
                         <Card className="border-0 shadow-lg">
