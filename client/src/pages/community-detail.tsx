@@ -1,6 +1,6 @@
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +40,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { Link } from "wouter";
+import { cn } from "@/lib/utils";
 import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryImage, Post } from "@shared/schema";
 
 export default function CommunityDetail() {
@@ -48,6 +49,7 @@ export default function CommunityDetail() {
   const [selectedFloorPlan, setSelectedFloorPlan] = useState<FloorPlan | null>(null);
   const [isFloorPlanModalOpen, setIsFloorPlanModalOpen] = useState(false);
   const [selectedGalleryCategory, setSelectedGalleryCategory] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<string | null>("overview");
 
   const { data: community, isLoading: communityLoading } = useQuery<Community>({
     queryKey: [`/api/communities/${slug}`],
@@ -154,6 +156,132 @@ export default function CommunityDetail() {
 
   const galleryCategories = Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean)));
 
+  const hasAmenities = Boolean(
+    (community as any).amenitiesData?.length || community.amenities?.length
+  );
+  const hasFloorPlans = floorPlans.length > 0;
+  const hasGallery = galleryImages.length > 0;
+  const hasEvents = events.length > 0;
+  const hasTestimonials = testimonials.length > 0;
+  const hasPosts = posts.length > 0;
+  const hasFaqs = faqs.length > 0;
+
+  const navSections = useMemo(() => {
+    const sections: { id: string; label: string }[] = [
+      { id: "overview", label: "Overview" },
+      { id: "highlights", label: "Highlights" },
+    ];
+
+    if (hasAmenities) {
+      sections.push({ id: "amenities", label: "Amenities" });
+    }
+
+    if (hasFloorPlans) {
+      sections.push({ id: "floor-plans", label: "Floor Plans & Pricing" });
+    }
+
+    if (hasGallery) {
+      sections.push({ id: "gallery", label: "Gallery" });
+    }
+
+    if (hasEvents) {
+      sections.push({ id: "events", label: "Events" });
+    }
+
+    if (hasTestimonials) {
+      sections.push({ id: "testimonials", label: "Testimonials" });
+    }
+
+    if (hasPosts) {
+      sections.push({ id: "news", label: "News" });
+    }
+
+    if (hasFaqs) {
+      sections.push({ id: "faqs", label: "FAQs" });
+    }
+
+    sections.push({ id: "neighborhood", label: "Neighborhood" });
+    sections.push({ id: "contact", label: "Contact" });
+
+    return sections;
+  }, [hasAmenities, hasFloorPlans, hasGallery, hasEvents, hasTestimonials, hasPosts, hasFaqs]);
+
+  useEffect(() => {
+    if (!navSections.length) {
+      setActiveSection(null);
+      return;
+    }
+
+    setActiveSection((current) => {
+      if (current && navSections.some((section) => section.id === current)) {
+        return current;
+      }
+
+      return navSections[0].id;
+    });
+  }, [navSections]);
+
+  useEffect(() => {
+    if (!navSections.length) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntries = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+        const fallbackEntries = [...entries].sort(
+          (a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top)
+        );
+
+        const nextActiveEntry = visibleEntries[0] ?? fallbackEntries[0];
+        const nextActiveId =
+          nextActiveEntry?.target instanceof HTMLElement ? nextActiveEntry.target.id : null;
+
+        if (nextActiveId) {
+          setActiveSection(nextActiveId);
+        }
+      },
+      {
+        rootMargin: "-150px 0px -60%",
+        threshold: [0.1, 0.25, 0.5],
+      }
+    );
+
+    const elements = navSections
+      .map((section) => document.getElementById(section.id))
+      .filter((element): element is HTMLElement => Boolean(element));
+
+    elements.forEach((element) => observer.observe(element));
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [navSections]);
+
+  const handleNavClick = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (!element) {
+      return;
+    }
+
+    const headerElement = document.querySelector<HTMLElement>('[data-testid="header"]');
+    const navElement = document.querySelector<HTMLElement>('[data-community-sticky-nav]');
+    const offset = (headerElement?.offsetHeight ?? 0) + (navElement?.offsetHeight ?? 0) + 16;
+
+    const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+    const offsetPosition = elementPosition - offset;
+
+    window.scrollTo({
+      top: offsetPosition < 0 ? 0 : offsetPosition,
+      behavior: "smooth",
+    });
+
+    setActiveSection(sectionId);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -211,13 +339,40 @@ export default function CommunityDetail() {
         </div>
       </section>
 
+      {navSections.length > 0 && (
+        <div
+          className="bg-white/95 backdrop-blur border-b border-border sticky top-16 z-40"
+          data-community-sticky-nav
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav className="flex gap-2 overflow-x-auto py-3" aria-label="Community sections">
+              {navSections.map((section) => (
+                <button
+                  key={section.id}
+                  type="button"
+                  onClick={() => handleNavClick(section.id)}
+                  className={cn(
+                    "px-4 py-2 rounded-full border text-sm font-medium transition-colors whitespace-nowrap",
+                    activeSection === section.id
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                      : "bg-transparent text-muted-foreground border-border hover:bg-primary/10"
+                  )}
+                >
+                  {section.label}
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
+
       {/* Main Content with Sticky Sidebar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-16">
             {/* Overview Section */}
-            <section>
+            <section id="overview" className="scroll-mt-32">
               <h2 className="text-3xl font-bold mb-6" data-testid="overview-title">
                 Welcome to {community.name}
               </h2>
@@ -231,7 +386,7 @@ export default function CommunityDetail() {
             </section>
 
             {/* Features & Highlights */}
-            <section>
+            <section id="highlights" className="scroll-mt-32">
               <h2 className="text-3xl font-bold mb-8">Community Highlights</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="border-l-4 border-l-primary">
@@ -274,10 +429,10 @@ export default function CommunityDetail() {
             </section>
 
             {/* Amenities Showcase */}
-            {(community.amenitiesData || community.amenities) && 
-             ((community.amenitiesData && community.amenitiesData.length > 0) || 
+            {(community.amenitiesData || community.amenities) &&
+             ((community.amenitiesData && community.amenitiesData.length > 0) ||
               (community.amenities && community.amenities.length > 0)) && (
-              <section>
+              <section id="amenities" className="scroll-mt-32">
                 <h2 className="text-3xl font-bold mb-8">Amenities & Services</h2>
                 <div className="bg-gray-50 rounded-2xl p-8">
                   <p className="text-lg text-gray-600 mb-8">
@@ -378,7 +533,7 @@ export default function CommunityDetail() {
 
             {/* Floor Plans Section */}
             {floorPlans.length > 0 && (
-              <section>
+              <section id="floor-plans" className="scroll-mt-32">
                 <h2 className="text-3xl font-bold mb-8">Floor Plans & Pricing</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Each apartment home is designed for comfort and independence, with modern conveniences and thoughtful layouts.
@@ -468,7 +623,7 @@ export default function CommunityDetail() {
 
             {/* Photo Gallery */}
             {galleryImages.length > 0 && (
-              <section>
+              <section id="gallery" className="scroll-mt-32">
                 <h2 className="text-3xl font-bold mb-8">Photo Gallery</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Explore our bright, comfortable spaces and serene outdoor areas through our community gallery.
@@ -523,7 +678,7 @@ export default function CommunityDetail() {
 
             {/* Events & Activities - Full Width */}
             {events.length > 0 && (
-              <section>
+              <section id="events" className="scroll-mt-32">
                 <h2 className="text-3xl font-bold mb-8">Upcoming Events</h2>
                 <div className="space-y-6">
                   {events.slice(0, 4).map((event) => (
@@ -547,7 +702,7 @@ export default function CommunityDetail() {
 
             {/* Testimonials */}
             {testimonials.length > 0 && (
-              <section>
+              <section id="testimonials" className="scroll-mt-32">
                 <h2 className="text-3xl font-bold mb-8">What Residents & Families Say</h2>
                 <div className="space-y-6">
                   {testimonials.slice(0, 3).map((testimonial) => (
@@ -587,7 +742,7 @@ export default function CommunityDetail() {
 
             {/* Blog Posts */}
             {posts.length > 0 && (
-              <section>
+              <section id="news" className="scroll-mt-32">
                 <h2 className="text-3xl font-bold mb-8">News & Updates from {community.name}</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Stay informed about the latest happenings, stories, and updates from our community.
@@ -646,7 +801,7 @@ export default function CommunityDetail() {
 
             {/* FAQs */}
             {faqs.length > 0 && (
-              <section>
+              <section id="faqs" className="scroll-mt-32">
                 <h2 className="text-3xl font-bold mb-8">Frequently Asked Questions</h2>
                 <Accordion type="single" collapsible className="space-y-4">
                   {faqs.slice(0, 6).map((faq) => (
@@ -674,7 +829,7 @@ export default function CommunityDetail() {
             )}
 
             {/* Location & Neighborhood */}
-            <section>
+            <section id="neighborhood" className="scroll-mt-32">
               <h2 className="text-3xl font-bold mb-8">Location & Neighborhood</h2>
               <div className="bg-gray-100 rounded-xl h-96 mb-6" data-testid="map-placeholder">
                 <div className="w-full h-full flex items-center justify-center text-gray-500">
@@ -871,7 +1026,7 @@ export default function CommunityDetail() {
       </div>
 
       {/* Full Width CTA Section */}
-      <section className="bg-primary text-white py-16 mt-16">
+      <section id="contact" className="bg-primary text-white py-16 mt-16 scroll-mt-32">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Experience {community.name}?

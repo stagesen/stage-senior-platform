@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, Phone } from "lucide-react";
 import { useState } from "react";
@@ -11,6 +11,10 @@ import logoUrl from "@assets/stagesenior-logo_1758726889154.webp";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [location] = useLocation();
+  const normalizedLocation = location.split("?")[0];
+  const isCommunityDetailPage = /^\/communities\/[^/]+$/.test(normalizedLocation);
+  const showNavigation = !isCommunityDetailPage;
 
   const navigation = [
     { name: "Communities", href: "/communities" },
@@ -32,20 +36,22 @@ export default function Header() {
             </Link>
           </div>
           
-          <nav className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-foreground hover:text-primary px-3 py-2 text-xl font-bold transition-colors"
-                  data-testid={`nav-${item.name.toLowerCase()}`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </nav>
+          {showNavigation && (
+            <nav className="hidden md:block">
+              <div className="ml-10 flex items-baseline space-x-8">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="text-foreground hover:text-primary px-3 py-2 text-xl font-bold transition-colors"
+                    data-testid={`nav-${item.name.toLowerCase()}`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </nav>
+          )}
           
           <div className="flex items-center space-x-4">
             <Button
@@ -59,28 +65,30 @@ export default function Header() {
               </a>
             </Button>
             
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden" data-testid="button-menu">
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[300px]">
-                <nav className="flex flex-col space-y-4 mt-8">
-                  {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="text-foreground hover:text-primary px-3 py-2 text-xl font-bold transition-colors"
-                      onClick={() => setIsOpen(false)}
-                      data-testid={`mobile-nav-${item.name.toLowerCase()}`}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </nav>
-              </SheetContent>
-            </Sheet>
+            {showNavigation && (
+              <Sheet open={isOpen} onOpenChange={setIsOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="md:hidden" data-testid="button-menu">
+                    <Menu className="h-6 w-6" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[300px]">
+                  <nav className="flex flex-col space-y-4 mt-8">
+                    {navigation.map((item) => (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className="text-foreground hover:text-primary px-3 py-2 text-xl font-bold transition-colors"
+                        onClick={() => setIsOpen(false)}
+                        data-testid={`mobile-nav-${item.name.toLowerCase()}`}
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                  </nav>
+                </SheetContent>
+              </Sheet>
+            )}
           </div>
         </div>
       </div>
