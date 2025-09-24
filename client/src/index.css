@@ -38,15 +38,18 @@
   --font-sans: "Inter", system-ui, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
-  --radius: 8px;
-  --shadow-2xs: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00);
-  --shadow-xs: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00);
-  --shadow-sm: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00), 0px 1px 2px -1px hsl(142, 76%, 36% / 0.00);
-  --shadow: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00), 0px 1px 2px -1px hsl(142, 76%, 36% / 0.00);
-  --shadow-md: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00), 0px 2px 4px -1px hsl(142, 76%, 36% / 0.00);
-  --shadow-lg: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00), 0px 4px 6px -1px hsl(142, 76%, 36% / 0.00);
-  --shadow-xl: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00), 0px 8px 10px -1px hsl(142, 76%, 36% / 0.00);
-  --shadow-2xl: 0px 2px 0px 0px hsl(142, 76%, 36% / 0.00);
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --shadow-soft-xs: 0 1px 1px -1px hsl(213 35% 20% / 0.18), 0 1px 2px hsl(213 35% 20% / 0.1);
+  --shadow-soft-sm: 0 1px 2px -1px hsl(213 35% 20% / 0.16), 0 2px 4px hsl(213 35% 20% / 0.12);
+  --shadow-soft-md: 0 2px 4px -1px hsl(213 35% 20% / 0.14), 0 6px 12px hsl(213 35% 20% / 0.12);
+  --shadow-soft-lg: 0 10px 18px -5px hsl(213 35% 20% / 0.16), 0 12px 32px hsl(213 35% 20% / 0.14);
+  --shadow-soft-xl: 0 18px 30px -8px hsl(213 35% 20% / 0.18), 0 24px 48px hsl(213 35% 20% / 0.16);
+  --shadow-soft-2xl: 0 24px 40px -12px hsl(213 35% 20% / 0.22), 0 32px 64px hsl(213 35% 20% / 0.18);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 }
@@ -76,6 +79,18 @@
   --chart-3: hsl(228, 22%, 29%);
   --chart-4: hsl(213, 14%, 18%);
   --chart-5: hsl(220, 67%, 63%);
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --shadow-soft-xs: 0 1px 1px -1px hsl(213 60% 6% / 0.4), 0 1px 2px hsl(213 60% 6% / 0.28);
+  --shadow-soft-sm: 0 1px 2px -1px hsl(213 60% 6% / 0.36), 0 2px 4px hsl(213 60% 6% / 0.24);
+  --shadow-soft-md: 0 2px 4px -1px hsl(213 60% 6% / 0.34), 0 6px 12px hsl(213 60% 6% / 0.22);
+  --shadow-soft-lg: 0 10px 18px -5px hsl(213 60% 6% / 0.32), 0 12px 32px hsl(213 60% 6% / 0.28);
+  --shadow-soft-xl: 0 18px 30px -8px hsl(213 60% 6% / 0.3), 0 24px 48px hsl(213 60% 6% / 0.26);
+  --shadow-soft-2xl: 0 24px 40px -12px hsl(213 60% 6% / 0.32), 0 32px 64px hsl(213 60% 6% / 0.28);
 }
 
 @layer base {
