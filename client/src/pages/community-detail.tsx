@@ -140,17 +140,17 @@ export default function CommunityDetail() {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-[600px] overflow-hidden">
+      <section className="relative h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden">
         <img
           src={community.heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600`}
           alt={`${community.name} - Senior Living Community`}
           className="w-full h-full object-cover"
           data-testid="hero-image"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
         <div className="absolute inset-0 flex flex-col justify-between">
           {/* Top Navigation */}
-          <div className="p-6">
+          <div className="p-4 md:p-6 lg:p-8">
             <Button 
               variant="ghost" 
               className="text-white hover:bg-white/20" 
@@ -165,20 +165,20 @@ export default function CommunityDetail() {
           </div>
           
           {/* Bottom Content */}
-          <div className="p-8 lg:p-12">
+          <div className="p-6 md:p-10 lg:p-16">
             <div className="max-w-7xl mx-auto">
-              <div className="grid lg:grid-cols-2 gap-8 items-end">
+              <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-end">
                 {/* Left Side - Community Info */}
-                <div className="text-white">
-                  <h1 className="text-4xl lg:text-5xl font-bold mb-3" data-testid="community-name">
+                <div className="text-white space-y-4">
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight" data-testid="community-name">
                     {community.name}
                   </h1>
-                  <div className="flex items-center text-lg mb-4 opacity-90" data-testid="community-location">
+                  <div className="flex items-center text-base md:text-lg opacity-95" data-testid="community-location">
                     <MapPin className="w-5 h-5 mr-2" />
                     {community.address || `${community.city}, ${community.state} ${community.zipCode}`}
                   </div>
                   {community.careTypes && community.careTypes.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-6">
+                    <div className="flex flex-wrap gap-2 mt-4">
                       {community.careTypes.map((careType) => (
                         <Badge 
                           key={careType} 
@@ -195,18 +195,18 @@ export default function CommunityDetail() {
                 </div>
                 
                 {/* Right Side - Pricing Card */}
-                <div className="bg-white rounded-lg p-6 shadow-xl">
-                  <div className="text-sm text-gray-600 mb-2">Monthly rentals start at</div>
-                  <div className="text-4xl font-bold text-gray-900 mb-1" data-testid="pricing-amount">
+                <div className="bg-white rounded-xl p-6 md:p-8 lg:p-10 shadow-2xl backdrop-blur-sm bg-white/95">
+                  <div className="text-sm md:text-base text-gray-600 mb-3">Monthly rentals start at</div>
+                  <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3" data-testid="pricing-amount">
                     {formatPrice(community.startingPrice)}<span className="text-lg font-normal">/month*</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-6">
+                  <p className="text-sm md:text-base text-gray-600 mb-8 leading-relaxed">
                     {community.shortDescription || "Experience exceptional senior living in our welcoming community."}
                   </p>
-                  <div className="space-y-3">
+                  <div className="space-y-3 md:space-y-4">
                     <Button 
                       size="lg" 
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-6 md:py-7 text-base md:text-lg"
                       data-testid="button-schedule-tour-hero"
                     >
                       <Calendar className="w-5 h-5 mr-2" />
@@ -215,7 +215,7 @@ export default function CommunityDetail() {
                     <Button 
                       variant="outline" 
                       size="lg" 
-                      className="w-full"
+                      className="w-full py-6 md:py-7 text-base md:text-lg"
                       asChild
                       data-testid="button-call-hero"
                     >
@@ -233,43 +233,43 @@ export default function CommunityDetail() {
       </section>
 
       {/* Main Content with Tabs */}
-      <main className="relative -mt-16 z-10">
+      <main className="relative -mt-8 md:-mt-12 lg:-mt-16 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-t-xl shadow-lg">
+          <div className="bg-white rounded-t-2xl shadow-2xl">
             <Tabs defaultValue="overview" className="w-full">
               <TabsList className="w-full h-auto p-0 bg-transparent rounded-none border-b" data-testid="tabs-list">
-                <div className="flex flex-wrap justify-center">
+                <div className="flex flex-wrap justify-center px-4 md:px-8">
                   <TabsTrigger 
                     value="overview" 
-                    className="px-6 py-4 text-base font-medium data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+                    className="px-4 md:px-6 py-4 md:py-5 text-sm md:text-base font-medium data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
                     data-testid="tab-overview"
                   >
                     Life at {community.name?.split(' ')[0]}
                   </TabsTrigger>
                   <TabsTrigger 
                     value="apartments" 
-                    className="px-6 py-4 text-base font-medium data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+                    className="px-4 md:px-6 py-4 md:py-5 text-sm md:text-base font-medium data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
                     data-testid="tab-apartments"
                   >
                     Apartments
                   </TabsTrigger>
                   <TabsTrigger 
                     value="amenities" 
-                    className="px-6 py-4 text-base font-medium data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+                    className="px-4 md:px-6 py-4 md:py-5 text-sm md:text-base font-medium data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
                     data-testid="tab-amenities"
                   >
                     Services & Amenities
                   </TabsTrigger>
                   <TabsTrigger 
                     value="gallery" 
-                    className="px-6 py-4 text-base font-medium data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+                    className="px-4 md:px-6 py-4 md:py-5 text-sm md:text-base font-medium data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
                     data-testid="tab-gallery"
                   >
                     Tour & Gallery
                   </TabsTrigger>
                   <TabsTrigger 
                     value="experience" 
-                    className="px-6 py-4 text-base font-medium data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+                    className="px-4 md:px-6 py-4 md:py-5 text-sm md:text-base font-medium data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
                     data-testid="tab-experience"
                   >
                     Experience
@@ -278,9 +278,9 @@ export default function CommunityDetail() {
               </TabsList>
 
               {/* Overview Tab */}
-              <TabsContent value="overview" className="p-8 lg:p-12 space-y-12">
+              <TabsContent value="overview" className="p-6 md:p-10 lg:p-16 space-y-12 md:space-y-16">
                 <div>
-                  <h2 className="text-3xl font-bold mb-6" data-testid="overview-title">
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8" data-testid="overview-title">
                     Welcome to {community.name}
                   </h2>
                   <div className="prose prose-lg max-w-none text-gray-600">
@@ -293,7 +293,7 @@ export default function CommunityDetail() {
 
                 {/* Highlights Section */}
                 <div>
-                  <h3 className="text-2xl font-semibold mb-6">Ignite Your Passion. Build Meaningful Connections.</h3>
+                  <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-6 md:mb-8">Ignite Your Passion. Build Meaningful Connections.</h3>
                   <p className="text-gray-600 leading-relaxed mb-6">
                     At {community.name}, we believe in fostering a fulfilling lifestyle for our residents. Living in our community makes it easy to nurture your mind, body, and spirit—whether it's over a meal or during a group activity. With daily opportunities for creativity, learning, fitness, and social connections, you'll discover ways to ignite your passions and uncover new possibilities.
                   </p>
@@ -302,7 +302,7 @@ export default function CommunityDetail() {
                 {/* Upcoming Events */}
                 {events.length > 0 && (
                   <div>
-                    <h3 className="text-2xl font-semibold mb-6">Announcements & Events</h3>
+                    <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-6 md:mb-8">Announcements & Events</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {events.slice(0, 2).map((event) => (
                         <EventCard key={event.id} event={event} />
@@ -314,7 +314,7 @@ export default function CommunityDetail() {
                 {/* Testimonials Section - Moved from Experience Tab */}
                 {testimonials.length > 0 && (
                   <div>
-                    <h3 className="text-2xl font-semibold mb-6">Why You'll Love {community.name}</h3>
+                    <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-6 md:mb-8">Why You'll Love {community.name}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {testimonials.slice(0, 4).map((testimonial) => (
                         <Card key={testimonial.id} className="p-6 hover:shadow-lg transition-shadow" data-testid={`testimonial-${testimonial.id}`}>
@@ -358,12 +358,12 @@ export default function CommunityDetail() {
               </TabsContent>
 
               {/* Apartments Tab */}
-              <TabsContent value="apartments" className="p-8 lg:p-12 space-y-8">
+              <TabsContent value="apartments" className="p-6 md:p-10 lg:p-16 space-y-10 md:space-y-12">
                 <div>
-                  <h2 className="text-3xl font-bold mb-6" data-testid="apartments-title">
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8" data-testid="apartments-title">
                     A Comfortable Lifestyle Awaits
                   </h2>
-                  <p className="text-gray-600 mb-8">
+                  <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-8">
                     Each apartment home is designed for ease and comfort, with every feature aimed at supporting your independent lifestyle. With modern and personalized conveniences, you can relax and focus on enjoying the things that matter most.
                   </p>
                 </div>
@@ -371,7 +371,7 @@ export default function CommunityDetail() {
                 {/* Floor Plans Grid */}
                 {floorPlans.length > 0 ? (
                   <div>
-                    <h3 className="text-2xl font-semibold mb-6">Our Floor Plans</h3>
+                    <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-6 md:mb-8">Our Floor Plans</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {floorPlans.map((floorPlan) => (
                         <Card 
@@ -436,12 +436,12 @@ export default function CommunityDetail() {
               </TabsContent>
 
               {/* Services & Amenities Tab */}
-              <TabsContent value="amenities" className="p-8 lg:p-12 space-y-8">
+              <TabsContent value="amenities" className="p-6 md:p-10 lg:p-16 space-y-10 md:space-y-12">
                 <div>
-                  <h2 className="text-3xl font-bold mb-6" data-testid="amenities-title">
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8" data-testid="amenities-title">
                     Endless Amenities for Effortless Living
                   </h2>
-                  <p className="text-gray-600 mb-8">
+                  <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-8">
                     Step into a lifestyle where every day feels like a retreat. Our community is packed with thoughtful amenities designed to make life easier, more enjoyable, and filled with opportunities for connection.
                   </p>
                 </div>
@@ -467,7 +467,7 @@ export default function CommunityDetail() {
 
                 {/* Services Section */}
                 <div>
-                  <h3 className="text-2xl font-semibold mb-6">Discover Convenient Living</h3>
+                  <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-6 md:mb-8">Discover Convenient Living</h3>
                   <p className="text-gray-600 mb-6">
                     We offer a variety of helpful services so you can focus on the things that matter most.
                   </p>
@@ -498,19 +498,19 @@ export default function CommunityDetail() {
               </TabsContent>
 
               {/* Gallery Tab */}
-              <TabsContent value="gallery" className="p-8 lg:p-12 space-y-8">
+              <TabsContent value="gallery" className="p-6 md:p-10 lg:p-16 space-y-10 md:space-y-12">
                 <div>
-                  <h2 className="text-3xl font-bold mb-6" data-testid="gallery-title">
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8" data-testid="gallery-title">
                     Explore {community.name}
                   </h2>
-                  <p className="text-gray-600 mb-8">
+                  <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-8">
                     You'll find bright, comfortable spaces throughout the community, as well as ample amenities and serene outdoor areas.
                   </p>
                 </div>
 
                 {/* Virtual Tour Section */}
                 <div className="mb-12">
-                  <h3 className="text-2xl font-semibold mb-6">Take a Virtual Tour</h3>
+                  <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-6 md:mb-8">Take a Virtual Tour</h3>
                   
                   {galleryImages.length > 0 ? (
                     <div>
@@ -578,12 +578,12 @@ export default function CommunityDetail() {
               </TabsContent>
 
               {/* Experience Tab - FAQs and Community Life */}
-              <TabsContent value="experience" className="p-8 lg:p-12 space-y-8">
+              <TabsContent value="experience" className="p-6 md:p-10 lg:p-16 space-y-10 md:space-y-12">
                 <div>
-                  <h2 className="text-3xl font-bold mb-6" data-testid="experience-title">
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8" data-testid="experience-title">
                     Experience Life at {community.name}
                   </h2>
-                  <p className="text-gray-600 mb-8">
+                  <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-8">
                     Discover what makes our community special and find answers to common questions about senior living at {community.name}.
                   </p>
                 </div>
@@ -616,7 +616,7 @@ export default function CommunityDetail() {
                 {/* FAQs Section */}
                 {faqs.length > 0 ? (
                   <div>
-                    <h3 className="text-2xl font-semibold mb-6">Frequently Asked Questions</h3>
+                    <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-6 md:mb-8">Frequently Asked Questions</h3>
                     <Accordion type="single" collapsible className="space-y-4">
                       {faqs.map((faq) => (
                         <AccordionItem key={faq.id} value={faq.id} className="border rounded-lg px-6" data-testid={`faq-${faq.id}`}>
