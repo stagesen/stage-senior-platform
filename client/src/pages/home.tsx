@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,6 +14,7 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 import { 
   Search, 
   MapPin, 
@@ -39,6 +40,9 @@ export default function Home() {
   const [showContactForm, setShowContactForm] = useState(false);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const autoplay = useRef(
+    Autoplay({ delay: 6000, stopOnInteraction: false, stopOnMouseEnter: true })
+  );
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -220,7 +224,7 @@ export default function Home() {
               {[...Array(3)].map((_, i) => (
                 <Card key={i} className="relative overflow-hidden flex-shrink-0 w-full max-w-md">
                   <div className="h-80 bg-gray-200 animate-pulse" />
-                  <CardContent className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+                  <CardContent className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/40 to-transparent">
                     <div className="space-y-3">
                       <div className="h-6 bg-gray-300 rounded animate-pulse" />
                       <div className="h-4 bg-gray-300 rounded w-2/3 animate-pulse" />
@@ -252,6 +256,7 @@ export default function Home() {
                   align: "center",
                 }}
                 setApi={setCarouselApi}
+                plugins={[autoplay.current]}
                 className="w-full"
                 data-testid="communities-carousel"
               >
@@ -269,11 +274,11 @@ export default function Home() {
                             : 'scale-95 opacity-60'
                         }`}
                       >
-                        <Card className="border-0 shadow-lg">
-                          <div className="relative h-80 overflow-hidden">
+                        <Card className="border-0 shadow-lg overflow-hidden">
+                          <div className="relative h-80 overflow-hidden group">
                             {community.heroImageUrl ? (
-                              <img 
-                                src={community.heroImageUrl} 
+                              <img
+                                src={community.heroImageUrl}
                                 alt={community.name}
                                 className="w-full h-full object-cover"
                                 data-testid={`community-image-${community.id}`}
@@ -283,50 +288,66 @@ export default function Home() {
                                 <MapPin className="w-16 h-16 text-white/60" />
                               </div>
                             )}
-                            {/* Gradient overlays */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
-                            
-                            {/* Content overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/25 to-transparent transition-all duration-300 group-hover:from-black/40 group-hover:via-black/15" />
+
                             <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                              <h3 className="text-xl font-bold mb-2" data-testid={`community-name-${community.id}`}>
+                              <h3 className="text-xl font-bold" data-testid={`community-name-${community.id}`}>
                                 {community.name}
                               </h3>
-                              <p className="text-sm text-white/90 mb-3 line-clamp-2">
-                                {community.shortDescription || community.description}
-                              </p>
-                              <div className="flex items-center gap-1 text-sm text-white/80 mb-4">
-                                <MapPin className="w-4 h-4" />
-                                <span data-testid={`community-address-${community.id}`}>
-                                  {community.street && community.city 
-                                    ? `${community.street}, ${community.city}, ${community.state}`
-                                    : `${community.city}, ${community.state}`}
-                                </span>
-                              </div>
-                              
-                              {/* CTAs */}
-                              <div className="flex gap-2">
-                                <Button 
-                                  asChild 
-                                  variant="secondary"
-                                  size="sm"
-                                  className="flex-1 text-xs"
-                                  data-testid={`button-learn-more-${community.id}`}
-                                >
-                                  <Link href={`/communities/${community.slug}`}>
-                                    Learn More
-                                  </Link>
-                                </Button>
-                                <Button 
-                                  size="sm"
-                                  className="flex-1 text-xs bg-transparent border border-white/40 text-white hover:bg-white hover:text-primary transition-all duration-200 font-medium"
-                                  onClick={() => setShowContactForm(true)}
-                                  data-testid={`button-get-pricing-${community.id}`}
-                                >
-                                  Get Pricing
-                                </Button>
-                              </div>
                             </div>
                           </div>
+                          <CardContent className="p-6 space-y-4 bg-white text-foreground">
+                            <p className="text-sm text-muted-foreground line-clamp-3">
+                              {community.shortDescription || community.description}
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              <Badge
+                                variant="secondary"
+                                className="bg-primary/10 text-primary hover:bg-primary/10 flex items-center gap-1"
+                              >
+                                <MapPin className="w-3 h-3" />
+                                <span data-testid={`community-address-${community.id}`}>
+                                  {community.city && community.state
+                                    ? `${community.city}, ${community.state}`
+                                    : community.city || community.state}
+                                </span>
+                              </Badge>
+                              {(community.careTypes || []).map((careType) => (
+                                <Badge
+                                  key={careType}
+                                  variant="outline"
+                                  className="border-primary/20 text-primary bg-primary/5"
+                                >
+                                  {careType
+                                    .split("-")
+                                    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+                                    .join(" ")}
+                                </Badge>
+                              ))}
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                asChild
+                                variant="secondary"
+                                size="sm"
+                                className="flex-1 text-xs"
+                                data-testid={`button-learn-more-${community.id}`}
+                              >
+                                <Link href={`/communities/${community.slug}`}>
+                                  Learn More
+                                </Link>
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="flex-1 text-xs border-primary/30 text-primary hover:bg-primary hover:text-white transition-all duration-200 font-medium"
+                                onClick={() => setShowContactForm(true)}
+                                data-testid={`button-get-pricing-${community.id}`}
+                              >
+                                Get Pricing
+                              </Button>
+                            </div>
+                          </CardContent>
                         </Card>
                       </div>
                     </CarouselItem>
@@ -349,6 +370,41 @@ export default function Home() {
                   </>
                 )}
               </Carousel>
+              {featuredCommunities.length > 1 && (
+                <div className="mt-8 flex flex-col items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    {featuredCommunities.map((community, index) => (
+                      <button
+                        key={community.id}
+                        type="button"
+                        onClick={() => carouselApi?.scrollTo(index)}
+                        className={`h-2.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/80 ${
+                          selectedIndex === index ? "w-8 bg-white" : "w-2 bg-white/40 hover:bg-white/70"
+                        }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                  <div className="w-full max-w-xs h-1 bg-white/20 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-white transition-all duration-500"
+                      style={{
+                        width: `${
+                          featuredCommunities.length
+                            ? ((selectedIndex % featuredCommunities.length) + 1) /
+                                featuredCommunities.length *
+                                100
+                            : 0
+                        }%`,
+                      }}
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <span className="text-xs uppercase tracking-[0.2em] text-white/70">
+                    {String(selectedIndex + 1).padStart(2, "0")} / {String(featuredCommunities.length).padStart(2, "0")}
+                  </span>
+                </div>
+              )}
             </div>
           )}
           
