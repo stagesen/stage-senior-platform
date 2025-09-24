@@ -232,8 +232,8 @@ export default function Footer() {
                 </p>
                 <Link href="/contact">
                   <Button 
-                    variant="outline" 
-                    className="border-background/30 text-background hover:bg-background hover:text-foreground w-full"
+                    variant="secondary" 
+                    className="bg-background text-foreground hover:bg-background/90 w-full"
                     data-testid="footer-contact-cta"
                   >
                     Contact Us Today
