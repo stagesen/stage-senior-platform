@@ -1,0 +1,70 @@
+Skip to content
+
+
+
+SeniorCareConnect (2)
+Files
+Commands
+Search
+Packager files
+Config files
+/
+
+Databases
+Development Database
+29.7MB / 10GB
+Billing Period
+Renews monthly, Oct 10
+Hours of Compute Used
+0 hours
+40s
+ • 
+Just now
+Add foundational UI components and page structure
+Check footer, contact, and logos work
+4 / 5
+
+5 messages & 55 actions
+Now I'll create an enhanced homepage using the reference content while keeping your existing navigation and footer. Let me build a dedicated homepage that incorporates the best elements from the reference.
+Checkpoint made
+21 minutes ago
+Add a new landing page for the community platform
+16 minutes of work
+please update our color style and pallette to use this - #2761d8
+#373f5a
+#262b35
+#0d404c. - also i am not seeing the hero image on the homepage. - the main images for Gardens at Columbine and Stonebridge Senior are also broken
+
+21 minutes ago
+
+3 messages & 50 actions
+I'll help you update the color palette and fix the broken images. Let me start by examining the current color setup and investigating the image issues.
+Checkpoint made
+10 minutes ago
+Update website color scheme and fix broken images on multiple pages
+10 minutes of work
+Updated our footer and contact pages with our real address and phone number - 8100 E Arapahoe Road, Suite 208 Centennial, CO 80112
+(303) 436-2300 info@stagesenior.com as well as our logo with standard and invert where appropraite for nav and footer
+10 minutes ago
+
+2 messages & 52 actions
+I'll help you update the footer and contact pages with your real business information and logos. Let me start by creating a task plan and finding the relevant files.
+Checkpoint made
+just now
+Update website with current contact information and branding assets
+8 minutes of work
+logos all seem broken still in nav and footer
+
+Just now
+Working..
+
+Scroll to latest
+Queue
+please update copyright fotoer with correct auto updating year, - Stage Management, LLC. All Rights Reserved. - and then create and link to real Privacy, Terms and Accessibility pages. -- also add this logo and link to https://ashaliving.org/ in that same copywrite soon. - please add Respite Care to all communities as a service. - on homepage can we update our cards to a beautiful carosaol for the commniities like the attached. --- we want each community to have their own phone numbers listed on their specific pages and cards - only on the main stage pages should the stage senior number be listed
+1
+Next
+
+Make, test, iterate…
+
+Build
+SeniorCareConnect (2) - Replit
