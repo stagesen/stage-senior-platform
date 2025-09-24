@@ -51,23 +51,6 @@
   --spacing: 0.25rem;
 }
 
-/* Smooth scrolling behavior */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Hide scrollbar for sticky navigation on mobile */
-.scrollbar-hide {
-  /* Firefox */
-  scrollbar-width: none;
-  /* Safari and Chrome */
-  -ms-overflow-style: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
 .dark {
   --background: hsl(213, 14%, 18%);
   --foreground: hsl(0, 0%, 100%);

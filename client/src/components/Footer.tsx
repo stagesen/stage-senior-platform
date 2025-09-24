@@ -29,7 +29,7 @@ export default function Footer() {
               <img 
                 src={logoWhiteUrl} 
                 alt="Stage Senior"
-                className="w-auto h-12 sm:h-14 md:h-16"
+                className="w-auto min-w-[150px] h-12 sm:h-14 md:h-16"
               />
             </div>
             <p className="text-background/80 mb-4" data-testid="footer-description">

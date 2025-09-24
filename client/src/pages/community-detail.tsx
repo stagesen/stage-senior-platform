@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import EventCard from "@/components/EventCard";
 import FloorPlanModal from "@/components/FloorPlanModal";
-import CommunityDetailNavigation from "@/components/CommunityDetailNavigation";
 import { 
   MapPin, 
   Phone, 
@@ -212,29 +211,13 @@ export default function CommunityDetail() {
         </div>
       </section>
 
-      {/* Sticky Navigation */}
-      <CommunityDetailNavigation 
-        sections={{
-          overview: true,
-          features: true,
-          amenities: !!(community.amenities && community.amenities.length > 0),
-          floorPlans: floorPlans.length > 0,
-          gallery: galleryImages.length > 0,
-          events: events.length > 0,
-          testimonials: testimonials.length > 0,
-          blogPosts: posts.length > 0,
-          faqs: faqs.length > 0,
-          location: true,
-        }}
-      />
-
       {/* Main Content with Sticky Sidebar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-16">
             {/* Overview Section */}
-            <section id="overview">
+            <section>
               <h2 className="text-3xl font-bold mb-6" data-testid="overview-title">
                 Welcome to {community.name}
               </h2>
@@ -248,7 +231,7 @@ export default function CommunityDetail() {
             </section>
 
             {/* Features & Highlights */}
-            <section id="features">
+            <section>
               <h2 className="text-3xl font-bold mb-8">Community Highlights</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="border-l-4 border-l-primary">
@@ -291,22 +274,22 @@ export default function CommunityDetail() {
             </section>
 
             {/* Amenities Showcase */}
-            {community.amenities && community.amenities.length > 0 && (
-              <section id="amenities">
+            {(community.amenitiesData || community.amenities) && 
+             ((community.amenitiesData && community.amenitiesData.length > 0) || 
+              (community.amenities && community.amenities.length > 0)) && (
+              <section>
                 <h2 className="text-3xl font-bold mb-8">Amenities & Services</h2>
                 <div className="bg-gray-50 rounded-2xl p-8">
                   <p className="text-lg text-gray-600 mb-8">
                     Step into a lifestyle where every day feels like a retreat. Our community is packed with thoughtful amenities designed to make life easier and more enjoyable.
                   </p>
                   {/* Show featured amenities with images first if available */}
-                  {(community as any).amenities && 
-                   Array.isArray((community as any).amenities) && 
-                   (community as any).amenities.filter && 
-                   (community as any).amenities.filter((am: any) => am.imageUrl).length > 0 && (
+                  {(community as any).amenitiesData && 
+                   (community as any).amenitiesData.filter((am: any) => am.imageUrl).length > 0 && (
                     <div className="mb-8">
                       <h3 className="text-xl font-semibold mb-4">Featured Amenities</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {(community as any).amenities
+                        {(community as any).amenitiesData
                           .filter((am: any) => am.imageUrl)
                           .map((amenity: any, index: number) => {
                             const IconComponent = amenity.icon ? 
@@ -353,15 +336,14 @@ export default function CommunityDetail() {
                   
                   {/* Show all amenities in compact grid */}
                   <h3 className="text-xl font-semibold mb-4">
-                    {(community as any).amenities && 
-                     Array.isArray((community as any).amenities) && 
-                     (community as any).amenities.filter && 
-                     (community as any).amenities.filter((am: any) => am.imageUrl).length > 0 
+                    {(community as any).amenitiesData && 
+                     (community as any).amenitiesData.filter((am: any) => am.imageUrl).length > 0 
                       ? "All Amenities" 
                       : ""}
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                    {(community.amenities?.map(name => ({ name })) || []
+                    {((community as any).amenitiesData || 
+                      community.amenities?.map(name => ({ name })) || []
                     ).map((amenity: any, index: number) => {
                       const amenityName = typeof amenity === 'string' ? amenity : amenity.name;
                       const IconComponent = typeof amenity === 'string' ? 
@@ -396,7 +378,7 @@ export default function CommunityDetail() {
 
             {/* Floor Plans Section */}
             {floorPlans.length > 0 && (
-              <section id="floor-plans">
+              <section>
                 <h2 className="text-3xl font-bold mb-8">Floor Plans & Pricing</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Each apartment home is designed for comfort and independence, with modern conveniences and thoughtful layouts.
@@ -444,10 +426,10 @@ export default function CommunityDetail() {
                               {Number(floorPlan.bathrooms)} {Number(floorPlan.bathrooms) === 1 ? 'Bath' : 'Baths'}
                             </span>
                           )}
-                          {floorPlan.squareFeet && (
+                          {floorPlan.sqft && (
                             <span className="flex items-center gap-1" data-testid={`floor-plan-sqft-${floorPlan.id}`}>
                               <Square className="w-4 h-4" />
-                              {floorPlan.squareFeet} sq ft
+                              {floorPlan.sqft} sq ft
                             </span>
                           )}
                         </div>
@@ -486,7 +468,7 @@ export default function CommunityDetail() {
 
             {/* Photo Gallery */}
             {galleryImages.length > 0 && (
-              <section id="gallery">
+              <section>
                 <h2 className="text-3xl font-bold mb-8">Photo Gallery</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Explore our bright, comfortable spaces and serene outdoor areas through our community gallery.
@@ -541,7 +523,7 @@ export default function CommunityDetail() {
 
             {/* Events & Activities - Full Width */}
             {events.length > 0 && (
-              <section id="events">
+              <section>
                 <h2 className="text-3xl font-bold mb-8">Upcoming Events</h2>
                 <div className="space-y-6">
                   {events.slice(0, 4).map((event) => (
@@ -565,7 +547,7 @@ export default function CommunityDetail() {
 
             {/* Testimonials */}
             {testimonials.length > 0 && (
-              <section id="testimonials">
+              <section>
                 <h2 className="text-3xl font-bold mb-8">What Residents & Families Say</h2>
                 <div className="space-y-6">
                   {testimonials.slice(0, 3).map((testimonial) => (
@@ -605,7 +587,7 @@ export default function CommunityDetail() {
 
             {/* Blog Posts */}
             {posts.length > 0 && (
-              <section id="blog-posts">
+              <section>
                 <h2 className="text-3xl font-bold mb-8">News & Updates from {community.name}</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Stay informed about the latest happenings, stories, and updates from our community.
@@ -625,10 +607,7 @@ export default function CommunityDetail() {
                       <CardContent className="p-6">
                         <div className="flex items-center gap-2 mb-3">
                           <Badge variant="secondary" className="text-xs">
-                            {(() => {
-                              const date = post.publishedAt || post.createdAt;
-                              return date ? new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Date not available';
-                            })()}
+                            {new Date(post.publishedAt || post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                           </Badge>
                           {post.tags && post.tags.length > 0 && (
                             <Badge variant="outline" className="text-xs">
@@ -667,7 +646,7 @@ export default function CommunityDetail() {
 
             {/* FAQs */}
             {faqs.length > 0 && (
-              <section id="faqs">
+              <section>
                 <h2 className="text-3xl font-bold mb-8">Frequently Asked Questions</h2>
                 <Accordion type="single" collapsible className="space-y-4">
                   {faqs.slice(0, 6).map((faq) => (
@@ -695,7 +674,7 @@ export default function CommunityDetail() {
             )}
 
             {/* Location & Neighborhood */}
-            <section id="location">
+            <section>
               <h2 className="text-3xl font-bold mb-8">Location & Neighborhood</h2>
               <div className="bg-gray-100 rounded-xl h-96 mb-6" data-testid="map-placeholder">
                 <div className="w-full h-full flex items-center justify-center text-gray-500">
