@@ -43,6 +43,12 @@ import {
 import { Link } from "wouter";
 import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryImage, Post } from "@shared/schema";
 
+// Import AI-generated neighborhood images
+import goldenColoradoNeighborhood from "@assets/generated_images/Golden_Colorado_neighborhood_view_6945dadb.png";
+import arvadaColoradoNeighborhood from "@assets/generated_images/Arvada_Colorado_neighborhood_scene_936687a3.png";
+import littletonColoradoCommunity from "@assets/generated_images/Littleton_Colorado_community_area_de21be5a.png";
+import quailStreetArvadaNeighborhood from "@assets/generated_images/Quail_Street_Arvada_neighborhood_9e817b49.png";
+
 export default function CommunityDetail() {
   const params = useParams();
   const slug = params.slug;
@@ -154,6 +160,34 @@ export default function CommunityDetail() {
   };
 
   const galleryCategories = Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean)));
+
+  // Get neighborhood image based on community slug
+  const getNeighborhoodImage = (slug: string | undefined) => {
+    if (!slug) return null;
+    
+    const imageMap = {
+      'golden-pond': {
+        src: goldenColoradoNeighborhood,
+        alt: 'Golden, Colorado neighborhood view with beautiful residential homes and mountain backdrop'
+      },
+      'stonebridge-senior': {
+        src: arvadaColoradoNeighborhood,
+        alt: 'Arvada, Colorado neighborhood scene featuring tree-lined streets and welcoming community atmosphere'
+      },
+      'the-gardens-at-columbine': {
+        src: littletonColoradoCommunity,
+        alt: 'Littleton, Colorado community area showing peaceful suburban setting with parks and gardens'
+      },
+      'the-gardens-on-quail': {
+        src: quailStreetArvadaNeighborhood,
+        alt: 'Quail Street, Arvada neighborhood with charming homes and mature landscaping'
+      }
+    };
+    
+    return imageMap[slug as keyof typeof imageMap] || null;
+  };
+
+  const neighborhoodImage = getNeighborhoodImage(slug);
 
   return (
     <div className="min-h-screen bg-white">
@@ -677,14 +711,38 @@ export default function CommunityDetail() {
             {/* Location & Neighborhood */}
             <section>
               <h2 className="text-3xl font-bold mb-8">Location & Neighborhood</h2>
-              <div className="bg-gray-100 rounded-xl h-96 mb-6" data-testid="map-placeholder">
-                <div className="w-full h-full flex items-center justify-center text-gray-500">
-                  <div className="text-center">
-                    <MapPin className="w-12 h-12 mx-auto mb-4" />
-                    <p className="text-lg font-medium">{community.address}</p>
-                    <p>{community.city}, {community.state} {community.zipCode}</p>
+              <div className="relative rounded-xl h-96 mb-6 overflow-hidden shadow-lg" data-testid="neighborhood-image-container">
+                {neighborhoodImage ? (
+                  <>
+                    <img
+                      src={neighborhoodImage.src}
+                      alt={neighborhoodImage.alt}
+                      className="w-full h-full object-cover"
+                      data-testid="neighborhood-image"
+                      loading="lazy"
+                    />
+                    {/* Address overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-6">
+                      <div className="text-white">
+                        <div className="flex items-center mb-2">
+                          <MapPin className="w-6 h-6 mr-2 flex-shrink-0" />
+                          <p className="text-lg font-medium">{community.address}</p>
+                        </div>
+                        <p className="text-white/90">{community.city}, {community.state} {community.zipCode}</p>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  // Fallback to original placeholder if no image available
+                  <div className="bg-gray-100 rounded-xl h-96 w-full flex items-center justify-center text-gray-500">
+                    <div className="text-center">
+                      <MapPin className="w-12 h-12 mx-auto mb-4" />
+                      <p className="text-lg font-medium">{community.address}</p>
+                      <p>{community.city}, {community.state} {community.zipCode}</p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
