@@ -59,10 +59,7 @@ export default function Home() {
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await apiRequest("POST", "/api/tour-requests", {
-        ...formData,
-        preferredDate: new Date().toISOString(),
-      });
+      await apiRequest("POST", "/api/tour-requests", formData);
       toast({
         title: "Request Submitted",
         description: "We'll contact you within 10 minutes to help with your needs.",
