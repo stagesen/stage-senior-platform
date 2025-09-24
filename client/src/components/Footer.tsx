@@ -190,7 +190,6 @@ export default function Footer() {
               <h3 className="text-xl font-semibold text-background mb-6" data-testid="footer-contact-title">
                 Get In Touch
               </h3>
-              <p className="text-background/70 mb-6">Ready to learn more? We're here to help you find the perfect community.</p>
               
               <div className="space-y-4">
                 <div className="flex items-center p-3 bg-background/5 rounded-lg hover:bg-background/10 transition-colors" data-testid="footer-phone">
