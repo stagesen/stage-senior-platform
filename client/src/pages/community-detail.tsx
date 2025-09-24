@@ -49,6 +49,11 @@ import arvadaColoradoNeighborhood from "@assets/generated_images/Arvada_Colorado
 import littletonColoradoCommunity from "@assets/generated_images/Littleton_Colorado_community_area_de21be5a.png";
 import quailStreetArvadaNeighborhood from "@assets/generated_images/Quail_Street_Arvada_neighborhood_9e817b49.png";
 
+// Import feature highlight images
+import extraordinaryDiningImage from "@assets/generated_images/Senior_dining_extraordinary_experience_cbd509af.png";
+import engagingLifestyleImage from "@assets/generated_images/Senior_engaging_lifestyle_activities_d2661af2.png";
+import idealLocationImage from "@assets/generated_images/Seniors_ideal_location_lifestyle_091a6c73.png";
+
 export default function CommunityDetail() {
   const params = useParams();
   const slug = params.slug;
@@ -91,8 +96,8 @@ export default function CommunityDetail() {
     enabled: !!community?.id,
   });
 
-  const { data: posts = [] } = useQuery<Post[]>({
-    queryKey: [`/api/posts?communityId=${community?.id}&published=true`],
+  const { data: posts = [], isLoading: postsLoading, error: postsError } = useQuery<Post[]>({
+    queryKey: ['/api/posts', community?.id, 'published'],
     enabled: !!community?.id,
   });
 
@@ -766,6 +771,214 @@ export default function CommunityDetail() {
                   </CardContent>
                 </Card>
               </div>
+            </section>
+
+            {/* Features Highlights Section */}
+            <section>
+              <h2 className="text-3xl font-bold mb-8">Experience the Difference</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Extraordinary Dining */}
+                <Card className="overflow-hidden hover:shadow-xl transition-shadow group" data-testid="feature-extraordinary-dining">
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={extraordinaryDiningImage}
+                      alt="Extraordinary dining experience featuring seniors enjoying nutritious, homestyle cuisine in a beautiful dining room"
+                      width={400}
+                      height={256}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      data-testid="feature-dining-image"
+                    />
+                  </div>
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-semibold mb-3" data-testid="feature-dining-title">
+                      Extraordinary Dining
+                    </h3>
+                    <p className="text-gray-600 mb-4 leading-relaxed" data-testid="feature-dining-description">
+                      There's no need to worry about cooking. You can dine on nutritious, homestyle cuisine in our beautiful dining room—complete with great conversation.
+                    </p>
+                    <Button variant="outline" className="w-full" asChild>
+                      <Link href="#menu" aria-label="View sample menu for this community" data-testid="button-sample-menu">
+                        Sample Menu
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Engaging Lifestyle */}
+                <Card className="overflow-hidden hover:shadow-xl transition-shadow group" data-testid="feature-engaging-lifestyle">
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={engagingLifestyleImage}
+                      alt="Engaging lifestyle activities featuring seniors staying active, getting creative, and learning new skills"
+                      width={400}
+                      height={256}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      data-testid="feature-lifestyle-image"
+                    />
+                  </div>
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-semibold mb-3" data-testid="feature-lifestyle-title">
+                      Engaging Lifestyle
+                    </h3>
+                    <p className="text-gray-600 mb-4 leading-relaxed" data-testid="feature-lifestyle-description">
+                      From staying active to getting creative to learning new skills, we offer a diverse variety of ways for you to pursue your hobbies and interests.
+                    </p>
+                    <Button variant="outline" className="w-full" asChild>
+                      <Link href={`/events?community=${community.slug}`} aria-label="View engagement calendar for this community" data-testid="button-engagement-calendar">
+                        Engagement Calendar
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Ideal Location */}
+                <Card className="overflow-hidden hover:shadow-xl transition-shadow group" data-testid="feature-ideal-location">
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={idealLocationImage}
+                      alt="Seniors enjoying ideal location lifestyle with access to golf courses, local eateries, and parks"
+                      width={400}
+                      height={256}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      data-testid="feature-location-image"
+                    />
+                  </div>
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-semibold mb-3" data-testid="feature-location-title">
+                      Ideal Location
+                    </h3>
+                    <p className="text-gray-600 mb-4 leading-relaxed" data-testid="feature-location-description">
+                      You can easily enjoy the area by playing at Arroyo Del Oso Golf Course, dining at popular local eateries, and walking through Quintessence Park.
+                    </p>
+                    <Button variant="outline" className="w-full" asChild>
+                      <Link 
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                          community.address || `${community.city}, ${community.state} ${community.zipCode}`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Get directions to ${community.name}`}
+                        data-testid="button-map-directions"
+                      >
+                        Map and Directions
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </section>
+
+            {/* Articles Section */}
+            <section>
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <p className="text-sm text-gray-500 uppercase tracking-wide mb-2" data-testid="articles-header">
+                    OUR RESOURCES
+                  </p>
+                  <h2 className="text-3xl font-bold" data-testid="articles-title">
+                    News & articles
+                  </h2>
+                </div>
+                <Button variant="outline" asChild data-testid="button-browse-articles">
+                  <Link href="/blog">
+                    Browse all articles
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Link>
+                </Button>
+              </div>
+              
+              {postsLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {[1, 2, 3].map((i) => (
+                    <Card key={i} className="overflow-hidden" data-testid={`article-skeleton-${i}`}>
+                      <Skeleton className="h-48 w-full" />
+                      <CardContent className="p-6 space-y-3">
+                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-6 w-full" />
+                        <Skeleton className="h-6 w-3/4" />
+                        <Skeleton className="h-4 w-24" />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : postsError ? (
+                <div className="text-center py-12" data-testid="articles-error">
+                  <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-foreground mb-2">Unable to Load Articles</h3>
+                  <p className="text-gray-500 mb-4">Sorry, we couldn't load the latest articles. Please try again later.</p>
+                  <Button variant="outline" onClick={() => window.location.reload()} data-testid="button-retry-articles">
+                    Try Again
+                  </Button>
+                </div>
+              ) : posts.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {posts.slice(0, 3).map((post) => (
+                    <Card key={post.id} className="overflow-hidden hover:shadow-xl transition-shadow group" data-testid={`article-card-${post.id}`}>
+                      <div className="relative h-48 overflow-hidden bg-gray-100">
+                        {post.heroImageUrl ? (
+                          <img
+                            src={post.heroImageUrl}
+                            alt={post.title}
+                            width={400}
+                            height={192}
+                            loading="lazy"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            data-testid={`article-image-${post.id}`}
+                          />
+                        ) : (
+                          <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" data-testid={`article-placeholder-${post.id}`}>
+                            <BookOpen className="w-12 h-12 text-gray-400" />
+                          </div>
+                        )}
+                      </div>
+                      <CardContent className="p-6">
+                        <time className="text-sm text-gray-500 mb-2 block" data-testid={`article-date-${post.id}`}>
+                          {post.publishedAt ? 
+                            new Date(post.publishedAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            }) :
+                            new Date(post.createdAt || new Date()).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })
+                          }
+                        </time>
+                        <h3 className="text-xl font-semibold mb-3 line-clamp-2" data-testid={`article-title-${post.id}`}>
+                          {post.title}
+                        </h3>
+                        {post.summary && (
+                          <p className="text-gray-600 mb-4 line-clamp-2 text-sm" data-testid={`article-summary-${post.id}`}>
+                            {post.summary}
+                          </p>
+                        )}
+                        <Link 
+                          href={`/blog/${post.slug}`}
+                          className="inline-flex items-center text-primary hover:text-primary/80 font-medium"
+                          data-testid={`link-article-${post.id}`}
+                        >
+                          Read more
+                          <ArrowRight className="w-4 h-4 ml-1" />
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12" data-testid="no-articles">
+                  <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-foreground mb-2">No Articles Available</h3>
+                  <p className="text-gray-500" data-testid="no-articles-message">Check back soon for the latest news and updates from our community.</p>
+                </div>
+              )}
             </section>
           </div>
 
