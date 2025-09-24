@@ -274,24 +274,100 @@ export default function CommunityDetail() {
             </section>
 
             {/* Amenities Showcase */}
-            {community.amenities && community.amenities.length > 0 && (
+            {(community.amenitiesData || community.amenities) && 
+             ((community.amenitiesData && community.amenitiesData.length > 0) || 
+              (community.amenities && community.amenities.length > 0)) && (
               <section>
                 <h2 className="text-3xl font-bold mb-8">Amenities & Services</h2>
                 <div className="bg-gray-50 rounded-2xl p-8">
                   <p className="text-lg text-gray-600 mb-8">
                     Step into a lifestyle where every day feels like a retreat. Our community is packed with thoughtful amenities designed to make life easier and more enjoyable.
                   </p>
+                  {/* Show featured amenities with images first if available */}
+                  {(community as any).amenitiesData && 
+                   (community as any).amenitiesData.filter((am: any) => am.imageUrl).length > 0 && (
+                    <div className="mb-8">
+                      <h3 className="text-xl font-semibold mb-4">Featured Amenities</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {(community as any).amenitiesData
+                          .filter((am: any) => am.imageUrl)
+                          .map((amenity: any, index: number) => {
+                            const IconComponent = amenity.icon ? 
+                              (amenity.icon === 'Utensils' ? Coffee : 
+                               amenity.icon === 'Coffee' ? Coffee :
+                               amenity.icon === 'Car' ? Car :
+                               amenity.icon === 'Activity' ? Activity :
+                               amenity.icon === 'BookOpen' ? BookOpen :
+                               amenity.icon === 'Heart' ? Heart :
+                               amenity.icon === 'Users' ? Users :
+                               amenity.icon === 'Wifi' ? Wifi :
+                               Sparkles) : 
+                              getAmenityIcon(amenity.name);
+                            return (
+                              <Card 
+                                key={`featured-${index}`}
+                                className="overflow-hidden hover:shadow-lg transition-shadow"
+                                data-testid={`featured-amenity-${index}`}
+                              >
+                                <div className="h-48 overflow-hidden">
+                                  <img 
+                                    src={amenity.imageUrl} 
+                                    alt={amenity.name}
+                                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                  />
+                                </div>
+                                <CardContent className="p-4">
+                                  <div className="flex items-start space-x-3">
+                                    <IconComponent className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                                    <div>
+                                      <h4 className="font-semibold text-base">{amenity.name}</h4>
+                                      {amenity.description && (
+                                        <p className="text-sm text-gray-600 mt-1">{amenity.description}</p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Show all amenities in compact grid */}
+                  <h3 className="text-xl font-semibold mb-4">
+                    {(community as any).amenitiesData && 
+                     (community as any).amenitiesData.filter((am: any) => am.imageUrl).length > 0 
+                      ? "All Amenities" 
+                      : ""}
+                  </h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                    {community.amenities.map((amenity, index) => {
-                      const Icon = getAmenityIcon(amenity);
+                    {((community as any).amenitiesData || 
+                      community.amenities?.map(name => ({ name })) || []
+                    ).map((amenity: any, index: number) => {
+                      const amenityName = typeof amenity === 'string' ? amenity : amenity.name;
+                      const IconComponent = typeof amenity === 'string' ? 
+                        getAmenityIcon(amenity) :
+                        (amenity.icon ? 
+                          (amenity.icon === 'Utensils' ? Coffee : 
+                           amenity.icon === 'Coffee' ? Coffee :
+                           amenity.icon === 'Car' ? Car :
+                           amenity.icon === 'Activity' ? Activity :
+                           amenity.icon === 'BookOpen' ? BookOpen :
+                           amenity.icon === 'Heart' ? Heart :
+                           amenity.icon === 'Users' ? Users :
+                           amenity.icon === 'Wifi' ? Wifi :
+                           Sparkles) : 
+                          getAmenityIcon(amenityName));
+                      
                       return (
                         <div 
-                          key={index}
+                          key={`amenity-${index}`}
                           className="flex items-center space-x-3 bg-white rounded-lg p-4"
                           data-testid={`amenity-${index}`}
                         >
-                          <Icon className="w-8 h-8 text-primary flex-shrink-0" />
-                          <span className="text-sm font-medium">{amenity}</span>
+                          <IconComponent className="w-8 h-8 text-primary flex-shrink-0" />
+                          <span className="text-sm font-medium">{amenityName}</span>
                         </div>
                       );
                     })}
