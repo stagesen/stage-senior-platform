@@ -32,6 +32,7 @@ export const amenities = pgTable("amenities", {
   category: varchar("category", { length: 100 }),
   description: text("description"),
   icon: varchar("icon", { length: 50 }),
+  imageUrl: text("image_url"),
   sortOrder: integer("sort_order").default(0),
   active: boolean("active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
