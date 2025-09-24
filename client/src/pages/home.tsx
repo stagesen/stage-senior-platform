@@ -14,19 +14,24 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { 
-  Search, 
-  MapPin, 
-  Calendar, 
-  Phone, 
-  Star, 
-  Shield, 
-  Heart, 
-  Users, 
+import {
+  Search,
+  MapPin,
+  Calendar,
+  Phone,
+  Star,
+  Shield,
+  Heart,
+  Users,
   Award,
   CheckCircle,
   ArrowRight,
-  Mail
+  Mail,
+  CalendarClock,
+  ShieldCheck,
+  Sparkles,
+  Lock,
+  MessageCircle
 } from "lucide-react";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
@@ -502,86 +507,140 @@ export default function Home() {
       {/* Lead Generation Panel */}
       <section id="lead" className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
-                Talk to a real local advisor today
-              </h2>
-              <p className="text-xl text-muted-foreground mb-6">
-                Urgent placement? Weekend tours? We've got you. Call now or get a callback in 10 minutes.
-              </p>
-              <div className="flex flex-wrap gap-4 mb-8">
-                <Button 
-                  size="lg" 
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1 text-sm font-medium text-primary">
+                  <Phone className="h-4 w-4" /> Colorado-based guidance, 7 days a week
+                </span>
+                <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
+                  Talk to a real local advisor today
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  Urgent placement? Weekend tours? We’ve got you covered. Call now or tell us what you need and we’ll respond in 10 minutes.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  size="lg"
                   asChild
+                  className="sm:flex-1 shadow-md"
                   data-testid="button-call-now"
                 >
-                  <a href="tel:+1-303-436-2300">
-                    <Phone className="w-5 h-5 mr-2" />
-                    Call (303) 436‑2300
+                  <a href="tel:+1-303-436-2300" className="flex items-center justify-center">
+                    <Phone className="w-5 h-5 mr-2" /> Call (303) 436‑2300
                   </a>
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline"
+                <Button
+                  size="lg"
+                  variant="ghost"
+                  className="sm:flex-1 border border-primary/20 text-primary hover:bg-primary/10"
                   onClick={() => setShowContactForm(true)}
                   data-testid="button-request-callback"
                 >
-                  Request Callback
+                  Request a quick callback
                 </Button>
               </div>
-              <ul className="space-y-3 text-muted-foreground">
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" />
-                  Same‑day and next‑day tours available
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" />
-                  Transparent availability & pricing information
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" />
-                  Expert help comparing communities and care options
-                </li>
-              </ul>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Card className="border-none bg-white shadow-sm">
+                  <CardContent className="flex items-start gap-3 p-5">
+                    <CalendarClock className="h-8 w-8 rounded-full bg-primary/10 p-1.5 text-primary" />
+                    <div>
+                      <h3 className="font-semibold text-foreground">Tours on your schedule</h3>
+                      <p className="text-sm text-muted-foreground">Same-day and weekend visits arranged by our on-call team.</p>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-none bg-white shadow-sm">
+                  <CardContent className="flex items-start gap-3 p-5">
+                    <ShieldCheck className="h-8 w-8 rounded-full bg-primary/10 p-1.5 text-primary" />
+                    <div>
+                      <h3 className="font-semibold text-foreground">Transparent answers</h3>
+                      <p className="text-sm text-muted-foreground">Real availability, pricing, and care levels without the runaround.</p>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-none bg-white shadow-sm sm:col-span-2">
+                  <CardContent className="flex items-start gap-3 p-5">
+                    <Sparkles className="h-8 w-8 rounded-full bg-primary/10 p-1.5 text-primary" />
+                    <div>
+                      <h3 className="font-semibold text-foreground">Warm, human support</h3>
+                      <p className="text-sm text-muted-foreground">Compare communities with a teammate who knows every neighborhood.</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              <Card className="border-none bg-white shadow-sm">
+                <CardContent className="flex flex-col gap-5 p-6 sm:flex-row sm:items-center">
+                  <img
+                    src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=160&h=160&q=80&auto=format&fit=crop"
+                    alt="Stage Senior advisor"
+                    className="h-20 w-20 rounded-2xl object-cover shadow-md"
+                  />
+                  <div className="space-y-3">
+                    <blockquote className="text-lg font-medium text-foreground">
+                      “We help families feel confident about their next step—no pressure, just honest guidance.”
+                    </blockquote>
+                    <div className="text-sm text-muted-foreground">
+                      <span className="font-semibold text-foreground">Maya Thompson</span>, Senior Living Advisor
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-            
+
             {showContactForm ? (
-              <Card>
-                <CardContent className="p-6">
-                  <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <div>
-                      <Input
-                        placeholder="Your name *"
-                        value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        required
-                        data-testid="input-contact-name"
-                      />
+              <Card className="border-primary/20 shadow-lg">
+                <CardContent className="p-6 sm:p-8">
+                  <form onSubmit={handleContactSubmit} className="space-y-6">
+                    <div className="rounded-2xl border border-primary/20 bg-white p-5 shadow-sm">
+                      <div className="mb-4 flex items-start gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-lg font-semibold text-primary-foreground">
+                          1
+                        </span>
+                        <div>
+                          <h3 className="font-semibold text-foreground">Contact information</h3>
+                          <p className="text-sm text-muted-foreground">Tell us how to reach you.</p>
+                        </div>
+                      </div>
+                      <div className="grid gap-3">
+                        <Input
+                          placeholder="Your name *"
+                          value={formData.name}
+                          onChange={(e) => setFormData({...formData, name: e.target.value})}
+                          required
+                          data-testid="input-contact-name"
+                        />
+                        <Input
+                          type="tel"
+                          placeholder="Phone number *"
+                          value={formData.phone}
+                          onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                          required
+                          data-testid="input-contact-phone"
+                        />
+                        <Input
+                          type="email"
+                          placeholder="Email (optional)"
+                          value={formData.email}
+                          onChange={(e) => setFormData({...formData, email: e.target.value})}
+                          data-testid="input-contact-email"
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <Input
-                        type="tel"
-                        placeholder="Phone number *"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                        required
-                        data-testid="input-contact-phone"
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        type="email"
-                        placeholder="Email (optional)"
-                        value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        data-testid="input-contact-email"
-                      />
-                    </div>
-                    <div>
+                    <div className="rounded-2xl border border-primary/20 bg-white p-5 shadow-sm">
+                      <div className="mb-4 flex items-start gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-lg font-semibold text-primary-foreground">
+                          2
+                        </span>
+                        <div>
+                          <h3 className="font-semibold text-foreground">Care needs</h3>
+                          <p className="text-sm text-muted-foreground">What kind of support are you exploring?</p>
+                        </div>
+                      </div>
                       <Select value={formData.careType} onValueChange={(value) => setFormData({...formData, careType: value})}>
                         <SelectTrigger data-testid="select-contact-care-type">
-                          <SelectValue placeholder="What kind of care?" />
+                          <SelectValue placeholder="Select a care type" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="independent-living">Independent Living</SelectItem>
@@ -591,51 +650,76 @@ export default function Home() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
+                    <div className="rounded-2xl border border-primary/20 bg-white p-5 shadow-sm">
+                      <div className="mb-4 flex items-start gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-lg font-semibold text-primary-foreground">
+                          3
+                        </span>
+                        <div>
+                          <h3 className="font-semibold text-foreground">Anything else?</h3>
+                          <p className="text-sm text-muted-foreground">Share details so we can jump in prepared.</p>
+                        </div>
+                      </div>
                       <Textarea
-                        placeholder="Tell us what you need..."
+                        placeholder="Tell us about timing, location preferences, or specific concerns..."
                         value={formData.message}
                         onChange={(e) => setFormData({...formData, message: e.target.value})}
-                        rows={3}
+                        rows={4}
                         data-testid="textarea-contact-message"
                       />
                     </div>
-                    <div className="flex gap-3">
-                      <Button type="submit" className="flex-1" data-testid="button-submit-contact">
-                        Get Help
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                      <Button type="submit" className="sm:flex-1" data-testid="button-submit-contact">
+                        Get help from an advisor
                       </Button>
-                      <Button 
-                        type="button" 
-                        variant="outline" 
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="sm:flex-1"
                         onClick={() => setShowContactForm(false)}
                         data-testid="button-cancel-contact"
                       >
                         Cancel
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      By submitting, you agree to our <Link href="#" className="underline">Privacy Policy</Link>.
-                    </p>
+                    <div className="flex items-start gap-3 rounded-xl bg-muted/60 p-4 text-sm text-muted-foreground">
+                      <Lock className="mt-0.5 h-5 w-5 text-primary" />
+                      <p>
+                        Your details stay private. We only use them to respond to your request. Review our {" "}
+                        <Link href="#" className="font-medium text-primary underline">Privacy Policy</Link>.
+                      </p>
+                    </div>
                   </form>
                 </CardContent>
               </Card>
             ) : (
-              <Card className="bg-primary text-white">
-                <CardContent className="p-8 text-center">
-                  <Mail className="w-16 h-16 mx-auto mb-6 opacity-80" />
-                  <h3 className="text-2xl font-bold mb-4">Get Expert Guidance</h3>
-                  <p className="text-white/90 mb-6">
-                    Our senior living advisors are standing by to help you find the perfect community for your loved one.
-                  </p>
-                  <Button 
-                    size="lg" 
-                    variant="secondary"
-                    onClick={() => setShowContactForm(true)}
+              <Card className="border-primary/20 bg-white shadow-lg">
+                <CardContent className="space-y-6 p-6 sm:p-8">
+                  <div className="flex items-start gap-4">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <MessageCircle className="h-6 w-6" />
+                    </span>
+                    <div>
+                      <h3 className="text-2xl font-semibold text-foreground">Prefer typing it out?</h3>
+                      <p className="text-muted-foreground">
+                        Share a few details and a Stage Senior advisor will reach out within minutes.
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    size="lg"
                     className="w-full"
+                    onClick={() => setShowContactForm(true)}
                     data-testid="button-show-contact-form"
                   >
-                    Start Your Search
+                    Start an online request
                   </Button>
+                  <div className="rounded-xl bg-primary/5 p-4 text-sm text-muted-foreground">
+                    <p className="font-medium text-foreground">Need to talk sooner?</p>
+                    <p>
+                      Call us at <a href="tel:+1-303-436-2300" className="font-semibold text-primary">(303) 436‑2300</a> for immediate help.
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             )}
