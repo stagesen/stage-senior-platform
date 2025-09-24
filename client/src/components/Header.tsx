@@ -27,7 +27,7 @@ export default function Header() {
               <img 
                 src={logoUrl} 
                 alt="Stage Senior"
-                className="w-auto min-w-[150px] h-10 sm:h-12 md:h-14"
+                className="w-auto h-10 sm:h-12 md:h-14"
               />
             </Link>
           </div>
