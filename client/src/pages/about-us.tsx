@@ -2,10 +2,23 @@ import { useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Shield, Heart, Users, Award, Phone, Mail, MapPin, Calendar, Star } from "lucide-react";
 
 export default function AboutUs() {
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
+
+  const teamMembers = [
+    { name: "Michael Thompson", title: "Chief Executive Officer" },
+    { name: "Sarah Johnson", title: "Chief Operating Officer" },
+    { name: "David Chen", title: "Director of Clinical Services" },
+    { name: "Lisa Rodriguez", title: "Director of Marketing" },
+    { name: "James Wilson", title: "Director of Finance" }
+  ];
+
   useEffect(() => {
     document.title = "About Us | Stage Senior";
     
@@ -140,6 +153,36 @@ export default function AboutUs() {
                   </h3>
                   <p className="text-muted-foreground" data-testid={`value-description-${index}`}>
                     {value.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Leadership Team */}
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="team-title">
+              Our Leadership Team
+            </h2>
+            <p className="text-lg text-muted-foreground" data-testid="team-subtitle">
+              Elevating Senior Care Across Colorado
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-16">
+            {teamMembers.map((member, index) => (
+              <Card key={index} className="text-center p-6 hover:shadow-lg transition-shadow" data-testid={`team-member-${index}`}>
+                <CardContent className="pt-6">
+                  <Avatar className="w-20 h-20 mx-auto mb-4" data-testid={`avatar-${index}`} aria-label={`Portrait of ${member.name}`}>
+                    <AvatarFallback className="text-lg font-semibold bg-primary/10 text-primary">
+                      {getInitials(member.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <h3 className="font-semibold text-lg mb-2" data-testid={`member-name-${index}`}>
+                    {member.name}
+                  </h3>
+                  <p className="text-muted-foreground text-sm" data-testid={`member-title-${index}`}>
+                    {member.title}
                   </p>
                 </CardContent>
               </Card>
