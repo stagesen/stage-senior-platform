@@ -123,158 +123,163 @@ export default function Footer() {
 
             {/* Company Info */}
             <div className="space-y-6">
-              <div className="w-fit" data-testid="footer-logo">
+              <Link
+                href="/"
+                className="inline-flex w-fit items-center"
+                aria-label="Stage Senior Living homepage"
+                data-testid="footer-logo"
+              >
                 <img
                   src={logoWhiteUrl}
                   alt="Stage Senior"
-                className="h-12 w-auto sm:h-14 md:h-16"
-              />
+                  className="h-12 w-auto object-contain sm:h-14 md:h-16"
+                />
+              </Link>
+              <p className="text-background/80" data-testid="footer-description">
+                Locally owned, resident-focused senior living communities across Colorado since 2016—offering tailored support,
+                vibrant programming, and hospitality-driven care.
+              </p>
+              <ul className="grid gap-2 text-sm text-background/80" data-testid="footer-highlights">
+                {highlightPoints.map((point) => (
+                  <li key={point} className="flex items-start gap-3">
+                    <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/30 text-primary-foreground">
+                      <Sparkles className="h-3.5 w-3.5" />
+                    </span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                {socialLinks.map((social) => {
+                  const Icon = social.icon;
+                  return (
+                    <a
+                      key={social.name}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-background/30 bg-background/10 text-background/70 transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:text-primary"
+                      aria-label={social.name}
+                      data-testid={social.testId}
+                    >
+                      <Icon className="h-5 w-5" />
+                    </a>
+                  );
+                })}
+              </div>
             </div>
-            <p className="text-background/80" data-testid="footer-description">
-              Locally owned, resident-focused senior living communities across Colorado since 2016—offering tailored support,
-              vibrant programming, and hospitality-driven care.
-            </p>
-            <ul className="grid gap-2 text-sm text-background/80" data-testid="footer-highlights">
-              {highlightPoints.map((point) => (
-                <li key={point} className="flex items-start gap-3">
-                  <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/30 text-primary-foreground">
-                    <Sparkles className="h-3.5 w-3.5" />
+
+            {/* Communities */}
+            <div>
+              <h3 className="mb-4 text-lg font-semibold text-background" data-testid="footer-communities-title">
+                Our Communities
+              </h3>
+              <ul className="space-y-2 text-background/80">
+                {communities.map((community) => (
+                  <li key={community.slug}>
+                    <Link
+                      href={`/communities/${community.slug}`}
+                      className="hover:text-primary transition-colors"
+                      data-testid={`footer-community-${community.slug}`}
+                    >
+                      {community.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h3 className="mb-4 text-lg font-semibold text-background" data-testid="footer-quicklinks-title">
+                Quick Links
+              </h3>
+              <ul className="space-y-2 text-background/80">
+                {quickLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="hover:text-primary transition-colors"
+                      data-testid={`footer-quicklink-${link.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact */}
+            <div className="space-y-5">
+              <h3 className="mb-4 text-lg font-semibold text-background" data-testid="footer-contact-title">
+                Contact
+              </h3>
+              <div className="space-y-3 text-background/80">
+                <div className="flex items-center" data-testid="footer-phone">
+                  <Phone className="mr-2 h-4 w-4" />
+                  <span>(303) 436-2300</span>
+                </div>
+                <div className="flex items-center" data-testid="footer-email">
+                  <Mail className="mr-2 h-4 w-4" />
+                  <span>info@stagesenior.com</span>
+                </div>
+                <div className="flex items-start" data-testid="footer-address">
+                  <MapPin className="mr-2 mt-1 h-4 w-4" />
+                  <span>
+                    8100 E Arapahoe Road, Suite 208
+                    <br />
+                    Centennial, CO 80112
                   </span>
-                  <span>{point}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              {socialLinks.map((social) => {
-                const Icon = social.icon;
-                return (
-                  <a
-                    key={social.name}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-background/30 bg-background/10 text-background/70 transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:text-primary"
-                    aria-label={social.name}
-                    data-testid={social.testId}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Communities */}
-          <div>
-            <h3 className="mb-4 text-lg font-semibold text-background" data-testid="footer-communities-title">
-              Our Communities
-            </h3>
-            <ul className="space-y-2 text-background/80">
-              {communities.map((community) => (
-                <li key={community.slug}>
-                  <Link
-                    href={`/communities/${community.slug}`} 
-                    className="hover:text-primary transition-colors"
-                    data-testid={`footer-community-${community.slug}`}
-                  >
-                    {community.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="mb-4 text-lg font-semibold text-background" data-testid="footer-quicklinks-title">
-              Quick Links
-            </h3>
-            <ul className="space-y-2 text-background/80">
-              {quickLinks.map((link) => (
-                <li key={link.href}>
-                  <Link 
-                    href={link.href} 
-                    className="hover:text-primary transition-colors"
-                    data-testid={`footer-quicklink-${link.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div className="space-y-5">
-            <h3 className="mb-4 text-lg font-semibold text-background" data-testid="footer-contact-title">
-              Contact
-            </h3>
-            <div className="space-y-3 text-background/80">
-              <div className="flex items-center" data-testid="footer-phone">
-                <Phone className="mr-2 h-4 w-4" />
-                <span>(303) 436-2300</span>
-              </div>
-              <div className="flex items-center" data-testid="footer-email">
-                <Mail className="mr-2 h-4 w-4" />
-                <span>info@stagesenior.com</span>
-              </div>
-              <div className="flex items-start" data-testid="footer-address">
-                <MapPin className="mr-2 mt-1 h-4 w-4" />
-                <span>
-                  8100 E Arapahoe Road, Suite 208
-                  <br />
-                  Centennial, CO 80112
-                </span>
-              </div>
-            </div>
-            <div className="rounded-2xl border border-background/20 bg-background/10 p-5">
-              <form className="space-y-3" onSubmit={handleNewsletterSubmit} data-testid="footer-newsletter-form">
-                <div className="space-y-1">
-                  <h4 className="text-base font-semibold text-background" data-testid="footer-newsletter-title">
-                    Stay in the loop
-                  </h4>
-                  <p className="text-sm text-background/70" data-testid="footer-newsletter-description">
-                    Join our monthly newsletter for community highlights, care resources, and upcoming events.
-                  </p>
                 </div>
-                <div className="flex flex-col gap-2 sm:flex-row">
-                  <label className="sr-only" htmlFor="newsletter-email">
-                    Email address
-                  </label>
-                  <input
-                    id="newsletter-email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={newsletterEmail}
-                    onChange={(event) => {
-                      setNewsletterEmail(event.target.value);
-                      if (newsletterSubmitted) {
-                        setNewsletterSubmitted(false);
-                      }
-                    }}
-                    placeholder="you@example.com"
-                    className="h-11 flex-1 rounded-full border border-background/30 bg-background px-4 text-sm text-foreground placeholder:text-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    data-testid="footer-newsletter-input"
-                  />
-                  <button
-                    type="submit"
-                    className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/40 transition-transform hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    data-testid="footer-newsletter-submit"
-                  >
-                    <Send className="h-4 w-4" />
-                    Join
-                  </button>
-                </div>
-                {newsletterSubmitted && (
-                  <p className="text-sm text-background/80" data-testid="footer-newsletter-success" aria-live="polite">
-                    Thank you for subscribing! Look for our next update in your inbox.
-                  </p>
-                )}
-              </form>
+              </div>
+              <div className="rounded-2xl border border-background/20 bg-background/10 p-5">
+                <form className="space-y-3" onSubmit={handleNewsletterSubmit} data-testid="footer-newsletter-form">
+                  <div className="space-y-1">
+                    <h4 className="text-base font-semibold text-background" data-testid="footer-newsletter-title">
+                      Stay in the loop
+                    </h4>
+                    <p className="text-sm text-background/70" data-testid="footer-newsletter-description">
+                      Join our monthly newsletter for community highlights, care resources, and upcoming events.
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <label className="sr-only" htmlFor="newsletter-email">
+                      Email address
+                    </label>
+                    <input
+                      id="newsletter-email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      value={newsletterEmail}
+                      onChange={(event) => {
+                        setNewsletterEmail(event.target.value);
+                        if (newsletterSubmitted) {
+                          setNewsletterSubmitted(false);
+                        }
+                      }}
+                      placeholder="you@example.com"
+                      className="h-11 flex-1 rounded-full border border-background/30 bg-background px-4 text-sm text-foreground placeholder:text-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      data-testid="footer-newsletter-input"
+                    />
+                    <button
+                      type="submit"
+                      className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/40 transition-transform hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      data-testid="footer-newsletter-submit"
+                    >
+                      <Send className="h-4 w-4" />
+                      Join
+                    </button>
+                  </div>
+                  {newsletterSubmitted && (
+                    <p className="text-sm text-background/80" data-testid="footer-newsletter-success" aria-live="polite">
+                      Thank you for subscribing! Look for our next update in your inbox.
+                    </p>
+                  )}
+                </form>
+              </div>
             </div>
-          </div>
 
         </div>
 

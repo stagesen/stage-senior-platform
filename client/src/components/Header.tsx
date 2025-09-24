@@ -26,11 +26,16 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link href="/" data-testid="logo">
-              <img 
-                src={logoUrl} 
+            <Link
+              href="/"
+              className="inline-flex items-center"
+              aria-label="Stage Senior Living homepage"
+              data-testid="logo"
+            >
+              <img
+                src={logoUrl}
                 alt="Stage Senior"
-                className="w-auto h-10 sm:h-12 md:h-14"
+                className="h-10 w-auto object-contain sm:h-12 md:h-14"
               />
             </Link>
           </div>
