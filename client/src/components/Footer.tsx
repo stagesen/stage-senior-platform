@@ -23,8 +23,12 @@ export default function Footer() {
           
           {/* Company Info */}
           <div className="md:col-span-1">
-            <div className="text-2xl font-bold text-primary mb-4" data-testid="footer-logo">
-              Stage Senior
+            <div className="mb-4" data-testid="footer-logo">
+              <img 
+                src="@assets/stagesenior-logo-wht_1758726884711.webp" 
+                alt="Stage Senior"
+                className="h-12 w-auto"
+              />
             </div>
             <p className="text-background/80 mb-4" data-testid="footer-description">
               Locally owned, resident-focused senior living communities across Colorado since 2016.
@@ -102,7 +106,7 @@ export default function Footer() {
             <div className="space-y-2 text-background/80">
               <div className="flex items-center" data-testid="footer-phone">
                 <Phone className="w-4 h-4 mr-2" />
-                <span>(303) 555-0123</span>
+                <span>(303) 436-2300</span>
               </div>
               <div className="flex items-center" data-testid="footer-email">
                 <Mail className="w-4 h-4 mr-2" />
@@ -110,7 +114,7 @@ export default function Footer() {
               </div>
               <div className="flex items-start" data-testid="footer-address">
                 <MapPin className="w-4 h-4 mr-2 mt-1" />
-                <span>Denver, Colorado<br />Serving the Front Range</span>
+                <span>8100 E Arapahoe Road, Suite 208<br />Centennial, CO 80112</span>
               </div>
             </div>
           </div>

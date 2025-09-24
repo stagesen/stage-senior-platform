@@ -24,8 +24,12 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link href="/" className="text-2xl font-bold text-primary" data-testid="logo">
-              Stage Senior
+            <Link href="/" data-testid="logo">
+              <img 
+                src="@assets/stagesenior-logo_1758726889154.webp" 
+                alt="Stage Senior"
+                className="h-10 w-auto"
+              />
             </Link>
           </div>
           
@@ -50,7 +54,7 @@ export default function Header() {
               className="bg-primary text-primary-foreground hover:bg-primary/90"
               data-testid="button-call"
             >
-              <a href="tel:+1-303-555-0123">
+              <a href="tel:+1-303-436-2300">
                 <Phone className="w-4 h-4 mr-2" />
                 Call Now
               </a>
