@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import EventCard from "@/components/EventCard";
 import FloorPlanModal from "@/components/FloorPlanModal";
+import CommunityDetailNavigation from "@/components/CommunityDetailNavigation";
 import { 
   MapPin, 
   Phone, 
@@ -211,13 +212,29 @@ export default function CommunityDetail() {
         </div>
       </section>
 
+      {/* Sticky Navigation */}
+      <CommunityDetailNavigation 
+        sections={{
+          overview: true,
+          features: true,
+          amenities: !!(community.amenities && community.amenities.length > 0),
+          floorPlans: floorPlans.length > 0,
+          gallery: galleryImages.length > 0,
+          events: events.length > 0,
+          testimonials: testimonials.length > 0,
+          blogPosts: posts.length > 0,
+          faqs: faqs.length > 0,
+          location: true,
+        }}
+      />
+
       {/* Main Content with Sticky Sidebar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-16">
             {/* Overview Section */}
-            <section>
+            <section id="overview">
               <h2 className="text-3xl font-bold mb-6" data-testid="overview-title">
                 Welcome to {community.name}
               </h2>
@@ -231,7 +248,7 @@ export default function CommunityDetail() {
             </section>
 
             {/* Features & Highlights */}
-            <section>
+            <section id="features">
               <h2 className="text-3xl font-bold mb-8">Community Highlights</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="border-l-4 border-l-primary">
@@ -275,7 +292,7 @@ export default function CommunityDetail() {
 
             {/* Amenities Showcase */}
             {community.amenities && community.amenities.length > 0 && (
-              <section>
+              <section id="amenities">
                 <h2 className="text-3xl font-bold mb-8">Amenities & Services</h2>
                 <div className="bg-gray-50 rounded-2xl p-8">
                   <p className="text-lg text-gray-600 mb-8">
@@ -379,7 +396,7 @@ export default function CommunityDetail() {
 
             {/* Floor Plans Section */}
             {floorPlans.length > 0 && (
-              <section>
+              <section id="floor-plans">
                 <h2 className="text-3xl font-bold mb-8">Floor Plans & Pricing</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Each apartment home is designed for comfort and independence, with modern conveniences and thoughtful layouts.
@@ -469,7 +486,7 @@ export default function CommunityDetail() {
 
             {/* Photo Gallery */}
             {galleryImages.length > 0 && (
-              <section>
+              <section id="gallery">
                 <h2 className="text-3xl font-bold mb-8">Photo Gallery</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Explore our bright, comfortable spaces and serene outdoor areas through our community gallery.
@@ -524,7 +541,7 @@ export default function CommunityDetail() {
 
             {/* Events & Activities - Full Width */}
             {events.length > 0 && (
-              <section>
+              <section id="events">
                 <h2 className="text-3xl font-bold mb-8">Upcoming Events</h2>
                 <div className="space-y-6">
                   {events.slice(0, 4).map((event) => (
@@ -548,7 +565,7 @@ export default function CommunityDetail() {
 
             {/* Testimonials */}
             {testimonials.length > 0 && (
-              <section>
+              <section id="testimonials">
                 <h2 className="text-3xl font-bold mb-8">What Residents & Families Say</h2>
                 <div className="space-y-6">
                   {testimonials.slice(0, 3).map((testimonial) => (
@@ -588,7 +605,7 @@ export default function CommunityDetail() {
 
             {/* Blog Posts */}
             {posts.length > 0 && (
-              <section>
+              <section id="blog-posts">
                 <h2 className="text-3xl font-bold mb-8">News & Updates from {community.name}</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Stay informed about the latest happenings, stories, and updates from our community.
@@ -650,7 +667,7 @@ export default function CommunityDetail() {
 
             {/* FAQs */}
             {faqs.length > 0 && (
-              <section>
+              <section id="faqs">
                 <h2 className="text-3xl font-bold mb-8">Frequently Asked Questions</h2>
                 <Accordion type="single" collapsible className="space-y-4">
                   {faqs.slice(0, 6).map((faq) => (
@@ -678,7 +695,7 @@ export default function CommunityDetail() {
             )}
 
             {/* Location & Neighborhood */}
-            <section>
+            <section id="location">
               <h2 className="text-3xl font-bold mb-8">Location & Neighborhood</h2>
               <div className="bg-gray-100 rounded-xl h-96 mb-6" data-testid="map-placeholder">
                 <div className="w-full h-full flex items-center justify-center text-gray-500">
