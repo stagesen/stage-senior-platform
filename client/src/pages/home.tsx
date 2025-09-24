@@ -136,10 +136,10 @@ export default function Home() {
                   Find a Community
                 </Link>
               </Button>
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="border-white/60 text-white hover:bg-white/10 font-semibold px-8 py-6 text-lg"
+              <Button
+                size="lg"
+                variant="ghost"
+                className="border border-white/50 bg-white/10 text-white/95 backdrop-blur-md font-semibold shadow-[0_0_25px_-15px_rgba(255,255,255,0.9)] hover:bg-white/20 hover:text-white px-8 py-6 text-lg"
                 onClick={() => setShowContactForm(true)}
                 data-testid="button-check-availability"
               >
