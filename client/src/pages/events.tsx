@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,24 +13,47 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { Event, Community } from "@shared/schema";
 
 export default function Events() {
+  const [location] = useLocation();
   const [selectedCommunity, setSelectedCommunity] = useState("all");
   const [timeFilter, setTimeFilter] = useState("upcoming");
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
   const [calendarMode, setCalendarMode] = useState<"month" | "week">("month");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
-  const { data: communities = [] } = useQuery<Community[]>({
-    queryKey: ["/api/communities", { active: true }],
+  // Handle URL query parameters for initial community selection
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.split('?')[1] || '');
+    const communityParam = searchParams.get('community');
+    if (communityParam) {
+      setSelectedCommunity(communityParam);
+    }
+  }, [location]);
+
+  const { data: allCommunities = [] } = useQuery<Community[]>({
+    queryKey: ["/api/communities"],
   });
 
-  const { data: events = [], isLoading } = useQuery<Event[]>({
-    queryKey: ["/api/events", { 
-      upcoming: timeFilter === "upcoming" ? true : undefined,
-      public: true,
-      communityId: selectedCommunity !== "all" ? selectedCommunity : undefined,
-    }],
+  // Filter communities to only show active ones
+  const communities = allCommunities.filter(community => community.active !== false);
+
+  const { data: allEvents = [], isLoading } = useQuery<Event[]>({
+    queryKey: ["/api/events"],
   });
 
+  // Filter events based on community selection and public visibility
+  const events = allEvents.filter((event) => {
+    // Only show public events
+    if (!event.isPublic) return false;
+    
+    // Filter by selected community
+    if (selectedCommunity !== "all" && event.communityId !== selectedCommunity) {
+      return false;
+    }
+    
+    return true;
+  });
+
+  // Filter events by time (upcoming/past/all)
   const filteredEvents = events.filter((event) => {
     const now = new Date();
     const eventDate = new Date(event.startsAt);
