@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, Phone } from "lucide-react";
 import { useState } from "react";
@@ -8,9 +8,11 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import logoUrl from "@assets/stagesenior-logo_1758726889154.webp";
+import { cn } from "@/lib/utils";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [location] = useLocation();
 
   const navigation = [
     { name: "Communities", href: "/communities" },
@@ -34,16 +36,26 @@ export default function Header() {
           
           <nav className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-foreground hover:text-primary px-3 py-2 text-xl font-bold transition-colors"
-                  data-testid={`nav-${item.name.toLowerCase()}`}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {navigation.map((item) => {
+                const isActive = location === item.href;
+
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={cn(
+                      "relative px-3 py-2 text-xl font-bold transition-colors",
+                      isActive
+                        ? "text-primary after:absolute after:left-3 after:right-3 after:-bottom-1 after:h-1 after:rounded-full after:bg-primary"
+                        : "text-foreground hover:text-primary"
+                    )}
+                    aria-current={isActive ? "page" : undefined}
+                    data-testid={`nav-${item.name.toLowerCase()}`}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
             </div>
           </nav>
           
@@ -67,17 +79,27 @@ export default function Header() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px]">
                 <nav className="flex flex-col space-y-4 mt-8">
-                  {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="text-foreground hover:text-primary px-3 py-2 text-xl font-bold transition-colors"
-                      onClick={() => setIsOpen(false)}
-                      data-testid={`mobile-nav-${item.name.toLowerCase()}`}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
+                  {navigation.map((item) => {
+                    const isActive = location === item.href;
+
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className={cn(
+                          "relative px-3 py-2 text-xl font-bold transition-colors",
+                          isActive
+                            ? "text-primary after:absolute after:left-3 after:right-3 after:-bottom-1 after:h-1 after:rounded-full after:bg-primary"
+                            : "text-foreground hover:text-primary"
+                        )}
+                        aria-current={isActive ? "page" : undefined}
+                        onClick={() => setIsOpen(false)}
+                        data-testid={`mobile-nav-${item.name.toLowerCase()}`}
+                      >
+                        {item.name}
+                      </Link>
+                    );
+                  })}
                 </nav>
               </SheetContent>
             </Sheet>
