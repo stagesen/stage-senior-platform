@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import EventCard from "@/components/EventCard";
 import FloorPlanModal from "@/components/FloorPlanModal";
+import CommunityMap from "@/components/CommunityMap";
 import { 
   MapPin, 
   Phone, 
@@ -274,8 +275,8 @@ export default function CommunityDetail() {
             </section>
 
             {/* Amenities Showcase */}
-            {(community.amenitiesData || community.amenities) && 
-             ((community.amenitiesData && community.amenitiesData.length > 0) || 
+            {(community.amenities || community.amenities) && 
+             ((community.amenities && community.amenities.length > 0) || 
               (community.amenities && community.amenities.length > 0)) && (
               <section>
                 <h2 className="text-3xl font-bold mb-8">Amenities & Services</h2>
@@ -426,10 +427,10 @@ export default function CommunityDetail() {
                               {Number(floorPlan.bathrooms)} {Number(floorPlan.bathrooms) === 1 ? 'Bath' : 'Baths'}
                             </span>
                           )}
-                          {floorPlan.sqft && (
+                          {floorPlan.squareFeet && (
                             <span className="flex items-center gap-1" data-testid={`floor-plan-sqft-${floorPlan.id}`}>
                               <Square className="w-4 h-4" />
-                              {floorPlan.sqft} sq ft
+                              {floorPlan.squareFeet} sq ft
                             </span>
                           )}
                         </div>
@@ -846,22 +847,43 @@ export default function CommunityDetail() {
                 </CardContent>
               </Card>
 
-              {/* Mini Map */}
+              {/* Interactive Mini Map */}
               <Card className="shadow-lg">
-                <CardContent className="p-0">
-                  <div className="h-48 bg-gray-100 rounded-lg flex items-center justify-center" data-testid="mini-map">
-                    <div className="text-center text-gray-500">
-                      <MapPin className="w-8 h-8 mx-auto mb-2" />
-                      <p className="text-sm font-medium">{community.city}, {community.state}</p>
-                      <Button 
-                        variant="link" 
-                        size="sm" 
-                        className="mt-2"
-                        data-testid="button-get-directions"
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <MapPin className="w-5 h-5 text-primary" />
+                    Location
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0 pb-4">
+                  <div className="h-48" data-testid="mini-map">
+                    <CommunityMap 
+                      communities={[community]} 
+                      selectedCommunityId={community.id}
+                    />
+                  </div>
+                  <div className="px-4 pt-3">
+                    <p className="text-sm text-gray-600 mb-3">
+                      {community.address || `${community.city}, ${community.state} ${community.zipCode}`}
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full"
+                      asChild
+                      data-testid="button-get-directions"
+                    >
+                      <a 
+                        href={`https://maps.google.com/maps?daddr=${encodeURIComponent(
+                          community.address || `${community.city}, ${community.state} ${community.zipCode}`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
-                        Get Directions →
-                      </Button>
-                    </div>
+                        <MapPin className="w-4 h-4 mr-2" />
+                        Get Directions
+                      </a>
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -869,6 +891,108 @@ export default function CommunityDetail() {
           </div>
         </div>
       </div>
+
+      {/* Location & Directions - Full Width Map Section */}
+      <section className="bg-gray-50 py-16 mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="location-section-title">
+              Location & Directions
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Visit us and discover why {community.name} is the perfect place to call home. 
+              We're conveniently located in the heart of {community.city}.
+            </p>
+          </div>
+          
+          {/* Full Width Map */}
+          <Card className="shadow-2xl overflow-hidden mb-12">
+            <CardContent className="p-0">
+              <div className="h-96" data-testid="full-width-map">
+                <CommunityMap 
+                  communities={[community]} 
+                  selectedCommunityId={community.id}
+                />
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Location Details Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="text-center">
+              <CardContent className="p-8">
+                <MapPin className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-3" data-testid="address-title">Address</h3>
+                <p className="text-muted-foreground" data-testid="community-address">
+                  {community.address || `${community.city}, ${community.state} ${community.zipCode}`}
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="mt-4 w-full" 
+                  asChild
+                  data-testid="button-directions-full"
+                >
+                  <a 
+                    href={`https://maps.google.com/maps?daddr=${encodeURIComponent(
+                      community.address || `${community.city}, ${community.state} ${community.zipCode}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Get Directions
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+            
+            <Card className="text-center">
+              <CardContent className="p-8">
+                <Phone className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-3">Contact Us</h3>
+                <p className="text-muted-foreground mb-2" data-testid="community-phone">
+                  {community.phone || "(303) 436-2300"}
+                </p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Call us to schedule your visit
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  asChild
+                  data-testid="button-call-location"
+                >
+                  <a href={`tel:${community.phone || '+1-303-436-2300'}`}>
+                    <Phone className="w-4 h-4 mr-2" />
+                    Call Now
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+            
+            <Card className="text-center">
+              <CardContent className="p-8">
+                <Calendar className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-3">Visit Hours</h3>
+                <p className="text-muted-foreground mb-2">
+                  Mon-Fri: 9:00 AM - 6:00 PM
+                </p>
+                <p className="text-muted-foreground mb-4">
+                  Sat-Sun: 10:00 AM - 5:00 PM
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  data-testid="button-schedule-visit-location"
+                >
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Schedule Visit
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
 
       {/* Full Width CTA Section */}
       <section className="bg-primary text-white py-16 mt-16">
