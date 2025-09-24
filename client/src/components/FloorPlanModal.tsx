@@ -2,17 +2,14 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  ChevronLeft, 
-  ChevronRight, 
   BedDouble, 
   Bath, 
   Square, 
   Download,
   Calendar,
-  Home,
-  Check
+  Check,
+  Phone
 } from "lucide-react";
 import type { FloorPlan } from "@shared/schema";
 
@@ -29,38 +26,21 @@ export default function FloorPlanModal({
   isOpen, 
   onOpenChange 
 }: FloorPlanModalProps) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  // Create array of available images - floor plan first
+  const images: { url: string; caption: string; type: 'plan' | 'photo' }[] = [];
+  if (floorPlan.planImageUrl) {
+    images.push({ url: floorPlan.planImageUrl, caption: "Floor Plan Layout", type: 'plan' });
+  }
+  if (floorPlan.imageUrl) {
+    images.push({ url: floorPlan.imageUrl, caption: "Living Space", type: 'photo' });
+  }
+  
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   
   // Reset image index when floor plan changes
   useEffect(() => {
-    setCurrentImageIndex(0);
+    setSelectedImageIndex(0);
   }, [floorPlan.id]);
-
-  // Create array of available images
-  const images: { url: string; caption: string }[] = [];
-  if (floorPlan.imageUrl) {
-    images.push({ url: floorPlan.imageUrl, caption: "Living Space" });
-  }
-  if (floorPlan.planImageUrl) {
-    images.push({ url: floorPlan.planImageUrl, caption: "Floor Plan Layout" });
-  }
-
-  const handlePreviousImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev === 0 ? Math.max(images.length - 1, 0) : prev - 1
-    );
-  };
-
-  const handleNextImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev >= images.length - 1 ? 0 : prev + 1
-    );
-  };
-  
-  // Safely get current image index, clamped to valid range
-  const safeImageIndex = images.length > 0 
-    ? Math.min(currentImageIndex, images.length - 1) 
-    : 0;
 
   const formatPrice = (price: number | null) => {
     if (!price) return 'Contact for pricing';
@@ -80,21 +60,21 @@ export default function FloorPlanModal({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="max-w-4xl max-h-[90vh] overflow-y-auto"
+        className="max-w-4xl w-[95vw] max-h-[95vh] overflow-y-auto p-4 sm:p-6"
         data-testid={`floor-plan-modal-${floorPlan.id}`}
       >
-        <DialogHeader>
-          <div className="flex items-start justify-between">
+        <DialogHeader className="mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
             <div>
-              <DialogTitle className="text-2xl font-bold">
+              <DialogTitle className="text-xl sm:text-2xl font-bold">
                 {floorPlan.name}
               </DialogTitle>
-              <p className="text-muted-foreground mt-1">{communityName}</p>
+              <p className="text-sm sm:text-base text-muted-foreground mt-1">{communityName}</p>
             </div>
-            <div className="text-right">
+            <div className="text-left sm:text-right">
               {getAvailabilityBadge(floorPlan.availability)}
               {floorPlan.startingPrice && (
-                <p className="text-2xl font-bold text-primary mt-2">
+                <p className="text-xl sm:text-2xl font-bold text-primary mt-1 sm:mt-2">
                   {formatPrice(floorPlan.startingPrice)}/mo
                 </p>
               )}
@@ -102,93 +82,70 @@ export default function FloorPlanModal({
           </div>
         </DialogHeader>
 
-        <Tabs defaultValue="gallery" className="w-full mt-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="gallery">Gallery</TabsTrigger>
-            <TabsTrigger value="floorplan">Floor Plan</TabsTrigger>
-            <TabsTrigger value="details">Details</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="gallery" className="mt-6">
-            {images.length > 0 ? (
-              <div className="relative">
-                <div className="aspect-video bg-muted rounded-lg overflow-hidden">
-                  <img
-                    src={images[safeImageIndex]?.url || ''}
-                    alt={images[safeImageIndex]?.caption || 'Floor plan image'}
-                    className="w-full h-full object-contain"
-                    data-testid={`modal-gallery-image-${safeImageIndex}`}
-                  />
-                </div>
-                
-                {images.length > 1 && (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="absolute left-4 top-1/2 -translate-y-1/2"
-                      onClick={handlePreviousImage}
-                      data-testid="modal-gallery-previous"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="absolute right-4 top-1/2 -translate-y-1/2"
-                      onClick={handleNextImage}
-                      data-testid="modal-gallery-next"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                    
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-background/80 px-3 py-1 rounded-full text-sm">
-                      {images[safeImageIndex]?.caption || 'Image'} ({safeImageIndex + 1}/{images.length})
-                    </div>
-                  </>
-                )}
+        {/* Main Image Display */}
+        {images.length > 0 ? (
+          <div className="space-y-4">
+            <div className="relative aspect-[4/3] sm:aspect-video bg-muted rounded-lg overflow-hidden">
+              <img
+                src={images[selectedImageIndex]?.url || ''}
+                alt={images[selectedImageIndex]?.caption || 'Floor plan image'}
+                className="w-full h-full object-contain"
+                data-testid={`modal-main-image-${selectedImageIndex}`}
+              />
+              <div className="absolute bottom-2 right-2 bg-background/80 px-2 py-1 rounded text-xs sm:text-sm">
+                {images[selectedImageIndex]?.caption}
               </div>
-            ) : (
-              <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                <Home className="h-12 w-12 text-muted-foreground" />
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="floorplan" className="mt-6">
-            {floorPlan.planImageUrl ? (
-              <div className="space-y-4">
-                <div className="bg-muted rounded-lg overflow-hidden">
-                  <img
-                    src={floorPlan.planImageUrl}
-                    alt={`${floorPlan.name} floor plan`}
-                    className="w-full h-auto"
-                    data-testid="modal-floor-plan-image"
-                  />
-                </div>
-                
-                {floorPlan.pdfUrl && (
-                  <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => window.open(floorPlan.pdfUrl!, '_blank', 'noopener,noreferrer')}
-                    data-testid="button-download-pdf"
+            </div>
+            
+            {/* Thumbnail Gallery */}
+            {images.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {images.map((image, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImageIndex(index)}
+                    className={`relative flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden border-2 transition-all ${
+                      selectedImageIndex === index 
+                        ? 'border-primary ring-2 ring-primary/20' 
+                        : 'border-muted hover:border-primary/50'
+                    }`}
+                    data-testid={`modal-thumbnail-${index}`}
                   >
-                    <Download className="h-4 w-4 mr-2" />
-                    Download Floor Plan PDF
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                <Square className="h-12 w-12 text-muted-foreground" />
-                <p className="ml-4 text-muted-foreground">Floor plan not available</p>
+                    <img
+                      src={image.url}
+                      alt={image.caption}
+                      className="w-full h-full object-cover"
+                    />
+                    {selectedImageIndex === index && (
+                      <div className="absolute inset-0 bg-primary/10" />
+                    )}
+                  </button>
+                ))}
               </div>
             )}
-          </TabsContent>
+            
+            {/* PDF Download */}
+            {floorPlan.pdfUrl && (
+              <Button 
+                variant="outline" 
+                className="w-full sm:w-auto"
+                onClick={() => window.open(floorPlan.pdfUrl!, '_blank', 'noopener,noreferrer')}
+                data-testid="button-download-pdf"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Download Floor Plan PDF
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div className="aspect-video bg-muted rounded-lg flex flex-col items-center justify-center p-8">
+            <Square className="h-12 w-12 text-muted-foreground mb-2" />
+            <p className="text-muted-foreground text-center">No images available</p>
+          </div>
+        )}
 
-          <TabsContent value="details" className="mt-6 space-y-6">
+        {/* Details Section */}
+        <div className="space-y-4 sm:space-y-6 mt-6">
             {/* Specifications */}
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-muted rounded-lg p-4 text-center">
@@ -244,16 +201,16 @@ export default function FloorPlanModal({
                 </div>
               </div>
             )}
-          </TabsContent>
-        </Tabs>
+        </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 mt-6">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-6">
           <Button className="flex-1" data-testid={`button-schedule-tour-${floorPlan.id}`}>
             <Calendar className="h-4 w-4 mr-2" />
             Schedule a Tour
           </Button>
           <Button variant="outline" className="flex-1" data-testid={`button-contact-${floorPlan.id}`}>
+            <Phone className="h-4 w-4 mr-2" />
             Contact Us
           </Button>
         </div>
