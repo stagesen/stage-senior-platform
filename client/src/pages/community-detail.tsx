@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import EventCard from "@/components/EventCard";
 import FloorPlanModal from "@/components/FloorPlanModal";
+import CommunityLocationMap, { getCommunityCoordinates } from "@/components/CommunityLocationMap";
 import { 
   MapPin, 
   Phone, 
@@ -139,6 +140,17 @@ export default function CommunityDetail() {
     if (!price) return "Contact for pricing";
     return `$${price.toLocaleString()}`;
   };
+
+  const coordinates = getCommunityCoordinates(community);
+  const streetAddress = community.address?.trim() || community.street?.trim() || "";
+  const cityState = [community.city, community.state].filter(Boolean).join(", ");
+  const postalCode = (community.zipCode || community.zip || "").toString().trim();
+  const locationLine = [cityState, postalCode].filter(part => part && part.trim().length > 0).join(" ").trim();
+  const fullAddress = [streetAddress, locationLine].filter(part => part && part.trim().length > 0).join(", ");
+  const directionsQuery = coordinates
+    ? `${coordinates.lat},${coordinates.lng}`
+    : fullAddress || `${community.city}, ${community.state}`;
+  const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(directionsQuery)}`;
 
   const getAmenityIcon = (amenity: string) => {
     const amenityLower = amenity.toLowerCase();
@@ -849,20 +861,56 @@ export default function CommunityDetail() {
               {/* Mini Map */}
               <Card className="shadow-lg">
                 <CardContent className="p-0">
-                  <div className="h-48 bg-gray-100 rounded-lg flex items-center justify-center" data-testid="mini-map">
-                    <div className="text-center text-gray-500">
+                  {coordinates ? (
+                    <div className="relative h-48" data-testid="mini-map">
+                      <CommunityLocationMap
+                        community={community}
+                        coordinates={coordinates}
+                        className="h-full w-full"
+                      />
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent text-white p-4">
+                        <div className="flex items-center gap-2 text-sm font-medium">
+                          <MapPin className="w-4 h-4" />
+                          <span>{fullAddress || `${community.city}, ${community.state}`}</span>
+                        </div>
+                        <Button
+                          variant="link"
+                          size="sm"
+                          className="mt-2 px-0 text-white hover:text-white/90"
+                          data-testid="button-get-directions"
+                          asChild
+                        >
+                          <a href={directionsUrl} target="_blank" rel="noreferrer">
+                            Get Directions →
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      className="h-48 bg-gray-100 rounded-lg flex flex-col items-center justify-center text-gray-500 px-4 text-center"
+                      data-testid="mini-map"
+                    >
                       <MapPin className="w-8 h-8 mx-auto mb-2" />
-                      <p className="text-sm font-medium">{community.city}, {community.state}</p>
-                      <Button 
-                        variant="link" 
-                        size="sm" 
+                      <p className="text-sm font-medium">
+                        {community.city}, {community.state}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Location details coming soon.
+                      </p>
+                      <Button
+                        variant="link"
+                        size="sm"
                         className="mt-2"
                         data-testid="button-get-directions"
+                        asChild
                       >
-                        Get Directions →
+                        <a href={directionsUrl} target="_blank" rel="noreferrer">
+                          Get Directions →
+                        </a>
                       </Button>
                     </div>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
