@@ -12,6 +12,7 @@ import {
   Phone
 } from "lucide-react";
 import type { FloorPlan } from "@shared/schema";
+import { useBookingFlow } from "@/components/booking-flow";
 
 interface FloorPlanModalProps {
   floorPlan: FloorPlan;
@@ -20,12 +21,13 @@ interface FloorPlanModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export default function FloorPlanModal({ 
-  floorPlan, 
+export default function FloorPlanModal({
+  floorPlan,
   communityName,
-  isOpen, 
-  onOpenChange 
+  isOpen,
+  onOpenChange
 }: FloorPlanModalProps) {
+  const { openBooking, trackCall } = useBookingFlow();
   // Create array of available images - floor plan first
   const images: { url: string; caption: string; type: 'plan' | 'photo' }[] = [];
   if (floorPlan.planImageUrl) {
@@ -205,11 +207,30 @@ export default function FloorPlanModal({
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-6">
-          <Button className="flex-1" data-testid={`button-schedule-tour-${floorPlan.id}`}>
+          <Button
+            className="flex-1"
+            data-testid={`button-schedule-tour-${floorPlan.id}`}
+            onClick={() =>
+              openBooking({
+                communityId: floorPlan.communityId ?? undefined,
+                communityName,
+                source: `floor-plan:${floorPlan.id}`,
+              })
+            }
+          >
             <Calendar className="h-4 w-4 mr-2" />
             Schedule a Tour
           </Button>
-          <Button variant="outline" className="flex-1" data-testid={`button-contact-${floorPlan.id}`}>
+          <Button
+            variant="outline"
+            className="flex-1"
+            data-testid={`button-contact-${floorPlan.id}`}
+            onClick={() =>
+              trackCall({
+                source: `floor-plan:${floorPlan.id}`,
+              })
+            }
+          >
             <Phone className="h-4 w-4 mr-2" />
             Contact Us
           </Button>

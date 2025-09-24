@@ -9,9 +9,8 @@ import { Search, MapPin, Calendar, Phone, Info, Map, List, Star, Shield, Chevron
 import CommunityCard from "@/components/CommunityCard";
 import CommunityMap from "@/components/CommunityMap";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import type { Community, InsertTourRequest } from "@shared/schema";
+import type { Community } from "@shared/schema";
+import { useBookingFlow } from "@/components/booking-flow";
 
 const CARE_TYPES = [
   { value: "all", label: "All Communities" },
@@ -27,7 +26,7 @@ export default function Communities() {
   const [selectedCommunityId, setSelectedCommunityId] = useState<string | undefined>();
   const [showMap, setShowMap] = useState(true);
 
-  const { toast } = useToast();
+  const { openBooking, trackCall } = useBookingFlow();
 
   const { data: communities = [], isLoading } = useQuery<Community[]>({
     queryKey: ["/api/communities"],
@@ -116,25 +115,24 @@ export default function Communities() {
             
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="px-8 py-6 text-lg bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg shadow-lg hover:shadow-xl transition-all"
                 data-testid="button-schedule-tour"
+                onClick={() => openBooking({ source: "communities-hero" })}
               >
                 <Calendar className="w-5 h-5 mr-2" />
                 Schedule Your Visit
               </Button>
-              <Button 
-                variant="outline" 
-                size="lg" 
+              <Button
+                variant="outline"
+                size="lg"
                 className="px-8 py-6 text-lg rounded-lg"
-                asChild
                 data-testid="button-call-hero"
+                onClick={() => trackCall({ source: "communities-hero-call" })}
               >
-                <a href="tel:+1-303-436-2300">
-                  <Phone className="w-5 h-5 mr-2" />
-                  (303) 436-2300
-                </a>
+                <Phone className="w-5 h-5 mr-2" />
+                (303) 436-2300
               </Button>
             </div>
             
@@ -387,26 +385,25 @@ export default function Communities() {
             Our senior living advisors are here to help you every step of the way
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="secondary"
               className="text-lg px-8 py-6"
               data-testid="button-schedule-tour-cta"
+              onClick={() => openBooking({ source: "communities-footer" })}
             >
               <Calendar className="w-5 h-5 mr-2" />
               Schedule Tours
             </Button>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
               className="bg-transparent text-white border-white hover:bg-white hover:text-primary text-lg px-8 py-6"
-              asChild
               data-testid="button-call-cta"
+              onClick={() => trackCall({ source: "communities-footer-call" })}
             >
-              <a href="tel:+1-303-436-2300">
-                <Phone className="w-5 h-5 mr-2" />
-                Call (303) 436-2300
-              </a>
+              <Phone className="w-5 h-5 mr-2" />
+              Call (303) 436-2300
             </Button>
           </div>
         </div>

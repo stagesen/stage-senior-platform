@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Shield, Heart, Users, Award, Phone, Mail, MapPin, Calendar, Star } from "lucide-react";
+import { useBookingFlow } from "@/components/booking-flow";
 
 export default function AboutUs() {
+  const { openBooking, trackCall } = useBookingFlow();
   useEffect(() => {
     document.title = "About Us | Stage Senior";
     
@@ -87,11 +89,14 @@ export default function AboutUs() {
                     Tour Our Communities
                   </Link>
                 </Button>
-                <Button variant="outline" size="lg" asChild data-testid="button-call-us">
-                  <a href="tel:+1-303-436-2300">
-                    <Phone className="w-5 h-5 mr-2" />
-                    (303) 436-2300
-                  </a>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  data-testid="button-call-us"
+                  onClick={() => trackCall({ source: "about-hero-call" })}
+                >
+                  <Phone className="w-5 h-5 mr-2" />
+                  (303) 436-2300
                 </Button>
               </div>
             </div>
@@ -241,29 +246,25 @@ export default function AboutUs() {
             for their loved ones' care.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="secondary"
               className="px-8 py-6 text-lg"
-              asChild
               data-testid="button-schedule-tour"
+              onClick={() => openBooking({ source: "about-cta" })}
             >
-              <Link href="/communities">
-                <Calendar className="w-5 h-5 mr-2" />
-                Schedule a Tour
-              </Link>
+              <Calendar className="w-5 h-5 mr-2" />
+              Schedule a Tour
             </Button>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
               className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary px-8 py-6 text-lg"
-              asChild
               data-testid="button-call-now"
+              onClick={() => trackCall({ source: "about-cta-call" })}
             >
-              <a href="tel:+1-303-436-2300">
-                <Phone className="w-5 h-5 mr-2" />
-                Call (303) 436-2300
-              </a>
+              <Phone className="w-5 h-5 mr-2" />
+              Call (303) 436-2300
             </Button>
           </div>
           

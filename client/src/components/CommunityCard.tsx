@@ -2,18 +2,19 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  MapPin, 
-  Phone, 
-  Calendar, 
-  Info, 
-  Star, 
-  Shield, 
-  Leaf, 
-  Users, 
-  Home 
+import {
+  MapPin,
+  Phone,
+  Calendar,
+  Info,
+  Star,
+  Shield,
+  Leaf,
+  Users,
+  Home
 } from "lucide-react";
 import type { Community } from "@shared/schema";
+import { useBookingFlow } from "@/components/booking-flow";
 
 interface CommunityCardProps {
   community: Community;
@@ -22,6 +23,7 @@ interface CommunityCardProps {
 }
 
 export default function CommunityCard({ community, isSelected, onSelect }: CommunityCardProps) {
+  const { openBooking, trackCall } = useBookingFlow();
   const formatPrice = (price: number | null) => {
     if (!price) return "Contact for pricing";
     return `$${price.toLocaleString()}`;
@@ -159,23 +161,36 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
             
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button 
+              <Button
                 className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                 data-testid={`button-schedule-tour-${community.slug}`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  openBooking({
+                    communityId: community.id,
+                    communityName: community.name,
+                    source: `community-card:${community.slug}`,
+                  });
+                }}
               >
                 <Calendar className="w-4 h-4 mr-2" />
                 Schedule Tour
               </Button>
-              <Button 
-                variant="outline" 
-                className="flex-1" 
-                asChild
+              <Button
+                variant="outline"
+                className="flex-1"
                 data-testid={`button-call-${community.slug}`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  trackCall({
+                    source: `community-card:${community.slug}`,
+                    phoneNumber: community.phoneDial || community.phone || undefined,
+                    communityId: community.id,
+                  });
+                }}
               >
-                <a href={`tel:${community.phone || '+1-303-436-2300'}`}>
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call Now
-                </a>
+                <Phone className="w-4 h-4 mr-2" />
+                Call Now
               </Button>
               <Button 
                 variant="outline" 

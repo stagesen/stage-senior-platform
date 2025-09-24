@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import EventCard from "@/components/EventCard";
 import FloorPlanModal from "@/components/FloorPlanModal";
@@ -41,6 +40,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryImage, Post } from "@shared/schema";
+import { useBookingFlow } from "@/components/booking-flow";
 
 export default function CommunityDetail() {
   const params = useParams();
@@ -48,6 +48,7 @@ export default function CommunityDetail() {
   const [selectedFloorPlan, setSelectedFloorPlan] = useState<FloorPlan | null>(null);
   const [isFloorPlanModalOpen, setIsFloorPlanModalOpen] = useState(false);
   const [selectedGalleryCategory, setSelectedGalleryCategory] = useState<string | null>(null);
+  const { openBooking, trackCall } = useBookingFlow();
 
   const { data: community, isLoading: communityLoading } = useQuery<Community>({
     queryKey: [`/api/communities/${slug}`],
@@ -748,32 +749,52 @@ export default function CommunityDetail() {
                 <CardHeader>
                   <CardTitle>Schedule Your Visit</CardTitle>
                   <CardDescription>
-                    Tour our community and meet our caring team
+                    Use our unified booking flow to share your ideal visit style and timing.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Input 
-                    placeholder="Your Name" 
-                    data-testid="input-tour-name"
-                  />
-                  <Input 
-                    placeholder="Phone Number" 
-                    type="tel"
-                    data-testid="input-tour-phone"
-                  />
-                  <Input 
-                    placeholder="Email Address" 
-                    type="email"
-                    data-testid="input-tour-email"
-                  />
-                  <Button 
-                    className="w-full" 
-                    size="lg"
-                    data-testid="button-schedule-tour"
-                  >
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Schedule Tour
-                  </Button>
+                  <p className="text-sm text-muted-foreground">
+                    We confirm availability within 10 minutes during business hours and tailor every tour to your needs.
+                  </p>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-primary mt-0.5" />
+                      Choose in-person, virtual, or pricing-first conversations
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-primary mt-0.5" />
+                      Add preferred dates and care notes in step two
+                    </li>
+                  </ul>
+                  <div className="space-y-3">
+                    <Button
+                      className="w-full"
+                      size="lg"
+                      data-testid="button-schedule-tour"
+                      onClick={() => openBooking({
+                        source: `community-detail:${community.slug}`,
+                        communityId: community.id,
+                        communityName: community.name,
+                        visitType: "in-person-tour",
+                      })}
+                    >
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Start Tour Request
+                    </Button>
+                    <Button
+                      className="w-full"
+                      size="lg"
+                      variant="outline"
+                      onClick={() => openBooking({
+                        source: `community-detail:${community.slug}`,
+                        communityId: community.id,
+                        communityName: community.name,
+                        visitType: "pricing-consultation",
+                      })}
+                    >
+                      Request Pricing Details
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -783,16 +804,20 @@ export default function CommunityDetail() {
                   <CardTitle>Contact Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start" 
-                    asChild
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start"
                     data-testid="button-call"
+                    onClick={() =>
+                      trackCall({
+                        source: `community-detail:${community.slug}`,
+                        phoneNumber: community.phoneDial || community.phone || undefined,
+                        communityId: community.id,
+                      })
+                    }
                   >
-                    <a href={`tel:${community.phone || '+1-303-436-2300'}`}>
-                      <Phone className="w-4 h-4 mr-3" />
-                      {community.phone || "(303) 436-2300"}
-                    </a>
+                    <Phone className="w-4 h-4 mr-3" />
+                    {community.phone || "(303) 436-2300"}
                   </Button>
                   <Button 
                     variant="outline" 
@@ -880,26 +905,35 @@ export default function CommunityDetail() {
             Join our community of residents who are living their best life. Schedule a personalized tour today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="secondary"
               className="text-lg"
               data-testid="button-schedule-tour-cta"
+              onClick={() => openBooking({
+                source: `community-detail:${community.slug}:cta`,
+                communityId: community.id,
+                communityName: community.name,
+              })}
             >
               <Calendar className="w-5 h-5 mr-2" />
               Schedule Your Tour
             </Button>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
               className="bg-transparent text-white border-white hover:bg-white hover:text-primary text-lg"
-              asChild
               data-testid="button-call-cta"
+              onClick={() =>
+                trackCall({
+                  source: `community-detail:${community.slug}:cta-call`,
+                  phoneNumber: community.phoneDial || community.phone || undefined,
+                  communityId: community.id,
+                })
+              }
             >
-              <a href={`tel:${community.phone || '+1-303-436-2300'}`}>
-                <Phone className="w-5 h-5 mr-2" />
-                Call {community.phone || "(303) 436-2300"}
-              </a>
+              <Phone className="w-5 h-5 mr-2" />
+              Call {community.phone || "(303) 436-2300"}
             </Button>
           </div>
         </div>

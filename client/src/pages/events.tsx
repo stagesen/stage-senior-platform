@@ -10,6 +10,7 @@ import EventCalendar from "@/components/EventCalendar";
 import EventDetailsModal from "@/components/EventDetailsModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Event, Community } from "@shared/schema";
+import { useBookingFlow } from "@/components/booking-flow";
 
 export default function Events() {
   const [selectedCommunity, setSelectedCommunity] = useState("all");
@@ -17,6 +18,7 @@ export default function Events() {
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
   const [calendarMode, setCalendarMode] = useState<"month" | "week">("month");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const { trackCall } = useBookingFlow();
 
   const { data: communities = [] } = useQuery<Community[]>({
     queryKey: ["/api/communities", { active: true }],
@@ -270,14 +272,12 @@ export default function Events() {
                   <p className="text-sm text-muted-foreground mb-4" data-testid="contact-description">
                     Contact us to learn more about upcoming events or to schedule a visit.
                   </p>
-                  <Button 
-                    asChild
+                  <Button
                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                     data-testid="button-contact"
+                    onClick={() => trackCall({ source: "events-contact-call" })}
                   >
-                    <a href="tel:+1-303-436-2300">
-                      Call (303) 436-2300
-                    </a>
+                    Call (303) 436-2300
                   </Button>
                 </CardContent>
               </Card>

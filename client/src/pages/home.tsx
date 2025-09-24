@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { 
   Carousel,
   CarouselContent,
@@ -29,25 +28,15 @@ import {
   Mail
 } from "lucide-react";
 import { Link } from "wouter";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import type { Community, InsertTourRequest } from "@shared/schema";
+import type { Community } from "@shared/schema";
+import { useBookingFlow } from "@/components/booking-flow";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCareType, setSelectedCareType] = useState("all");
-  const [showContactForm, setShowContactForm] = useState(false);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    careType: "",
-    message: ""
-  });
-
-  const { toast } = useToast();
+  const { openBooking, trackCall } = useBookingFlow();
 
   // Track selected carousel index for visual emphasis
   useEffect(() => {
@@ -84,25 +73,6 @@ export default function Home() {
 
   const featuredCommunities = filteredCommunities; // Show all filtered communities in carousel
 
-  const handleContactSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await apiRequest("POST", "/api/tour-requests", formData);
-      toast({
-        title: "Request Submitted",
-        description: "We'll contact you within 10 minutes to help with your needs.",
-      });
-      setFormData({ name: "", phone: "", email: "", careType: "", message: "" });
-      setShowContactForm(false);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to submit request. Please call us directly.",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -136,11 +106,11 @@ export default function Home() {
                   Find a Community
                 </Link>
               </Button>
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 variant="outline"
                 className="border-white/60 text-white hover:bg-white/10 font-semibold px-8 py-6 text-lg"
-                onClick={() => setShowContactForm(true)}
+                onClick={() => openBooking({ source: "home-hero" })}
                 data-testid="button-check-availability"
               >
                 Check Availability
@@ -511,20 +481,18 @@ export default function Home() {
                 Urgent placement? Weekend tours? We've got you. Call now or get a callback in 10 minutes.
               </p>
               <div className="flex flex-wrap gap-4 mb-8">
-                <Button 
-                  size="lg" 
-                  asChild
+                <Button
+                  size="lg"
                   data-testid="button-call-now"
+                  onClick={() => trackCall({ source: "home-lead-call" })}
                 >
-                  <a href="tel:+1-303-436-2300">
-                    <Phone className="w-5 h-5 mr-2" />
-                    Call (303) 436‑2300
-                  </a>
+                  <Phone className="w-5 h-5 mr-2" />
+                  Call (303) 436‑2300
                 </Button>
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   variant="outline"
-                  onClick={() => setShowContactForm(true)}
+                  onClick={() => openBooking({ source: "home-lead", visitType: "request-callback" })}
                   data-testid="button-request-callback"
                 >
                   Request Callback
@@ -546,99 +514,55 @@ export default function Home() {
               </ul>
             </div>
             
-            {showContactForm ? (
-              <Card>
-                <CardContent className="p-6">
-                  <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <div>
-                      <Input
-                        placeholder="Your name *"
-                        value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        required
-                        data-testid="input-contact-name"
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        type="tel"
-                        placeholder="Phone number *"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                        required
-                        data-testid="input-contact-phone"
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        type="email"
-                        placeholder="Email (optional)"
-                        value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        data-testid="input-contact-email"
-                      />
-                    </div>
-                    <div>
-                      <Select value={formData.careType} onValueChange={(value) => setFormData({...formData, careType: value})}>
-                        <SelectTrigger data-testid="select-contact-care-type">
-                          <SelectValue placeholder="What kind of care?" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="independent-living">Independent Living</SelectItem>
-                          <SelectItem value="assisted-living">Assisted Living</SelectItem>
-                          <SelectItem value="memory-care">Memory Care</SelectItem>
-                          <SelectItem value="in-home-care">In‑Home Care</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Textarea
-                        placeholder="Tell us what you need..."
-                        value={formData.message}
-                        onChange={(e) => setFormData({...formData, message: e.target.value})}
-                        rows={3}
-                        data-testid="textarea-contact-message"
-                      />
-                    </div>
-                    <div className="flex gap-3">
-                      <Button type="submit" className="flex-1" data-testid="button-submit-contact">
-                        Get Help
-                      </Button>
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        onClick={() => setShowContactForm(false)}
-                        data-testid="button-cancel-contact"
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      By submitting, you agree to our <Link href="#" className="underline">Privacy Policy</Link>.
+            <Card className="bg-white shadow-lg">
+              <CardContent className="p-8 space-y-6">
+                <div className="flex items-center gap-4">
+                  <Mail className="w-12 h-12 text-primary" />
+                  <div>
+                    <h3 className="text-2xl font-bold text-foreground">Ready when you are</h3>
+                    <p className="text-muted-foreground">
+                      Complete our two-step booking flow and we&apos;ll confirm details within 10 minutes.
                     </p>
-                  </form>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card className="bg-primary text-white">
-                <CardContent className="p-8 text-center">
-                  <Mail className="w-16 h-16 mx-auto mb-6 opacity-80" />
-                  <h3 className="text-2xl font-bold mb-4">Get Expert Guidance</h3>
-                  <p className="text-white/90 mb-6">
-                    Our senior living advisors are standing by to help you find the perfect community for your loved one.
-                  </p>
-                  <Button 
-                    size="lg" 
-                    variant="secondary"
-                    onClick={() => setShowContactForm(true)}
+                  </div>
+                </div>
+                <ul className="space-y-3 text-muted-foreground">
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-primary" />
+                    Choose visit type, timing, and community preferences
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-primary" />
+                    Request pricing or a virtual consult in the same flow
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-primary" />
+                    Secure form—no obligation, just expert guidance
+                  </li>
+                </ul>
+                <div className="space-y-3">
+                  <Button
+                    size="lg"
                     className="w-full"
-                    data-testid="button-show-contact-form"
+                    onClick={() => openBooking({ source: "home-lead", visitType: "pricing-consultation" })}
+                    data-testid="button-start-booking"
                   >
-                    Start Your Search
+                    Start Booking Flow
                   </Button>
-                </CardContent>
-              </Card>
-            )}
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => trackCall({ source: "home-lead-card" })}
+                    data-testid="button-call-support"
+                  >
+                    Prefer to call? (303) 436‑2300
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground text-center">
+                  By continuing you agree to our <Link href="/privacy" className="underline">Privacy Policy</Link>.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
