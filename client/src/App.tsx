@@ -13,6 +13,10 @@ import FAQs from "@/pages/faqs";
 import Privacy from "@/pages/privacy";
 import Terms from "@/pages/terms";
 import Accessibility from "@/pages/accessibility";
+import AboutUs from "@/pages/about-us";
+import Services from "@/pages/services";
+import StageCares from "@/pages/stage-cares";
+import ProfessionalManagement from "@/pages/services/management";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -30,6 +34,10 @@ function Router() {
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={Blog} />
           <Route path="/faqs" component={FAQs} />
+          <Route path="/about-us" component={AboutUs} />
+          <Route path="/services" component={Services} />
+          <Route path="/stage-cares" component={StageCares} />
+          <Route path="/services/management" component={ProfessionalManagement} />
           <Route path="/privacy" component={Privacy} />
           <Route path="/terms" component={Terms} />
           <Route path="/accessibility" component={Accessibility} />
