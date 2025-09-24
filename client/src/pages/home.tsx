@@ -107,13 +107,13 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/80 to-primary/70" />
         <img
           src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?q=80&w=1600&auto=format&fit=crop"
           alt="Senior living community with beautiful gardens"
-          className="absolute inset-0 h-full w-full object-cover mix-blend-overlay"
+          className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-white">
+        <div className="absolute inset-0 bg-slate-900/70" aria-hidden="true" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-white">
           <div className="max-w-3xl">
             <p className="uppercase tracking-widest text-white/80 text-xs mb-2" data-testid="hero-tagline">
               Locally Owned • Resident‑Focused
