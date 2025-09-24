@@ -13,29 +13,81 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Master tables
+export const careTypes = pgTable("care_types", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  sortOrder: integer("sort_order").default(0),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const amenities = pgTable("amenities", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  category: varchar("category", { length: 100 }),
+  description: text("description"),
+  icon: varchar("icon", { length: 50 }),
+  sortOrder: integer("sort_order").default(0),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const communities = pgTable("communities", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   name: varchar("name", { length: 255 }).notNull(),
+  street: text("street"),
   city: varchar("city", { length: 100 }).notNull(),
   state: varchar("state", { length: 2 }).notNull().default("CO"),
-  zipCode: varchar("zip_code", { length: 10 }),
+  zip: varchar("zip", { length: 10 }),
+  zipCode: varchar("zip_code", { length: 10 }), // Keep for backwards compatibility
   latitude: decimal("latitude", { precision: 10, scale: 8 }),
   longitude: decimal("longitude", { precision: 11, scale: 8 }),
+  lat: decimal("lat", { precision: 10, scale: 8 }), // Additional field from CSV
+  lng: decimal("lng", { precision: 11, scale: 8 }), // Additional field from CSV
+  phoneDisplay: varchar("phone_display", { length: 20 }),
+  phoneDial: varchar("phone_dial", { length: 20 }),
+  secondaryPhoneDisplay: varchar("secondary_phone_display", { length: 20 }),
+  secondaryPhoneDial: varchar("secondary_phone_dial", { length: 20 }),
+  email: varchar("email", { length: 255 }),
   heroImageUrl: text("hero_image_url"),
+  overview: text("overview"),
   description: text("description"),
   shortDescription: text("short_description"),
+  startingRateDisplay: varchar("starting_rate_display", { length: 100 }),
   startingPrice: integer("starting_price"),
-  careTypes: jsonb("care_types").$type<string[]>().default([]),
-  amenities: jsonb("amenities").$type<string[]>().default([]),
+  careTypes: jsonb("care_types").$type<string[]>().default([]), // Keep for backwards compatibility
+  amenities: jsonb("amenities").$type<string[]>().default([]), // Keep for backwards compatibility
   seoTitle: text("seo_title"),
   seoDescription: text("seo_description"),
-  phone: varchar("phone", { length: 20 }),
-  address: text("address"),
+  seoDesc: text("seo_desc"), // Additional field from CSV
+  phone: varchar("phone", { length: 20 }), // Keep for backwards compatibility
+  address: text("address"), // Keep for backwards compatibility
   featured: boolean("featured").default(false),
   active: boolean("active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Junction tables for many-to-many relationships
+export const communitiesCareTypes = pgTable("communities_care_types", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  communityId: uuid("community_id").notNull().references(() => communities.id, { onDelete: "cascade" }),
+  careTypeId: uuid("care_type_id").notNull().references(() => careTypes.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const communitiesAmenities = pgTable("communities_amenities", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  communityId: uuid("community_id").notNull().references(() => communities.id, { onDelete: "cascade" }),
+  amenityId: uuid("amenity_id").notNull().references(() => amenities.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const posts = pgTable("posts", {
@@ -43,6 +95,7 @@ export const posts = pgTable("posts", {
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   title: varchar("title", { length: 255 }).notNull(),
   summary: text("summary"),
+  bodyHtml: text("body_html"), // Additional field from CSV
   content: text("content").notNull(),
   heroImageUrl: text("hero_image_url"),
   tags: jsonb("tags").$type<string[]>().default([]),
@@ -58,6 +111,7 @@ export const posts = pgTable("posts", {
 export const events = pgTable("events", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
+  eventSlug: varchar("event_slug", { length: 255 }), // Additional field from CSV
   title: varchar("title", { length: 255 }).notNull(),
   summary: text("summary"),
   description: text("description"),
@@ -67,6 +121,7 @@ export const events = pgTable("events", {
   locationText: text("location_text"),
   rsvpUrl: text("rsvp_url"),
   communityId: uuid("community_id").references(() => communities.id),
+  published: boolean("published").default(false),
   maxAttendees: integer("max_attendees"),
   isPublic: boolean("is_public").default(true),
   createdAt: timestamp("created_at").defaultNow(),
@@ -76,10 +131,12 @@ export const events = pgTable("events", {
 export const faqs = pgTable("faqs", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   question: text("question").notNull(),
-  answer: text("answer").notNull(),
+  answer: text("answer"),
+  answerHtml: text("answer_html"), // Additional field from CSV
   category: varchar("category", { length: 100 }),
   communityId: uuid("community_id").references(() => communities.id),
-  sortOrder: integer("sort_order").default(0),
+  sort: integer("sort").default(0), // Additional field from CSV
+  sortOrder: integer("sort_order").default(0), // Keep for backwards compatibility
   active: boolean("active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -87,8 +144,11 @@ export const faqs = pgTable("faqs", {
 
 export const galleries = pgTable("galleries", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  gallerySlug: varchar("gallery_slug", { length: 255 }), // Additional field from CSV
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
+  hero: boolean("hero").default(false), // Additional field from CSV
+  published: boolean("published").default(false), // Additional field from CSV
   images: jsonb("images").$type<Array<{
     url: string;
     alt: string;
@@ -96,6 +156,7 @@ export const galleries = pgTable("galleries", {
     height?: number;
     caption?: string;
   }>>().default([]),
+  tags: jsonb("tags").$type<string[]>().default([]), // Additional field from CSV
   communityId: uuid("community_id").references(() => communities.id),
   category: varchar("category", { length: 100 }),
   active: boolean("active").default(true),
@@ -119,18 +180,24 @@ export const tourRequests = pgTable("tour_requests", {
 export const floorPlans = pgTable("floor_plans", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   communityId: uuid("community_id").references(() => communities.id),
+  planSlug: varchar("plan_slug", { length: 255 }), // Additional field from CSV
   name: varchar("name", { length: 255 }).notNull(),
   bedrooms: integer("bedrooms").notNull(),
   bathrooms: decimal("bathrooms", { precision: 3, scale: 1 }).notNull(),
   squareFeet: integer("square_feet"),
   description: text("description"),
   highlights: jsonb("highlights").$type<string[]>().default([]),
+  images: jsonb("images").$type<string[]>().default([]), // Additional field from CSV for multiple images
   imageUrl: text("image_url"),
   planImageUrl: text("plan_image_url"),
-  pdfUrl: text("pdf_url"),
+  specPdfUrl: text("spec_pdf_url"), // Additional field from CSV
+  pdfUrl: text("pdf_url"), // Keep for backwards compatibility
+  accessible: boolean("accessible").default(false), // Additional field from CSV
+  startingRateDisplay: varchar("starting_rate_display", { length: 100 }), // Additional field from CSV
   startingPrice: integer("starting_price"),
   availability: varchar("availability", { length: 50 }).default("available"),
-  sortOrder: integer("sort_order").default(0),
+  sortPriority: integer("sort_priority").default(0), // Additional field from CSV
+  sortOrder: integer("sort_order").default(0), // Keep for backwards compatibility
   active: boolean("active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -168,6 +235,14 @@ export const galleryImages = pgTable("gallery_images", {
 });
 
 // Relations
+export const careTypesRelations = relations(careTypes, ({ many }) => ({
+  communities: many(communitiesCareTypes),
+}));
+
+export const amenitiesRelations = relations(amenities, ({ many }) => ({
+  communities: many(communitiesAmenities),
+}));
+
 export const communitiesRelations = relations(communities, ({ many }) => ({
   posts: many(posts),
   events: many(events),
@@ -177,6 +252,30 @@ export const communitiesRelations = relations(communities, ({ many }) => ({
   floorPlans: many(floorPlans),
   testimonials: many(testimonials),
   galleryImages: many(galleryImages),
+  careTypes: many(communitiesCareTypes),
+  amenities: many(communitiesAmenities),
+}));
+
+export const communitiesCareTypesRelations = relations(communitiesCareTypes, ({ one }) => ({
+  community: one(communities, {
+    fields: [communitiesCareTypes.communityId],
+    references: [communities.id],
+  }),
+  careType: one(careTypes, {
+    fields: [communitiesCareTypes.careTypeId],
+    references: [careTypes.id],
+  }),
+}));
+
+export const communitiesAmenitiesRelations = relations(communitiesAmenities, ({ one }) => ({
+  community: one(communities, {
+    fields: [communitiesAmenities.communityId],
+    references: [communities.id],
+  }),
+  amenity: one(amenities, {
+    fields: [communitiesAmenities.amenityId],
+    references: [amenities.id],
+  }),
 }));
 
 export const postsRelations = relations(posts, ({ one }) => ({
@@ -236,10 +335,32 @@ export const galleryImagesRelations = relations(galleryImages, ({ one }) => ({
 }));
 
 // Insert schemas
+export const insertCareTypeSchema = createInsertSchema(careTypes).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertAmenitySchema = createInsertSchema(amenities).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertCommunitySchema = createInsertSchema(communities).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+});
+
+export const insertCommunityCareTypeSchema = createInsertSchema(communitiesCareTypes).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertCommunityAmenitySchema = createInsertSchema(communitiesAmenities).omit({
+  id: true,
+  createdAt: true,
 });
 
 export const insertPostSchema = createInsertSchema(posts).omit({
@@ -291,8 +412,16 @@ export const insertGalleryImageSchema = createInsertSchema(galleryImages).omit({
 });
 
 // Types
+export type CareType = typeof careTypes.$inferSelect;
+export type InsertCareType = z.infer<typeof insertCareTypeSchema>;
+export type Amenity = typeof amenities.$inferSelect;
+export type InsertAmenity = z.infer<typeof insertAmenitySchema>;
 export type Community = typeof communities.$inferSelect;
 export type InsertCommunity = z.infer<typeof insertCommunitySchema>;
+export type CommunityCareType = typeof communitiesCareTypes.$inferSelect;
+export type InsertCommunityCareType = z.infer<typeof insertCommunityCareTypeSchema>;
+export type CommunityAmenity = typeof communitiesAmenities.$inferSelect;
+export type InsertCommunityAmenity = z.infer<typeof insertCommunityAmenitySchema>;
 export type Post = typeof posts.$inferSelect;
 export type InsertPost = z.infer<typeof insertPostSchema>;
 export type Event = typeof events.$inferSelect;
