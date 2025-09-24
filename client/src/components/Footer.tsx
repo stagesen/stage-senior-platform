@@ -20,57 +20,53 @@ export default function Footer() {
 
   return (
     <footer className="bg-foreground text-background py-12" data-testid="footer">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-[minmax(0,2fr)_repeat(3,minmax(0,1fr))]">
           {/* Company Info */}
-          <div className="md:col-span-1">
-            <div className="mb-4" data-testid="footer-logo">
-              <img 
-                src={logoWhiteUrl} 
+          <div className="space-y-6" data-testid="footer-company">
+            <div className="flex items-center" data-testid="footer-logo">
+              <img
+                src={logoWhiteUrl}
                 alt="Stage Senior"
-                className="w-auto min-w-[150px] h-12 sm:h-14 md:h-16"
+                className="h-10 w-auto sm:h-12"
               />
             </div>
-            <p className="text-background/80 mb-4" data-testid="footer-description">
-              Locally owned, resident-focused senior living communities across Colorado since 2016.
-            </p>
-            <div className="flex space-x-4">
-              <a 
-                href="#" 
-                className="text-background/60 hover:text-primary transition-colors"
+            <div className="flex items-center space-x-3" data-testid="footer-socials">
+              <a
+                href="#"
+                className="rounded-full border border-background/20 p-2 text-background/60 transition-colors hover:text-primary hover:border-primary/60"
                 data-testid="social-facebook"
               >
-                <Facebook className="w-5 h-5" />
+                <Facebook className="h-4 w-4" />
               </a>
-              <a 
-                href="#" 
-                className="text-background/60 hover:text-primary transition-colors"
+              <a
+                href="#"
+                className="rounded-full border border-background/20 p-2 text-background/60 transition-colors hover:text-primary hover:border-primary/60"
                 data-testid="social-linkedin"
               >
-                <Linkedin className="w-5 h-5" />
+                <Linkedin className="h-4 w-4" />
               </a>
-              <a 
-                href="#" 
-                className="text-background/60 hover:text-primary transition-colors"
+              <a
+                href="#"
+                className="rounded-full border border-background/20 p-2 text-background/60 transition-colors hover:text-primary hover:border-primary/60"
                 data-testid="social-instagram"
               >
-                <Instagram className="w-5 h-5" />
+                <Instagram className="h-4 w-4" />
               </a>
             </div>
           </div>
-          
+
           {/* Communities */}
-          <div>
-            <h3 className="text-lg font-semibold text-background mb-4" data-testid="footer-communities-title">
+          <div className="space-y-4" data-testid="footer-communities">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-background/80" data-testid="footer-communities-title">
               Our Communities
             </h3>
-            <ul className="space-y-2 text-background/80">
+            <ul className="space-y-2 text-sm text-background/70">
               {communities.map((community) => (
                 <li key={community.slug}>
-                  <Link 
-                    href={`/communities/${community.slug}`} 
-                    className="hover:text-primary transition-colors"
+                  <Link
+                    href={`/communities/${community.slug}`}
+                    className="transition-colors hover:text-primary"
                     data-testid={`footer-community-${community.slug}`}
                   >
                     {community.name}
@@ -79,18 +75,18 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-          
+
           {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-semibold text-background mb-4" data-testid="footer-quicklinks-title">
+          <div className="space-y-4" data-testid="footer-quicklinks">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-background/80" data-testid="footer-quicklinks-title">
               Quick Links
             </h3>
-            <ul className="space-y-2 text-background/80">
+            <ul className="space-y-2 text-sm text-background/70">
               {quickLinks.map((link) => (
                 <li key={link.href}>
-                  <Link 
-                    href={link.href} 
-                    className="hover:text-primary transition-colors"
+                  <Link
+                    href={link.href}
+                    className="transition-colors hover:text-primary"
                     data-testid={`footer-quicklink-${link.name.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     {link.name}
@@ -99,58 +95,57 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-          
+
           {/* Contact */}
-          <div>
-            <h3 className="text-lg font-semibold text-background mb-4" data-testid="footer-contact-title">
+          <div className="space-y-4" data-testid="footer-contact">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-background/80" data-testid="footer-contact-title">
               Contact
             </h3>
-            <div className="space-y-2 text-background/80">
-              <div className="flex items-center" data-testid="footer-phone">
-                <Phone className="w-4 h-4 mr-2" />
+            <div className="space-y-3 text-sm text-background/70">
+              <div className="flex items-center gap-3" data-testid="footer-phone">
+                <Phone className="h-4 w-4" />
                 <span>(303) 436-2300</span>
               </div>
-              <div className="flex items-center" data-testid="footer-email">
-                <Mail className="w-4 h-4 mr-2" />
+              <div className="flex items-center gap-3" data-testid="footer-email">
+                <Mail className="h-4 w-4" />
                 <span>info@stagesenior.com</span>
               </div>
-              <div className="flex items-start" data-testid="footer-address">
-                <MapPin className="w-4 h-4 mr-2 mt-1" />
+              <div className="flex items-start gap-3 leading-relaxed" data-testid="footer-address">
+                <MapPin className="mt-1 h-4 w-4" />
                 <span>8100 E Arapahoe Road, Suite 208<br />Centennial, CO 80112</span>
               </div>
             </div>
           </div>
-          
         </div>
-        
-        <div className="border-t border-background/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <div className="flex items-center space-x-4">
-            <div className="text-background/60 text-sm" data-testid="footer-copyright">
-              © {new Date().getFullYear()} Stage Management, LLC. All Rights Reserved.
-            </div>
-            <a 
-              href="https://ashaliving.org/" 
-              target="_blank" 
+
+        <div className="mt-12 flex flex-col gap-6 border-t border-background/15 pt-8 text-sm text-background/60 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-4 text-center md:flex-row md:items-center md:gap-6 md:text-left">
+            <span data-testid="footer-copyright">
+              © {new Date().getFullYear()} Stage Management, LLC. All rights reserved.
+            </span>
+            <a
+              href="https://ashaliving.org/"
+              target="_blank"
               rel="noopener noreferrer"
-              className="hover:opacity-80 transition-opacity"
+              className="flex items-center justify-center transition-opacity hover:opacity-80"
               data-testid="footer-asha-link"
             >
-              <img 
-                src={ashaLogoUrl} 
+              <img
+                src={ashaLogoUrl}
                 alt="ASHA Logo"
-                className="w-auto h-10 sm:h-12 md:h-14"
+                className="h-8 w-auto sm:h-10"
                 data-testid="footer-asha-logo"
               />
             </a>
           </div>
-          <div className="flex space-x-6 text-sm text-background/60 mt-4 md:mt-0">
-            <Link href="/privacy" className="hover:text-primary transition-colors" data-testid="footer-privacy">
+          <div className="flex flex-wrap justify-center gap-6" data-testid="footer-legal">
+            <Link href="/privacy" className="transition-colors hover:text-primary" data-testid="footer-privacy">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="hover:text-primary transition-colors" data-testid="footer-terms">
+            <Link href="/terms" className="transition-colors hover:text-primary" data-testid="footer-terms">
               Terms of Service
             </Link>
-            <Link href="/accessibility" className="hover:text-primary transition-colors" data-testid="footer-accessibility">
+            <Link href="/accessibility" className="transition-colors hover:text-primary" data-testid="footer-accessibility">
               Accessibility
             </Link>
           </div>
