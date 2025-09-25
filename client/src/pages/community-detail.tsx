@@ -756,9 +756,13 @@ export default function CommunityDetail() {
         </div>
       </div>
 
-      {/* Features Highlights Section */}
-            <section>
-              <h2 className="text-3xl font-bold mb-8">Experience the Difference</h2>
+
+      {/* Full-width sections after amenities */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 space-y-16">
+        
+        {/* Features Highlights Section */}
+        <section id="features" className="scroll-mt-32">
+          <h2 className="text-3xl font-bold mb-8">Experience the Difference</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Extraordinary Dining */}
                 <Card className="overflow-hidden hover:shadow-xl transition-shadow group" data-testid="feature-extraordinary-dining">
@@ -1429,8 +1433,8 @@ export default function CommunityDetail() {
         </div>
       </div>
 
-          {/* White Card CTA Section */}
-          <section className="py-16 mt-16">
+        {/* White Card CTA Section */}
+        <section className="py-16 mt-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="shadow-2xl border-0 bg-white">
             <CardContent className="p-8 md:p-12 text-center">
@@ -1470,8 +1474,9 @@ export default function CommunityDetail() {
               </div>
             </CardContent>
           </Card>
-        </div>
-      </section>
+        </section>
+        
+      </div>
       
       {/* Floor Plan Modal */}
       {selectedFloorPlan && (
