@@ -182,7 +182,7 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
       )}
       
       {/* Gallery Category Cards - 4 across on desktop */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {items.slice(0, 4).map((gallery) => {
           const config = categoryConfig[gallery.category] || { icon: Image, displayName: gallery.title };
           const IconComponent = config.icon;
@@ -627,7 +627,7 @@ export default function CommunityDetail() {
     (community as any)?.amenitiesData?.length || community?.amenities?.length
   );
   const hasFloorPlans = floorPlans.length > 0;
-  const hasGallery = galleryImages.length > 0;
+  const hasGallery = galleries.length > 0 && galleries.some(g => g.images && g.images.length > 0);
   const hasEvents = events.length > 0;
   const hasTestimonials = testimonials.length > 0;
   const hasPosts = posts.length > 0;

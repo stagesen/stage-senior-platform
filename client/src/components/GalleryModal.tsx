@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X, Grid } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface GalleryImage {
   url: string;
@@ -71,6 +72,12 @@ export default function GalleryModal({ isOpen, onClose, gallery, initialImageInd
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 overflow-hidden bg-black/95">
+        <VisuallyHidden>
+          <DialogTitle>{gallery.title || 'Gallery'}</DialogTitle>
+          <DialogDescription>
+            Browse through the {gallery.title || 'gallery'} collection. Use arrow keys to navigate between images or click the thumbnails below.
+          </DialogDescription>
+        </VisuallyHidden>
         {/* Header */}
         <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-black/80 to-transparent p-4">
           <div className="flex items-center justify-between">
