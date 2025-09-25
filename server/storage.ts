@@ -13,6 +13,7 @@ import {
   communitiesCareTypes,
   amenities,
   communitiesAmenities,
+  users,
   type Community,
   type InsertCommunity,
   type Post,
@@ -36,9 +37,14 @@ import {
   type CareType,
   type InsertCareType,
   type Amenity,
+  type User,
+  type InsertUser,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm";
+import session from "express-session";
+import connectPg from "connect-pg-simple";
+import { pool } from "./db";
 
 export interface IStorage {
   // Community operations
@@ -162,6 +168,16 @@ export interface IStorage {
   }): Promise<CareType[]>;
   getCareType(slug: string): Promise<CareType | undefined>;
   getCareTypeById(id: string): Promise<CareType | undefined>;
+
+  // User operations - referenced by javascript_auth_all_persistance integration
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, user: Partial<InsertUser>): Promise<User>;
+  deleteUser(id: number): Promise<void>;
+
+  // Session store - referenced by javascript_auth_all_persistance integration
+  sessionStore: session.Store;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -929,6 +945,55 @@ export class DatabaseStorage implements IStorage {
       .from(careTypes)
       .where(eq(careTypes.id, id));
     return careType;
+  }
+
+  // User operations - referenced by javascript_auth_all_persistance integration
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username));
+    return user;
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const [created] = await db
+      .insert(users)
+      .values(user)
+      .returning();
+    return created;
+  }
+
+  async updateUser(id: number, user: Partial<InsertUser>): Promise<User> {
+    const [updated] = await db
+      .update(users)
+      .set(user)
+      .where(eq(users.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteUser(id: number): Promise<void> {
+    await db.delete(users).where(eq(users.id, id));
+  }
+
+  // Session store - referenced by javascript_auth_all_persistance integration
+  sessionStore: session.Store;
+
+  constructor() {
+    const PostgresSessionStore = connectPg(session);
+    this.sessionStore = new PostgresSessionStore({ 
+      pool,
+      createTableIfMissing: true 
+    });
   }
 }
 

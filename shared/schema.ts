@@ -8,10 +8,22 @@ import {
   integer,
   boolean,
   jsonb,
-  uuid
+  uuid,
+  serial
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+
+// Users table for authentication - referenced by javascript_auth_all_persistance integration
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: varchar("username", { length: 255 }).notNull().unique(),
+  password: text("password").notNull(),
+  email: varchar("email", { length: 255 }),
+  role: varchar("role", { length: 50 }).default("admin"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
 
 // Master tables
 export const careTypes = pgTable("care_types", {
@@ -457,6 +469,16 @@ export const insertGalleryImageSchema = createInsertSchema(galleryImages).omit({
   updatedAt: true,
 });
 
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  username: z.string().min(3, "Username must be at least 3 characters").max(50, "Username is too long"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z.string().email("Please enter a valid email address").optional().or(z.literal("")),
+});
+
 // Types
 export type CareType = typeof careTypes.$inferSelect;
 export type InsertCareType = z.infer<typeof insertCareTypeSchema>;
@@ -486,3 +508,5 @@ export type Testimonial = typeof testimonials.$inferSelect;
 export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
 export type GalleryImage = typeof galleryImages.$inferSelect;
 export type InsertGalleryImage = z.infer<typeof insertGalleryImageSchema>;
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;

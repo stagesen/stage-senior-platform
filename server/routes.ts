@@ -1,6 +1,7 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { setupAuth } from "./auth";
 import {
   insertCommunitySchema,
   insertPostSchema,
@@ -15,7 +16,17 @@ import {
   insertCareTypeSchema,
 } from "@shared/schema";
 
+// Middleware to protect admin routes - referenced by javascript_auth_all_persistance integration
+function requireAuth(req: Request, res: Response, next: NextFunction) {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Authentication required" });
+  }
+  next();
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up authentication - referenced by javascript_auth_all_persistance integration
+  setupAuth(app);
   
   // Community routes
   app.get("/api/communities", async (req, res) => {
@@ -54,7 +65,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/communities", async (req, res) => {
+  app.post("/api/communities", requireAuth, async (req, res) => {
     try {
       const validatedData = insertCommunitySchema.parse(req.body);
       const community = await storage.createCommunity(validatedData);
@@ -65,7 +76,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/communities/:id", async (req, res) => {
+  app.put("/api/communities/:id", requireAuth, async (req, res) => {
     try {
       const validatedData = insertCommunitySchema.partial().parse(req.body);
       const community = await storage.updateCommunity(req.params.id, validatedData);
@@ -76,7 +87,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/communities/:id", async (req, res) => {
+  app.delete("/api/communities/:id", requireAuth, async (req, res) => {
     try {
       await storage.deleteCommunity(req.params.id);
       res.status(204).send();
@@ -123,7 +134,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/posts", async (req, res) => {
+  app.post("/api/posts", requireAuth, async (req, res) => {
     try {
       const validatedData = insertPostSchema.parse(req.body);
       const post = await storage.createPost(validatedData);
@@ -134,7 +145,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/posts/:id", async (req, res) => {
+  app.put("/api/posts/:id", requireAuth, async (req, res) => {
     try {
       const validatedData = insertPostSchema.partial().parse(req.body);
       const post = await storage.updatePost(req.params.id, validatedData);
@@ -145,7 +156,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/posts/:id", async (req, res) => {
+  app.delete("/api/posts/:id", requireAuth, async (req, res) => {
     try {
       await storage.deletePost(req.params.id);
       res.status(204).send();
@@ -198,7 +209,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/blog-posts", async (req, res) => {
+  app.post("/api/blog-posts", requireAuth, async (req, res) => {
     try {
       const validatedData = insertBlogPostSchema.parse(req.body);
       const post = await storage.createBlogPost(validatedData);
@@ -209,7 +220,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/blog-posts/:id", async (req, res) => {
+  app.put("/api/blog-posts/:id", requireAuth, async (req, res) => {
     try {
       const validatedData = insertBlogPostSchema.partial().parse(req.body);
       const post = await storage.updateBlogPost(req.params.id, validatedData);
@@ -220,7 +231,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/blog-posts/:id", async (req, res) => {
+  app.delete("/api/blog-posts/:id", requireAuth, async (req, res) => {
     try {
       await storage.deleteBlogPost(req.params.id);
       res.status(204).send();
@@ -267,7 +278,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/events", async (req, res) => {
+  app.post("/api/events", requireAuth, async (req, res) => {
     try {
       const validatedData = insertEventSchema.parse(req.body);
       const event = await storage.createEvent(validatedData);
@@ -278,7 +289,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/events/:id", async (req, res) => {
+  app.put("/api/events/:id", requireAuth, async (req, res) => {
     try {
       const validatedData = insertEventSchema.partial().parse(req.body);
       const event = await storage.updateEvent(req.params.id, validatedData);
@@ -289,7 +300,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/events/:id", async (req, res) => {
+  app.delete("/api/events/:id", requireAuth, async (req, res) => {
     try {
       await storage.deleteEvent(req.params.id);
       res.status(204).send();
@@ -323,7 +334,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/faqs", async (req, res) => {
+  app.post("/api/faqs", requireAuth, async (req, res) => {
     try {
       const validatedData = insertFaqSchema.parse(req.body);
       const faq = await storage.createFaq(validatedData);
@@ -334,7 +345,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/faqs/:id", async (req, res) => {
+  app.put("/api/faqs/:id", requireAuth, async (req, res) => {
     try {
       const validatedData = insertFaqSchema.partial().parse(req.body);
       const faq = await storage.updateFaq(req.params.id, validatedData);
@@ -345,7 +356,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/faqs/:id", async (req, res) => {
+  app.delete("/api/faqs/:id", requireAuth, async (req, res) => {
     try {
       await storage.deleteFaq(req.params.id);
       res.status(204).send();
@@ -379,7 +390,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/galleries", async (req, res) => {
+  app.post("/api/galleries", requireAuth, async (req, res) => {
     try {
       const validatedData = insertGallerySchema.parse(req.body);
       const gallery = await storage.createGallery(validatedData);
@@ -390,7 +401,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/galleries/:id", async (req, res) => {
+  app.put("/api/galleries/:id", requireAuth, async (req, res) => {
     try {
       const validatedData = insertGallerySchema.partial().parse(req.body);
       const gallery = await storage.updateGallery(req.params.id, validatedData);
@@ -401,7 +412,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/galleries/:id", async (req, res) => {
+  app.delete("/api/galleries/:id", requireAuth, async (req, res) => {
     try {
       await storage.deleteGallery(req.params.id);
       res.status(204).send();
@@ -443,7 +454,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/tour-requests/:id", async (req, res) => {
+  app.put("/api/tour-requests/:id", requireAuth, async (req, res) => {
     try {
       const validatedData = insertTourRequestSchema.partial().parse(req.body);
       const tourRequest = await storage.updateTourRequest(req.params.id, validatedData);
@@ -454,7 +465,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/tour-requests/:id", async (req, res) => {
+  app.delete("/api/tour-requests/:id", requireAuth, async (req, res) => {
     try {
       await storage.deleteTourRequest(req.params.id);
       res.status(204).send();
@@ -498,7 +509,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/floor-plans", async (req, res) => {
+  app.post("/api/floor-plans", requireAuth, async (req, res) => {
     try {
       const validatedData = insertFloorPlanSchema.parse(req.body);
       const floorPlan = await storage.createFloorPlan(validatedData);
@@ -509,7 +520,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/floor-plans/:id", async (req, res) => {
+  app.put("/api/floor-plans/:id", requireAuth, async (req, res) => {
     try {
       const validatedData = insertFloorPlanSchema.partial().parse(req.body);
       const floorPlan = await storage.updateFloorPlan(req.params.id, validatedData);
@@ -520,7 +531,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/floor-plans/:id", async (req, res) => {
+  app.delete("/api/floor-plans/:id", requireAuth, async (req, res) => {
     try {
       await storage.deleteFloorPlan(req.params.id);
       res.status(204).send();
@@ -567,7 +578,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/testimonials", async (req, res) => {
+  app.post("/api/testimonials", requireAuth, async (req, res) => {
     try {
       const validatedData = insertTestimonialSchema.parse(req.body);
       const testimonial = await storage.createTestimonial(validatedData);
@@ -578,7 +589,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/testimonials/:id", async (req, res) => {
+  app.put("/api/testimonials/:id", requireAuth, async (req, res) => {
     try {
       const validatedData = insertTestimonialSchema.partial().parse(req.body);
       const testimonial = await storage.updateTestimonial(req.params.id, validatedData);
@@ -589,7 +600,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/testimonials/:id", async (req, res) => {
+  app.delete("/api/testimonials/:id", requireAuth, async (req, res) => {
     try {
       await storage.deleteTestimonial(req.params.id);
       res.status(204).send();
@@ -639,7 +650,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/gallery-images", async (req, res) => {
+  app.post("/api/gallery-images", requireAuth, async (req, res) => {
     try {
       const validatedData = insertGalleryImageSchema.parse(req.body);
       const galleryImage = await storage.createGalleryImage(validatedData);
@@ -650,7 +661,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/gallery-images/:id", async (req, res) => {
+  app.put("/api/gallery-images/:id", requireAuth, async (req, res) => {
     try {
       const validatedData = insertGalleryImageSchema.partial().parse(req.body);
       const galleryImage = await storage.updateGalleryImage(req.params.id, validatedData);
@@ -661,7 +672,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/gallery-images/:id", async (req, res) => {
+  app.delete("/api/gallery-images/:id", requireAuth, async (req, res) => {
     try {
       await storage.deleteGalleryImage(req.params.id);
       res.status(204).send();
