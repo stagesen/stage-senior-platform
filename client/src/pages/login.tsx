@@ -111,7 +111,12 @@ export default function Login() {
               </TabsList>
 
               <TabsContent value="login">
-                <form onSubmit={handleLogin} className="space-y-4">
+                <form onSubmit={handleLogin} className="space-y-4" autoComplete="off">
+                  {/* Hidden dummy fields to prevent incorrect autofill */}
+                  <div style={{ display: 'none' }}>
+                    <input type="text" name="fakeusername" autoComplete="off" tabIndex={-1} />
+                    <input type="password" name="fakepassword" autoComplete="off" tabIndex={-1} />
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="login-username">Username</Label>
                     <div className="relative">
@@ -125,6 +130,10 @@ export default function Login() {
                         onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
                         className="pl-10"
                         disabled={isLoading}
+                        autoComplete="nope"
+                        autoCorrect="off"
+                        autoCapitalize="none"
+                        spellCheck="false"
                       />
                     </div>
                   </div>
@@ -142,6 +151,7 @@ export default function Login() {
                         onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                         className="pl-10"
                         disabled={isLoading}
+                        autoComplete="new-password"
                       />
                     </div>
                   </div>
@@ -158,7 +168,12 @@ export default function Login() {
               </TabsContent>
 
               <TabsContent value="register">
-                <form onSubmit={handleRegister} className="space-y-4">
+                <form onSubmit={handleRegister} className="space-y-4" autoComplete="off">
+                  {/* Hidden dummy fields to prevent incorrect autofill */}
+                  <div style={{ display: 'none' }}>
+                    <input type="text" name="fakeusername2" autoComplete="off" tabIndex={-1} />
+                    <input type="password" name="fakepassword2" autoComplete="off" tabIndex={-1} />
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="register-username">Username</Label>
                     <div className="relative">
@@ -172,6 +187,10 @@ export default function Login() {
                         onChange={(e) => setRegisterForm({ ...registerForm, username: e.target.value })}
                         className="pl-10"
                         disabled={isLoading}
+                        autoComplete="nope"
+                        autoCorrect="off"
+                        autoCapitalize="none"
+                        spellCheck="false"
                       />
                     </div>
                   </div>
@@ -189,6 +208,7 @@ export default function Login() {
                         onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
                         className="pl-10"
                         disabled={isLoading}
+                        autoComplete="off"
                       />
                     </div>
                   </div>
@@ -206,6 +226,7 @@ export default function Login() {
                         onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
                         className="pl-10"
                         disabled={isLoading}
+                        autoComplete="new-password"
                       />
                     </div>
                   </div>
