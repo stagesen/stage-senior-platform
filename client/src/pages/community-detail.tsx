@@ -1193,6 +1193,207 @@ export default function CommunityDetail() {
                       </CardContent>
                     </Card>
                   </>
+                ) : community.slug === 'the-gardens-on-quail' ? (
+                  <>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1560707303-4e980ce876ad?w=800&q=80"
+                          alt="Independent Plus Option"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-independent-plus"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Independent Plus Option</h3>
+                        <p className="text-gray-600">
+                          A unique choice for seniors who want independence with optional support.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"
+                          alt="Seamless Care Transitions"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-seamless-care"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Seamless Care Transitions</h3>
+                        <p className="text-gray-600">
+                          Move easily between Independent, Assisted, and Memory Care.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80"
+                          alt="Community Connections"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-community-connections"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Community Connections</h3>
+                        <p className="text-gray-600">
+                          Partnerships with Arvada schools, churches, and non-profits keep residents engaged.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80"
+                          alt="Upscale, Modern Design"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-modern-design"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Upscale, Modern Design</h3>
+                        <p className="text-gray-600">
+                          Bistro, theater, library, and courtyards for comfortable daily living.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </>
+                ) : community.slug === 'gardens-at-columbine' ? (
+                  <>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80"
+                          alt="Beautiful Gardens"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-gardens"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Beautiful Gardens</h3>
+                        <p className="text-gray-600">
+                          Over two acres of outdoor paths, art, and water features.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1543269664-56d93c1b41a6?w=800&q=80"
+                          alt="Strong Staff Tenure"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-staff-tenure"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Strong Staff Tenure</h3>
+                        <p className="text-gray-600">
+                          Many caregivers and directors have been here since the community opened.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80"
+                          alt="Dedicated Memory Care Wing"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-memory-care"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Dedicated Memory Care Wing</h3>
+                        <p className="text-gray-600">
+                          Secure, bright, and purpose-built for dementia care.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1516733968668-dbdce39c4651?w=800&q=80"
+                          alt="Home-Like Feel"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-home-like"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Home-Like Feel</h3>
+                        <p className="text-gray-600">
+                          A warm, personal environment rather than a corporate setting.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </>
+                ) : community.slug === 'stonebridge-senior' ? (
+                  <>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"
+                          alt="Personalized Care Plans"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-personalized-plans"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Personalized Care Plans</h3>
+                        <p className="text-gray-600">
+                          Developed with residents and families, updated regularly.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1559234938-b60fff04894d?w=800&q=80"
+                          alt="Your Story First Philosophy"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-story-first"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Your Story First Philosophy</h3>
+                        <p className="text-gray-600">
+                          Staff learn each resident's life story to guide daily care.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1516733968668-dbdce39c4651?w=800&q=80"
+                          alt="Cozy, Intimate Setting"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-intimate"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Cozy, Intimate Setting</h3>
+                        <p className="text-gray-600">
+                          Smaller community feel with modern amenities.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1601760562234-9814eea6663a?w=800&q=80"
+                          alt="Pet-Friendly"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-pet-friendly"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Pet-Friendly</h3>
+                        <p className="text-gray-600">
+                          Residents are welcome to bring pets; pet therapy is also offered.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </>
                 ) : (
                   <>
                     <Card className="overflow-hidden">
