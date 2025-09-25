@@ -70,6 +70,8 @@ export const communities = pgTable("communities", {
   seoDesc: text("seo_desc"), // Additional field from CSV
   phone: varchar("phone", { length: 20 }), // Keep for backwards compatibility
   address: text("address"), // Keep for backwards compatibility
+  mainColorHex: varchar("main_color_hex", { length: 7 }),
+  ctaColorHex: varchar("cta_color_hex", { length: 7 }),
   featured: boolean("featured").default(false),
   active: boolean("active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
@@ -380,6 +382,9 @@ export const insertCommunitySchema = createInsertSchema(communities).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  mainColorHex: z.string().regex(/^#([0-9a-fA-F]{6})$/, "Invalid hex color format (use #RRGGBB)").optional(),
+  ctaColorHex: z.string().regex(/^#([0-9a-fA-F]{6})$/, "Invalid hex color format (use #RRGGBB)").optional(),
 });
 
 export const insertCommunityCareTypeSchema = createInsertSchema(communitiesCareTypes).omit({

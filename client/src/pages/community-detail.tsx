@@ -312,8 +312,54 @@ export default function CommunityDetail() {
   }
 
 
+  // WCAG contrast calculation for better accessibility
+  const getContrastRatio = (color1: string, color2: string) => {
+    const getLuminance = (hex: string) => {
+      const rgb = parseInt(hex.slice(1), 16);
+      const r = ((rgb >> 16) & 0xff) / 255;
+      const g = ((rgb >> 8) & 0xff) / 255;
+      const b = (rgb & 0xff) / 255;
+      
+      const sRGB = [r, g, b].map(c => 
+        c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
+      );
+      
+      return 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2];
+    };
+    
+    const l1 = getLuminance(color1);
+    const l2 = getLuminance(color2);
+    const lighter = Math.max(l1, l2);
+    const darker = Math.min(l1, l2);
+    
+    return (lighter + 0.05) / (darker + 0.05);
+  };
+
+  const getAccessibleTextColor = (bgColor: string) => {
+    if (!bgColor || !bgColor.match(/^#[0-9a-fA-F]{6}$/)) return '#ffffff';
+    
+    const whiteContrast = getContrastRatio(bgColor, '#ffffff');
+    const blackContrast = getContrastRatio(bgColor, '#000000');
+    
+    // Use WCAG AA standard (4.5:1 ratio)
+    return whiteContrast >= blackContrast ? '#ffffff' : '#000000';
+  };
+
+  // Memoize community styles to avoid recreation on each render
+  const communityStyles = useMemo(() => {
+    const mainColor = (community as any).mainColorHex || '#2563eb';
+    const ctaColor = (community as any).ctaColorHex || '#f59e0b';
+    
+    return {
+      '--community-main': mainColor,
+      '--community-cta': ctaColor,
+      '--community-main-text': getAccessibleTextColor(mainColor),
+      '--community-cta-text': getAccessibleTextColor(ctaColor),
+    } as React.CSSProperties;
+  }, [(community as any)?.mainColorHex, (community as any)?.ctaColorHex]);
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white" style={communityStyles}>
       {/* Hero Section */}
       <section className="relative h-[500px] md:h-[600px] overflow-hidden">
         <img
@@ -1149,8 +1195,14 @@ export default function CommunityDetail() {
                     data-testid="input-tour-email"
                   />
                   <Button 
-                    className="w-full" 
+                    className="w-full shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-2xl hover:scale-105" 
                     size="lg"
+                    style={{
+                      backgroundColor: 'var(--community-cta)',
+                      color: 'var(--community-cta-text)',
+                      borderColor: 'var(--community-cta)',
+                      boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                    }}
                     data-testid="button-schedule-tour"
                   >
                     <Calendar className="w-4 h-4 mr-2" />
@@ -1234,7 +1286,12 @@ export default function CommunityDetail() {
       </div>
 
       {/* Full Width CTA Section */}
-      <section className="bg-primary text-white py-16 mt-16">
+      <section 
+        className="text-white py-16 mt-16"
+        style={{
+          backgroundColor: 'var(--community-main)'
+        }}
+      >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Experience {community.name}?
@@ -1246,7 +1303,13 @@ export default function CommunityDetail() {
             <Button 
               size="lg" 
               variant="secondary"
-              className="text-lg"
+              className="text-lg shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-3xl"
+              style={{
+                backgroundColor: 'var(--community-cta)',
+                color: 'var(--community-cta-text)',
+                borderColor: 'var(--community-cta)',
+                boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+              }}
               data-testid="button-schedule-tour-cta"
             >
               <Calendar className="w-5 h-5 mr-2" />
@@ -1255,7 +1318,10 @@ export default function CommunityDetail() {
             <Button 
               size="lg" 
               variant="outline"
-              className="bg-transparent text-white border-white hover:bg-white hover:text-primary text-lg"
+              className="bg-white/10 backdrop-blur-md text-white border-white/50 hover:bg-white hover:text-primary text-lg shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl"
+              style={{
+                boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+              }}
               asChild
               data-testid="button-call-cta"
             >
