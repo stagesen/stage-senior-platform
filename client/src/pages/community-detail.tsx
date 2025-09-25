@@ -385,7 +385,15 @@ export default function CommunityDetail() {
 
       {navSections.length > 0 && (
         <div
-          className="bg-white/95 backdrop-blur border-b border-border sticky top-16 z-40"
+          className="sticky top-16 z-40 bg-white/98 backdrop-blur-md border-b border-border shadow-sm"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.98) !important',
+            backdropFilter: 'blur(12px) !important',
+            boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05) !important',
+            position: 'sticky !important',
+            top: '64px !important',
+            zIndex: '40 !important'
+          }}
           data-community-sticky-nav
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1089,7 +1097,7 @@ export default function CommunityDetail() {
 
           {/* Sticky Sidebar */}
           <div className="lg:col-span-1">
-            <div className="lg:sticky lg:top-24 space-y-6">
+            <div className="lg:sticky lg:top-32 space-y-6">
               {/* Pricing Card */}
               <Card className="shadow-lg border-2 border-primary/20">
                 <CardHeader className="bg-primary/5">
