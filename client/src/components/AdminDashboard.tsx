@@ -1439,9 +1439,24 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Page Path</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="/communities" data-testid="input-page-path" />
-                    </FormControl>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger data-testid="select-page-path">
+                          <SelectValue placeholder="Select a page" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="/">Homepage (/)</SelectItem>
+                        <SelectItem value="/about-us">About Us</SelectItem>
+                        <SelectItem value="/blog">Blog</SelectItem>
+                        <SelectItem value="/services">Services</SelectItem>
+                        <SelectItem value="/services/management">Management Services</SelectItem>
+                        <SelectItem value="/stage-cares">Stage Cares</SelectItem>
+                        <SelectItem value="/communities">Communities</SelectItem>
+                        <SelectItem value="/care-points">Care Points</SelectItem>
+                        <SelectItem value="/events">Events</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -1534,10 +1549,13 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   name="overlayOpacity"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Overlay Opacity (0-1)</FormLabel>
+                      <FormLabel>Overlay Opacity</FormLabel>
                       <FormControl>
                         <Input {...field} value={field.value || "0.5"} type="number" step="0.1" min="0" max="1" data-testid="input-overlay-opacity" />
                       </FormControl>
+                      <p className="text-sm text-muted-foreground">
+                        Controls the darkness of the background overlay (0 = transparent, 1 = solid black)
+                      </p>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -1555,11 +1573,14 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="left">Left</SelectItem>
-                          <SelectItem value="center">Center</SelectItem>
-                          <SelectItem value="right">Right</SelectItem>
+                          <SelectItem value="left">Left (Content aligned to left side)</SelectItem>
+                          <SelectItem value="center">Center (Content centered on page)</SelectItem>
+                          <SelectItem value="right">Right (Content aligned to right side)</SelectItem>
                         </SelectContent>
                       </Select>
+                      <p className="text-sm text-muted-foreground">
+                        Aligns the hero text content horizontally on the page
+                      </p>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -2652,6 +2673,95 @@ https://example.com/image2.jpg|Second alt|Another caption"
                 </TableRow>
               );
             })}
+          </TableBody>
+        </Table>
+      );
+    }
+
+    // Page Heroes table
+    if (type === "page-heroes") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Page</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>Subtitle</TableHead>
+              <TableHead>CTA</TableHead>
+              <TableHead>Settings</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: PageHero) => (
+              <TableRow key={item.id} data-testid={`page-hero-row-${item.id}`}>
+                <TableCell className="font-medium">
+                  <Badge variant="outline" className="font-mono">
+                    {item.pagePath}
+                  </Badge>
+                </TableCell>
+                <TableCell className="max-w-[200px]">
+                  <div className="truncate font-semibold">{item.title}</div>
+                </TableCell>
+                <TableCell className="max-w-[200px]">
+                  <div className="truncate text-sm text-muted-foreground">
+                    {item.subtitle || "No subtitle"}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {item.ctaText ? (
+                    <div className="space-y-1">
+                      <div className="text-sm font-medium">{item.ctaText}</div>
+                      <div className="text-xs text-muted-foreground truncate max-w-[150px]">
+                        {item.ctaLink || "No link"}
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-muted-foreground">No CTA</span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <div className="space-y-1 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">Align:</span>
+                      <Badge variant="secondary" className="text-xs">
+                        {item.textAlignment || "center"}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">Overlay:</span>
+                      <span className="font-mono">{item.overlayOpacity || "0.5"}</span>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={item.active ? "default" : "secondary"}>
+                    {item.active ? "Active" : "Inactive"}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => handleEdit(item)}
+                      data-testid={`button-edit-${item.id}`}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="destructive" 
+                      onClick={() => handleDelete(item.id)}
+                      data-testid={`button-delete-${item.id}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       );
