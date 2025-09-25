@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Building2, TrendingUp, Users, Shield, Award, Star, CheckCircle, Phone, Mail, MapPin, Calendar, BarChart3, Settings, Heart } from "lucide-react";
+import { PageHero } from "@/components/PageHero";
 
 export default function ProfessionalManagement() {
   useEffect(() => {
@@ -129,6 +130,14 @@ export default function ProfessionalManagement() {
 
   return (
     <div className="min-h-screen bg-white">
+      <PageHero
+        pagePath="/services/management"
+        defaultTitle="Professional Management"
+        defaultSubtitle="Expert Senior Living Operations"
+        defaultDescription="Proven management solutions that elevate communities through operational excellence, staff development, and resident-first care philosophy."
+        defaultBackgroundImage="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=2000&q=80"
+      />
+      
       {/* Breadcrumb Navigation */}
       <div className="bg-gray-50 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
