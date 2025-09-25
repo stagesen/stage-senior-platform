@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Home, Heart, Brain, Clock, Shield, Users, Star, Phone, Calendar, MapPin, CheckCircle } from "lucide-react";
+import { PageHero } from "@/components/PageHero";
 
 export default function Services() {
   useEffect(() => {
@@ -106,6 +107,14 @@ export default function Services() {
 
   return (
     <div className="min-h-screen bg-white">
+      <PageHero
+        pagePath="/services"
+        defaultTitle="Our Services"
+        defaultSubtitle="Comprehensive Senior Living Solutions"
+        defaultDescription="From Independent Living to Memory Care, we provide personalized services that honor each resident's unique needs and preferences."
+        defaultBackgroundImage="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=2000&q=80"
+      />
+      
       {/* Breadcrumb Navigation */}
       <div className="bg-gray-50 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -125,34 +134,6 @@ export default function Services() {
         </div>
       </div>
 
-      {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 bg-gradient-to-br from-primary/10 to-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6" data-testid="page-title">
-              Our Services
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed" data-testid="hero-description">
-              Comprehensive senior living services designed around your unique needs and preferences. 
-              From independent living to specialized memory care, we provide exceptional support at every stage.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button size="lg" asChild data-testid="button-explore-communities">
-                <Link href="/communities">
-                  <MapPin className="w-5 h-5 mr-2" />
-                  Explore Our Communities
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" asChild data-testid="button-schedule-consultation">
-                <a href="tel:+1-303-436-2300">
-                  <Phone className="w-5 h-5 mr-2" />
-                  Schedule Consultation
-                </a>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Services Grid */}
       <section className="py-16 bg-white">
