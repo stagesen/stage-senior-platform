@@ -387,12 +387,9 @@ export default function CommunityDetail() {
         <div
           className="sticky top-16 z-40 bg-white/98 backdrop-blur-md border-b border-border shadow-sm"
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.98) !important',
-            backdropFilter: 'blur(12px) !important',
-            boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05) !important',
-            position: 'sticky !important',
-            top: '64px !important',
-            zIndex: '40 !important'
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(12px)',
+            boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
           }}
           data-community-sticky-nav
         >
