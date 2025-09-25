@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import EventCard from "@/components/EventCard";
 import FloorPlanModal from "@/components/FloorPlanModal";
+import GalleryModal from "@/components/GalleryModal";
 import CommunityMap from "@/components/CommunityMap";
 import { 
   MapPin, 
@@ -141,10 +142,47 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
 
   // Ensure galleries is always an array
   const items = galleries ?? [];
+  
+  // Collect all images from all galleries for the photo grid
+  const allImages = items.flatMap(gallery => 
+    (gallery.images || []).map(img => ({
+      ...img,
+      galleryTitle: gallery.title,
+      galleryId: gallery.id
+    }))
+  );
+  
+  // Get first 12 images for the grid
+  const gridImages = allImages.slice(0, 12);
 
   return (
-    <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+    <div className="space-y-8">
+      {/* Photo Grid - 9-12 images */}
+      {gridImages.length > 0 && (
+        <div className="grid grid-cols-3 md:grid-cols-4 gap-2 rounded-lg overflow-hidden">
+          {gridImages.map((image, index) => (
+            <div 
+              key={index} 
+              className="aspect-square overflow-hidden cursor-pointer group"
+              onClick={() => {
+                const gallery = items.find(g => g.id === image.galleryId);
+                if (gallery) onGallerySelect(gallery);
+              }}
+              data-testid={`gallery-grid-image-${index}`}
+            >
+              <img
+                src={image.url}
+                alt={image.alt || `Gallery image ${index + 1}`}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Gallery Category Cards - 4 across on desktop */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {items.slice(0, 4).map((gallery) => {
           const config = categoryConfig[gallery.category] || { icon: Image, displayName: gallery.title };
           const IconComponent = config.icon;
@@ -154,42 +192,32 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
           return (
             <Card 
               key={gallery.id} 
-              className="overflow-hidden hover:shadow-xl transition-all cursor-pointer group"
+              className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
               onClick={() => onGallerySelect(gallery)}
               data-testid={`gallery-category-${gallery.category}`}
             >
-              <AspectRatio ratio={16/9}>
+              <AspectRatio ratio={4/3}>
                 {coverImage ? (
                   <img
                     src={coverImage.url}
                     alt={coverImage.alt || `${gallery.title} gallery`}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
-                    <IconComponent className="w-16 h-16 text-primary/30" />
+                    <IconComponent className="w-12 h-12 text-primary/30" />
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 text-white">
-                  <h3 className="text-xl font-bold mb-1">{gallery.title}</h3>
-                  <p className="text-sm opacity-90">{totalImages} {totalImages === 1 ? 'Photo' : 'Photos'}</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute bottom-3 left-3 right-3 text-white">
+                  <h3 className="font-semibold text-sm mb-0.5">{gallery.title}</h3>
+                  <p className="text-xs opacity-90">{totalImages} Photos</p>
                 </div>
               </AspectRatio>
             </Card>
           );
         })}
       </div>
-      <Button 
-        variant="outline" 
-        size="lg" 
-        className="w-full"
-        onClick={() => onGallerySelect(null)}
-        data-testid="gallery-view-all"
-      >
-        <Image className="w-4 h-4 mr-2" />
-        View All Galleries
-      </Button>
     </div>
   );
 };
@@ -536,7 +564,8 @@ export default function CommunityDetail() {
   const slug = params.slug;
   const [selectedFloorPlan, setSelectedFloorPlan] = useState<FloorPlan | null>(null);
   const [isFloorPlanModalOpen, setIsFloorPlanModalOpen] = useState(false);
-  const [selectedGalleryCategory, setSelectedGalleryCategory] = useState<string | null>(null);
+  const [selectedGallery, setSelectedGallery] = useState<Gallery | null>(null);
+  const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>("overview");
 
   useEffect(() => {
@@ -960,6 +989,37 @@ export default function CommunityDetail() {
               </p>
             </section>
 
+            {/* Featured Testimonial */}
+            {testimonials.length > 0 && (
+              <div className="mb-12">
+                <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 shadow-lg">
+                  <CardContent className="p-8">
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0">
+                        <Star className="w-12 h-12 text-primary fill-primary/20" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-lg italic leading-relaxed mb-4">
+                          "{testimonials[0].text}"
+                        </p>
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                            <span className="text-primary font-semibold text-lg">
+                              {testimonials[0].author?.charAt(0) || 'R'}
+                            </span>
+                          </div>
+                          <div>
+                            <p className="font-semibold">{testimonials[0].author}</p>
+                            <p className="text-sm text-gray-600">{testimonials[0].relationship}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
             {/* Features & Highlights */}
             <section id="highlights" className="scroll-mt-32">
               <h2 className="text-3xl font-bold mb-8">Community Highlights</h2>
@@ -1339,8 +1399,8 @@ export default function CommunityDetail() {
                 <GalleryOverview 
                   galleries={galleries}
                   onGallerySelect={(gallery) => {
-                    // Handle gallery selection - could open a modal or navigate to a gallery page
-                    console.log('Selected gallery:', gallery);
+                    setSelectedGallery(gallery);
+                    setIsGalleryModalOpen(true);
                   }}
                 />
               </section>
@@ -1627,6 +1687,16 @@ export default function CommunityDetail() {
           }}
         />
       )}
+
+      {/* Gallery Modal */}
+      <GalleryModal
+        isOpen={isGalleryModalOpen}
+        onClose={() => {
+          setIsGalleryModalOpen(false);
+          setSelectedGallery(null);
+        }}
+        gallery={selectedGallery}
+      />
       
       {/* Scroll to Top Button */}
       <ScrollToTop />
