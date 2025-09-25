@@ -622,8 +622,141 @@ export default function CommunityDetail() {
                 </div>
               </section>
             )}
+          </div>
 
-            {/* Features Highlights Section */}
+          {/* Sticky Sidebar - Only for Top Sections */}
+          <div className="lg:col-span-1">
+            <div className="lg:sticky lg:top-32 space-y-6">
+              {/* Pricing Card */}
+              <Card className="shadow-lg border-2 border-primary/20">
+                <CardHeader className="bg-primary/5">
+                  <CardDescription>Monthly rentals start at</CardDescription>
+                  <CardTitle className="text-3xl" data-testid="pricing-amount">
+                    {formatPrice(community.startingPrice)}<span className="text-lg font-normal">/mo*</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  <p className="text-sm text-gray-600">
+                    *Pricing varies by care level and apartment type. Contact us for personalized pricing.
+                  </p>
+                  <Separator />
+                  <div className="space-y-2">
+                    <div className="flex items-center text-sm">
+                      <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
+                      <span>No buy-in fees</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
+                      <span>Month-to-month rental</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
+                      <span>All utilities included</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Schedule Tour Card */}
+              <Card className="shadow-lg">
+                <CardHeader>
+                  <CardTitle>Schedule Your Visit</CardTitle>
+                  <CardDescription>
+                    Tour our community and meet our caring team
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Input 
+                    placeholder="Your Name" 
+                    data-testid="input-tour-name"
+                  />
+                  <Input 
+                    placeholder="Phone Number" 
+                    type="tel"
+                    data-testid="input-tour-phone"
+                  />
+                  <Input 
+                    placeholder="Email Address" 
+                    type="email"
+                    data-testid="input-tour-email"
+                  />
+                  <Button 
+                    className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white" 
+                    data-testid="button-schedule-tour"
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Schedule Your Tour
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Contact Information */}
+              <Card className="shadow-lg">
+                <CardHeader>
+                  <CardTitle>Contact Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Button variant="outline" className="w-full justify-start" asChild data-testid="button-call-community">
+                    <a href={`tel:${community.phone || '+1-800-555-0123'}`}>
+                      <Phone className="w-4 h-4 mr-2" />
+                      {community.phone || '(800) 555-0123'}
+                    </a>
+                  </Button>
+                  <Separator />
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-3">
+                      <MapPin className="w-4 h-4 text-muted-foreground mt-1" />
+                      <div className="text-sm">
+                        <p className="font-medium">Address</p>
+                        <p className="text-muted-foreground">
+                          {community.address}<br />
+                          {community.city}, {community.state} {community.zipCode}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Mail className="w-4 h-4 text-muted-foreground mt-1" />
+                      <div className="text-sm">
+                        <p className="font-medium">Email</p>
+                        <p className="text-muted-foreground">
+                          {community.email || 'info@example.com'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Clock className="w-4 h-4 text-muted-foreground mt-1" />
+                      <div className="text-sm">
+                        <p className="font-medium">Office Hours</p>
+                        <p className="text-muted-foreground">
+                          Mon-Fri: 9:00 AM - 6:00 PM<br />
+                          Sat-Sun: 10:00 AM - 5:00 PM
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Download Brochure */}
+              <Card className="shadow-lg bg-primary/5 border-primary/20">
+                <CardContent className="p-6 text-center">
+                  <Download className="w-10 h-10 text-primary mx-auto mb-4" />
+                  <h3 className="font-semibold mb-2">Community Brochure</h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Get detailed information about our community, floor plans, and services
+                  </p>
+                  <Button variant="outline" className="w-full" data-testid="button-download-brochure">
+                    <Download className="w-4 h-4 mr-2" />
+                    Download PDF
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Features Highlights Section */}
             <section>
               <h2 className="text-3xl font-bold mb-8">Experience the Difference</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -1296,8 +1429,8 @@ export default function CommunityDetail() {
         </div>
       </div>
 
-      {/* White Card CTA Section */}
-      <div className="py-16 mt-16">
+          {/* White Card CTA Section */}
+          <section className="py-16 mt-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="shadow-2xl border-0 bg-white">
             <CardContent className="p-8 md:p-12 text-center">
@@ -1338,7 +1471,7 @@ export default function CommunityDetail() {
             </CardContent>
           </Card>
         </div>
-      </div>
+      </section>
       
       {/* Floor Plan Modal */}
       {selectedFloorPlan && (
