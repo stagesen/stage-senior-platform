@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Heart, BookOpen, Users, Shield, Star, Sparkles, Phone, Calendar, MapPin, CheckCircle, Quote } from "lucide-react";
+import { PageHero } from "@/components/PageHero";
 
 export default function StageCares() {
   useEffect(() => {
@@ -116,6 +117,15 @@ export default function StageCares() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Page Hero */}
+      <PageHero
+        pagePath="/stage-cares"
+        defaultTitle="Stage Cares"
+        defaultSubtitle="Your Story First Philosophy"
+        defaultDescription="Our signature care approach that puts each resident's unique life story at the heart of personalized care planning and daily experiences."
+        defaultBackgroundImage="https://images.unsplash.com/photo-1543333995-a78aea2eee50?w=2000&q=80"
+      />
+      
       {/* Breadcrumb Navigation */}
       <div className="bg-gray-50 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
