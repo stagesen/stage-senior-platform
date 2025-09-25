@@ -38,7 +38,8 @@ import {
   Bed,
   Square,
   Download,
-  ArrowRight
+  ArrowRight,
+  Trees
 } from "lucide-react";
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -129,35 +130,36 @@ const FloorPlansGrid = ({ plans, onOpen }: { plans: any[], onOpen: (plan: any) =
 };
 
 // Local subcomponent: Gallery Overview
-const GalleryOverview = ({ images, onCategorySelect }: { images: any[], onCategorySelect: (category: string | null) => void }) => {
-  // Derive categories from images
-  const categories = [
-    { name: 'Residents', icon: Users, count: images.filter(img => img.category === 'Residents').length },
-    { name: 'Amenities', icon: Sparkles, count: images.filter(img => img.category === 'Amenities').length },
-    { name: 'Community', icon: Home, count: images.filter(img => img.category === 'Community').length },
-    { name: 'Dining', icon: Coffee, count: images.filter(img => img.category === 'Dining').length },
-  ].filter(cat => cat.count > 0).slice(0, 4);
+const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onGallerySelect: (gallery: any) => void }) => {
+  // Map our gallery categories to icons
+  const categoryConfig = {
+    'life-activities': { icon: Users, displayName: 'Life & Activities' },
+    'apartments-spaces': { icon: Home, displayName: 'Apartments & Spaces' },
+    'care-team': { icon: Heart, displayName: 'Care & Team' },
+    'outdoors-colorado': { icon: Trees, displayName: 'Outdoors & Colorado' },
+  };
 
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-        {categories.map((category) => {
-          const categoryImages = images.filter(img => img.category === category.name);
-          const coverImage = categoryImages[0];
-          const IconComponent = category.icon;
+        {galleries.slice(0, 4).map((gallery) => {
+          const config = categoryConfig[gallery.category] || { icon: Image, displayName: gallery.title };
+          const IconComponent = config.icon;
+          const coverImage = gallery.images?.[0];
+          const totalImages = gallery.images?.length || 0;
           
           return (
             <Card 
-              key={category.name} 
+              key={gallery.id} 
               className="overflow-hidden hover:shadow-xl transition-all cursor-pointer group"
-              onClick={() => onCategorySelect(category.name)}
-              data-testid={`gallery-category-${category.name}`}
+              onClick={() => onGallerySelect(gallery)}
+              data-testid={`gallery-category-${gallery.category}`}
             >
               <AspectRatio ratio={16/9}>
                 {coverImage ? (
                   <img
                     src={coverImage.url}
-                    alt={`${category.name} gallery`}
+                    alt={coverImage.alt || `${gallery.title} gallery`}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                 ) : (
@@ -167,8 +169,8 @@ const GalleryOverview = ({ images, onCategorySelect }: { images: any[], onCatego
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4 text-white">
-                  <h3 className="text-xl font-bold mb-1">{category.name}</h3>
-                  <p className="text-sm opacity-90">{category.count} {category.count === 1 ? 'Photo' : 'Photos'}</p>
+                  <h3 className="text-xl font-bold mb-1">{gallery.title}</h3>
+                  <p className="text-sm opacity-90">{totalImages} {totalImages === 1 ? 'Photo' : 'Photos'}</p>
                 </div>
               </AspectRatio>
             </Card>
@@ -179,11 +181,11 @@ const GalleryOverview = ({ images, onCategorySelect }: { images: any[], onCatego
         variant="outline" 
         size="lg" 
         className="w-full"
-        onClick={() => onCategorySelect(null)}
+        onClick={() => onGallerySelect(null)}
         data-testid="gallery-view-all"
       >
         <Image className="w-4 h-4 mr-2" />
-        View All {images.length} Photos
+        View All Galleries
       </Button>
     </div>
   );
@@ -329,18 +331,25 @@ const ActionPanel = ({ community }: { community: any }) => {
   return (
     <section className="bg-gradient-to-br from-gray-50 to-white py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Pricing Card */}
-          <Card className="shadow-lg border-2 border-primary/20">
+          <Card className="shadow-lg border-2 border-primary/20 overflow-hidden">
+            <div className="h-48 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2000"
+                alt="Comfortable senior living apartment"
+                className="w-full h-full object-cover"
+              />
+            </div>
             <CardHeader className="bg-primary/5">
-              <CardDescription>Monthly rentals start at</CardDescription>
-              <CardTitle className="text-3xl" data-testid="pricing-amount">
+              <CardTitle className="text-2xl">Monthly Pricing</CardTitle>
+              <CardDescription className="text-3xl font-bold text-primary mt-2" data-testid="pricing-amount">
                 {community.startingPrice !== null && community.startingPrice !== undefined ? (
                   <>{formatPrice(community.startingPrice)}<span className="text-lg font-normal">/mo*</span></>
                 ) : (
                   formatPrice(community.startingPrice)
                 )}
-              </CardTitle>
+              </CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
               <p className="text-sm text-gray-600">
@@ -355,83 +364,102 @@ const ActionPanel = ({ community }: { community: any }) => {
                 </div>
                 <div className="flex items-center text-sm">
                   <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                  <span>Month-to-month</span>
+                  <span>Month-to-month rentals</span>
+                </div>
+                <div className="flex items-center text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
+                  <span>All-inclusive pricing</span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Schedule Tour */}
-          <Card className="shadow-lg">
-            <CardHeader>
-              <CardTitle>Schedule Your Visit</CardTitle>
-              <CardDescription>
-                Tour our community today
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Button 
-                className="w-full bg-gradient-to-r from-primary to-primary/90" 
-                size="lg"
-                data-testid="button-schedule-tour"
-              >
-                <Calendar className="w-4 h-4 mr-2" />
-                Schedule Tour
-              </Button>
-              <Button 
-                variant="outline" 
-                className="w-full" 
-                size="lg"
-                data-testid="button-call-community"
-                asChild
-              >
-                <a href={`tel:${community.phone || '+1-800-555-0123'}`}>
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call Now
-                </a>
+              <Button className="w-full" variant="outline" data-testid="button-view-pricing">
+                View Floor Plan Pricing
+                <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </CardContent>
           </Card>
 
           {/* Contact Information */}
-          <Card className="shadow-lg">
+          <Card className="shadow-lg overflow-hidden">
+            <div className="h-48 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=2000"
+                alt="Friendly staff ready to help"
+                className="w-full h-full object-cover"
+              />
+            </div>
             <CardHeader>
-              <CardTitle>Contact Info</CardTitle>
+              <CardTitle className="text-2xl">Contact Us</CardTitle>
+              <CardDescription>Get in touch with our team</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-muted-foreground mt-1" />
-                <div className="text-sm">
-                  <p className="font-medium">Address</p>
-                  <p className="text-muted-foreground">
-                    {community.address}<br />
-                    {community.city}, {community.state} {community.zipCode}
-                  </p>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <Phone className="w-5 h-5 text-primary mt-0.5" />
+                  <div>
+                    <p className="font-medium">Call Us</p>
+                    <a href={`tel:${community.phone || '+1-303-436-2300'}`} className="text-primary hover:underline">
+                      {community.phone || "(303) 436-2300"}
+                    </a>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Clock className="w-4 h-4 text-muted-foreground mt-1" />
-                <div className="text-sm">
-                  <p className="font-medium">Hours</p>
-                  <p className="text-muted-foreground">
-                    Mon-Fri: 9AM-6PM
-                  </p>
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-primary mt-0.5" />
+                  <div>
+                    <p className="font-medium">Visit Us</p>
+                    <p className="text-sm text-muted-foreground">
+                      {community.address}<br />
+                      {community.city}, {community.state} {community.zipCode}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Clock className="w-5 h-5 text-primary mt-0.5" />
+                  <div>
+                    <p className="font-medium">Office Hours</p>
+                    <p className="text-sm text-muted-foreground">
+                      Mon-Fri: 9:00 AM - 6:00 PM<br />
+                      Sat-Sun: 10:00 AM - 5:00 PM
+                    </p>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Download Brochure */}
-          <Card className="shadow-lg bg-primary/5 border-primary/20">
-            <CardContent className="p-6 text-center h-full flex flex-col justify-center">
-              <Download className="w-10 h-10 text-primary mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">Community Brochure</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Get detailed information
+          <Card className="shadow-lg bg-primary/5 border-primary/20 overflow-hidden">
+            <div className="h-48 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=2000"
+                alt="Community brochure preview"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <CardHeader>
+              <CardTitle className="text-2xl">Community Brochure</CardTitle>
+              <CardDescription>Complete information guide</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <p className="text-sm text-gray-600">
+                Get detailed information about our community, floor plans, services, and amenities in our comprehensive brochure.
               </p>
-              <Button variant="outline" className="w-full" data-testid="button-download-brochure">
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                  <span>Floor plans & pricing</span>
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                  <span>Amenities & services</span>
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                  <span>Care levels & support</span>
+                </li>
+              </ul>
+              <Button className="w-full" data-testid="button-download-brochure">
                 <Download className="w-4 h-4 mr-2" />
-                Download PDF
+                Download PDF Brochure
               </Button>
             </CardContent>
           </Card>
@@ -1299,15 +1327,18 @@ export default function CommunityDetail() {
             )}
 
             {/* Photo Gallery */}
-            {galleryImages.length > 0 && (
+            {galleries.length > 0 && (
               <section id="gallery" className="scroll-mt-32">
                 <h2 className="text-3xl font-bold mb-8">Photo Gallery</h2>
                 <p className="text-lg text-gray-600 mb-8">
-                  Explore our bright, comfortable spaces and serene outdoor areas through our community gallery.
+                  Explore our vibrant community life, comfortable living spaces, dedicated care team, and beautiful Colorado surroundings.
                 </p>
                 <GalleryOverview 
-                  images={galleryImages}
-                  onCategorySelect={setSelectedGalleryCategory}
+                  galleries={galleries}
+                  onGallerySelect={(gallery) => {
+                    // Handle gallery selection - could open a modal or navigate to a gallery page
+                    console.log('Selected gallery:', gallery);
+                  }}
                 />
               </section>
             )}
