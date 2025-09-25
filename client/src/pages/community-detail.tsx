@@ -751,9 +751,8 @@ export default function CommunityDetail() {
       return;
     }
 
-    const headerElement = document.querySelector<HTMLElement>('[data-testid="header"]');
     const navElement = document.querySelector<HTMLElement>('[data-community-sticky-nav]');
-    const offset = (headerElement?.offsetHeight ?? 0) + (navElement?.offsetHeight ?? 0) + 16;
+    const offset = (navElement?.offsetHeight ?? 0) + 16;
 
     const elementPosition = element.getBoundingClientRect().top + window.scrollY;
     const offsetPosition = elementPosition - offset;
@@ -893,21 +892,6 @@ export default function CommunityDetail() {
           </div>
         )}
         
-        {/* Back Button */}
-        <div className="absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 z-20">
-          <Button 
-            variant="ghost" 
-            className="text-white hover:bg-white/20" 
-            asChild
-            data-testid="button-back"
-          >
-            <Link href="/communities">
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Back to Communities
-            </Link>
-          </Button>
-        </div>
-        
         {/* Hero Content */}
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16">
           <div className="max-w-7xl mx-auto">
@@ -938,37 +922,111 @@ export default function CommunityDetail() {
         </div>
       </section>
 
-      {navSections.length > 0 && (
-        <div
-          className="sticky top-16 z-40 bg-white/98 backdrop-blur-md border-b border-border shadow-sm"
-          style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(12px)',
-            boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
-          }}
-          data-community-sticky-nav
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <nav className="flex gap-2 overflow-x-auto py-3" aria-label="Community sections">
+      {/* Sticky Community Navigation Bar */}
+      <div
+        className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-md"
+        data-community-sticky-nav
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Top Section with Logo and Contact */}
+          <div className="flex items-center justify-between py-4">
+            {/* Community Branding */}
+            <div className="flex items-center gap-4">
+              {heroLogoSrc ? (
+                <img
+                  src={heroLogoSrc}
+                  alt={heroLogoAlt}
+                  className="h-10 md:h-12 w-auto object-contain"
+                  data-testid="nav-community-logo"
+                />
+              ) : (
+                <div className="flex items-center gap-3">
+                  <div 
+                    className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center shadow-sm"
+                    style={{ backgroundColor: (community as any)?.mainColorHex || '#2563eb' }}
+                  >
+                    <Home className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg md:text-xl font-bold text-gray-900">{community.name}</h2>
+                    <p className="text-xs text-gray-600 hidden md:block">{community.city}, {community.state}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Contact Actions */}
+            <div className="flex items-center gap-2 md:gap-4">
+              {community.phoneDisplay && (
+                <a
+                  href={`tel:${community.phoneDial || community.phoneDisplay}`}
+                  className="hidden md:flex items-center gap-2 text-gray-700 hover:text-primary transition-colors"
+                  data-testid="nav-phone"
+                >
+                  <Phone className="w-4 h-4" />
+                  <span className="text-sm font-medium">{community.phoneDisplay}</span>
+                </a>
+              )}
+              <Button 
+                size="sm"
+                className="shadow-sm"
+                style={{ 
+                  backgroundColor: (community as any)?.ctaColorHex || '#f59e0b',
+                  color: (community as any)?.ctaColorHex ? getAccessibleTextColor((community as any).ctaColorHex) : '#ffffff'
+                }}
+                data-testid="nav-schedule-tour"
+              >
+                <Calendar className="w-4 h-4 mr-1 md:mr-2" />
+                <span className="hidden md:inline">Schedule</span> Tour
+              </Button>
+              <Button 
+                variant="ghost"
+                size="sm"
+                asChild
+                className="md:hidden"
+                data-testid="nav-back-mobile"
+              >
+                <Link href="/communities">
+                  <ChevronLeft className="w-4 h-4" />
+                </Link>
+              </Button>
+              <Button 
+                variant="outline"
+                size="sm"
+                asChild
+                className="hidden md:inline-flex"
+                data-testid="nav-back-desktop"
+              >
+                <Link href="/communities">
+                  <ChevronLeft className="w-4 h-4 mr-2" />
+                  All Communities
+                </Link>
+              </Button>
+            </div>
+          </div>
+
+          {/* Section Navigation */}
+          {navSections.length > 0 && (
+            <nav className="flex gap-2 overflow-x-auto pb-3 -mb-px" aria-label="Community sections">
               {navSections.map((section) => (
                 <button
                   key={section.id}
                   type="button"
                   onClick={() => handleNavClick(section.id)}
                   className={cn(
-                    "px-4 py-2 rounded-full border text-sm font-medium transition-colors whitespace-nowrap",
+                    "px-4 py-2 text-sm font-medium transition-all whitespace-nowrap border-b-2",
                     activeSection === section.id
-                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                      : "bg-transparent text-muted-foreground border-border hover:bg-primary/10"
+                      ? "text-primary border-primary"
+                      : "text-gray-600 border-transparent hover:text-gray-900 hover:border-gray-300"
                   )}
                 >
                   {section.label}
                 </button>
               ))}
             </nav>
-          </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Main Content with Sticky Sidebar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -976,7 +1034,7 @@ export default function CommunityDetail() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-16">
             {/* Overview Section */}
-            <section id="overview" className="scroll-mt-32">
+            <section id="overview" className="scroll-mt-24">
               <h2 className="text-3xl font-bold mb-6" data-testid="overview-title">
                 Welcome to {community.name}
               </h2>
@@ -1021,7 +1079,7 @@ export default function CommunityDetail() {
             )}
 
             {/* Features & Highlights */}
-            <section id="highlights" className="scroll-mt-32">
+            <section id="highlights" className="scroll-mt-24">
               <h2 className="text-3xl font-bold mb-8">Community Highlights</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="overflow-hidden">
@@ -1093,7 +1151,7 @@ export default function CommunityDetail() {
 
             {/* Amenities Showcase */}
             {community.amenities && community.amenities.length > 0 && (
-              <section id="amenities" className="scroll-mt-32">
+              <section id="amenities" className="scroll-mt-24">
                 <h2 className="text-3xl font-bold mb-8">Amenities & Services</h2>
                 <div className="bg-gray-50 rounded-2xl p-8">
                   <p className="text-lg text-gray-600 mb-8">
@@ -1195,7 +1253,7 @@ export default function CommunityDetail() {
 
           {/* Sticky Sidebar - Only for Top Sections */}
           <div className="lg:col-span-1">
-            <div className="lg:sticky lg:top-32 space-y-6">
+            <div className="lg:sticky lg:top-28 space-y-6">
               {/* Pricing Card */}
               <Card className="shadow-lg border-2 border-primary/20">
                 <CardHeader className="bg-primary/5">
@@ -1266,9 +1324,9 @@ export default function CommunityDetail() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <Button variant="outline" className="w-full justify-start" asChild data-testid="button-call-community">
-                    <a href={`tel:${community.phone || '+1-800-555-0123'}`}>
+                    <a href={`tel:${community.phoneDial || community.phoneDisplay || '+1-800-555-0123'}`}>
                       <Phone className="w-4 h-4 mr-2" />
-                      {community.phone || '(800) 555-0123'}
+                      {community.phoneDisplay || community.phone || '(800) 555-0123'}
                     </a>
                   </Button>
                   <Separator />
@@ -1330,7 +1388,7 @@ export default function CommunityDetail() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 space-y-16">
         
         {/* Experience the Difference - Feature Sections */}
-        <section id="features" className="scroll-mt-32 space-y-20">
+        <section id="features" className="scroll-mt-24 space-y-20">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4">Experience the Difference</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -1380,7 +1438,7 @@ export default function CommunityDetail() {
 
             {/* Floor Plans Section */}
             {floorPlans.length > 0 && (
-              <section id="floor-plans" className="scroll-mt-32">
+              <section id="floor-plans" className="scroll-mt-24">
                 <h2 className="text-3xl font-bold mb-8">Floor Plans & Pricing</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Each apartment home is designed for comfort and independence, with modern conveniences and thoughtful layouts.
@@ -1419,7 +1477,7 @@ export default function CommunityDetail() {
 
             {/* Photo Gallery */}
             {galleries.length > 0 && (
-              <section id="gallery" className="scroll-mt-32">
+              <section id="gallery" className="scroll-mt-24">
                 <h2 className="text-3xl font-bold mb-8">Photo Gallery</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Explore our vibrant community life, comfortable living spaces, dedicated care team, and beautiful Colorado surroundings.
@@ -1436,7 +1494,7 @@ export default function CommunityDetail() {
 
             {/* Events & Activities - Full Width */}
             {events.length > 0 && (
-              <section id="events" className="scroll-mt-32">
+              <section id="events" className="scroll-mt-24">
                 <h2 className="text-3xl font-bold mb-8">Upcoming Events</h2>
                 <div className="space-y-6">
                   {events.slice(0, 4).map((event) => (
@@ -1460,7 +1518,7 @@ export default function CommunityDetail() {
 
             {/* Testimonials */}
             {testimonials.length > 0 && (
-              <section id="testimonials" className="scroll-mt-32">
+              <section id="testimonials" className="scroll-mt-24">
                 <h2 className="text-3xl font-bold mb-8">What Residents & Families Say</h2>
                 <TestimonialsCarousel testimonials={testimonials} />
               </section>
@@ -1468,7 +1526,7 @@ export default function CommunityDetail() {
 
             {/* Latest News - Blog Posts */}
             {blogPosts.length > 0 && (
-              <section id="news" className="py-8 scroll-mt-32">
+              <section id="news" className="py-8 scroll-mt-24">
                 <div className="flex items-center justify-between mb-8">
                   <div>
                     <h2 className="text-3xl font-bold mb-2">Latest News & Activities</h2>
@@ -1619,7 +1677,7 @@ export default function CommunityDetail() {
 
             {/* FAQs */}
             {faqs.length > 0 && (
-              <section id="faqs" className="scroll-mt-32">
+              <section id="faqs" className="scroll-mt-24">
                 <h2 className="text-3xl font-bold mb-8">Frequently Asked Questions</h2>
                 <Accordion type="single" collapsible className="space-y-4">
                   {faqs.slice(0, 6).map((faq) => (
@@ -1647,7 +1705,7 @@ export default function CommunityDetail() {
             )}
 
             {/* Location & Neighborhood */}
-            <section id="neighborhood" className="scroll-mt-32">
+            <section id="neighborhood" className="scroll-mt-24">
               <h2 className="text-3xl font-bold mb-8">Location & Neighborhood</h2>
               <Card className="mb-6 overflow-hidden">
                 <CardContent className="p-0">
