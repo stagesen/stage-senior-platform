@@ -90,23 +90,29 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       city: "",
       state: "CO",
       zip: "",
+      zipCode: "", // Backward compatibility
       latitude: null,
       longitude: null,
+      lat: null, // Additional field from CSV
+      lng: null, // Additional field from CSV
       phoneDisplay: "",
       phoneDial: "",
       secondaryPhoneDisplay: "",
       secondaryPhoneDial: "",
+      phone: "", // Backward compatibility
       email: "",
       heroImageUrl: "",
       overview: "",
       description: "",
       shortDescription: "",
+      address: "", // Backward compatibility
       startingRateDisplay: "",
       startingPrice: null,
       mainColorHex: "",
       ctaColorHex: "",
       seoTitle: "",
       seoDescription: "",
+      seoDesc: "", // Additional field from CSV
       careTypes: [],
       amenities: [],
       active: true,
@@ -314,6 +320,23 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   });
 
   const handleSubmit = (data: any) => {
+    // For communities, normalize lat/lng fields
+    if (type === "communities") {
+      // If lat/lng are provided but not latitude/longitude, copy them
+      if (data.lat !== null && data.lat !== undefined && !data.latitude) {
+        data.latitude = data.lat;
+      }
+      if (data.lng !== null && data.lng !== undefined && !data.longitude) {
+        data.longitude = data.lng;
+      }
+      // If latitude/longitude are provided but not lat/lng, copy them
+      if (data.latitude !== null && data.latitude !== undefined && !data.lat) {
+        data.lat = data.latitude;
+      }
+      if (data.longitude !== null && data.longitude !== undefined && !data.lng) {
+        data.lng = data.longitude;
+      }
+    }
     // For floor plans, ensure planSlug is set to name if not provided
     if (type === "floor-plans" && !data.planSlug && data.name) {
       data.planSlug = data.name.toLowerCase().replace(/\s+/g, '-');
@@ -330,6 +353,23 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   };
 
   const handleEdit = (item: any) => {
+    // For communities, normalize lat/lng fields when editing
+    if (type === "communities") {
+      // If lat/lng exist but latitude/longitude don't, copy them
+      if (item.lat && !item.latitude) {
+        item.latitude = item.lat;
+      }
+      if (item.lng && !item.longitude) {
+        item.longitude = item.lng;
+      }
+      // If latitude/longitude exist but lat/lng don't, copy them
+      if (item.latitude && !item.lat) {
+        item.lat = item.latitude;
+      }
+      if (item.longitude && !item.lng) {
+        item.lng = item.longitude;
+      }
+    }
     setEditingItem(item);
     getCurrentForm().reset(item);
     setIsDialogOpen(true);
@@ -449,13 +489,13 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   )}
                 />
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={communityForm.control}
                   name="phoneDisplay"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Display</FormLabel>
+                      <FormLabel>Primary Phone (Display)</FormLabel>
                       <FormControl>
                         <Input {...field} value={field.value || ""} placeholder="(303) 555-0100" data-testid="input-community-phone-display" />
                       </FormControl>
@@ -468,7 +508,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   name="phoneDial"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Dial</FormLabel>
+                      <FormLabel>Primary Phone (Dial)</FormLabel>
                       <FormControl>
                         <Input {...field} value={field.value || ""} placeholder="3035550100" data-testid="input-community-phone-dial" />
                       </FormControl>
@@ -476,6 +516,36 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     </FormItem>
                   )}
                 />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={communityForm.control}
+                  name="secondaryPhoneDisplay"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Secondary Phone (Display)</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} placeholder="(303) 555-0200" data-testid="input-community-secondary-phone-display" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={communityForm.control}
+                  name="secondaryPhoneDial"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Secondary Phone (Dial)</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} placeholder="3035550200" data-testid="input-community-secondary-phone-dial" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={communityForm.control}
                   name="startingPrice"
@@ -483,7 +553,20 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     <FormItem>
                       <FormLabel>Starting Price</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} value={field.value || ""} onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)} data-testid="input-community-price" />
+                        <Input type="number" {...field} value={field.value || ""} onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)} data-testid="input-community-starting-price" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={communityForm.control}
+                  name="startingRateDisplay"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Starting Rate Display</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} placeholder="From $3,500/month" data-testid="input-community-starting-rate-display" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -633,6 +716,19 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     <FormLabel>SEO Description</FormLabel>
                     <FormControl>
                       <Textarea {...field} value={field.value || ""} rows={3} data-testid="textarea-community-seo-description" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
+                name="seoDesc"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>SEO Description (Alternative)</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} value={field.value || ""} rows={2} placeholder="Alternative SEO description from CSV import" data-testid="textarea-community-seo-desc" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1979,6 +2075,96 @@ https://example.com/image2.jpg|Second alt|Another caption"
 
   // Render table based on type
   const renderTable = () => {
+    // Communities table
+    if (type === "communities") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead>Contact</TableHead>
+              <TableHead>Starting Price</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: Community) => (
+              <TableRow key={item.id} data-testid={`community-row-${item.id}`}>
+                <TableCell className="font-medium">
+                  <div className="space-y-1">
+                    <div className="font-semibold">{item.name}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {item.slug}
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-start space-x-1">
+                    <MapPin className="w-3 h-3 mt-0.5 text-muted-foreground" />
+                    <div className="text-sm">
+                      <div>{item.street || 'No street'}</div>
+                      <div>{item.city}, {item.state} {item.zip || item.zipCode || ''}</div>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="space-y-1">
+                    {item.phoneDisplay && (
+                      <div className="flex items-center space-x-1">
+                        <Phone className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-sm">{item.phoneDisplay}</span>
+                      </div>
+                    )}
+                    {item.email && (
+                      <div className="flex items-center space-x-1">
+                        <Mail className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-sm">{item.email}</span>
+                      </div>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {item.startingRateDisplay || (item.startingPrice ? `$${item.startingPrice.toLocaleString()}` : 'Not set')}
+                </TableCell>
+                <TableCell>
+                  <div className="flex flex-col gap-1">
+                    <Badge variant={item.active ? "default" : "secondary"}>
+                      {item.active ? "Active" : "Inactive"}
+                    </Badge>
+                    {item.featured && (
+                      <Badge variant="outline">Featured</Badge>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => handleEdit(item)}
+                      data-testid={`button-edit-${item.id}`}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="destructive" 
+                      onClick={() => handleDelete(item.id)}
+                      data-testid={`button-delete-${item.id}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      );
+    }
+
     if (type === "tours") {
       return (
         <Table>
