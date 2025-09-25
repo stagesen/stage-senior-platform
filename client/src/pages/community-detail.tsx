@@ -1284,6 +1284,50 @@ export default function CommunityDetail() {
                 </Card>
               </div>
             </section>
+
+        {/* White Card CTA Section */}
+        <section className="py-16 mt-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card className="shadow-2xl border-0 bg-white">
+            <CardContent className="p-8 md:p-12 text-center">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">
+                Ready to Experience {community.name}?
+              </h2>
+              <p className="text-xl mb-8 text-gray-600">
+                Join our community of residents who are living their best life. Schedule a personalized tour today.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  size="lg" 
+                  className="text-lg shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-3xl"
+                  style={{
+                    backgroundColor: 'var(--community-cta)',
+                    color: 'var(--community-cta-text)',
+                    borderColor: 'var(--community-cta)',
+                    boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                  }}
+                  data-testid="button-schedule-tour-cta"
+                >
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Schedule Your Tour
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="text-lg shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl border-gray-300 hover:bg-gray-50"
+                  data-testid="button-call-cta"
+                  asChild
+                >
+                  <a href={`tel:${community.phone || '+1-303-436-2300'}`}>
+                    <Phone className="w-5 h-5 mr-2" />
+                    Call {community.phone || "(303) 436-2300"}
+                  </a>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        </section>
           </div>
 
           {/* Sticky Sidebar */}
@@ -1430,53 +1474,6 @@ export default function CommunityDetail() {
 
             </div>
           </div>
-        </div>
-      </div>
-
-        {/* White Card CTA Section */}
-        <section className="py-16 mt-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="shadow-2xl border-0 bg-white">
-            <CardContent className="p-8 md:p-12 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">
-                Ready to Experience {community.name}?
-              </h2>
-              <p className="text-xl mb-8 text-gray-600">
-                Join our community of residents who are living their best life. Schedule a personalized tour today.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  size="lg" 
-                  className="text-lg shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-3xl"
-                  style={{
-                    backgroundColor: 'var(--community-cta)',
-                    color: 'var(--community-cta-text)',
-                    borderColor: 'var(--community-cta)',
-                    boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-                  }}
-                  data-testid="button-schedule-tour-cta"
-                >
-                  <Calendar className="w-5 h-5 mr-2" />
-                  Schedule Your Tour
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  className="text-lg shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl border-gray-300 hover:bg-gray-50"
-                  data-testid="button-call-cta"
-                  asChild
-                >
-                  <a href={`tel:${community.phone || '+1-303-436-2300'}`}>
-                    <Phone className="w-5 h-5 mr-2" />
-                    Call {community.phone || "(303) 436-2300"}
-                  </a>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-        
-      </div>
       
       {/* Floor Plan Modal */}
       {selectedFloorPlan && (
