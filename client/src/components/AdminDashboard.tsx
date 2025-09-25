@@ -166,9 +166,14 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     resolver: zodResolver(insertGallerySchema),
     defaultValues: {
       title: "",
+      gallerySlug: "",
       description: "",
       images: [],
+      tags: [],
       category: "",
+      communityId: undefined,
+      hero: false,
+      published: false,
       active: true,
     },
   });
@@ -311,6 +316,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     // For floor plans, ensure planSlug is set to name if not provided
     if (type === "floor-plans" && !data.planSlug && data.name) {
       data.planSlug = data.name.toLowerCase().replace(/\s+/g, '-');
+    }
+    // For galleries, ensure gallerySlug is set to title if not provided
+    if (type === "galleries" && !data.gallerySlug && data.title) {
+      data.gallerySlug = data.title.toLowerCase().replace(/\s+/g, '-');
     }
     if (editingItem) {
       updateMutation.mutate({ id: editingItem.id, data });
@@ -1479,6 +1488,218 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
           </Form>
         );
 
+      case "galleries":
+        return (
+          <Form {...galleryForm}>
+            <form onSubmit={galleryForm.handleSubmit(handleSubmit)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={galleryForm.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input {...field} data-testid="input-gallery-title" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={galleryForm.control}
+                  name="gallerySlug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Gallery Slug</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          value={field.value || ""} 
+                          placeholder="url-friendly-name" 
+                          data-testid="input-gallery-slug" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <FormField
+                control={galleryForm.control}
+                name="communityId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Community</FormLabel>
+                    <Select 
+                      onValueChange={(value) => field.onChange(value === "" ? undefined : value)} 
+                      value={field.value || ""}
+                    >
+                      <FormControl>
+                        <SelectTrigger data-testid="select-gallery-community">
+                          <SelectValue placeholder="Select a community" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="">General/All Communities</SelectItem>
+                        {communities.map((community) => (
+                          <SelectItem key={community.id} value={community.id}>
+                            {community.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={galleryForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        {...field} 
+                        value={field.value || ""} 
+                        rows={3} 
+                        data-testid="textarea-gallery-description" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={galleryForm.control}
+                name="images"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Images (One per line - URL, alt text, caption)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="https://example.com/image1.jpg|Alt text|Caption
+https://example.com/image2.jpg|Second alt|Another caption"
+                        value={field.value?.map(img => 
+                          `${img.url}${img.alt ? `|${img.alt}` : ''}${img.caption ? `|${img.caption}` : ''}`
+                        ).join('\n') || ''}
+                        onChange={(e) => {
+                          const lines = e.target.value.split('\n').filter(line => line.trim());
+                          const images = lines.map(line => {
+                            const parts = line.split('|');
+                            return {
+                              url: parts[0]?.trim() || '',
+                              alt: parts[1]?.trim() || '',
+                              caption: parts[2]?.trim() || ''
+                            };
+                          }).filter(img => img.url);
+                          field.onChange(images);
+                        }}
+                        rows={6}
+                        data-testid="textarea-gallery-images"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={galleryForm.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tags (comma-separated)</FormLabel>
+                    <FormControl>
+                      <Input 
+                        value={field.value?.join(', ') || ''}
+                        onChange={(e) => {
+                          const tags = e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag);
+                          field.onChange(tags);
+                        }}
+                        placeholder="nature, landscape, community"
+                        data-testid="input-gallery-tags"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={galleryForm.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <FormControl>
+                      <Input 
+                        {...field} 
+                        value={field.value || ""} 
+                        placeholder="e.g., Facilities, Activities, Residents"
+                        data-testid="input-gallery-category" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="flex items-center space-x-4">
+                <FormField
+                  control={galleryForm.control}
+                  name="hero"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-gallery-hero" />
+                      </FormControl>
+                      <FormLabel>Hero Gallery</FormLabel>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={galleryForm.control}
+                  name="published"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-gallery-published" />
+                      </FormControl>
+                      <FormLabel>Published</FormLabel>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={galleryForm.control}
+                  name="active"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-gallery-active" />
+                      </FormControl>
+                      <FormLabel>Active</FormLabel>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="button-submit">
+                  {editingItem ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        );
+
       case "floor-plans":
         return (
           <Form {...floorPlanForm}>
@@ -1993,6 +2214,78 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   </TableCell>
                   <TableCell>
                     {new Date(item.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleEdit(item)}
+                        data-testid={`button-edit-${item.id}`}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={() => handleDelete(item.id)}
+                        data-testid={`button-delete-${item.id}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      );
+    }
+
+    // Galleries table
+    if (type === "galleries") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Title</TableHead>
+              <TableHead>Community</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Images</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: Gallery) => {
+              const community = communities.find(c => c.id === item.communityId);
+              return (
+                <TableRow key={item.id} data-testid={`gallery-row-${item.id}`}>
+                  <TableCell className="font-medium max-w-[200px] truncate">
+                    {item.title}
+                  </TableCell>
+                  <TableCell>
+                    {community?.name || "General"}
+                  </TableCell>
+                  <TableCell>
+                    {item.category || "Uncategorized"}
+                  </TableCell>
+                  <TableCell>
+                    {item.images?.length || 0} images
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col gap-1">
+                      <Badge variant={item.active ? "default" : "secondary"}>
+                        {item.active ? "Active" : "Inactive"}
+                      </Badge>
+                      {item.published && (
+                        <Badge variant="outline">Published</Badge>
+                      )}
+                      {item.hero && (
+                        <Badge variant="outline">Hero</Badge>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
