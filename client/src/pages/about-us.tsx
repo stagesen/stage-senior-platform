@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Shield, Heart, Users, Award, Phone, Mail, MapPin, Calendar, Star } from "lucide-react";
+import { PageHero } from "@/components/PageHero";
 
 export default function AboutUs() {
   const getInitials = (name: string) => {
@@ -61,6 +62,14 @@ export default function AboutUs() {
 
   return (
     <div className="min-h-screen bg-white">
+      <PageHero
+        pagePath="/about-us"
+        defaultTitle="About Stage Senior"
+        defaultSubtitle="Locally Owned, Resident-Focused"
+        defaultDescription="Founded in 2016, Stage Senior Management is a locally owned, Colorado-based senior living management company committed to exceptional care."
+        defaultBackgroundImage="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=2000&q=80"
+      />
+
       {/* Breadcrumb Navigation */}
       <div className="bg-gray-50 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
