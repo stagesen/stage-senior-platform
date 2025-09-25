@@ -567,6 +567,7 @@ export default function CommunityDetail() {
   const [selectedGallery, setSelectedGallery] = useState<Gallery | null>(null);
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>("overview");
+  const [showNav, setShowNav] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -574,6 +575,21 @@ export default function CommunityDetail() {
 
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [slug]);
+
+  // Effect to show/hide navigation based on scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show nav when scrolled past hero section (500px is roughly the hero height)
+      const scrollPosition = window.scrollY;
+      const heroHeight = 500; // Matches the hero section height
+      setShowNav(scrollPosition > heroHeight - 100); // Show a bit before hero ends
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial position
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const { data: community, isLoading: communityLoading } = useQuery<Community>({
     queryKey: [`/api/communities/${slug}`],
@@ -922,9 +938,12 @@ export default function CommunityDetail() {
         </div>
       </section>
 
-      {/* Sticky Community Navigation Bar */}
+      {/* Sticky Community Navigation Bar - Appears on scroll */}
       <div
-        className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-md"
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-md transition-all duration-300 ease-in-out",
+          showNav ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+        )}
         data-community-sticky-nav
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
