@@ -32,6 +32,7 @@ import {
   insertFaqSchema,
   insertGallerySchema,
   insertTestimonialSchema,
+  insertPageHeroSchema,
   type Community,
   type Post,
   type Event,
@@ -39,16 +40,18 @@ import {
   type Faq,
   type Gallery,
   type Testimonial,
+  type PageHero,
   type InsertCommunity,
   type InsertPost,
   type InsertEvent,
   type InsertFaq,
   type InsertGallery,
   type InsertTestimonial,
+  type InsertPageHero,
 } from "@shared/schema";
 
 interface AdminDashboardProps {
-  type: "communities" | "posts" | "events" | "tours" | "faqs" | "galleries" | "testimonials";
+  type: "communities" | "posts" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes";
 }
 
 export default function AdminDashboard({ type }: AdminDashboardProps) {
@@ -167,6 +170,23 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     },
   });
 
+  const pageHeroForm = useForm<InsertPageHero>({
+    resolver: zodResolver(insertPageHeroSchema),
+    defaultValues: {
+      pagePath: "",
+      title: "",
+      subtitle: "",
+      description: "",
+      backgroundImageUrl: "",
+      ctaText: "",
+      ctaLink: "",
+      overlayOpacity: "0.5",
+      textAlignment: "center",
+      active: true,
+      sortOrder: 0,
+    },
+  });
+
   // Get current form based on type
   const getCurrentForm = () => {
     switch (type) {
@@ -176,6 +196,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "faqs": return faqForm;
       case "galleries": return galleryForm;
       case "testimonials": return testimonialForm;
+      case "page-heroes": return pageHeroForm;
       default: return communityForm;
     }
   };
@@ -1086,6 +1107,166 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
           </Form>
         );
 
+      case "page-heroes":
+        return (
+          <Form {...pageHeroForm}>
+            <form onSubmit={pageHeroForm.handleSubmit(handleSubmit)} className="space-y-4">
+              <FormField
+                control={pageHeroForm.control}
+                name="pagePath"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Page Path</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="/communities" data-testid="input-page-path" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={pageHeroForm.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input {...field} data-testid="input-hero-title" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={pageHeroForm.control}
+                  name="subtitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Subtitle</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} data-testid="input-hero-subtitle" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={pageHeroForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} value={field.value || ""} rows={3} data-testid="textarea-hero-description" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={pageHeroForm.control}
+                name="backgroundImageUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Background Image URL</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="https://example.com/image.jpg" data-testid="input-background-image" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={pageHeroForm.control}
+                  name="ctaText"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CTA Text</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} placeholder="Learn More" data-testid="input-cta-text" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={pageHeroForm.control}
+                  name="ctaLink"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CTA Link</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} placeholder="/contact" data-testid="input-cta-link" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={pageHeroForm.control}
+                  name="overlayOpacity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Overlay Opacity (0-1)</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || "0.5"} type="number" step="0.1" min="0" max="1" data-testid="input-overlay-opacity" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={pageHeroForm.control}
+                  name="textAlignment"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Text Alignment</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value || "center"}>
+                        <FormControl>
+                          <SelectTrigger data-testid="select-text-alignment">
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="left">Left</SelectItem>
+                          <SelectItem value="center">Center</SelectItem>
+                          <SelectItem value="right">Right</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={pageHeroForm.control}
+                name="active"
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-2">
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-hero-active" />
+                    </FormControl>
+                    <FormLabel>Active</FormLabel>
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="button-submit">
+                  {editingItem ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        );
+
       default:
         return <div>Form not implemented for {type}</div>;
     }
@@ -1236,6 +1417,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "faqs": return "FAQs";
       case "galleries": return "Galleries";
       case "testimonials": return "Testimonials";
+      case "page-heroes": return "Page Heroes";
       default: return type;
     }
   };
