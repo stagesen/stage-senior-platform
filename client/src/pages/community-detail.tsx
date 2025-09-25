@@ -45,6 +45,453 @@ import { cn } from "@/lib/utils";
 import ScrollToTop from "@/components/ScrollToTop";
 import stageSeniorLogo from "@assets/stagesenior-logo_1758726889154.webp";
 import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryImage, Post, BlogPost } from "@shared/schema";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+
+// Helper function for formatting prices
+const formatPrice = (price: number | undefined | null): string => {
+  if (!price) return '$0';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(price);
+};
+
+// Local subcomponent: Floor Plans Grid
+const FloorPlansGrid = ({ plans, onOpen }: { plans: any[], onOpen: (plan: any) => void }) => {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+      {plans.map((plan) => (
+        <Card 
+          key={plan.id} 
+          className="overflow-hidden hover:shadow-xl transition-all cursor-pointer group" 
+          onClick={() => onOpen(plan)}
+          data-testid={`floor-plan-${plan.id}`}
+        >
+          {plan.imageUrl && (
+            <AspectRatio ratio={4/3}>
+              <img
+                src={plan.imageUrl}
+                alt={`${plan.name} floor plan`}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                data-testid={`floor-plan-image-${plan.id}`}
+              />
+            </AspectRatio>
+          )}
+          <CardContent className="p-5">
+            <h4 className="font-semibold text-lg mb-2" data-testid={`floor-plan-name-${plan.id}`}>
+              {plan.name}
+            </h4>
+            {plan.startingPrice && (
+              <p className="text-2xl font-bold text-primary mb-3" data-testid={`floor-plan-price-${plan.id}`}>
+                {formatPrice(plan.startingPrice)}<span className="text-sm font-normal">/mo</span>
+              </p>
+            )}
+            <div className="flex flex-wrap gap-3 text-sm text-gray-600 mb-3">
+              {plan.bedrooms !== null && (
+                <span className="flex items-center gap-1" data-testid={`floor-plan-bedrooms-${plan.id}`}>
+                  <Bed className="w-4 h-4" />
+                  {plan.bedrooms} {plan.bedrooms === 1 ? 'Bed' : 'Beds'}
+                </span>
+              )}
+              {plan.bathrooms !== null && (
+                <span className="flex items-center gap-1" data-testid={`floor-plan-bathrooms-${plan.id}`}>
+                  <Bath className="w-4 h-4" />
+                  {Number(plan.bathrooms)} {Number(plan.bathrooms) === 1 ? 'Bath' : 'Baths'}
+                </span>
+              )}
+              {plan.squareFeet && (
+                <span className="flex items-center gap-1" data-testid={`floor-plan-sqft-${plan.id}`}>
+                  <Square className="w-4 h-4" />
+                  {plan.squareFeet} sq ft
+                </span>
+              )}
+            </div>
+            <div className="flex items-center text-primary group-hover:translate-x-1 transition-transform">
+              <span className="text-sm font-medium">View Details</span>
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+};
+
+// Local subcomponent: Gallery Overview
+const GalleryOverview = ({ images, onCategorySelect }: { images: any[], onCategorySelect: (category: string | null) => void }) => {
+  // Derive categories from images
+  const categories = [
+    { name: 'Residents', icon: Users, count: images.filter(img => img.category === 'Residents').length },
+    { name: 'Amenities', icon: Sparkles, count: images.filter(img => img.category === 'Amenities').length },
+    { name: 'Community', icon: Home, count: images.filter(img => img.category === 'Community').length },
+    { name: 'Dining', icon: Coffee, count: images.filter(img => img.category === 'Dining').length },
+  ].filter(cat => cat.count > 0).slice(0, 4);
+
+  return (
+    <div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+        {categories.map((category) => {
+          const categoryImages = images.filter(img => img.category === category.name);
+          const coverImage = categoryImages[0];
+          const IconComponent = category.icon;
+          
+          return (
+            <Card 
+              key={category.name} 
+              className="overflow-hidden hover:shadow-xl transition-all cursor-pointer group"
+              onClick={() => onCategorySelect(category.name)}
+              data-testid={`gallery-category-${category.name}`}
+            >
+              <AspectRatio ratio={16/9}>
+                {coverImage ? (
+                  <img
+                    src={coverImage.url}
+                    alt={`${category.name} gallery`}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
+                    <IconComponent className="w-16 h-16 text-primary/30" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4 text-white">
+                  <h3 className="text-xl font-bold mb-1">{category.name}</h3>
+                  <p className="text-sm opacity-90">{category.count} {category.count === 1 ? 'Photo' : 'Photos'}</p>
+                </div>
+              </AspectRatio>
+            </Card>
+          );
+        })}
+      </div>
+      <Button 
+        variant="outline" 
+        size="lg" 
+        className="w-full"
+        onClick={() => onCategorySelect(null)}
+        data-testid="gallery-view-all"
+      >
+        <Image className="w-4 h-4 mr-2" />
+        View All {images.length} Photos
+      </Button>
+    </div>
+  );
+};
+
+// Local subcomponent: Testimonials Carousel
+const TestimonialsCarousel = ({ testimonials }: { testimonials: any[] }) => {
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
+    api.on('select', () => {
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
+
+  // Auto-advance with respect to reduced motion
+  useEffect(() => {
+    if (!api) return;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    const interval = setInterval(() => {
+      if (api.canScrollNext()) {
+        api.scrollNext();
+      } else {
+        api.scrollTo(0);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [api]);
+
+  return (
+    <div className="relative">
+      <Carousel setApi={setApi} className="w-full">
+        <CarouselContent>
+          {testimonials.map((testimonial) => (
+            <CarouselItem key={testimonial.id}>
+              <div className="px-8 py-12 text-center">
+                <blockquote className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-tight" data-testid={`testimonial-quote-${testimonial.id}`}>
+                  "{testimonial.content}"
+                </blockquote>
+                <div className="space-y-2">
+                  <p className="text-xl font-semibold text-gray-800" data-testid={`testimonial-author-${testimonial.id}`}>
+                    {testimonial.authorName}
+                  </p>
+                  {testimonial.authorRelation && (
+                    <p className="text-lg text-gray-600" data-testid={`testimonial-relation-${testimonial.id}`}>
+                      {testimonial.authorRelation}
+                    </p>
+                  )}
+                  {testimonial.rating && (
+                    <div className="flex items-center justify-center gap-1 mt-4" data-testid={`testimonial-rating-${testimonial.id}`}>
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star 
+                          key={i} 
+                          className={`w-6 h-6 ${i < (testimonial.rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="left-0" />
+        <CarouselNext className="right-0" />
+      </Carousel>
+      <div className="flex justify-center gap-2 mt-6">
+        {Array.from({ length: count }).map((_, index) => (
+          <button
+            key={index}
+            className={`w-2 h-2 rounded-full transition-all ${
+              current === index + 1 ? 'bg-primary w-8' : 'bg-gray-300'
+            }`}
+            onClick={() => api?.scrollTo(index)}
+            aria-label={`Go to testimonial ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Local subcomponent: Feature Section
+const FeatureSection = ({ 
+  title, 
+  eyebrow, 
+  body, 
+  imageUrl, 
+  imageAlt, 
+  cta, 
+  imageLeft = false 
+}: { 
+  title: string;
+  eyebrow?: string;
+  body: string;
+  imageUrl: string;
+  imageAlt: string;
+  cta?: { label: string; href: string; };
+  imageLeft?: boolean;
+}) => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div className={`${imageLeft ? 'md:order-2' : ''}`}>
+        {eyebrow && (
+          <Badge className="mb-4 bg-primary/10 text-primary border-0">
+            {eyebrow}
+          </Badge>
+        )}
+        <h3 className="text-3xl font-bold mb-4">{title}</h3>
+        <p className="text-lg text-gray-600 mb-6 leading-relaxed">{body}</p>
+        {cta && (
+          <Button variant="outline" size="lg" asChild>
+            <Link href={cta.href}>
+              {cta.label}
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
+          </Button>
+        )}
+      </div>
+      <div className={`${imageLeft ? 'md:order-1' : ''}`}>
+        <AspectRatio ratio={4/3}>
+          <img
+            src={imageUrl}
+            alt={imageAlt}
+            className="w-full h-full object-cover rounded-2xl shadow-xl"
+          />
+        </AspectRatio>
+      </div>
+    </div>
+  );
+};
+
+// Local subcomponent: Action Panel
+const ActionPanel = ({ community }: { community: any }) => {
+  return (
+    <section className="bg-gradient-to-br from-gray-50 to-white py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Pricing Card */}
+          <Card className="shadow-lg border-2 border-primary/20">
+            <CardHeader className="bg-primary/5">
+              <CardDescription>Monthly rentals start at</CardDescription>
+              <CardTitle className="text-3xl" data-testid="pricing-amount">
+                {formatPrice(community.startingPrice)}<span className="text-lg font-normal">/mo*</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <p className="text-sm text-gray-600">
+                *Pricing varies by care level and apartment type.
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
+                  <span>No buy-in fees</span>
+                </div>
+                <div className="flex items-center text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
+                  <span>Month-to-month</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Schedule Tour */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle>Schedule Your Visit</CardTitle>
+              <CardDescription>
+                Tour our community today
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button 
+                className="w-full bg-gradient-to-r from-primary to-primary/90" 
+                size="lg"
+                data-testid="button-schedule-tour"
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                Schedule Tour
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full" 
+                size="lg"
+                data-testid="button-call-community"
+                asChild
+              >
+                <a href={`tel:${community.phone || '+1-800-555-0123'}`}>
+                  <Phone className="w-4 h-4 mr-2" />
+                  Call Now
+                </a>
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Contact Information */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle>Contact Info</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-start gap-3">
+                <MapPin className="w-4 h-4 text-muted-foreground mt-1" />
+                <div className="text-sm">
+                  <p className="font-medium">Address</p>
+                  <p className="text-muted-foreground">
+                    {community.address}<br />
+                    {community.city}, {community.state} {community.zipCode}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Clock className="w-4 h-4 text-muted-foreground mt-1" />
+                <div className="text-sm">
+                  <p className="font-medium">Hours</p>
+                  <p className="text-muted-foreground">
+                    Mon-Fri: 9AM-6PM
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Download Brochure */}
+          <Card className="shadow-lg bg-primary/5 border-primary/20">
+            <CardContent className="p-6 text-center h-full flex flex-col justify-center">
+              <Download className="w-10 h-10 text-primary mx-auto mb-4" />
+              <h3 className="font-semibold mb-2">Community Brochure</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Get detailed information
+              </p>
+              <Button variant="outline" className="w-full" data-testid="button-download-brochure">
+                <Download className="w-4 h-4 mr-2" />
+                Download PDF
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Local subcomponent: Enhanced Bottom CTA
+const EnhancedBottomCTA = ({ community }: { community: any }) => {
+  return (
+    <section className="relative py-24 overflow-hidden">
+      {/* Background Image with Overlay */}
+      <div className="absolute inset-0">
+        <img
+          src={community.heroImageUrl || 'https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=2000'}
+          alt="Community background"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/70 to-black/60" />
+      </div>
+      
+      {/* Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        {/* Logo */}
+        {community.heroLogoSrc && (
+          <img 
+            src={community.heroLogoSrc} 
+            alt={`${community.name} logo`}
+            className="h-20 mx-auto mb-8"
+          />
+        )}
+        
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+          Ready to Experience {community.name}?
+        </h2>
+        <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto">
+          Join our community of residents who are living their best life. Schedule a personalized tour today.
+        </p>
+        
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button 
+            size="lg" 
+            className="text-lg px-8 py-6 shadow-2xl bg-white text-primary hover:bg-gray-100"
+            data-testid="button-schedule-tour-hero"
+          >
+            <Calendar className="w-5 h-5 mr-2" />
+            Schedule Your Tour Today
+          </Button>
+          <Button 
+            size="lg" 
+            variant="outline"
+            className="text-lg px-8 py-6 border-2 border-white text-white hover:bg-white/10 backdrop-blur-sm"
+            data-testid="button-call-hero"
+            asChild
+          >
+            <a href={`tel:${community.phone || '+1-303-436-2300'}`}>
+              <Phone className="w-5 h-5 mr-2" />
+              Call {community.phone || "(303) 436-2300"}
+            </a>
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 export default function CommunityDetail() {
   const params = useParams();
