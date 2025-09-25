@@ -19,7 +19,7 @@ import {
   Image
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import type { Community, Post, Event, TourRequest, Faq, Gallery, Testimonial, PageHero } from "@shared/schema";
+import type { Community, Post, Event, TourRequest, Faq, Gallery, Testimonial, PageHero, FloorPlan } from "@shared/schema";
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -58,6 +58,10 @@ export default function Admin() {
     queryKey: ["/api/page-heroes"],
   });
 
+  const { data: floorPlans = [] } = useQuery<FloorPlan[]>({
+    queryKey: ["/api/floor-plans"],
+  });
+
   // Calculate stats
   const stats = {
     totalCommunities: communities.length,
@@ -76,6 +80,8 @@ export default function Admin() {
     totalTestimonials: testimonials.length,
     activePageHeroes: pageHeroes.filter(h => h.active).length,
     totalPageHeroes: pageHeroes.length,
+    activeFloorPlans: floorPlans.filter(f => f.active).length,
+    totalFloorPlans: floorPlans.length,
   };
 
   return (
@@ -115,12 +121,13 @@ export default function Admin() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-9" data-testid="admin-tabs">
+          <TabsList className="grid w-full grid-cols-10" data-testid="admin-tabs">
             <TabsTrigger value="dashboard" data-testid="tab-dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="communities" data-testid="tab-communities">Communities</TabsTrigger>
             <TabsTrigger value="posts" data-testid="tab-posts">Blog Posts</TabsTrigger>
             <TabsTrigger value="events" data-testid="tab-events">Events</TabsTrigger>
             <TabsTrigger value="tours" data-testid="tab-tours">Tour Requests</TabsTrigger>
+            <TabsTrigger value="floor-plans" data-testid="tab-floor-plans">Floor Plans</TabsTrigger>
             <TabsTrigger value="faqs" data-testid="tab-faqs">FAQs</TabsTrigger>
             <TabsTrigger value="galleries" data-testid="tab-galleries">Galleries</TabsTrigger>
             <TabsTrigger value="testimonials" data-testid="tab-testimonials">Testimonials</TabsTrigger>
@@ -305,6 +312,10 @@ export default function Admin() {
 
           <TabsContent value="tours">
             <AdminDashboard type="tours" />
+          </TabsContent>
+
+          <TabsContent value="floor-plans">
+            <AdminDashboard type="floor-plans" />
           </TabsContent>
 
           <TabsContent value="faqs">

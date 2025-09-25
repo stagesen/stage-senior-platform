@@ -33,6 +33,7 @@ import {
   insertGallerySchema,
   insertTestimonialSchema,
   insertPageHeroSchema,
+  insertFloorPlanSchema,
   type Community,
   type Post,
   type Event,
@@ -41,6 +42,7 @@ import {
   type Gallery,
   type Testimonial,
   type PageHero,
+  type FloorPlan,
   type InsertCommunity,
   type InsertPost,
   type InsertEvent,
@@ -48,10 +50,11 @@ import {
   type InsertGallery,
   type InsertTestimonial,
   type InsertPageHero,
+  type InsertFloorPlan,
 } from "@shared/schema";
 
 interface AdminDashboardProps {
-  type: "communities" | "posts" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes";
+  type: "communities" | "posts" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans";
 }
 
 export default function AdminDashboard({ type }: AdminDashboardProps) {
@@ -187,6 +190,27 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     },
   });
 
+  const floorPlanForm = useForm<InsertFloorPlan>({
+    resolver: zodResolver(insertFloorPlanSchema),
+    defaultValues: {
+      name: "",
+      planSlug: "",
+      communityId: undefined,
+      bedrooms: 1,
+      bathrooms: "1",
+      squareFeet: null,
+      description: "",
+      highlights: [],
+      imageUrl: "",
+      planImageUrl: "",
+      startingPrice: null,
+      startingRateDisplay: "",
+      availability: "available",
+      sortOrder: 0,
+      active: true,
+    },
+  });
+
   // Get current form based on type
   const getCurrentForm = () => {
     switch (type) {
@@ -197,6 +221,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "galleries": return galleryForm;
       case "testimonials": return testimonialForm;
       case "page-heroes": return pageHeroForm;
+      case "floor-plans": return floorPlanForm;
       default: return communityForm;
     }
   };
@@ -270,6 +295,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   });
 
   const handleSubmit = (data: any) => {
+    // For floor plans, ensure planSlug is set to name if not provided
+    if (type === "floor-plans" && !data.planSlug && data.name) {
+      data.planSlug = data.name.toLowerCase().replace(/\s+/g, '-');
+    }
     if (editingItem) {
       updateMutation.mutate({ id: editingItem.id, data });
     } else {
@@ -1267,6 +1296,273 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
           </Form>
         );
 
+      case "floor-plans":
+        return (
+          <Form {...floorPlanForm}>
+            <form onSubmit={floorPlanForm.handleSubmit(handleSubmit)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={floorPlanForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="e.g., Studio Apartment" data-testid="input-floor-plan-name" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={floorPlanForm.control}
+                  name="planSlug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug (optional)</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} placeholder="Auto-generated from name" data-testid="input-floor-plan-slug" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <FormField
+                control={floorPlanForm.control}
+                name="communityId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Community</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value || undefined}>
+                      <FormControl>
+                        <SelectTrigger data-testid="select-floor-plan-community">
+                          <SelectValue placeholder="Select a community" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {communities.map((community) => (
+                          <SelectItem key={community.id} value={community.id}>
+                            {community.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="grid grid-cols-3 gap-4">
+                <FormField
+                  control={floorPlanForm.control}
+                  name="bedrooms"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bedrooms</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || 0} 
+                          onChange={(e) => field.onChange(Number(e.target.value))} 
+                          min="0"
+                          data-testid="input-floor-plan-bedrooms" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={floorPlanForm.control}
+                  name="bathrooms"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bathrooms</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          placeholder="e.g., 1.5"
+                          data-testid="input-floor-plan-bathrooms" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={floorPlanForm.control}
+                  name="squareFeet"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Square Feet</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || ""} 
+                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                          placeholder="e.g., 850"
+                          data-testid="input-floor-plan-square-feet" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={floorPlanForm.control}
+                  name="startingPrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Starting Price</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || ""} 
+                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                          placeholder="e.g., 2500"
+                          data-testid="input-floor-plan-price" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={floorPlanForm.control}
+                  name="startingRateDisplay"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Starting Rate Display</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          value={field.value || ""} 
+                          placeholder="e.g., Starting at $2,500/mo"
+                          data-testid="input-floor-plan-rate-display" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={floorPlanForm.control}
+                name="imageUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Image URL</FormLabel>
+                    <FormControl>
+                      <Input 
+                        {...field} 
+                        value={field.value || ""} 
+                        placeholder="https://example.com/floor-plan.jpg"
+                        data-testid="input-floor-plan-image" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={floorPlanForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        {...field} 
+                        value={field.value || ""} 
+                        rows={4}
+                        placeholder="Describe the floor plan features..."
+                        data-testid="textarea-floor-plan-description" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={floorPlanForm.control}
+                  name="availability"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Availability</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value || "available"}>
+                        <FormControl>
+                          <SelectTrigger data-testid="select-floor-plan-availability">
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="available">Available</SelectItem>
+                          <SelectItem value="limited">Limited</SelectItem>
+                          <SelectItem value="unavailable">Unavailable</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={floorPlanForm.control}
+                  name="sortOrder"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sort Order</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || 0} 
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          data-testid="input-floor-plan-sort" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={floorPlanForm.control}
+                name="active"
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-2">
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-floor-plan-active" />
+                    </FormControl>
+                    <FormLabel>Active</FormLabel>
+                  </FormItem>
+                )}
+              />
+              
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="button-submit">
+                  {editingItem ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        );
+
       default:
         return <div>Form not implemented for {type}</div>;
     }
@@ -1315,6 +1611,75 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                           </a>
                         </Button>
                       )}
+                      <Button 
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={() => handleDelete(item.id)}
+                        data-testid={`button-delete-${item.id}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      );
+    }
+
+    // Floor Plans table
+    if (type === "floor-plans") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Community</TableHead>
+              <TableHead>Beds/Baths</TableHead>
+              <TableHead>Sq. Ft.</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: FloorPlan) => {
+              const community = communities.find(c => c.id === item.communityId);
+              return (
+                <TableRow key={item.id} data-testid={`floor-plan-row-${item.id}`}>
+                  <TableCell className="font-medium">{item.name}</TableCell>
+                  <TableCell>{community?.name || "N/A"}</TableCell>
+                  <TableCell>
+                    {item.bedrooms} BR / {item.bathrooms} BA
+                  </TableCell>
+                  <TableCell>{item.squareFeet ? `${item.squareFeet.toLocaleString()} sq ft` : "N/A"}</TableCell>
+                  <TableCell>
+                    {item.startingRateDisplay || (item.startingPrice ? `$${item.startingPrice.toLocaleString()}` : "N/A")}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant={item.active ? "default" : "secondary"}>
+                        {item.active ? "Active" : "Inactive"}
+                      </Badge>
+                      {item.availability && item.availability !== "available" && (
+                        <Badge variant="outline">
+                          {item.availability}
+                        </Badge>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleEdit(item)}
+                        data-testid={`button-edit-${item.id}`}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
                       <Button 
                         size="sm" 
                         variant="destructive" 
@@ -1418,6 +1783,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "galleries": return "Galleries";
       case "testimonials": return "Testimonials";
       case "page-heroes": return "Page Heroes";
+      case "floor-plans": return "Floor Plans";
       default: return type;
     }
   };
