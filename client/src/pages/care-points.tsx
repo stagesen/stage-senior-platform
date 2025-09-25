@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +8,10 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { DollarSign, Shield, Clock, Users, CheckCircle, AlertCircle, Phone, Calendar, MapPin, FileText, Sparkles, Quote } from "lucide-react";
 
 export default function CarePoints() {
+  // Fetch care types from API
+  const { data: careTypes = [], isLoading: careTypesLoading } = useQuery({
+    queryKey: ["/api/care-types"],
+  });
   useEffect(() => {
     document.title = "Care Points - Transparent Pricing | Stage Senior";
     

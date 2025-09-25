@@ -12,6 +12,7 @@ import {
   insertFloorPlanSchema,
   insertTestimonialSchema,
   insertGalleryImageSchema,
+  insertCareTypeSchema,
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -667,6 +668,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting gallery image:", error);
       res.status(500).json({ message: "Failed to delete gallery image" });
+    }
+  });
+
+  // Care type routes
+  app.get("/api/care-types", async (req, res) => {
+    try {
+      const { active } = req.query;
+      const filters: any = {};
+      
+      if (active !== undefined) {
+        filters.active = active === 'true';
+      }
+      
+      const careTypes = await storage.getCareTypes(filters);
+      res.json(careTypes);
+    } catch (error) {
+      console.error("Error fetching care types:", error);
+      res.status(500).json({ message: "Failed to fetch care types" });
+    }
+  });
+
+  app.get("/api/care-types/:slug", async (req, res) => {
+    try {
+      const careType = await storage.getCareType(req.params.slug);
+      if (!careType) {
+        return res.status(404).json({ message: "Care type not found" });
+      }
+      res.json(careType);
+    } catch (error) {
+      console.error("Error fetching care type:", error);
+      res.status(500).json({ message: "Failed to fetch care type" });
     }
   });
 

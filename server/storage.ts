@@ -34,6 +34,7 @@ import {
   type GalleryImage,
   type InsertGalleryImage,
   type CareType,
+  type InsertCareType,
   type Amenity,
 } from "@shared/schema";
 import { db } from "./db";
@@ -154,6 +155,13 @@ export interface IStorage {
   createGalleryImage(galleryImage: InsertGalleryImage): Promise<GalleryImage>;
   updateGalleryImage(id: string, galleryImage: Partial<InsertGalleryImage>): Promise<GalleryImage>;
   deleteGalleryImage(id: string): Promise<void>;
+
+  // Care type operations
+  getCareTypes(filters?: {
+    active?: boolean;
+  }): Promise<CareType[]>;
+  getCareType(slug: string): Promise<CareType | undefined>;
+  getCareTypeById(id: string): Promise<CareType | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -892,6 +900,35 @@ export class DatabaseStorage implements IStorage {
 
   async deleteGalleryImage(id: string): Promise<void> {
     await db.delete(galleryImages).where(eq(galleryImages.id, id));
+  }
+
+  // Care type operations
+  async getCareTypes(filters?: {
+    active?: boolean;
+  }): Promise<CareType[]> {
+    let query = db.select().from(careTypes);
+    
+    if (filters?.active !== undefined) {
+      query = query.where(eq(careTypes.active, filters.active));
+    }
+    
+    return await query.orderBy(asc(careTypes.sortOrder), asc(careTypes.name));
+  }
+
+  async getCareType(slug: string): Promise<CareType | undefined> {
+    const [careType] = await db
+      .select()
+      .from(careTypes)
+      .where(eq(careTypes.slug, slug));
+    return careType;
+  }
+
+  async getCareTypeById(id: string): Promise<CareType | undefined> {
+    const [careType] = await db
+      .select()
+      .from(careTypes)
+      .where(eq(careTypes.id, id));
+    return careType;
   }
 }
 
