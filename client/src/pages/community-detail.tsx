@@ -586,7 +586,7 @@ export default function CommunityDetail() {
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Check initial position
+    // Don't check initial position - always start hidden
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
