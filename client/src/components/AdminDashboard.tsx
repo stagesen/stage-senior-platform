@@ -810,14 +810,14 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Community</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <Select onValueChange={(value) => field.onChange(value === "none" ? undefined : value)} value={field.value || "none"}>
                       <FormControl>
                         <SelectTrigger data-testid="select-post-community">
                           <SelectValue placeholder="Select a community (optional)" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">No specific community</SelectItem>
+                        <SelectItem value="none">No specific community</SelectItem>
                         {communities.map((community) => (
                           <SelectItem key={community.id} value={community.id}>
                             {community.name}
@@ -1211,8 +1211,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     <FormItem>
                       <FormLabel>Community</FormLabel>
                       <Select 
-                        onValueChange={(value) => field.onChange(value === "" ? undefined : value)} 
-                        value={field.value || ""}
+                        onValueChange={(value) => field.onChange(value === "none" ? undefined : value)} 
+                        value={field.value || "none"}
                       >
                         <FormControl>
                           <SelectTrigger data-testid="select-faq-community">
@@ -1220,7 +1220,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">General/All Communities</SelectItem>
+                          <SelectItem value="none">General/All Communities</SelectItem>
                           {communities.map((community) => (
                             <SelectItem key={community.id} value={community.id}>
                               {community.name}
@@ -1315,8 +1315,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   <FormItem>
                     <FormLabel>Community</FormLabel>
                     <Select 
-                      onValueChange={(value) => field.onChange(value === "" ? undefined : value)} 
-                      value={field.value || ""}
+                      onValueChange={(value) => field.onChange(value === "none" ? undefined : value)} 
+                      value={field.value || "none"}
                     >
                       <FormControl>
                         <SelectTrigger data-testid="select-testimonial-community">
@@ -1324,7 +1324,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">General/All Communities</SelectItem>
+                        <SelectItem value="none">General/All Communities</SelectItem>
                         {communities.map((community) => (
                           <SelectItem key={community.id} value={community.id}>
                             {community.name}
@@ -1655,8 +1655,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   <FormItem>
                     <FormLabel>Community</FormLabel>
                     <Select 
-                      onValueChange={(value) => field.onChange(value === "" ? undefined : value)} 
-                      value={field.value || ""}
+                      onValueChange={(value) => field.onChange(value === "none" ? undefined : value)} 
+                      value={field.value || "none"}
                     >
                       <FormControl>
                         <SelectTrigger data-testid="select-gallery-community">
@@ -1664,7 +1664,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">General/All Communities</SelectItem>
+                        <SelectItem value="none">General/All Communities</SelectItem>
                         {communities.map((community) => (
                           <SelectItem key={community.id} value={community.id}>
                             {community.name}
