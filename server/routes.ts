@@ -14,6 +14,7 @@ import {
   insertTestimonialSchema,
   insertGalleryImageSchema,
   insertCareTypeSchema,
+  insertPageHeroSchema,
 } from "@shared/schema";
 
 // Middleware to protect admin routes - referenced by javascript_auth_all_persistance integration
@@ -710,6 +711,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching care type:", error);
       res.status(500).json({ message: "Failed to fetch care type" });
+    }
+  });
+
+  // Page hero routes
+  app.get("/api/page-heroes", async (req, res) => {
+    try {
+      const { active } = req.query;
+      const filters: any = {};
+      
+      if (active !== undefined) {
+        filters.active = active === 'true';
+      }
+      
+      const pageHeroes = await storage.getPageHeroes(filters);
+      res.json(pageHeroes);
+    } catch (error) {
+      console.error("Error fetching page heroes:", error);
+      res.status(500).json({ message: "Failed to fetch page heroes" });
+    }
+  });
+
+  app.get("/api/page-heroes/:pagePath", async (req, res) => {
+    try {
+      const pageHero = await storage.getPageHero(req.params.pagePath);
+      if (!pageHero) {
+        return res.status(404).json({ message: "Page hero not found" });
+      }
+      res.json(pageHero);
+    } catch (error) {
+      console.error("Error fetching page hero:", error);
+      res.status(500).json({ message: "Failed to fetch page hero" });
+    }
+  });
+
+  app.post("/api/page-heroes", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertPageHeroSchema.parse(req.body);
+      const pageHero = await storage.createPageHero(validatedData);
+      res.status(201).json(pageHero);
+    } catch (error) {
+      console.error("Error creating page hero:", error);
+      res.status(400).json({ message: "Failed to create page hero" });
+    }
+  });
+
+  app.put("/api/page-heroes/:id", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertPageHeroSchema.partial().parse(req.body);
+      const pageHero = await storage.updatePageHero(req.params.id, validatedData);
+      res.json(pageHero);
+    } catch (error) {
+      console.error("Error updating page hero:", error);
+      res.status(400).json({ message: "Failed to update page hero" });
+    }
+  });
+
+  app.delete("/api/page-heroes/:id", requireAuth, async (req, res) => {
+    try {
+      await storage.deletePageHero(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting page hero:", error);
+      res.status(500).json({ message: "Failed to delete page hero" });
     }
   });
 

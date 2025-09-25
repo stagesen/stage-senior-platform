@@ -489,7 +489,7 @@ export const pageHeroes = pgTable("page_heroes", {
   backgroundImageUrl: text("background_image_url").notNull(),
   ctaText: varchar("cta_text", { length: 100 }),
   ctaLink: varchar("cta_link", { length: 255 }),
-  overlayOpacity: real("overlay_opacity").default(0.5), // 0-1 for background overlay darkness
+  overlayOpacity: decimal("overlay_opacity", { precision: 3, scale: 2 }).default("0.50"), // 0-1 for background overlay darkness
   textAlignment: varchar("text_alignment", { length: 20 }).default("center"), // left, center, right
   active: boolean("active").default(true),
   sortOrder: integer("sort_order").default(0),
