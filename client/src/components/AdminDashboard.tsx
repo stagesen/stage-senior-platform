@@ -121,8 +121,12 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       slug: "",
       summary: "",
       content: "",
+      heroImageUrl: "",
       tags: [],
+      communityId: undefined,
       published: false,
+      seoTitle: "",
+      seoDescription: "",
     },
   });
 
@@ -690,11 +694,11 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 name="communityId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Community (Optional)</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value || undefined}>
+                    <FormLabel>Community</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value || ""}>
                       <FormControl>
                         <SelectTrigger data-testid="select-post-community">
-                          <SelectValue placeholder="Select a community" />
+                          <SelectValue placeholder="Select a community (optional)" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -731,6 +735,45 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     <FormLabel>Content</FormLabel>
                     <FormControl>
                       <Textarea {...field} rows={10} data-testid="textarea-post-content" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={postForm.control}
+                name="heroImageUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Hero Image URL</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value || ""} placeholder="https://example.com/image.jpg" data-testid="input-post-hero-image" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={postForm.control}
+                name="seoTitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>SEO Title</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value || ""} placeholder="SEO optimized title for search engines" data-testid="input-post-seo-title" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={postForm.control}
+                name="seoDescription"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>SEO Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} value={field.value || ""} rows={3} placeholder="Meta description for search engines (150-160 characters recommended)" data-testid="textarea-post-seo-description" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1669,6 +1712,70 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         </Badge>
                       )}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleEdit(item)}
+                        data-testid={`button-edit-${item.id}`}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={() => handleDelete(item.id)}
+                        data-testid={`button-delete-${item.id}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      );
+    }
+
+    // Blog Posts table
+    if (type === "posts") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Title</TableHead>
+              <TableHead>Community</TableHead>
+              <TableHead>Summary</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: Post) => {
+              const community = communities.find(c => c.id === item.communityId);
+              return (
+                <TableRow key={item.id} data-testid={`post-row-${item.id}`}>
+                  <TableCell className="font-medium max-w-[200px] truncate">
+                    {item.title}
+                  </TableCell>
+                  <TableCell>
+                    {community?.name || "General"}
+                  </TableCell>
+                  <TableCell className="max-w-[250px] truncate">
+                    {item.summary || "No summary"}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={item.published ? "default" : "secondary"}>
+                      {item.published ? "Published" : "Draft"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {new Date(item.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
