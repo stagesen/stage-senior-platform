@@ -10,6 +10,7 @@ import EventCard from "@/components/EventCard";
 import EventCalendar from "@/components/EventCalendar";
 import EventDetailsModal from "@/components/EventDetailsModal";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageHero } from "@/components/PageHero";
 import type { Event, Community } from "@shared/schema";
 
 export default function Events() {
@@ -77,19 +78,12 @@ export default function Events() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary/5 to-accent/10 py-12 lg:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-6" data-testid="page-title">
-              Community <span className="text-primary">Events</span> & Programming
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto" data-testid="page-description">
-              Experience meaningful activities and social connections at Stage Senior communities. Our resident-focused 
-              programming promotes dignity, comfort, and joy through engaging events designed for residents and families.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        pagePath="/events"
+        defaultTitle="Community Events & Programming"
+        defaultSubtitle="Experience meaningful activities and social connections at Stage Senior communities"
+        defaultBackgroundImage="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=2000&q=80"
+      />
 
       {/* Filters */}
       <section className="bg-card py-6 border-b border-border">

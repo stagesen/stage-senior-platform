@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { DollarSign, Shield, Clock, Users, CheckCircle, AlertCircle, Phone, Calendar, MapPin, FileText, Sparkles, Quote } from "lucide-react";
+import { PageHero } from "@/components/PageHero";
 
 export default function CarePoints() {
   // Fetch care types from API
@@ -183,55 +184,12 @@ export default function CarePoints() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 bg-gradient-to-br from-primary/10 to-background overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <Badge className="mb-4" variant="secondary" data-testid="hero-badge">
-                <DollarSign className="w-4 h-4 mr-1" />
-                Transparent Pricing System
-              </Badge>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6" data-testid="page-title">
-                Care Points
-              </h1>
-              <p className="text-xl text-muted-foreground mb-8 leading-relaxed" data-testid="hero-description">
-                Our revolutionary transparent pricing system for additional services. No surprise charges, 
-                clear pricing, and family involvement in every care decision.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" asChild data-testid="button-explore-communities">
-                  <Link href="/communities">
-                    <MapPin className="w-5 h-5 mr-2" />
-                    Experience Our Communities
-                  </Link>
-                </Button>
-                <Button variant="outline" size="lg" asChild data-testid="button-learn-more">
-                  <a href="tel:+1-303-436-2300">
-                    <Phone className="w-5 h-5 mr-2" />
-                    Learn More
-                  </a>
-                </Button>
-              </div>
-            </div>
-            <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=800&auto=format&fit=crop"
-                alt="Family discussing care plans with transparent pricing documentation"
-                className="rounded-lg shadow-xl w-full"
-                data-testid="hero-image"
-              />
-              <div className="absolute -bottom-6 -right-6 bg-primary text-primary-foreground p-6 rounded-lg shadow-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <Shield className="w-5 h-5 fill-current" />
-                  <span className="font-bold text-lg">0</span>
-                </div>
-                <p className="text-sm">Hidden Fees</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        pagePath="/care-points"
+        defaultTitle="Care Points"
+        defaultSubtitle="Our revolutionary transparent pricing system for additional services"
+        defaultBackgroundImage="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=2000&q=80"
+      />
 
       {/* What is Care Points Section */}
       <section className="py-16 bg-white">

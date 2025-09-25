@@ -11,6 +11,7 @@ import CommunityMap from "@/components/CommunityMap";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { PageHero } from "@/components/PageHero";
 import type { Community, InsertTourRequest } from "@shared/schema";
 
 const CARE_TYPES = [
@@ -75,20 +76,17 @@ export default function Communities() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-background to-primary/5 py-20 lg:py-32">
+      <PageHero
+        pagePath="/communities"
+        defaultTitle="Independent Living Tailored to You"
+        defaultSubtitle="Explore our four Colorado communities where exceptional care meets the comfort of home."
+        defaultBackgroundImage="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=2000&q=80"
+      />
+
+      {/* Search and Filter Section */}
+      <section className="bg-gray-50 py-8 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-8">
-            <div className="space-y-4">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight" data-testid="page-title">
-                <span className="block text-foreground">Independent Living</span>
-                <span className="block text-primary mt-2">Tailored to You</span>
-              </h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed" data-testid="page-description">
-                Explore our four Colorado communities where exceptional care meets the comfort of home. 
-                With personalized support and vibrant community life, your loved ones will thrive.
-              </p>
-            </div>
-            
+          <div className="space-y-6">
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto">
               <div className="bg-card rounded-full shadow-lg p-2 flex items-center">
@@ -115,7 +113,7 @@ export default function Communities() {
             </div>
             
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button 
                 size="lg" 
                 className="px-8 py-6 text-lg bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg shadow-lg hover:shadow-xl transition-all"
