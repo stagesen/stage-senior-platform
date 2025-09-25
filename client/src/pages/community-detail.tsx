@@ -1024,37 +1024,65 @@ export default function CommunityDetail() {
             <section id="highlights" className="scroll-mt-32">
               <h2 className="text-3xl font-bold mb-8">Community Highlights</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="border-l-4 border-l-primary">
+                <Card className="overflow-hidden">
+                  <AspectRatio ratio={16 / 9}>
+                    <img
+                      src="https://images.unsplash.com/photo-1543269664-56d93c1b41a6?w=800&q=80"
+                      alt="Vibrant Community Life"
+                      className="w-full h-full object-cover"
+                      data-testid="highlight-community-life"
+                    />
+                  </AspectRatio>
                   <CardContent className="p-6">
-                    <Users className="w-10 h-10 text-primary mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">Vibrant Community Life</h3>
+                    <h3 className="text-xl font-semibold mb-2 text-primary">Vibrant Community Life</h3>
                     <p className="text-gray-600">
                       Join a warm community where friendships flourish and every day brings new opportunities for connection and growth.
                     </p>
                   </CardContent>
                 </Card>
-                <Card className="border-l-4 border-l-primary">
+                <Card className="overflow-hidden">
+                  <AspectRatio ratio={16 / 9}>
+                    <img
+                      src="https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"
+                      alt="Personalized Care"
+                      className="w-full h-full object-cover"
+                      data-testid="highlight-personalized-care"
+                    />
+                  </AspectRatio>
                   <CardContent className="p-6">
-                    <Heart className="w-10 h-10 text-primary mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">Personalized Care</h3>
+                    <h3 className="text-xl font-semibold mb-2 text-primary">Personalized Care</h3>
                     <p className="text-gray-600">
                       Our dedicated team provides tailored support that honors your independence while ensuring comfort and safety.
                     </p>
                   </CardContent>
                 </Card>
-                <Card className="border-l-4 border-l-primary">
+                <Card className="overflow-hidden">
+                  <AspectRatio ratio={16 / 9}>
+                    <img
+                      src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80"
+                      alt="Active Lifestyle"
+                      className="w-full h-full object-cover"
+                      data-testid="highlight-active-lifestyle"
+                    />
+                  </AspectRatio>
                   <CardContent className="p-6">
-                    <Activity className="w-10 h-10 text-primary mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">Active Lifestyle</h3>
+                    <h3 className="text-xl font-semibold mb-2 text-primary">Active Lifestyle</h3>
                     <p className="text-gray-600">
                       From fitness classes to cultural outings, enjoy a full calendar of activities designed to keep you engaged.
                     </p>
                   </CardContent>
                 </Card>
-                <Card className="border-l-4 border-l-primary">
+                <Card className="overflow-hidden">
+                  <AspectRatio ratio={16 / 9}>
+                    <img
+                      src="https://images.unsplash.com/photo-1559304787-945aa4341065?w=800&q=80"
+                      alt="24/7 Support"
+                      className="w-full h-full object-cover"
+                      data-testid="highlight-24-7-support"
+                    />
+                  </AspectRatio>
                   <CardContent className="p-6">
-                    <Shield className="w-10 h-10 text-primary mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">24/7 Support</h3>
+                    <h3 className="text-xl font-semibold mb-2 text-primary">24/7 Support</h3>
                     <p className="text-gray-600">
                       Rest easy knowing our caring staff is available around the clock for assistance whenever you need it.
                     </p>
