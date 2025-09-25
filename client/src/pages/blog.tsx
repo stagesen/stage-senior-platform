@@ -10,6 +10,7 @@ import { Search, Filter, Calendar, User, ArrowLeft } from "lucide-react";
 import BlogCard from "@/components/BlogCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
+import { PageHero } from "@/components/PageHero";
 import type { BlogPost, Community } from "@shared/schema";
 
 export default function Blog() {
@@ -183,6 +184,13 @@ export default function Blog() {
   // Blog listing page
   return (
     <div>
+      <PageHero
+        pagePath="/blog"
+        defaultTitle="Blog & News"
+        defaultSubtitle="Stories from Our Communities"
+        defaultDescription="Stay connected with the latest news, stories, and insights from Stage Senior communities across Colorado."
+        defaultBackgroundImage="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=2000&q=80"
+      />
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary/5 to-accent/10 py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
