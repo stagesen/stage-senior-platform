@@ -185,6 +185,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       authorRelation: "",
       content: "",
       rating: 5,
+      communityId: undefined,
       featured: false,
       approved: true,
       sortOrder: 0,
@@ -1217,13 +1218,17 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Community</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value || undefined}>
+                    <Select 
+                      onValueChange={(value) => field.onChange(value === "" ? undefined : value)} 
+                      value={field.value || ""}
+                    >
                       <FormControl>
                         <SelectTrigger data-testid="select-testimonial-community">
                           <SelectValue placeholder="Select a community" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
+                        <SelectItem value="">General/All Communities</SelectItem>
                         {communities.map((community) => (
                           <SelectItem key={community.id} value={community.id}>
                             {community.name}
@@ -2355,6 +2360,88 @@ https://example.com/image2.jpg|Second alt|Another caption"
                   </TableCell>
                   <TableCell>
                     {item.sortOrder || 0}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleEdit(item)}
+                        data-testid={`button-edit-${item.id}`}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={() => handleDelete(item.id)}
+                        data-testid={`button-delete-${item.id}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      );
+    }
+
+    // Testimonials table
+    if (type === "testimonials") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Author</TableHead>
+              <TableHead>Community</TableHead>
+              <TableHead>Content</TableHead>
+              <TableHead>Rating</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: Testimonial) => {
+              const community = communities.find(c => c.id === item.communityId);
+              return (
+                <TableRow key={item.id} data-testid={`testimonial-row-${item.id}`}>
+                  <TableCell className="font-medium">
+                    <div className="space-y-1">
+                      <div className="font-semibold">{item.authorName}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {item.authorRelation}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {community?.name || "General"}
+                  </TableCell>
+                  <TableCell className="max-w-[300px]">
+                    <div className="truncate">
+                      {item.content.substring(0, 100)}...
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center">
+                      {[...Array(5)].map((_, i) => (
+                        <span key={i} className={i < item.rating ? "text-yellow-500" : "text-gray-300"}>
+                          ★
+                        </span>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col gap-1">
+                      <Badge variant={item.approved ? "default" : "secondary"}>
+                        {item.approved ? "Approved" : "Pending"}
+                      </Badge>
+                      {item.featured && (
+                        <Badge variant="outline">Featured</Badge>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
