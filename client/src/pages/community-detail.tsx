@@ -139,10 +139,13 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
     'outdoors-colorado': { icon: Trees, displayName: 'Outdoors & Colorado' },
   };
 
+  // Ensure galleries is always an array
+  const items = galleries ?? [];
+
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-        {galleries.slice(0, 4).map((gallery) => {
+        {items.slice(0, 4).map((gallery) => {
           const config = categoryConfig[gallery.category] || { icon: Image, displayName: gallery.title };
           const IconComponent = config.icon;
           const coverImage = gallery.images?.[0];
