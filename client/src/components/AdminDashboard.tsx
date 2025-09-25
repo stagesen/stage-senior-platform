@@ -137,7 +137,14 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       slug: "",
       summary: "",
       description: "",
+      imageUrl: "",
       startsAt: new Date(),
+      endsAt: undefined,
+      locationText: "",
+      rsvpUrl: "",
+      communityId: undefined,
+      published: false,
+      maxAttendees: undefined,
       isPublic: true,
     },
   });
@@ -840,14 +847,15 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 name="communityId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Community</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value || undefined}>
+                    <FormLabel>Community (Optional)</FormLabel>
+                    <Select onValueChange={(value) => field.onChange(value === "none" ? undefined : value)} value={field.value || "none"}>
                       <FormControl>
                         <SelectTrigger data-testid="select-event-community">
                           <SelectValue placeholder="Select a community" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
+                        <SelectItem value="none">No specific community</SelectItem>
                         {communities.map((community) => (
                           <SelectItem key={community.id} value={community.id}>
                             {community.name}
@@ -906,7 +914,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   <FormItem>
                     <FormLabel>Summary</FormLabel>
                     <FormControl>
-                      <Textarea {...field} data-testid="textarea-event-summary" />
+                      <Textarea {...field} value={field.value || ""} data-testid="textarea-event-summary" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -914,16 +922,105 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
               />
               <FormField
                 control={eventForm.control}
-                name="isPublic"
+                name="description"
                 render={({ field }) => (
-                  <FormItem className="flex items-center space-x-2">
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-event-public" />
+                      <Textarea {...field} value={field.value || ""} rows={4} data-testid="textarea-event-description" />
                     </FormControl>
-                    <FormLabel>Public Event</FormLabel>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={eventForm.control}
+                  name="locationText"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Location/Venue</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} placeholder="e.g., Main Dining Room" data-testid="input-event-location" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={eventForm.control}
+                  name="maxAttendees"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Max Attendees (Optional)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || ""} 
+                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                          data-testid="input-event-max-attendees" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={eventForm.control}
+                  name="imageUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Image URL</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} placeholder="https://example.com/event-image.jpg" data-testid="input-event-image" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={eventForm.control}
+                  name="rsvpUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>RSVP URL (Optional)</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} placeholder="https://example.com/rsvp" data-testid="input-event-rsvp" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex items-center space-x-4">
+                <FormField
+                  control={eventForm.control}
+                  name="published"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-event-published" />
+                      </FormControl>
+                      <FormLabel>Published</FormLabel>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={eventForm.control}
+                  name="isPublic"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-event-public" />
+                      </FormControl>
+                      <FormLabel>Public Event</FormLabel>
+                    </FormItem>
+                  )}
+                />
+              </div>
               <div className="flex justify-end space-x-2">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
                   Cancel
@@ -1711,6 +1808,83 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                           {item.availability}
                         </Badge>
                       )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleEdit(item)}
+                        data-testid={`button-edit-${item.id}`}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={() => handleDelete(item.id)}
+                        data-testid={`button-delete-${item.id}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      );
+    }
+
+    // Events table
+    if (type === "events") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Title</TableHead>
+              <TableHead>Community</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead>Start Date</TableHead>
+              <TableHead>End Date</TableHead>
+              <TableHead>Max Attendees</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: Event) => {
+              const community = communities.find(c => c.id === item.communityId);
+              return (
+                <TableRow key={item.id} data-testid={`event-row-${item.id}`}>
+                  <TableCell className="font-medium max-w-[200px] truncate">
+                    {item.title}
+                  </TableCell>
+                  <TableCell>
+                    {community?.name || "General"}
+                  </TableCell>
+                  <TableCell className="max-w-[150px] truncate">
+                    {item.locationText || "TBD"}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(item.startsAt).toLocaleDateString()} {new Date(item.startsAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </TableCell>
+                  <TableCell>
+                    {item.endsAt ? `${new Date(item.endsAt).toLocaleDateString()} ${new Date(item.endsAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : "N/A"}
+                  </TableCell>
+                  <TableCell>
+                    {item.maxAttendees || "Unlimited"}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col gap-1">
+                      <Badge variant={item.published ? "default" : "secondary"}>
+                        {item.published ? "Published" : "Draft"}
+                      </Badge>
+                      <Badge variant={item.isPublic ? "outline" : "destructive"}>
+                        {item.isPublic ? "Public" : "Private"}
+                      </Badge>
                     </div>
                   </TableCell>
                   <TableCell>
