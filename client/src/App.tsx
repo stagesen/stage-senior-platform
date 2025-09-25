@@ -21,10 +21,13 @@ import ProfessionalManagement from "@/pages/services/management";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ScrollRestoration from "@/components/ScrollRestoration";
+import ScrollToTop from "@/components/ScrollToTop";
 
 function Router() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <ScrollRestoration />
       <Header />
       <main className="flex-1">
         <Switch>
@@ -48,6 +51,7 @@ function Router() {
         </Switch>
       </main>
       <Footer />
+      <ScrollToTop />
     </div>
   );
 }
