@@ -80,10 +80,27 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     defaultValues: {
       name: "",
       slug: "",
+      street: "",
       city: "",
       state: "CO",
+      zip: "",
+      latitude: null,
+      longitude: null,
+      phoneDisplay: "",
+      phoneDial: "",
+      secondaryPhoneDisplay: "",
+      secondaryPhoneDial: "",
+      email: "",
+      heroImageUrl: "",
+      overview: "",
       description: "",
       shortDescription: "",
+      startingRateDisplay: "",
+      startingPrice: null,
+      mainColorHex: "",
+      ctaColorHex: "",
+      seoTitle: "",
+      seoDescription: "",
       careTypes: [],
       amenities: [],
       active: true,
@@ -292,7 +309,20 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   )}
                 />
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <FormField
+                control={communityForm.control}
+                name="street"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Street Address</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value || ""} data-testid="input-community-street" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-4 gap-4">
                 <FormField
                   control={communityForm.control}
                   name="city"
@@ -321,12 +351,108 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 />
                 <FormField
                   control={communityForm.control}
+                  name="zip"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Zip Code</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} data-testid="input-community-zip" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={communityForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" {...field} value={field.value || ""} data-testid="input-community-email" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <FormField
+                  control={communityForm.control}
+                  name="phoneDisplay"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Display</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} placeholder="(303) 555-0100" data-testid="input-community-phone-display" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={communityForm.control}
+                  name="phoneDial"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Dial</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} placeholder="3035550100" data-testid="input-community-phone-dial" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={communityForm.control}
                   name="startingPrice"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Starting Price</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} value={field.value || ""} onChange={(e) => field.onChange(Number(e.target.value))} data-testid="input-community-price" />
+                        <Input type="number" {...field} value={field.value || ""} onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)} data-testid="input-community-price" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={communityForm.control}
+                  name="latitude"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Latitude</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || ""} 
+                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)} 
+                          step="0.00000001"
+                          data-testid="input-community-latitude" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={communityForm.control}
+                  name="longitude"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Longitude</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || ""} 
+                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)} 
+                          step="0.00000001"
+                          data-testid="input-community-longitude" 
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -354,6 +480,86 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     <FormLabel>Full Description</FormLabel>
                     <FormControl>
                       <Textarea {...field} rows={6} data-testid="textarea-community-description" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
+                name="overview"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Overview</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} value={field.value || ""} rows={4} data-testid="textarea-community-overview" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
+                name="heroImageUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Hero Image URL</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value || ""} placeholder="https://..." data-testid="input-community-hero-image" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={communityForm.control}
+                  name="mainColorHex"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Main Color (Hex)</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} placeholder="#000000" data-testid="input-community-main-color" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={communityForm.control}
+                  name="ctaColorHex"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CTA Color (Hex)</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value || ""} placeholder="#FF0000" data-testid="input-community-cta-color" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={communityForm.control}
+                name="seoTitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>SEO Title</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value || ""} data-testid="input-community-seo-title" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
+                name="seoDescription"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>SEO Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} value={field.value || ""} rows={3} data-testid="textarea-community-seo-description" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
