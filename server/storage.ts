@@ -14,6 +14,7 @@ import {
   amenities,
   communitiesAmenities,
   users,
+  images,
   type Community,
   type InsertCommunity,
   type Post,
@@ -39,6 +40,8 @@ import {
   type Amenity,
   type User,
   type InsertUser,
+  type Image,
+  type InsertImage,
   pageHeroes,
   type PageHero,
   type InsertPageHero,
@@ -192,6 +195,15 @@ export interface IStorage {
   createPageHero(pageHero: InsertPageHero): Promise<PageHero>;
   updatePageHero(id: string, pageHero: Partial<InsertPageHero>): Promise<PageHero>;
   deletePageHero(id: string): Promise<void>;
+
+  // Image operations
+  createImage(image: InsertImage): Promise<Image>;
+  getImage(id: string): Promise<Image | null>;
+  getImages(): Promise<Image[]>;
+  deleteImage(id: string): Promise<void>;
+  createGalleryImage(galleryImage: InsertGalleryImage): Promise<GalleryImage>;
+  getGalleryImages(galleryId: string): Promise<GalleryImage[]>;
+  deleteGalleryImage(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1065,6 +1077,54 @@ export class DatabaseStorage implements IStorage {
 
   async deletePageHero(id: string): Promise<void> {
     await db.delete(pageHeroes).where(eq(pageHeroes.id, id));
+  }
+
+  // Image operations
+  async createImage(image: InsertImage): Promise<Image> {
+    const [created] = await db
+      .insert(images)
+      .values(image)
+      .returning();
+    return created;
+  }
+
+  async getImage(id: string): Promise<Image | null> {
+    const [image] = await db
+      .select()
+      .from(images)
+      .where(eq(images.id, id));
+    return image || null;
+  }
+
+  async getImages(): Promise<Image[]> {
+    return await db
+      .select()
+      .from(images)
+      .orderBy(desc(images.createdAt));
+  }
+
+  async deleteImage(id: string): Promise<void> {
+    await db.delete(images).where(eq(images.id, id));
+  }
+
+  async createGalleryImage(galleryImage: InsertGalleryImage): Promise<GalleryImage> {
+    const [created] = await db
+      .insert(galleryImages)
+      .values(galleryImage)
+      .returning();
+    return created;
+  }
+
+  async getGalleryImages(galleryId: string): Promise<GalleryImage[]> {
+    return await db
+      .select()
+      .from(galleryImages)
+      .where(eq(galleryImages.galleryId, galleryId))
+      .orderBy(asc(galleryImages.sortOrder));
+  }
+
+  async deleteGalleryImage(id: string): Promise<void> {
+    await db.delete(galleryImages).where(eq(galleryImages.id, id));
   }
 }
 

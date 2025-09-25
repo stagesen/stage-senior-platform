@@ -3,6 +3,14 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import {
+  uploadSingle,
+  uploadMultiple,
+  processSingleImageUpload,
+  processMultipleImageUploads,
+  deleteFromObjectStorage,
+  handleUploadError,
+} from "./upload";
+import {
   insertCommunitySchema,
   insertPostSchema,
   insertBlogPostSchema,
@@ -776,6 +784,94 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to delete page hero" });
     }
   });
+
+  // Image upload routes
+  // Single image upload
+  app.post("/api/upload", requireAuth, uploadSingle, async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      // Get authenticated user ID
+      const uploadedBy = (req.user as any)?.id;
+      
+      const result = await processSingleImageUpload(req.file, uploadedBy);
+      res.json(result);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      res.status(500).json({ message: "Failed to upload image" });
+    }
+  });
+
+  // Multiple image upload
+  app.post("/api/upload-multiple", requireAuth, uploadMultiple, async (req, res) => {
+    try {
+      const files = req.files as Express.Multer.File[];
+      if (!files || files.length === 0) {
+        return res.status(400).json({ message: "No files uploaded" });
+      }
+
+      // Get authenticated user ID
+      const uploadedBy = (req.user as any)?.id;
+      
+      const results = await processMultipleImageUploads(files, uploadedBy);
+      res.json(results);
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      res.status(500).json({ message: "Failed to upload images" });
+    }
+  });
+
+  // Get all images
+  app.get("/api/images", requireAuth, async (req, res) => {
+    try {
+      const images = await storage.getImages();
+      res.json(images);
+    } catch (error) {
+      console.error("Error fetching images:", error);
+      res.status(500).json({ message: "Failed to fetch images" });
+    }
+  });
+
+  // Get single image
+  app.get("/api/images/:id", async (req, res) => {
+    try {
+      const image = await storage.getImage(req.params.id);
+      if (!image) {
+        return res.status(404).json({ message: "Image not found" });
+      }
+      res.json(image);
+    } catch (error) {
+      console.error("Error fetching image:", error);
+      res.status(500).json({ message: "Failed to fetch image" });
+    }
+  });
+
+  // Delete image
+  app.delete("/api/images/:id", requireAuth, async (req, res) => {
+    try {
+      // Get image to find object key
+      const image = await storage.getImage(req.params.id);
+      if (!image) {
+        return res.status(404).json({ message: "Image not found" });
+      }
+
+      // Delete from object storage
+      await deleteFromObjectStorage(image.objectKey);
+      
+      // Delete from database
+      await storage.deleteImage(req.params.id);
+      
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      res.status(500).json({ message: "Failed to delete image" });
+    }
+  });
+
+  // Error handler for upload middleware
+  app.use(handleUploadError);
 
   const httpServer = createServer(app);
   return httpServer;
