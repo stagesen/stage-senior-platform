@@ -1126,70 +1126,141 @@ export default function CommunityDetail() {
             <section id="highlights" className="scroll-mt-24">
               <h2 className="text-3xl font-bold mb-8">Community Highlights</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="overflow-hidden">
-                  <AspectRatio ratio={16 / 9}>
-                    <img
-                      src="https://images.unsplash.com/photo-1543269664-56d93c1b41a6?w=800&q=80"
-                      alt="Vibrant Community Life"
-                      className="w-full h-full object-cover"
-                      data-testid="highlight-community-life"
-                    />
-                  </AspectRatio>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-2 text-primary">Vibrant Community Life</h3>
-                    <p className="text-gray-600">
-                      Join a warm community where friendships flourish and every day brings new opportunities for connection and growth.
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card className="overflow-hidden">
-                  <AspectRatio ratio={16 / 9}>
-                    <img
-                      src="https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"
-                      alt="Personalized Care"
-                      className="w-full h-full object-cover"
-                      data-testid="highlight-personalized-care"
-                    />
-                  </AspectRatio>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-2 text-primary">Personalized Care</h3>
-                    <p className="text-gray-600">
-                      Our dedicated team provides tailored support that honors your independence while ensuring comfort and safety.
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card className="overflow-hidden">
-                  <AspectRatio ratio={16 / 9}>
-                    <img
-                      src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80"
-                      alt="Active Lifestyle"
-                      className="w-full h-full object-cover"
-                      data-testid="highlight-active-lifestyle"
-                    />
-                  </AspectRatio>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-2 text-primary">Active Lifestyle</h3>
-                    <p className="text-gray-600">
-                      From fitness classes to cultural outings, enjoy a full calendar of activities designed to keep you engaged.
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card className="overflow-hidden">
-                  <AspectRatio ratio={16 / 9}>
-                    <img
-                      src="https://images.unsplash.com/photo-1559304787-945aa4341065?w=800&q=80"
-                      alt="24/7 Support"
-                      className="w-full h-full object-cover"
-                      data-testid="highlight-24-7-support"
-                    />
-                  </AspectRatio>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-2 text-primary">24/7 Support</h3>
-                    <p className="text-gray-600">
-                      Rest easy knowing our caring staff is available around the clock for assistance whenever you need it.
-                    </p>
-                  </CardContent>
-                </Card>
+                {community.slug === 'golden-pond' ? (
+                  <>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80"
+                          alt="Locally Owned & Rooted in Golden"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-locally-owned"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Locally Owned & Rooted in Golden</h3>
+                        <p className="text-gray-600">
+                          More than two decades of service, trusted by families through word of mouth.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"
+                          alt="All Levels of Care in One Place"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-care-levels"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">All Levels of Care in One Place</h3>
+                        <p className="text-gray-600">
+                          Independent, Assisted, and Memory Care — seamless transitions without the stress of moving again.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1543269664-56d93c1b41a6?w=800&q=80"
+                          alt="Stable, Familiar Staff"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-staff"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Stable, Familiar Staff</h3>
+                        <p className="text-gray-600">
+                          Many caregivers and managers have been here for years, creating continuity and real relationships.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80"
+                          alt="Active, Connected Lifestyle"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-lifestyle"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Active, Connected Lifestyle</h3>
+                        <p className="text-gray-600">
+                          Fitness, art, social events, and outings into Golden keep residents engaged and part of the community.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </>
+                ) : (
+                  <>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1543269664-56d93c1b41a6?w=800&q=80"
+                          alt="Vibrant Community Life"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-community-life"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Vibrant Community Life</h3>
+                        <p className="text-gray-600">
+                          Join a warm community where friendships flourish and every day brings new opportunities for connection and growth.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"
+                          alt="Personalized Care"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-personalized-care"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Personalized Care</h3>
+                        <p className="text-gray-600">
+                          Our dedicated team provides tailored support that honors your independence while ensuring comfort and safety.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80"
+                          alt="Active Lifestyle"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-active-lifestyle"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">Active Lifestyle</h3>
+                        <p className="text-gray-600">
+                          From fitness classes to cultural outings, enjoy a full calendar of activities designed to keep you engaged.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src="https://images.unsplash.com/photo-1559304787-945aa4341065?w=800&q=80"
+                          alt="24/7 Support"
+                          className="w-full h-full object-cover"
+                          data-testid="highlight-24-7-support"
+                        />
+                      </AspectRatio>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold mb-2 text-primary">24/7 Support</h3>
+                        <p className="text-gray-600">
+                          Rest easy knowing our caring staff is available around the clock for assistance whenever you need it.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </>
+                )}
               </div>
             </section>
 
