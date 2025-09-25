@@ -69,7 +69,8 @@ export const communities = pgTable("communities", {
   secondaryPhoneDisplay: varchar("secondary_phone_display", { length: 20 }),
   secondaryPhoneDial: varchar("secondary_phone_dial", { length: 20 }),
   email: varchar("email", { length: 255 }),
-  heroImageUrl: text("hero_image_url"),
+  heroImageUrl: text("hero_image_url"), // Keep for backward compatibility
+  imageId: varchar("image_id", { length: 255 }).references(() => images.id), // New image reference
   overview: text("overview"),
   description: text("description"),
   shortDescription: text("short_description"),
@@ -112,7 +113,8 @@ export const posts = pgTable("posts", {
   summary: text("summary"),
   bodyHtml: text("body_html"), // Additional field from CSV
   content: text("content").notNull(),
-  heroImageUrl: text("hero_image_url"),
+  heroImageUrl: text("hero_image_url"), // Keep for backward compatibility
+  imageId: varchar("image_id", { length: 255 }).references(() => images.id), // New image reference
   tags: jsonb("tags").$type<string[]>().default([]),
   communityId: uuid("community_id").references(() => communities.id),
   published: boolean("published").default(false),
@@ -130,7 +132,8 @@ export const events = pgTable("events", {
   title: varchar("title", { length: 255 }).notNull(),
   summary: text("summary"),
   description: text("description"),
-  imageUrl: text("image_url"),
+  imageUrl: text("image_url"), // Keep for backward compatibility
+  imageId: varchar("image_id", { length: 255 }).references(() => images.id), // New image reference
   startsAt: timestamp("starts_at").notNull(),
   endsAt: timestamp("ends_at"),
   locationText: text("location_text"),
@@ -223,7 +226,8 @@ export const floorPlans = pgTable("floor_plans", {
   description: text("description"),
   highlights: jsonb("highlights").$type<string[]>().default([]),
   images: jsonb("images").$type<string[]>().default([]), // Additional field from CSV for multiple images
-  imageUrl: text("image_url"),
+  imageUrl: text("image_url"), // Keep for backward compatibility
+  imageId: varchar("image_id", { length: 255 }).references(() => images.id), // New image reference
   planImageUrl: text("plan_image_url"),
   specPdfUrl: text("spec_pdf_url"), // Additional field from CSV
   pdfUrl: text("pdf_url"), // Keep for backwards compatibility
@@ -252,21 +256,29 @@ export const testimonials = pgTable("testimonials", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const galleryImages = pgTable("gallery_images", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
-  communityId: uuid("community_id").references(() => communities.id),
-  url: text("url").notNull(),
-  alt: text("alt").notNull(),
-  caption: text("caption"),
-  category: varchar("category", { length: 100 }),
-  tags: jsonb("tags").$type<string[]>().default([]),
+// Images table for storing all image metadata
+export const images = pgTable("images", {
+  id: varchar("id", { length: 255 }).primaryKey().default(sql`gen_random_uuid()`),
+  objectKey: text("object_key").notNull(), // Key in object storage
+  url: text("url").notNull(), // Public URL
+  alt: text("alt"), // Alt text for accessibility
   width: integer("width"),
   height: integer("height"),
-  featured: boolean("featured").default(false),
-  sortOrder: integer("sort_order").default(0),
-  active: boolean("active").default(true),
+  sizeBytes: integer("size_bytes"),
+  mimeType: text("mime_type"),
+  variants: jsonb("variants").$type<Record<string, { url: string; width: number; height: number; sizeBytes: number }>>(), // Different image sizes
+  uploadedBy: integer("uploaded_by").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Junction table between galleries and images
+export const galleryImages = pgTable("gallery_images", {
+  id: varchar("id", { length: 255 }).primaryKey().default(sql`gen_random_uuid()`),
+  galleryId: uuid("gallery_id").notNull().references(() => galleries.id, { onDelete: "cascade" }),
+  imageId: varchar("image_id", { length: 255 }).notNull().references(() => images.id, { onDelete: "cascade" }),
+  caption: text("caption"),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 // Relations
@@ -278,7 +290,7 @@ export const amenitiesRelations = relations(amenities, ({ many }) => ({
   communities: many(communitiesAmenities),
 }));
 
-export const communitiesRelations = relations(communities, ({ many }) => ({
+export const communitiesRelations = relations(communities, ({ one, many }) => ({
   posts: many(posts),
   events: many(events),
   faqs: many(faqs),
@@ -287,9 +299,12 @@ export const communitiesRelations = relations(communities, ({ many }) => ({
   tourRequests: many(tourRequests),
   floorPlans: many(floorPlans),
   testimonials: many(testimonials),
-  galleryImages: many(galleryImages),
   careTypes: many(communitiesCareTypes),
   amenities: many(communitiesAmenities),
+  image: one(images, {
+    fields: [communities.imageId],
+    references: [images.id],
+  }),
 }));
 
 export const communitiesCareTypesRelations = relations(communitiesCareTypes, ({ one }) => ({
@@ -319,6 +334,10 @@ export const postsRelations = relations(posts, ({ one }) => ({
     fields: [posts.communityId],
     references: [communities.id],
   }),
+  image: one(images, {
+    fields: [posts.imageId],
+    references: [images.id],
+  }),
 }));
 
 export const blogPostsRelations = relations(blogPosts, ({ one }) => ({
@@ -333,6 +352,10 @@ export const eventsRelations = relations(events, ({ one }) => ({
     fields: [events.communityId],
     references: [communities.id],
   }),
+  image: one(images, {
+    fields: [events.imageId],
+    references: [images.id],
+  }),
 }));
 
 export const faqsRelations = relations(faqs, ({ one }) => ({
@@ -342,11 +365,12 @@ export const faqsRelations = relations(faqs, ({ one }) => ({
   }),
 }));
 
-export const galleriesRelations = relations(galleries, ({ one }) => ({
+export const galleriesRelations = relations(galleries, ({ one, many }) => ({
   community: one(communities, {
     fields: [galleries.communityId],
     references: [communities.id],
   }),
+  images: many(galleryImages),
 }));
 
 export const tourRequestsRelations = relations(tourRequests, ({ one }) => ({
@@ -361,6 +385,10 @@ export const floorPlansRelations = relations(floorPlans, ({ one }) => ({
     fields: [floorPlans.communityId],
     references: [communities.id],
   }),
+  image: one(images, {
+    fields: [floorPlans.imageId],
+    references: [images.id],
+  }),
 }));
 
 export const testimonialsRelations = relations(testimonials, ({ one }) => ({
@@ -371,10 +399,22 @@ export const testimonialsRelations = relations(testimonials, ({ one }) => ({
 }));
 
 export const galleryImagesRelations = relations(galleryImages, ({ one }) => ({
-  community: one(communities, {
-    fields: [galleryImages.communityId],
-    references: [communities.id],
+  gallery: one(galleries, {
+    fields: [galleryImages.galleryId],
+    references: [galleries.id],
   }),
+  image: one(images, {
+    fields: [galleryImages.imageId],
+    references: [images.id],
+  }),
+}));
+
+export const imagesRelations = relations(images, ({ one, many }) => ({
+  uploadedBy: one(users, {
+    fields: [images.uploadedBy],
+    references: [users.id],
+  }),
+  galleries: many(galleryImages),
 }));
 
 // Insert schemas
@@ -466,7 +506,11 @@ export const insertTestimonialSchema = createInsertSchema(testimonials).omit({
 export const insertGalleryImageSchema = createInsertSchema(galleryImages).omit({
   id: true,
   createdAt: true,
-  updatedAt: true,
+});
+
+export const insertImageSchema = createInsertSchema(images).omit({
+  id: true,
+  createdAt: true,
 });
 
 export const insertUserSchema = createInsertSchema(users).omit({
@@ -486,7 +530,8 @@ export const pageHeroes = pgTable("page_heroes", {
   title: varchar("title", { length: 255 }).notNull(),
   subtitle: text("subtitle"),
   description: text("description"),
-  backgroundImageUrl: text("background_image_url").notNull(),
+  backgroundImageUrl: text("background_image_url").notNull(), // Keep for backward compatibility
+  imageId: varchar("image_id", { length: 255 }).references(() => images.id), // New image reference
   ctaText: varchar("cta_text", { length: 100 }),
   ctaLink: varchar("cta_link", { length: 255 }),
   overlayOpacity: decimal("overlay_opacity", { precision: 3, scale: 2 }).default("0.50"), // 0-1 for background overlay darkness
@@ -532,6 +577,8 @@ export type Testimonial = typeof testimonials.$inferSelect;
 export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
 export type GalleryImage = typeof galleryImages.$inferSelect;
 export type InsertGalleryImage = z.infer<typeof insertGalleryImageSchema>;
+export type Image = typeof images.$inferSelect;
+export type InsertImage = z.infer<typeof insertImageSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type PageHero = typeof pageHeroes.$inferSelect;
