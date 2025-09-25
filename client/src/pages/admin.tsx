@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import AdminDashboard from "@/components/AdminDashboard";
+import { useAuth } from "@/lib/auth";
 import { 
   Users, 
   Calendar, 
@@ -12,13 +13,16 @@ import {
   Camera, 
   TrendingUp,
   Phone,
-  Mail
+  Mail,
+  LogOut,
+  User
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import type { Community, Post, Event, TourRequest, Faq, Gallery, Testimonial } from "@shared/schema";
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const { user, logout } = useAuth();
 
   // Fetch data for dashboard stats
   const { data: communities = [] } = useQuery<Community[]>({
@@ -72,13 +76,32 @@ export default function Admin() {
       {/* Header */}
       <header className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-6">
-            <h1 className="text-3xl font-bold text-foreground" data-testid="admin-title">
-              Stage Senior Admin
-            </h1>
-            <p className="text-muted-foreground mt-2" data-testid="admin-description">
-              Manage communities, content, and user inquiries
-            </p>
+          <div className="py-6 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground" data-testid="admin-title">
+                Stage Senior Admin
+              </h1>
+              <p className="text-muted-foreground mt-2" data-testid="admin-description">
+                Manage communities, content, and user inquiries
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-sm">
+                <User className="h-4 w-4 text-muted-foreground" />
+                <span className="text-foreground" data-testid="user-info">
+                  {user?.username || 'Admin'}
+                </span>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={logout}
+                data-testid="button-logout"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </header>

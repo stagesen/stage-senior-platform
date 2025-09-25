@@ -1,7 +1,7 @@
 // Client-side authentication hooks and context - referenced by javascript_auth_all_persistance integration
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { useNavigate } from "wouter";
-import { apiRequest, queryClient } from "@lib/queryClient";
+import { useLocation } from "wouter";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { User } from "@shared/schema";
 
 export interface AuthContextType {
@@ -17,7 +17,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     // Check if user is already logged in
@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await response.json();
       setUser(data);
       queryClient.invalidateQueries();
-      navigate("/admin");
+      setLocation("/admin");
     } else {
       const error = await response.json();
       throw new Error(error.message || "Login failed");
@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await response.json();
       setUser(data);
       queryClient.invalidateQueries();
-      navigate("/admin");
+      setLocation("/admin");
     } else {
       const error = await response.json();
       throw new Error(error.message || "Registration failed");
@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (response.ok) {
       setUser(null);
       queryClient.invalidateQueries();
-      navigate("/");
+      setLocation("/");
     }
   };
 
@@ -88,13 +88,13 @@ export function useAuth() {
 // Component to protect routes that require authentication
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { user, isLoading } = useAuth();
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     if (!isLoading && !user) {
-      navigate("/login");
+      setLocation("/login");
     }
-  }, [user, isLoading, navigate]);
+  }, [user, isLoading, setLocation]);
 
   if (isLoading) {
     return (
