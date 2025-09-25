@@ -154,7 +154,9 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     defaultValues: {
       question: "",
       answer: "",
+      answerHtml: "",
       category: "",
+      communityId: undefined,
       sortOrder: 0,
       active: true,
     },
@@ -1057,7 +1059,26 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   <FormItem>
                     <FormLabel>Answer</FormLabel>
                     <FormControl>
-                      <Textarea {...field} rows={6} data-testid="textarea-faq-answer" />
+                      <Textarea {...field} rows={4} data-testid="textarea-faq-answer" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={faqForm.control}
+                name="answerHtml"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Answer HTML (Optional)</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        {...field} 
+                        value={field.value || ""} 
+                        rows={4} 
+                        placeholder="Optional HTML formatted answer for rich text content" 
+                        data-testid="textarea-faq-answer-html" 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1082,15 +1103,18 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   name="communityId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Community (Optional)</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value || undefined}>
+                      <FormLabel>Community</FormLabel>
+                      <Select 
+                        onValueChange={(value) => field.onChange(value === "" ? undefined : value)} 
+                        value={field.value || ""}
+                      >
                         <FormControl>
                           <SelectTrigger data-testid="select-faq-community">
-                            <SelectValue placeholder="All communities" />
+                            <SelectValue placeholder="Select a community" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">All Communities</SelectItem>
+                          <SelectItem value="">General/All Communities</SelectItem>
                           {communities.map((community) => (
                             <SelectItem key={community.id} value={community.id}>
                               {community.name}
@@ -1103,6 +1127,25 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   )}
                 />
               </div>
+              <FormField
+                control={faqForm.control}
+                name="sortOrder"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sort Order</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        {...field} 
+                        value={field.value || 0} 
+                        onChange={(e) => field.onChange(Number(e.target.value))} 
+                        data-testid="input-faq-sort" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={faqForm.control}
                 name="active"
@@ -1950,6 +1993,75 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   </TableCell>
                   <TableCell>
                     {new Date(item.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleEdit(item)}
+                        data-testid={`button-edit-${item.id}`}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={() => handleDelete(item.id)}
+                        data-testid={`button-delete-${item.id}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      );
+    }
+
+    // FAQs table
+    if (type === "faqs") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Question</TableHead>
+              <TableHead>Community</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Sort Order</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: Faq) => {
+              const community = communities.find(c => c.id === item.communityId);
+              return (
+                <TableRow key={item.id} data-testid={`faq-row-${item.id}`}>
+                  <TableCell className="font-medium max-w-[300px]">
+                    <div className="space-y-1">
+                      <div className="font-semibold truncate">{item.question}</div>
+                      <div className="text-xs text-muted-foreground truncate">
+                        {item.answerHtml ? "Has HTML answer" : item.answer?.substring(0, 100)}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {community?.name || "General"}
+                  </TableCell>
+                  <TableCell>
+                    {item.category || "General"}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={item.active ? "default" : "secondary"}>
+                      {item.active ? "Active" : "Inactive"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {item.sortOrder || 0}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
