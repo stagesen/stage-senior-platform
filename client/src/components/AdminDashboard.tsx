@@ -31,21 +31,24 @@ import {
   insertEventSchema,
   insertFaqSchema,
   insertGallerySchema,
+  insertTestimonialSchema,
   type Community,
   type Post,
   type Event,
   type TourRequest,
   type Faq,
   type Gallery,
+  type Testimonial,
   type InsertCommunity,
   type InsertPost,
   type InsertEvent,
   type InsertFaq,
   type InsertGallery,
+  type InsertTestimonial,
 } from "@shared/schema";
 
 interface AdminDashboardProps {
-  type: "communities" | "posts" | "events" | "tours" | "faqs" | "galleries";
+  type: "communities" | "posts" | "events" | "tours" | "faqs" | "galleries" | "testimonials";
 }
 
 export default function AdminDashboard({ type }: AdminDashboardProps) {
@@ -134,6 +137,19 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     },
   });
 
+  const testimonialForm = useForm<InsertTestimonial>({
+    resolver: zodResolver(insertTestimonialSchema),
+    defaultValues: {
+      authorName: "",
+      authorRelation: "",
+      content: "",
+      rating: 5,
+      featured: false,
+      approved: true,
+      sortOrder: 0,
+    },
+  });
+
   // Get current form based on type
   const getCurrentForm = () => {
     switch (type) {
@@ -142,6 +158,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "events": return eventForm;
       case "faqs": return faqForm;
       case "galleries": return galleryForm;
+      case "testimonials": return testimonialForm;
       default: return communityForm;
     }
   };
@@ -714,6 +731,155 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
           </Form>
         );
 
+      case "testimonials":
+        return (
+          <Form {...testimonialForm}>
+            <form onSubmit={testimonialForm.handleSubmit(handleSubmit)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={testimonialForm.control}
+                  name="authorName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Author Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} data-testid="input-testimonial-author" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={testimonialForm.control}
+                  name="authorRelation"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Author Relation</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="e.g., Daughter, Son, Spouse" data-testid="input-testimonial-relation" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={testimonialForm.control}
+                name="communityId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Community</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value || undefined}>
+                      <FormControl>
+                        <SelectTrigger data-testid="select-testimonial-community">
+                          <SelectValue placeholder="Select a community" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {communities.map((community) => (
+                          <SelectItem key={community.id} value={community.id}>
+                            {community.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={testimonialForm.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Testimonial Content</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} rows={6} data-testid="textarea-testimonial-content" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-3 gap-4">
+                <FormField
+                  control={testimonialForm.control}
+                  name="rating"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Rating (1-5)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || 5} 
+                          onChange={(e) => field.onChange(Number(e.target.value))} 
+                          min="1" 
+                          max="5"
+                          data-testid="input-testimonial-rating" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={testimonialForm.control}
+                  name="sortOrder"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sort Order</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || 0} 
+                          onChange={(e) => field.onChange(Number(e.target.value))} 
+                          data-testid="input-testimonial-sort" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex items-center space-x-4">
+                <FormField
+                  control={testimonialForm.control}
+                  name="approved"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-testimonial-approved" />
+                      </FormControl>
+                      <FormLabel>Approved</FormLabel>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={testimonialForm.control}
+                  name="featured"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-testimonial-featured" />
+                      </FormControl>
+                      <FormLabel>Featured</FormLabel>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="button-submit">
+                  {editingItem ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        );
+
       default:
         return <div>Form not implemented for {type}</div>;
     }
@@ -863,6 +1029,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "tours": return "Tour Requests";
       case "faqs": return "FAQs";
       case "galleries": return "Galleries";
+      case "testimonials": return "Testimonials";
       default: return type;
     }
   };
