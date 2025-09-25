@@ -1000,17 +1000,17 @@ export default function CommunityDetail() {
                       </div>
                       <div className="flex-1">
                         <p className="text-lg italic leading-relaxed mb-4">
-                          "{testimonials[0].text}"
+                          "{testimonials[0].content}"
                         </p>
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
                             <span className="text-primary font-semibold text-lg">
-                              {testimonials[0].author?.charAt(0) || 'R'}
+                              {testimonials[0].authorName?.charAt(0) || 'R'}
                             </span>
                           </div>
                           <div>
-                            <p className="font-semibold">{testimonials[0].author}</p>
-                            <p className="text-sm text-gray-600">{testimonials[0].relationship}</p>
+                            <p className="font-semibold">{testimonials[0].authorName}</p>
+                            <p className="text-sm text-gray-600">{testimonials[0].authorRelation}</p>
                           </div>
                         </div>
                       </div>
