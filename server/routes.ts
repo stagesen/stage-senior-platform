@@ -422,8 +422,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Tour request routes
-  app.get("/api/tour-requests", async (req, res) => {
+  // Tour request routes - Protected because they contain PII
+  app.get("/api/tour-requests", requireAuth, async (req, res) => {
     try {
       const { communityId, status } = req.query;
       const filters: any = {};
@@ -541,8 +541,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Testimonial routes
-  app.get("/api/testimonials", async (req, res) => {
+  // Testimonial routes - Protected for admin review
+  app.get("/api/testimonials", requireAuth, async (req, res) => {
     try {
       const { communityId, featured, approved } = req.query;
       const filters: any = {};

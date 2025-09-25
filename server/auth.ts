@@ -30,8 +30,14 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
+  // Ensure SESSION_SECRET is set in production
+  const sessionSecret = process.env.SESSION_SECRET;
+  if (!sessionSecret && process.env.NODE_ENV === "production") {
+    throw new Error("SESSION_SECRET environment variable is required in production");
+  }
+
   const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET || randomBytes(32).toString("hex"),
+    secret: sessionSecret || randomBytes(32).toString("hex"),
     resave: false,
     saveUninitialized: false,
     store: storage.sessionStore,
@@ -80,6 +86,17 @@ export function setupAuth(app: Express) {
         return res.status(400).json({ message: "Username and password are required" });
       }
 
+      // Check if this is the first user (bootstrap scenario)
+      const userCount = await storage.getUserCount();
+      const isBootstrap = userCount === 0;
+
+      // After bootstrap, only authenticated admins can create new users
+      if (!isBootstrap && !req.isAuthenticated()) {
+        return res.status(403).json({ 
+          message: "Registration is restricted. Please contact an administrator." 
+        });
+      }
+
       const existingUser = await storage.getUserByUsername(username);
       if (existingUser) {
         return res.status(400).json({ message: "Username already exists" });
@@ -92,11 +109,17 @@ export function setupAuth(app: Express) {
         role: "admin",
       });
 
-      req.login(user, (err) => {
-        if (err) return next(err);
+      // Only auto-login during bootstrap
+      if (isBootstrap) {
+        req.login(user, (err) => {
+          if (err) return next(err);
+          const userWithoutPassword = { ...user, password: undefined };
+          res.status(201).json(userWithoutPassword);
+        });
+      } else {
         const userWithoutPassword = { ...user, password: undefined };
         res.status(201).json(userWithoutPassword);
-      });
+      }
     } catch (error) {
       next(error);
     }

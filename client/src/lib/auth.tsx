@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (username: string, password: string) => {
-    const response = await apiRequest("/api/login", "POST", { username, password });
+    const response = await apiRequest("POST", "/api/login", { username, password });
     if (response.ok) {
       const data = await response.json();
       setUser(data);
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (username: string, password: string, email?: string) => {
-    const response = await apiRequest("/api/register", "POST", { username, password, email });
+    const response = await apiRequest("POST", "/api/register", { username, password, email });
     if (response.ok) {
       const data = await response.json();
       setUser(data);
@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    const response = await apiRequest("/api/logout", "POST", {});
+    const response = await apiRequest("POST", "/api/logout", {});
     if (response.ok) {
       setUser(null);
       queryClient.invalidateQueries();

@@ -172,6 +172,7 @@ export interface IStorage {
   // User operations - referenced by javascript_auth_all_persistance integration
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserCount(): Promise<number>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<InsertUser>): Promise<User>;
   deleteUser(id: number): Promise<void>;
@@ -962,6 +963,13 @@ export class DatabaseStorage implements IStorage {
       .from(users)
       .where(eq(users.username, username));
     return user;
+  }
+
+  async getUserCount(): Promise<number> {
+    const [result] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(users);
+    return result?.count || 0;
   }
 
   async createUser(user: InsertUser): Promise<User> {
