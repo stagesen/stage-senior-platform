@@ -8,6 +8,7 @@ import {
   insertFaqSchema,
   insertGallerySchema,
   insertTourRequestSchema,
+  insertCallInteractionSchema,
   insertFloorPlanSchema,
   insertTestimonialSchema,
   insertGalleryImageSchema,
@@ -384,6 +385,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting tour request:", error);
       res.status(500).json({ message: "Failed to delete tour request" });
+    }
+  });
+
+  // Call interaction routes
+  app.get("/api/call-events", async (req, res) => {
+    try {
+      const { communityId } = req.query;
+      const callEvents = await storage.getCallInteractions({
+        communityId: communityId as string | undefined,
+      });
+      res.json(callEvents);
+    } catch (error) {
+      console.error("Error fetching call events:", error);
+      res.status(500).json({ message: "Failed to fetch call events" });
+    }
+  });
+
+  app.post("/api/call-events", async (req, res) => {
+    try {
+      const validatedData = insertCallInteractionSchema.parse(req.body);
+      const callEvent = await storage.createCallInteraction(validatedData);
+      res.status(201).json(callEvent);
+    } catch (error) {
+      console.error("Error logging call event:", error);
+      res.status(400).json({ message: "Failed to log call event" });
     }
   });
 

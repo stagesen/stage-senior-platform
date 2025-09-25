@@ -178,6 +178,15 @@ export const tourRequests = pgTable("tour_requests", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const callInteractions = pgTable("call_interactions", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  phoneNumber: varchar("phone_number", { length: 20 }).notNull(),
+  source: varchar("source", { length: 255 }).notNull(),
+  communityId: uuid("community_id").references(() => communities.id),
+  metadata: jsonb("metadata").$type<Record<string, unknown>>().default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const floorPlans = pgTable("floor_plans", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   communityId: uuid("community_id").references(() => communities.id),
@@ -394,6 +403,11 @@ export const insertTourRequestSchema = createInsertSchema(tourRequests).omit({
   updatedAt: true,
 });
 
+export const insertCallInteractionSchema = createInsertSchema(callInteractions).omit({
+  id: true,
+  createdAt: true,
+});
+
 export const insertFloorPlanSchema = createInsertSchema(floorPlans).omit({
   id: true,
   createdAt: true,
@@ -433,6 +447,8 @@ export type Gallery = typeof galleries.$inferSelect;
 export type InsertGallery = z.infer<typeof insertGallerySchema>;
 export type TourRequest = typeof tourRequests.$inferSelect;
 export type InsertTourRequest = z.infer<typeof insertTourRequestSchema>;
+export type CallInteraction = typeof callInteractions.$inferSelect;
+export type InsertCallInteraction = z.infer<typeof insertCallInteractionSchema>;
 export type FloorPlan = typeof floorPlans.$inferSelect;
 export type InsertFloorPlan = z.infer<typeof insertFloorPlanSchema>;
 export type Testimonial = typeof testimonials.$inferSelect;

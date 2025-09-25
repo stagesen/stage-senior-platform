@@ -5,8 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Home, Heart, Brain, Clock, Shield, Users, Star, Phone, Calendar, MapPin, CheckCircle } from "lucide-react";
+import { useBookingFlow } from "@/components/booking-flow";
 
 export default function Services() {
+  const { openBooking, trackCall } = useBookingFlow();
   useEffect(() => {
     document.title = "Our Services | Stage Senior";
     
@@ -312,17 +314,22 @@ export default function Services() {
             Schedule a consultation or tour today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" asChild data-testid="button-schedule-tour-cta">
-              <Link href="/communities">
-                <Calendar className="w-5 h-5 mr-2" />
-                Schedule a Tour
-              </Link>
+            <Button
+              size="lg"
+              data-testid="button-schedule-tour-cta"
+              onClick={() => openBooking({ source: "services-cta" })}
+            >
+              <Calendar className="w-5 h-5 mr-2" />
+              Schedule a Tour
             </Button>
-            <Button variant="outline" size="lg" asChild data-testid="button-call-now-cta">
-              <a href="tel:+1-303-436-2300">
-                <Phone className="w-5 h-5 mr-2" />
-                Call (303) 436-2300
-              </a>
+            <Button
+              variant="outline"
+              size="lg"
+              data-testid="button-call-now-cta"
+              onClick={() => trackCall({ source: "services-cta-call" })}
+            >
+              <Phone className="w-5 h-5 mr-2" />
+              Call (303) 436-2300
             </Button>
           </div>
           

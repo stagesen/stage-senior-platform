@@ -20,6 +20,7 @@ import ProfessionalManagement from "@/pages/services/management";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { BookingFlowProvider } from "@/components/booking-flow";
 
 function Router() {
   return (
@@ -54,8 +55,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Router />
+        <BookingFlowProvider>
+          <Toaster />
+          <Router />
+        </BookingFlowProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

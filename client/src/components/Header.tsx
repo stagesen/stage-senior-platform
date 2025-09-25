@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, Phone } from "lucide-react";
 import { useState } from "react";
+import { useBookingFlow } from "@/components/booking-flow";
 import {
   Sheet,
   SheetContent,
@@ -11,6 +12,7 @@ import logoUrl from "@assets/stagesenior-logo_1758726889154.webp";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const { openBooking, trackCall } = useBookingFlow();
 
   const navigation = [
     { name: "Communities", href: "/communities" },
@@ -49,14 +51,20 @@ export default function Header() {
           
           <div className="flex items-center space-x-4">
             <Button
-              asChild
+              variant="outline"
+              className="hidden md:inline-flex"
+              onClick={() => openBooking({ source: "header-secondary" })}
+              data-testid="button-book-tour"
+            >
+              Book a Tour
+            </Button>
+            <Button
               className="bg-primary text-primary-foreground hover:bg-primary/90"
               data-testid="button-call"
+              onClick={() => trackCall({ source: "header-call" })}
             >
-              <a href="tel:+1-303-436-2300">
-                <Phone className="w-4 h-4 mr-2" />
-                Call Now
-              </a>
+              <Phone className="w-4 h-4 mr-2" />
+              Call Now
             </Button>
             
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -78,6 +86,23 @@ export default function Header() {
                       {item.name}
                     </Link>
                   ))}
+                  <Button
+                    className="mt-6"
+                    onClick={() => {
+                      setIsOpen(false);
+                      openBooking({ source: "header-mobile" });
+                    }}
+                    data-testid="button-mobile-book-tour"
+                  >
+                    Book a Tour
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => trackCall({ source: "header-mobile-call" })}
+                    data-testid="button-mobile-call"
+                  >
+                    Call Now
+                  </Button>
                 </nav>
               </SheetContent>
             </Sheet>

@@ -8,6 +8,7 @@ import {
   floorPlans,
   testimonials,
   galleryImages,
+  callInteractions,
   careTypes,
   communitiesCareTypes,
   amenities,
@@ -24,6 +25,8 @@ import {
   type InsertGallery,
   type TourRequest,
   type InsertTourRequest,
+  type CallInteraction,
+  type InsertCallInteraction,
   type FloorPlan,
   type InsertFloorPlan,
   type Testimonial,
@@ -104,6 +107,12 @@ export interface IStorage {
   createTourRequest(tourRequest: InsertTourRequest): Promise<TourRequest>;
   updateTourRequest(id: string, tourRequest: Partial<InsertTourRequest>): Promise<TourRequest>;
   deleteTourRequest(id: string): Promise<void>;
+
+  // Call interaction operations
+  getCallInteractions(filters?: {
+    communityId?: string;
+  }): Promise<CallInteraction[]>;
+  createCallInteraction(interaction: InsertCallInteraction): Promise<CallInteraction>;
 
   // Floor plan operations
   getFloorPlans(filters?: {
@@ -633,6 +642,24 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTourRequest(id: string): Promise<void> {
     await db.delete(tourRequests).where(eq(tourRequests.id, id));
+  }
+
+  async getCallInteractions(filters?: { communityId?: string; }): Promise<CallInteraction[]> {
+    let query = db.select().from(callInteractions);
+
+    if (filters?.communityId) {
+      query = query.where(eq(callInteractions.communityId, filters.communityId));
+    }
+
+    return await query.orderBy(desc(callInteractions.createdAt));
+  }
+
+  async createCallInteraction(interaction: InsertCallInteraction): Promise<CallInteraction> {
+    const [created] = await db
+      .insert(callInteractions)
+      .values(interaction)
+      .returning();
+    return created;
   }
 
   // Floor plan operations

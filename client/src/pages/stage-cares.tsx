@@ -5,8 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Heart, BookOpen, Users, Shield, Star, Sparkles, Phone, Calendar, MapPin, CheckCircle, Quote } from "lucide-react";
+import { useBookingFlow } from "@/components/booking-flow";
 
 export default function StageCares() {
+  const { openBooking, trackCall } = useBookingFlow();
   useEffect(() => {
     document.title = "Stage Cares | Stage Senior";
     
@@ -375,17 +377,22 @@ export default function StageCares() {
             a meaningful, personalized care experience for your loved one.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" asChild data-testid="button-schedule-consultation">
-              <Link href="/communities">
-                <Calendar className="w-5 h-5 mr-2" />
-                Schedule a Consultation
-              </Link>
+            <Button
+              size="lg"
+              data-testid="button-schedule-consultation"
+              onClick={() => openBooking({ source: "stage-cares-cta" })}
+            >
+              <Calendar className="w-5 h-5 mr-2" />
+              Schedule a Consultation
             </Button>
-            <Button variant="outline" size="lg" asChild data-testid="button-call-now">
-              <a href="tel:+1-303-436-2300">
-                <Phone className="w-5 h-5 mr-2" />
-                Call (303) 436-2300
-              </a>
+            <Button
+              variant="outline"
+              size="lg"
+              data-testid="button-call-now"
+              onClick={() => trackCall({ source: "stage-cares-cta-call" })}
+            >
+              <Phone className="w-5 h-5 mr-2" />
+              Call (303) 436-2300
             </Button>
           </div>
           
