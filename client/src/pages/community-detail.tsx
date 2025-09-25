@@ -264,6 +264,52 @@ export default function CommunityDetail() {
 
   const heroLogoAlt = (community as any)?.logoAlt || `${community?.name || 'Community'} logo`;
 
+  // WCAG contrast calculation for better accessibility
+  const getContrastRatio = (color1: string, color2: string) => {
+    const getLuminance = (hex: string) => {
+      const rgb = parseInt(hex.slice(1), 16);
+      const r = ((rgb >> 16) & 0xff) / 255;
+      const g = ((rgb >> 8) & 0xff) / 255;
+      const b = (rgb & 0xff) / 255;
+      
+      const sRGB = [r, g, b].map(c => 
+        c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
+      );
+      
+      return 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2];
+    };
+    
+    const l1 = getLuminance(color1);
+    const l2 = getLuminance(color2);
+    const lighter = Math.max(l1, l2);
+    const darker = Math.min(l1, l2);
+    
+    return (lighter + 0.05) / (darker + 0.05);
+  };
+
+  const getAccessibleTextColor = (bgColor: string) => {
+    if (!bgColor || !bgColor.match(/^#[0-9a-fA-F]{6}$/)) return '#ffffff';
+    
+    const whiteContrast = getContrastRatio(bgColor, '#ffffff');
+    const blackContrast = getContrastRatio(bgColor, '#000000');
+    
+    // Use WCAG AA standard (4.5:1 ratio)
+    return whiteContrast >= blackContrast ? '#ffffff' : '#000000';
+  };
+
+  // Memoize community styles to avoid recreation on each render
+  const communityStyles = useMemo(() => {
+    const mainColor = (community as any)?.mainColorHex || '#2563eb';
+    const ctaColor = (community as any)?.ctaColorHex || '#f59e0b';
+    
+    return {
+      '--community-main': mainColor,
+      '--community-cta': ctaColor,
+      '--community-main-text': getAccessibleTextColor(mainColor),
+      '--community-cta-text': getAccessibleTextColor(ctaColor),
+    } as React.CSSProperties;
+  }, [(community as any)?.mainColorHex, (community as any)?.ctaColorHex]);
+
   // Early returns after all hooks
   if (communityLoading) {
     return (
@@ -310,53 +356,6 @@ export default function CommunityDetail() {
       </div>
     );
   }
-
-
-  // WCAG contrast calculation for better accessibility
-  const getContrastRatio = (color1: string, color2: string) => {
-    const getLuminance = (hex: string) => {
-      const rgb = parseInt(hex.slice(1), 16);
-      const r = ((rgb >> 16) & 0xff) / 255;
-      const g = ((rgb >> 8) & 0xff) / 255;
-      const b = (rgb & 0xff) / 255;
-      
-      const sRGB = [r, g, b].map(c => 
-        c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
-      );
-      
-      return 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2];
-    };
-    
-    const l1 = getLuminance(color1);
-    const l2 = getLuminance(color2);
-    const lighter = Math.max(l1, l2);
-    const darker = Math.min(l1, l2);
-    
-    return (lighter + 0.05) / (darker + 0.05);
-  };
-
-  const getAccessibleTextColor = (bgColor: string) => {
-    if (!bgColor || !bgColor.match(/^#[0-9a-fA-F]{6}$/)) return '#ffffff';
-    
-    const whiteContrast = getContrastRatio(bgColor, '#ffffff');
-    const blackContrast = getContrastRatio(bgColor, '#000000');
-    
-    // Use WCAG AA standard (4.5:1 ratio)
-    return whiteContrast >= blackContrast ? '#ffffff' : '#000000';
-  };
-
-  // Memoize community styles to avoid recreation on each render
-  const communityStyles = useMemo(() => {
-    const mainColor = (community as any).mainColorHex || '#2563eb';
-    const ctaColor = (community as any).ctaColorHex || '#f59e0b';
-    
-    return {
-      '--community-main': mainColor,
-      '--community-cta': ctaColor,
-      '--community-main-text': getAccessibleTextColor(mainColor),
-      '--community-cta-text': getAccessibleTextColor(ctaColor),
-    } as React.CSSProperties;
-  }, [(community as any)?.mainColorHex, (community as any)?.ctaColorHex]);
 
   return (
     <div className="min-h-screen bg-white" style={communityStyles}>
