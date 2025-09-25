@@ -16,8 +16,12 @@ export default function Blog() {
   const params = useParams();
   const postSlug = params.slug;
   
+  // Read community filter from URL parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  const communityParam = urlParams.get('community');
+  
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCommunity, setSelectedCommunity] = useState("all");
+  const [selectedCommunity, setSelectedCommunity] = useState(communityParam || "all");
   const [selectedTag, setSelectedTag] = useState("all");
 
   const { data: communities = [] } = useQuery<Community[]>({

@@ -937,7 +937,7 @@ export default function CommunityDetail() {
                   </Badge>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {blogPosts.slice(0, 6).map((post) => (
+                  {blogPosts.slice(0, 3).map((post) => (
                     <Card key={post.id} className="group hover:shadow-2xl transition-all duration-300 border-0 overflow-hidden bg-white" data-testid={`blog-post-${post.id}`}>
                       <div className="relative">
                         {(post.mainImage || post.thumbnailImage) ? (
@@ -1004,7 +1004,7 @@ export default function CommunityDetail() {
                     </Card>
                   ))}
                 </div>
-                {blogPosts.length > 6 && (
+                {blogPosts.length > 3 && (
                   <div className="text-center mt-10">
                     <Button
                       variant="outline"
@@ -1013,7 +1013,7 @@ export default function CommunityDetail() {
                       asChild
                       data-testid="button-view-all-posts"
                     >
-                      <Link href="/blog">
+                      <Link href={`/blog?community=${community.id}`}>
                         <BookOpen className="w-4 h-4 mr-2" />
                         Explore All {blogPosts.length} Stories
                         <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
