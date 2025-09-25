@@ -86,6 +86,7 @@ The platform includes a comprehensive admin interface for content management:
 - **FAQ System**: Categorized frequently asked questions with search capabilities
 - **Gallery Management**: Image galleries with lightbox functionality
 - **Tour Requests**: Lead management system for potential residents
+- **Page Heroes**: Dynamic hero sections with background images for all major pages (/about-us, /blog, /services, /services/management, /stage-cares, /communities, /care-points, /events) manageable through admin dashboard
 
 ## External Dependencies
 
