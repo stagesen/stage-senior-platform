@@ -57,7 +57,8 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 // Helper function for formatting prices
 const formatPrice = (price: number | undefined | null): string => {
-  if (!price) return '$0';
+  if (price === null || price === undefined) return 'Contact for pricing';
+  if (price === 0) return '$0'; // Handle actual zero price
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -302,7 +303,7 @@ const FeatureSection = ({
         <h3 className="text-3xl font-bold mb-4">{title}</h3>
         <p className="text-lg text-gray-600 mb-6 leading-relaxed">{body}</p>
         {cta && (
-          <Button variant="outline" size="lg" asChild>
+          <Button variant="outline" size="lg" asChild data-testid={`button-feature-${title.toLowerCase().replace(/\s+/g, '-')}`}>
             <Link href={cta.href}>
               {cta.label}
               <ArrowRight className="w-4 h-4 ml-2" />
@@ -334,12 +335,18 @@ const ActionPanel = ({ community }: { community: any }) => {
             <CardHeader className="bg-primary/5">
               <CardDescription>Monthly rentals start at</CardDescription>
               <CardTitle className="text-3xl" data-testid="pricing-amount">
-                {formatPrice(community.startingPrice)}<span className="text-lg font-normal">/mo*</span>
+                {community.startingPrice !== null && community.startingPrice !== undefined ? (
+                  <>{formatPrice(community.startingPrice)}<span className="text-lg font-normal">/mo*</span></>
+                ) : (
+                  formatPrice(community.startingPrice)
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
               <p className="text-sm text-gray-600">
-                *Pricing varies by care level and apartment type.
+                {community.startingPrice !== null && community.startingPrice !== undefined
+                  ? '*Pricing varies by care level and apartment type.'
+                  : 'Contact us for personalized pricing information.'}
               </p>
               <div className="space-y-2">
                 <div className="flex items-center text-sm">
@@ -664,11 +671,7 @@ export default function CommunityDetail() {
     };
   }, [navSections]);
 
-  // Helper functions
-  const formatPrice = (price: number | null) => {
-    if (!price) return "Contact for pricing";
-    return `$${price.toLocaleString()}`;
-  };
+  // Helper functions - formatPrice is defined at the top of the file
 
   const getAmenityIcon = (amenity: string) => {
     const amenityLower = amenity.toLowerCase();
@@ -1207,93 +1210,54 @@ export default function CommunityDetail() {
       {/* Full-width sections after amenities */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 space-y-16">
         
-        {/* Features Highlights Section */}
-        <section id="features" className="scroll-mt-32">
-          <h2 className="text-3xl font-bold mb-8">Experience the Difference</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* Extraordinary Dining */}
-                <Card className="overflow-hidden hover:shadow-xl transition-shadow group" data-testid="feature-extraordinary-dining">
-                  <div className="relative h-64 overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1577308856961-1d3371de3c2b?q=80&w=800&auto=format&fit=crop"
-                      alt="Extraordinary dining experience featuring seniors enjoying nutritious, homestyle cuisine in a beautiful dining room"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      data-testid="feature-dining-image"
-                    />
-                  </div>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-3" data-testid="feature-dining-title">
-                      Extraordinary Dining
-                    </h3>
-                    <p className="text-gray-600 mb-4 leading-relaxed" data-testid="feature-dining-description">
-                      There's no need to worry about cooking. You can dine on nutritious, homestyle cuisine in our beautiful dining room—complete with great conversation.
-                    </p>
-                    <Button variant="outline" className="w-full" data-testid="button-sample-menu">
-                      Sample Menu
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* Engaging Lifestyle */}
-                <Card className="overflow-hidden hover:shadow-xl transition-shadow group" data-testid="feature-engaging-lifestyle">
-                  <div className="relative h-64 overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop"
-                      alt="Engaging lifestyle activities featuring seniors staying active, getting creative, and learning new skills"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      data-testid="feature-lifestyle-image"
-                    />
-                  </div>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-3" data-testid="feature-lifestyle-title">
-                      Engaging Lifestyle
-                    </h3>
-                    <p className="text-gray-600 mb-4 leading-relaxed" data-testid="feature-lifestyle-description">
-                      From staying active to getting creative to learning new skills, we offer a diverse variety of ways for you to pursue your hobbies and interests.
-                    </p>
-                    <Button variant="outline" className="w-full" asChild data-testid="button-engagement-calendar">
-                      <Link href={`/events?community=${community.slug || community.id}`}>
-                        Engagement Calendar
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* Ideal Location */}
-                <Card className="overflow-hidden hover:shadow-xl transition-shadow group" data-testid="feature-ideal-location">
-                  <div className="relative h-64 overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800&auto=format&fit=crop"
-                      alt="Seniors enjoying ideal location lifestyle with access to golf courses, local eateries, and parks"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      data-testid="feature-location-image"
-                    />
-                  </div>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-3" data-testid="feature-location-title">
-                      Ideal Location
-                    </h3>
-                    <p className="text-gray-600 mb-4 leading-relaxed" data-testid="feature-location-description">
-                      You can easily enjoy the area with nearby attractions, dining options, and recreational activities perfectly suited for an active lifestyle.
-                    </p>
-                    <Button variant="outline" className="w-full" asChild data-testid="button-map-directions">
-                      <a 
-                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-                          community.address || `${community.city}, ${community.state} ${community.zipCode}`
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Map and Directions
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </a>
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </section>
+        {/* Experience the Difference - Feature Sections */}
+        <section id="features" className="scroll-mt-32 space-y-20">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">Experience the Difference</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Discover a community where every detail is designed for your comfort, enjoyment, and well-being.
+            </p>
+          </div>
+          
+          <FeatureSection
+            eyebrow="Fine Dining"
+            title="Extraordinary Dining Experience"
+            body="There's no need to worry about cooking. You can dine on nutritious, homestyle cuisine in our beautiful dining room—complete with great conversation. Our professional chefs prepare fresh, locally-sourced meals daily, with menus designed by nutritionists to meet your dietary needs."
+            imageUrl="https://images.unsplash.com/photo-1577308856961-1d3371de3c2b?q=80&w=800&auto=format&fit=crop"
+            imageAlt="Extraordinary dining experience featuring seniors enjoying nutritious, homestyle cuisine in a beautiful dining room"
+            cta={{ label: "View Sample Menu", href: "#menu" }}
+            imageLeft={false}
+          />
+          
+          <FeatureSection
+            eyebrow="Active Living"
+            title="Engaging Lifestyle Programs"
+            body="From staying active to getting creative to learning new skills, we offer a diverse variety of ways for you to pursue your hobbies and interests. Our activities director creates a monthly calendar filled with fitness classes, art workshops, educational seminars, and social events tailored to your preferences."
+            imageUrl="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop"
+            imageAlt="Engaging lifestyle activities featuring seniors staying active, getting creative, and learning new skills"
+            cta={{ label: "View Engagement Calendar", href: `/events?community=${community.slug || community.id}` }}
+            imageLeft={true}
+          />
+          
+          <FeatureSection
+            eyebrow="Prime Location"
+            title="Ideal Location & Neighborhood"
+            body="You can easily enjoy the area with nearby attractions, dining options, and recreational activities perfectly suited for an active lifestyle. Our community is conveniently located near medical facilities, shopping centers, parks, and cultural destinations, keeping you connected to everything you love."
+            imageUrl="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800&auto=format&fit=crop"
+            imageAlt="Seniors enjoying ideal location lifestyle with access to golf courses, local eateries, and parks"
+            cta={{ label: "Get Directions", href: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(community.address || `${community.city}, ${community.state} ${community.zipCode}`)}` }}
+            imageLeft={false}
+          />
+          
+          <FeatureSection
+            eyebrow="Personalized Care"
+            title="24/7 Professional Care Team"
+            body="Rest assured knowing our dedicated team of licensed nurses and certified caregivers is available around the clock. We provide personalized care plans tailored to your unique needs, from medication management to assistance with daily activities, all while preserving your independence and dignity."
+            imageUrl="https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=800&auto=format&fit=crop"
+            imageAlt="Professional care team assisting seniors with compassion and expertise"
+            imageLeft={true}
+          />
+        </section>
 
             {/* Floor Plans Section */}
             {floorPlans.length > 0 && (
@@ -1302,65 +1266,14 @@ export default function CommunityDetail() {
                 <p className="text-lg text-gray-600 mb-8">
                   Each apartment home is designed for comfort and independence, with modern conveniences and thoughtful layouts.
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {floorPlans.slice(0, 4).map((floorPlan) => (
-                    <Card 
-                      key={floorPlan.id} 
-                      className="overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group" 
-                      onClick={() => {
-                        setSelectedFloorPlan(floorPlan);
-                        setIsFloorPlanModalOpen(true);
-                      }}
-                      data-testid={`floor-plan-${floorPlan.id}`}
-                    >
-                      {floorPlan.imageUrl && (
-                        <div className="relative h-48 bg-gray-100">
-                          <img
-                            src={floorPlan.imageUrl}
-                            alt={`${floorPlan.name} floor plan`}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            data-testid={`floor-plan-image-${floorPlan.id}`}
-                          />
-                        </div>
-                      )}
-                      <CardContent className="p-6">
-                        <h4 className="text-xl font-semibold mb-2" data-testid={`floor-plan-name-${floorPlan.id}`}>
-                          {floorPlan.name}
-                        </h4>
-                        {floorPlan.startingPrice && (
-                          <p className="text-2xl font-bold text-primary mb-4" data-testid={`floor-plan-price-${floorPlan.id}`}>
-                            {formatPrice(floorPlan.startingPrice)}<span className="text-base font-normal">/mo</span>
-                          </p>
-                        )}
-                        <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                          {floorPlan.bedrooms !== null && (
-                            <span className="flex items-center gap-1" data-testid={`floor-plan-bedrooms-${floorPlan.id}`}>
-                              <Bed className="w-4 h-4" />
-                              {floorPlan.bedrooms} {floorPlan.bedrooms === 1 ? 'Bed' : 'Beds'}
-                            </span>
-                          )}
-                          {floorPlan.bathrooms !== null && (
-                            <span className="flex items-center gap-1" data-testid={`floor-plan-bathrooms-${floorPlan.id}`}>
-                              <Bath className="w-4 h-4" />
-                              {Number(floorPlan.bathrooms)} {Number(floorPlan.bathrooms) === 1 ? 'Bath' : 'Baths'}
-                            </span>
-                          )}
-                          {floorPlan.squareFeet && (
-                            <span className="flex items-center gap-1" data-testid={`floor-plan-sqft-${floorPlan.id}`}>
-                              <Square className="w-4 h-4" />
-                              {floorPlan.squareFeet} sq ft
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center text-primary group-hover:translate-x-2 transition-transform">
-                          <span className="text-sm font-medium">View Details</span>
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-                {floorPlans.length > 4 && (
+                <FloorPlansGrid 
+                  plans={floorPlans} 
+                  onOpen={(plan) => {
+                    setSelectedFloorPlan(plan);
+                    setIsFloorPlanModalOpen(true);
+                  }}
+                />
+                {floorPlans.length > 8 && (
                   <div className="text-center mt-8">
                     <Button variant="outline" size="lg" data-testid="button-view-all-floor-plans">
                       View All {floorPlans.length} Floor Plans
@@ -1392,51 +1305,10 @@ export default function CommunityDetail() {
                 <p className="text-lg text-gray-600 mb-8">
                   Explore our bright, comfortable spaces and serene outdoor areas through our community gallery.
                 </p>
-
-                {/* Category Filters */}
-                {galleryCategories.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-8">
-                    <Button
-                      variant={selectedGalleryCategory === null ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedGalleryCategory(null)}
-                      data-testid="gallery-filter-all"
-                    >
-                      All Photos
-                    </Button>
-                    {galleryCategories.map((category) => (
-                      <Button
-                        key={category}
-                        variant={selectedGalleryCategory === category ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setSelectedGalleryCategory(category)}
-                        data-testid={`gallery-filter-${category}`}
-                      >
-                        {category}
-                      </Button>
-                    ))}
-                  </div>
-                )}
-
-                {/* Gallery Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {galleryImages
-                    .filter(img => !selectedGalleryCategory || img.category === selectedGalleryCategory)
-                    .slice(0, 9)
-                    .map((image) => (
-                      <div 
-                        key={image.id} 
-                        className="group cursor-pointer aspect-video rounded-lg overflow-hidden"
-                        data-testid={`gallery-image-${image.id}`}
-                      >
-                        <img
-                          src={image.url}
-                          alt={image.caption || `${community.name} gallery`}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                        />
-                      </div>
-                    ))}
-                </div>
+                <GalleryOverview 
+                  images={galleryImages}
+                  onCategorySelect={setSelectedGalleryCategory}
+                />
               </section>
             )}
 
@@ -1468,39 +1340,7 @@ export default function CommunityDetail() {
             {testimonials.length > 0 && (
               <section id="testimonials" className="scroll-mt-32">
                 <h2 className="text-3xl font-bold mb-8">What Residents & Families Say</h2>
-                <div className="space-y-6">
-                  {testimonials.slice(0, 3).map((testimonial) => (
-                    <Card key={testimonial.id} className="border-l-4 border-l-primary" data-testid={`testimonial-${testimonial.id}`}>
-                      <CardContent className="p-8">
-                        <blockquote className="text-lg text-gray-700 italic mb-6" data-testid={`testimonial-content-${testimonial.id}`}>
-                          "{testimonial.content}"
-                        </blockquote>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-semibold text-gray-900" data-testid={`testimonial-author-${testimonial.id}`}>
-                              {testimonial.authorName}
-                            </p>
-                            {testimonial.authorRelation && (
-                              <p className="text-sm text-gray-600" data-testid={`testimonial-relation-${testimonial.id}`}>
-                                {testimonial.authorRelation}
-                              </p>
-                            )}
-                          </div>
-                          {testimonial.rating && (
-                            <div className="flex items-center gap-1" data-testid={`testimonial-rating-${testimonial.id}`}>
-                              {Array.from({ length: 5 }).map((_, i) => (
-                                <Star 
-                                  key={i} 
-                                  className={`w-5 h-5 ${i < (testimonial.rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
-                                />
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                <TestimonialsCarousel testimonials={testimonials} />
               </section>
             )}
 
@@ -1732,194 +1572,11 @@ export default function CommunityDetail() {
               </div>
             </section>
 
-        {/* White Card CTA Section */}
-        <section className="py-16 mt-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="shadow-2xl border-0 bg-white">
-            <CardContent className="p-8 md:p-12 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">
-                Ready to Experience {community.name}?
-              </h2>
-              <p className="text-xl mb-8 text-gray-600">
-                Join our community of residents who are living their best life. Schedule a personalized tour today.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  size="lg" 
-                  className="text-lg shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-3xl"
-                  style={{
-                    backgroundColor: 'var(--community-cta)',
-                    color: 'var(--community-cta-text)',
-                    borderColor: 'var(--community-cta)',
-                    boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-                  }}
-                  data-testid="button-schedule-tour-cta"
-                >
-                  <Calendar className="w-5 h-5 mr-2" />
-                  Schedule Your Tour
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  className="text-lg shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl border-gray-300 hover:bg-gray-50"
-                  data-testid="button-call-cta"
-                  asChild
-                >
-                  <a href={`tel:${community.phone || '+1-303-436-2300'}`}>
-                    <Phone className="w-5 h-5 mr-2" />
-                    Call {community.phone || "(303) 436-2300"}
-                  </a>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        </section>
-          </div>
+            {/* Action Panel - Contact, Pricing, and Resources */}
+            <ActionPanel community={community} />
 
-          {/* Sticky Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="lg:sticky lg:top-32 space-y-6">
-              {/* Pricing Card */}
-              <Card className="shadow-lg border-2 border-primary/20">
-                <CardHeader className="bg-primary/5">
-                  <CardDescription>Monthly rentals start at</CardDescription>
-                  <CardTitle className="text-3xl" data-testid="pricing-amount">
-                    {formatPrice(community.startingPrice)}<span className="text-lg font-normal">/mo*</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 space-y-4">
-                  <p className="text-sm text-gray-600">
-                    *Pricing varies by care level and apartment type. Contact us for personalized pricing.
-                  </p>
-                  <Separator />
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm">
-                      <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                      <span>No buy-in fees</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                      <span>Month-to-month rental</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                      <span>All utilities included</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Schedule Tour Card */}
-              <Card className="shadow-lg">
-                <CardHeader>
-                  <CardTitle>Schedule Your Visit</CardTitle>
-                  <CardDescription>
-                    Tour our community and meet our caring team
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Input 
-                    placeholder="Your Name" 
-                    data-testid="input-tour-name"
-                  />
-                  <Input 
-                    placeholder="Phone Number" 
-                    type="tel"
-                    data-testid="input-tour-phone"
-                  />
-                  <Input 
-                    placeholder="Email Address" 
-                    type="email"
-                    data-testid="input-tour-email"
-                  />
-                  <Button 
-                    className="w-full shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-2xl hover:scale-105" 
-                    size="lg"
-                    style={{
-                      backgroundColor: 'var(--community-cta)',
-                      color: 'var(--community-cta-text)',
-                      borderColor: 'var(--community-cta)',
-                      boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                    }}
-                    data-testid="button-schedule-tour"
-                  >
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Schedule Tour
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Contact Card */}
-              <Card className="shadow-lg">
-                <CardHeader>
-                  <CardTitle>Contact Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start" 
-                    asChild
-                    data-testid="button-call"
-                  >
-                    <a href={`tel:${community.phone || '+1-303-436-2300'}`}>
-                      <Phone className="w-4 h-4 mr-3" />
-                      {community.phone || "(303) 436-2300"}
-                    </a>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start" 
-                    asChild
-                    data-testid="button-email"
-                  >
-                    <a href={`mailto:${community.email || 'info@stagesenior.com'}`}>
-                      <Mail className="w-4 h-4 mr-3" />
-                      Email Us
-                    </a>
-                  </Button>
-                  <Separator />
-                  <div className="space-y-2">
-                    <div className="flex items-start gap-3">
-                      <MapPin className="w-4 h-4 text-muted-foreground mt-1" />
-                      <div className="text-sm">
-                        <p className="font-medium">Address</p>
-                        <p className="text-muted-foreground">
-                          {community.address}<br />
-                          {community.city}, {community.state} {community.zipCode}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <Clock className="w-4 h-4 text-muted-foreground mt-1" />
-                      <div className="text-sm">
-                        <p className="font-medium">Office Hours</p>
-                        <p className="text-muted-foreground">
-                          Mon-Fri: 9:00 AM - 6:00 PM<br />
-                          Sat-Sun: 10:00 AM - 5:00 PM
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Download Brochure */}
-              <Card className="shadow-lg bg-primary/5 border-primary/20">
-                <CardContent className="p-6 text-center">
-                  <Download className="w-10 h-10 text-primary mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Community Brochure</h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Get detailed information about our community, floor plans, and services
-                  </p>
-                  <Button variant="outline" className="w-full" data-testid="button-download-brochure">
-                    <Download className="w-4 h-4 mr-2" />
-                    Download PDF
-                  </Button>
-                </CardContent>
-              </Card>
-
-            </div>
+            {/* Enhanced Bottom CTA */}
+            <EnhancedBottomCTA community={community} />
           </div>
       
       {/* Floor Plan Modal */}
