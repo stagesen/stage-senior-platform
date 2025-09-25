@@ -479,6 +479,30 @@ export const insertUserSchema = createInsertSchema(users).omit({
   email: z.string().email("Please enter a valid email address").optional().or(z.literal("")),
 });
 
+// Page heroes table for managing hero sections across pages
+export const pageHeroes = pgTable("page_heroes", {
+  id: varchar("id", { length: 255 }).primaryKey().default(sql`gen_random_uuid()`),
+  pagePath: varchar("page_path", { length: 255 }).notNull().unique(), // e.g., '/communities', '/care-points'
+  title: varchar("title", { length: 255 }).notNull(),
+  subtitle: text("subtitle"),
+  description: text("description"),
+  backgroundImageUrl: text("background_image_url").notNull(),
+  ctaText: varchar("cta_text", { length: 100 }),
+  ctaLink: varchar("cta_link", { length: 255 }),
+  overlayOpacity: real("overlay_opacity").default(0.5), // 0-1 for background overlay darkness
+  textAlignment: varchar("text_alignment", { length: 20 }).default("center"), // left, center, right
+  active: boolean("active").default(true),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertPageHeroSchema = createInsertSchema(pageHeroes).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type CareType = typeof careTypes.$inferSelect;
 export type InsertCareType = z.infer<typeof insertCareTypeSchema>;
@@ -510,3 +534,5 @@ export type GalleryImage = typeof galleryImages.$inferSelect;
 export type InsertGalleryImage = z.infer<typeof insertGalleryImageSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
+export type PageHero = typeof pageHeroes.$inferSelect;
+export type InsertPageHero = z.infer<typeof insertPageHeroSchema>;

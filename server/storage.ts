@@ -39,6 +39,9 @@ import {
   type Amenity,
   type User,
   type InsertUser,
+  pageHeroes,
+  type PageHero,
+  type InsertPageHero,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm";
@@ -179,6 +182,16 @@ export interface IStorage {
 
   // Session store - referenced by javascript_auth_all_persistance integration
   sessionStore: session.Store;
+
+  // Page hero operations
+  getPageHeroes(filters?: {
+    active?: boolean;
+  }): Promise<PageHero[]>;
+  getPageHero(pagePath: string): Promise<PageHero | undefined>;
+  getPageHeroById(id: string): Promise<PageHero | undefined>;
+  createPageHero(pageHero: InsertPageHero): Promise<PageHero>;
+  updatePageHero(id: string, pageHero: Partial<InsertPageHero>): Promise<PageHero>;
+  deletePageHero(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1002,6 +1015,56 @@ export class DatabaseStorage implements IStorage {
       pool,
       createTableIfMissing: true 
     });
+  }
+
+  // Page hero operations
+  async getPageHeroes(filters?: {
+    active?: boolean;
+  }): Promise<PageHero[]> {
+    let query = db.select().from(pageHeroes);
+    
+    if (filters?.active !== undefined) {
+      query = query.where(eq(pageHeroes.active, filters.active));
+    }
+    
+    return await query.orderBy(asc(pageHeroes.sortOrder), asc(pageHeroes.pagePath));
+  }
+
+  async getPageHero(pagePath: string): Promise<PageHero | undefined> {
+    const [pageHero] = await db
+      .select()
+      .from(pageHeroes)
+      .where(eq(pageHeroes.pagePath, pagePath));
+    return pageHero;
+  }
+
+  async getPageHeroById(id: string): Promise<PageHero | undefined> {
+    const [pageHero] = await db
+      .select()
+      .from(pageHeroes)
+      .where(eq(pageHeroes.id, id));
+    return pageHero;
+  }
+
+  async createPageHero(pageHero: InsertPageHero): Promise<PageHero> {
+    const [created] = await db
+      .insert(pageHeroes)
+      .values(pageHero)
+      .returning();
+    return created;
+  }
+
+  async updatePageHero(id: string, pageHero: Partial<InsertPageHero>): Promise<PageHero> {
+    const [updated] = await db
+      .update(pageHeroes)
+      .set(pageHero)
+      .where(eq(pageHeroes.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deletePageHero(id: string): Promise<void> {
+    await db.delete(pageHeroes).where(eq(pageHeroes.id, id));
   }
 }
 
