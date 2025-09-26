@@ -157,7 +157,7 @@ export interface IStorage {
   deleteTestimonial(id: string): Promise<void>;
 
   // Gallery image operations
-  getGalleryImages(filters?: {
+  getFilteredGalleryImages(filters?: {
     communityId?: string;
     category?: string;
     featured?: boolean;
@@ -887,7 +887,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Gallery image operations
-  async getGalleryImages(filters?: {
+  async getFilteredGalleryImages(filters?: {
     communityId?: string;
     category?: string;
     featured?: boolean;

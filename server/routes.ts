@@ -638,7 +638,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         filters.active = active === 'true';
       }
       
-      const galleryImages = await storage.getGalleryImages(filters);
+      const galleryImages = await storage.getFilteredGalleryImages(filters);
       res.json(galleryImages);
     } catch (error) {
       console.error("Error fetching gallery images:", error);
