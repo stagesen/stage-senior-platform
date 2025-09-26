@@ -209,7 +209,7 @@ export default function Home() {
                 {hero.subtitle}
               </p>
             )}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white drop-shadow-md" data-testid="hero-title">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-white drop-shadow-md" data-testid="hero-title">
               {hero.title}
             </h1>
             {hero.description && (

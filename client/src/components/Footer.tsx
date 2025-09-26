@@ -31,10 +31,10 @@ export default function Footer() {
           <div className="flex justify-center mb-4">
             <Heart className="w-8 h-8 text-background/90" />
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold text-background mb-6" data-testid="newsletter-title">
+          <h2 className="text-2xl font-bold text-background mb-6" data-testid="newsletter-title">
             Stay Connected with Our Community
           </h2>
-          <p className="text-background/95 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed" data-testid="newsletter-description">
+          <p className="text-background/95 text-lg mb-10 max-w-2xl mx-auto leading-relaxed" data-testid="newsletter-description">
             Get the latest updates on events, wellness tips, and community news delivered to your inbox.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
@@ -80,11 +80,11 @@ export default function Footer() {
               {/* Stats */}
               <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="text-center p-5 bg-gradient-to-br from-background/10 to-background/5 rounded-xl border border-background/10 hover:border-primary/30 transition-all duration-300">
-                  <div className="text-3xl font-bold text-primary mb-2">9+</div>
+                  <div className="text-2xl font-bold text-primary mb-2">9+</div>
                   <div className="text-background/80 text-sm font-medium">Years Serving</div>
                 </div>
                 <div className="text-center p-5 bg-gradient-to-br from-background/10 to-background/5 rounded-xl border border-background/10 hover:border-primary/30 transition-all duration-300">
-                  <div className="text-3xl font-bold text-primary mb-2">4</div>
+                  <div className="text-2xl font-bold text-primary mb-2">4</div>
                   <div className="text-background/80 text-sm font-medium">Communities</div>
                 </div>
               </div>
@@ -240,11 +240,11 @@ export default function Footer() {
             
             {/* Copyright and ASHA */}
             <div className="flex flex-col sm:flex-row items-center gap-6">
-              <div className="text-background/60 text-sm text-center sm:text-left" data-testid="footer-copyright">
+              <div className="text-background/60 text-xs text-center sm:text-left" data-testid="footer-copyright">
                 © {new Date().getFullYear()} Stage Management, LLC. All Rights Reserved.
               </div>
               <div className="flex items-center gap-4">
-                <span className="text-background/60 text-sm">Proud member of</span>
+                <span className="text-background/60 text-xs">Proud member of</span>
                 <a 
                   href="https://ashaliving.org/" 
                   target="_blank" 

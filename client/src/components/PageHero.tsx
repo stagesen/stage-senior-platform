@@ -105,7 +105,7 @@ export function PageHero({
         >
           {title && (
             <h1
-              className="text-5xl md:text-6xl font-bold text-white"
+              className="text-4xl md:text-5xl font-bold text-white"
               data-testid={`hero-title-${pagePath.replace(/\//g, "-") || "home"}`}
             >
               {title}
@@ -114,7 +114,7 @@ export function PageHero({
           
           {subtitle && (
             <h2
-              className="text-2xl md:text-3xl text-white/90"
+              className="text-lg md:text-xl text-white/90"
               data-testid={`hero-subtitle-${pagePath.replace(/\//g, "-") || "home"}`}
             >
               {subtitle}
