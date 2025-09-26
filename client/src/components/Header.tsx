@@ -36,8 +36,8 @@ export default function Header() {
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 ease-in-out ${
         isScrolled 
-          ? 'bg-card/95 backdrop-blur-md border-b border-border shadow-lg shadow-black/5 dark:shadow-white/5'
-          : 'bg-card border-b border-border'
+          ? 'bg-background/98 backdrop-blur-sm border-b border-border shadow-lg shadow-black/5 dark:shadow-white/5'
+          : 'bg-background border-b border-border'
       }`} data-testid="header">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`flex justify-between items-center transition-all duration-300 ease-in-out ${
