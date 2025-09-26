@@ -90,6 +90,7 @@ The platform includes a comprehensive admin interface for content management:
 - **Floor Plans**: Complete floor plan management with image uploads, pricing, and availability tracking
 - **Testimonials**: Customer testimonials with community associations
 - **Community Highlights**: Dynamic highlight cards for each community with customizable titles, descriptions, and images, replacing hardcoded content
+- **Experience the Difference Features**: Customizable feature sections for each community with eyebrow text, titles, descriptions, images, CTAs, and layout options, fully manageable through admin dashboard
 
 ### Image Management System
 The platform features a comprehensive image management system integrated with Replit's object storage:
