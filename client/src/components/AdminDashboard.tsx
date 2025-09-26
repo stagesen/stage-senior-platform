@@ -937,6 +937,9 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       phone: "", // Backward compatibility
       email: "",
       heroImageUrl: "",
+      logoImageId: "",
+      contactImageId: "",
+      brochureImageId: "",
       overview: "",
       description: "",
       shortDescription: "",
@@ -1661,6 +1664,60 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         value={field.value || undefined}
                         onChange={field.onChange}
                         label="Upload hero image for the community"
+                        maxSize={10 * 1024 * 1024}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
+                name="logoImageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Community Logo</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload logo image for the community"
+                        maxSize={10 * 1024 * 1024}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
+                name="contactImageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contact Card Image</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload image for the contact card section"
+                        maxSize={10 * 1024 * 1024}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
+                name="brochureImageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Brochure Card Image</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload image for the brochure card section"
                         maxSize={10 * 1024 * 1024}
                       />
                     </FormControl>
