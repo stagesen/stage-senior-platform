@@ -983,12 +983,11 @@ export default function CommunityDetail() {
     setActiveSection(sectionId);
   };
 
+  // Resolve the logo image from logoImageId
+  const resolvedLogoUrl = useResolveImageUrl(community?.logoImageId);
+  
   // Hero logo overlay functionality
-  const heroLogoSrc =
-    (community as any)?.logoImageUrl ||
-    (community as any)?.logoUrl ||
-    stageSeniorLogo;
-
+  const heroLogoSrc = resolvedLogoUrl || (community as any)?.logoUrl || (community as any)?.logoImageUrl || stageSeniorLogo;
   const heroLogoAlt = (community as any)?.logoAlt || `${community?.name || 'Community'} logo`;
 
   // WCAG contrast calculation for better accessibility
