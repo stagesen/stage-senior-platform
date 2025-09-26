@@ -60,7 +60,7 @@ export const uploadMultiple = multer({
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit per file
   },
-}).array("images", 10); // Max 10 images at once
+}).array("images", 20); // Max 20 images at once
 
 // Generate unique filename
 function generateUniqueFilename(originalFilename: string): string {
@@ -251,7 +251,7 @@ export function handleUploadError(
     }
     if (error.code === "LIMIT_FILE_COUNT") {
       return res.status(400).json({ 
-        message: "Too many files. Maximum is 10 files at once." 
+        message: "Too many files. Maximum is 20 files at once." 
       });
     }
     return res.status(400).json({ 

@@ -201,6 +201,7 @@ export interface IStorage {
   getImage(id: string): Promise<Image | null>;
   getImages(): Promise<Image[]>;
   deleteImage(id: string): Promise<void>;
+  checkImageReferences(imageId: string): Promise<Array<{ table: string; count: number }>>;
   createGalleryImage(galleryImage: InsertGalleryImage): Promise<GalleryImage>;
   getGalleryImages(galleryId: string): Promise<GalleryImage[]>;
   deleteGalleryImage(id: string): Promise<void>;
@@ -1101,6 +1102,66 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(images)
       .orderBy(desc(images.createdAt));
+  }
+
+  async checkImageReferences(imageId: string): Promise<Array<{ table: string; count: number }>> {
+    const references: Array<{ table: string; count: number }> = [];
+
+    // Check communities table
+    const [communitiesCount] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(communities)
+      .where(eq(communities.imageId, imageId));
+    if (communitiesCount.count > 0) {
+      references.push({ table: "communities", count: communitiesCount.count });
+    }
+
+    // Check posts table
+    const [postsCount] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(posts)
+      .where(eq(posts.imageId, imageId));
+    if (postsCount.count > 0) {
+      references.push({ table: "posts", count: postsCount.count });
+    }
+
+    // Check events table
+    const [eventsCount] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(events)
+      .where(eq(events.imageId, imageId));
+    if (eventsCount.count > 0) {
+      references.push({ table: "events", count: eventsCount.count });
+    }
+
+    // Check floor_plans table
+    const [floorPlansCount] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(floorPlans)
+      .where(eq(floorPlans.imageId, imageId));
+    if (floorPlansCount.count > 0) {
+      references.push({ table: "floor_plans", count: floorPlansCount.count });
+    }
+
+    // Check page_heroes table
+    const [pageHeroesCount] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(pageHeroes)
+      .where(eq(pageHeroes.imageId, imageId));
+    if (pageHeroesCount.count > 0) {
+      references.push({ table: "page_heroes", count: pageHeroesCount.count });
+    }
+
+    // Check gallery_images table
+    const [galleryImagesCount] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(galleryImages)
+      .where(eq(galleryImages.imageId, imageId));
+    if (galleryImagesCount.count > 0) {
+      references.push({ table: "gallery_images", count: galleryImagesCount.count });
+    }
+
+    return references;
   }
 
   async deleteImage(id: string): Promise<void> {

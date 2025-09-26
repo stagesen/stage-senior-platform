@@ -857,6 +857,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Image not found" });
       }
 
+      // Check if image is referenced by any entities
+      const imageId = req.params.id;
+      const references = await storage.checkImageReferences(imageId);
+      
+      if (references.length > 0) {
+        // Image is in use, return 409 Conflict
+        const referencedTables = references.map(ref => ref.table).join(", ");
+        return res.status(409).json({ 
+          message: `Cannot delete image. It is currently referenced by: ${referencedTables}. Please update or remove these references before deleting the image.`,
+          references: references
+        });
+      }
+
       // Delete from object storage
       await deleteFromObjectStorage(image.objectKey);
       
