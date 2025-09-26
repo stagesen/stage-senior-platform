@@ -62,6 +62,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isFetchingImages, setIsFetchingImages] = useState(false);
+  const [galleryImages, setGalleryImages] = useState<any[]>([]);
+  const [isLoadingGalleryImages, setIsLoadingGalleryImages] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -374,15 +376,19 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       }
     }
     
-    // For galleries, ensure images field is properly set
+    // For galleries, ensure images field is properly set and fetch gallery images
     if (type === "galleries") {
+      setEditingItem(item);
+      setIsLoadingGalleryImages(true);
+      
+      // First, reset the form with existing data
       const galleryData = {
         title: item.title || "",
         gallerySlug: item.gallerySlug || "",
         communityId: item.communityId || undefined,
         description: item.description || "",
-        // Keep images as objects for backend compatibility
-        images: item.images || [],
+        // Start with empty images, will be populated from API
+        images: [],
         tags: item.tags || [],
         category: item.category || "",
         hero: item.hero || false,
@@ -390,8 +396,48 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
         active: item.active !== false,
         thumbnailIndex: item.thumbnailIndex || null
       };
-      setEditingItem(item);
       galleryForm.reset(galleryData);
+      
+      // Fetch gallery images from the gallery_images table
+      if (item.id) {
+        fetch(`/api/galleries/${item.id}/images`, {
+          credentials: 'include'
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Failed to fetch gallery images');
+          })
+          .then(images => {
+            setGalleryImages(images);
+            // Set the images in the form
+            const imageUrls = images.map((img: any) => ({
+              url: img.imageUrl || img.url,
+              alt: img.alt || '',
+              caption: img.caption || ''
+            }));
+            galleryForm.setValue('images', imageUrls);
+          })
+          .catch(error => {
+            console.error('Error fetching gallery images:', error);
+            toast({
+              title: "Error",
+              description: "Failed to fetch gallery images",
+              variant: "destructive",
+            });
+            // Fallback to the original images if they exist
+            if (item.images) {
+              galleryForm.setValue('images', item.images);
+            }
+          })
+          .finally(() => {
+            setIsLoadingGalleryImages(false);
+          });
+      } else {
+        setIsLoadingGalleryImages(false);
+      }
+      
       setIsDialogOpen(true);
       return;
     }
@@ -410,6 +456,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   const openCreateDialog = () => {
     setEditingItem(null);
     getCurrentForm().reset();
+    setGalleryImages([]);
     setIsDialogOpen(true);
   };
 
@@ -1748,6 +1795,70 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Gallery Images</FormLabel>
+                    {isLoadingGalleryImages ? (
+                      <p className="text-sm text-muted-foreground">Loading existing images...</p>
+                    ) : editingItem && galleryImages.length > 0 ? (
+                      <div className="mb-4">
+                        <h4 className="text-sm font-medium mb-2">Existing Gallery Images ({galleryImages.length})</h4>
+                        <div className="grid grid-cols-4 gap-4">
+                          {galleryImages.map((image: any, index: number) => (
+                            <div key={image.id} className="relative group">
+                              <img 
+                                src={image.imageUrl || image.url} 
+                                alt={image.alt || `Gallery image ${index + 1}`}
+                                className="w-full h-24 object-cover rounded-md border"
+                              />
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="destructive"
+                                className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={async () => {
+                                  if (confirm('Are you sure you want to remove this image from the gallery?')) {
+                                    try {
+                                      const response = await apiRequest(
+                                        'DELETE',
+                                        `/api/galleries/${editingItem.id}/images/${image.id}`
+                                      );
+                                      
+                                      // Remove from local state
+                                      setGalleryImages(galleryImages.filter(img => img.id !== image.id));
+                                      
+                                      // Update form value
+                                      const currentImages = galleryForm.getValues('images') || [];
+                                      const updatedImages = currentImages.filter(
+                                        (img: any) => (img.url || img) !== (image.imageUrl || image.url)
+                                      );
+                                      galleryForm.setValue('images', updatedImages);
+                                      
+                                      toast({
+                                        title: "Success",
+                                        description: "Image removed from gallery",
+                                      });
+                                    } catch (error) {
+                                      console.error('Error deleting gallery image:', error);
+                                      toast({
+                                        title: "Error",
+                                        description: "Failed to remove image from gallery",
+                                        variant: "destructive",
+                                      });
+                                    }
+                                  }
+                                }}
+                                data-testid={`button-delete-gallery-image-${image.id}`}
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                              {image.sortOrder !== undefined && (
+                                <div className="absolute bottom-1 left-1 bg-black/50 text-white text-xs px-1 rounded">
+                                  #{image.sortOrder + 1}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
                     <FormControl>
                       <ImageUploader
                         value={field.value ? (Array.isArray(field.value) && field.value.length > 0 && typeof field.value[0] === 'object' ? field.value.map((img: any) => img.url || img) : field.value) : []}

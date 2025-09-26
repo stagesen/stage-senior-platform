@@ -431,6 +431,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get gallery images by gallery ID
+  app.get("/api/galleries/:galleryId/images", async (req, res) => {
+    try {
+      const images = await storage.getGalleryImagesByGalleryId(req.params.galleryId);
+      res.json(images);
+    } catch (error) {
+      console.error("Error fetching gallery images:", error);
+      res.status(500).json({ message: "Failed to fetch gallery images" });
+    }
+  });
+
+  // Delete a specific image from a gallery
+  app.delete("/api/galleries/:galleryId/images/:imageId", requireAuth, async (req, res) => {
+    try {
+      await storage.deleteGalleryImage(req.params.imageId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting gallery image:", error);
+      res.status(500).json({ message: "Failed to delete gallery image" });
+    }
+  });
+
   // Tour request routes - Protected because they contain PII
   app.get("/api/tour-requests", requireAuth, async (req, res) => {
     try {

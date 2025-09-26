@@ -202,9 +202,7 @@ export interface IStorage {
   getImages(): Promise<Image[]>;
   deleteImage(id: string): Promise<void>;
   checkImageReferences(imageId: string): Promise<Array<{ table: string; count: number }>>;
-  createGalleryImage(galleryImage: InsertGalleryImage): Promise<GalleryImage>;
-  getGalleryImages(galleryId: string): Promise<GalleryImage[]>;
-  deleteGalleryImage(id: string): Promise<void>;
+  getGalleryImagesByGalleryId(galleryId: string): Promise<GalleryImage[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1168,24 +1166,12 @@ export class DatabaseStorage implements IStorage {
     await db.delete(images).where(eq(images.id, id));
   }
 
-  async createGalleryImage(galleryImage: InsertGalleryImage): Promise<GalleryImage> {
-    const [created] = await db
-      .insert(galleryImages)
-      .values(galleryImage)
-      .returning();
-    return created;
-  }
-
-  async getGalleryImages(galleryId: string): Promise<GalleryImage[]> {
+  async getGalleryImagesByGalleryId(galleryId: string): Promise<GalleryImage[]> {
     return await db
       .select()
       .from(galleryImages)
       .where(eq(galleryImages.galleryId, galleryId))
       .orderBy(asc(galleryImages.sortOrder));
-  }
-
-  async deleteGalleryImage(id: string): Promise<void> {
-    await db.delete(galleryImages).where(eq(galleryImages.id, id));
   }
 }
 
