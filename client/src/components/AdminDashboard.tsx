@@ -61,6 +61,7 @@ interface AdminDashboardProps {
 export default function AdminDashboard({ type }: AdminDashboardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
+  const [isFetchingImages, setIsFetchingImages] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -1726,9 +1727,50 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     <FormControl>
                       <ImageUploader
                         value={field.value?.map(img => img.url) || []}
-                        onChange={(imageIds) => {
-                          if (Array.isArray(imageIds)) {
-                            field.onChange(imageIds.map(id => ({ url: id, alt: '', caption: '' })));
+                        onChange={async (imageIds) => {
+                          if (Array.isArray(imageIds) && imageIds.length > 0) {
+                            setIsFetchingImages(true);
+                            try {
+                              // Fetch image details for each ID
+                              const imagePromises = imageIds.map(id => 
+                                fetch(`/api/images/${id}`, { 
+                                  credentials: 'include',
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                  }
+                                }).then(r => {
+                                  if (!r.ok) throw new Error(`Failed to fetch image ${id}`);
+                                  return r.json();
+                                })
+                              );
+                              
+                              const images = await Promise.all(imagePromises);
+                              
+                              // Map to the gallery images format with proper URLs and metadata
+                              field.onChange(images.map((img: any) => ({
+                                url: img.url || img.secureUrl || '',
+                                alt: img.alt || img.originalName || '',
+                                caption: '',
+                                width: img.width || undefined,
+                                height: img.height || undefined
+                              })));
+                              
+                            } catch (error) {
+                              console.error('Error fetching image details:', error);
+                              toast({
+                                title: "Error fetching images",
+                                description: "Failed to load image details. Please try again.",
+                                variant: "destructive",
+                              });
+                              // Fallback: store just the IDs as URLs (better than nothing)
+                              field.onChange(imageIds.map(id => ({ 
+                                url: id, 
+                                alt: '', 
+                                caption: '' 
+                              })));
+                            } finally {
+                              setIsFetchingImages(false);
+                            }
                           } else {
                             field.onChange([]);
                           }
@@ -1737,8 +1779,14 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         label="Upload images for the gallery"
                         maxSize={10 * 1024 * 1024}
                         maxFiles={20}
+                        disabled={isFetchingImages}
                       />
                     </FormControl>
+                    {isFetchingImages && (
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Loading image details...
+                      </p>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}
