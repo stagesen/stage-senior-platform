@@ -35,7 +35,8 @@ import {
   Download,
   Filter,
   Search,
-  FileText
+  FileText,
+  ArrowRight
 } from "lucide-react";
 import { format } from "date-fns";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
@@ -53,9 +54,12 @@ import {
   insertAmenitySchema,
   insertTourRequestSchema,
   insertCommunityHighlightSchema,
+  insertCommunityFeatureSchema,
   type Community,
   type CommunityHighlight,
   type InsertCommunityHighlight,
+  type CommunityFeature,
+  type InsertCommunityFeature,
   type Post,
   type BlogPost,
   type Event,
@@ -888,6 +892,9 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   const [selectedCareTypes, setSelectedCareTypes] = useState<string[]>([]);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [selectedCommunityForHighlights, setSelectedCommunityForHighlights] = useState<string | null>(null);
+  const [selectedCommunityForFeatures, setSelectedCommunityForFeatures] = useState<string | null>(null);
+  const [isFeaturesDialogOpen, setIsFeaturesDialogOpen] = useState(false);
+  const [editingFeature, setEditingFeature] = useState<CommunityFeature | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -4253,6 +4260,18 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     </Button>
                     <Button 
                       size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedCommunityForFeatures(item.id);
+                        setIsFeaturesDialogOpen(true);
+                      }}
+                      data-testid={`button-manage-features-${item.id}`}
+                    >
+                      <Settings className="w-4 h-4 mr-1" />
+                      Features
+                    </Button>
+                    <Button 
+                      size="sm" 
                       variant="destructive" 
                       onClick={() => handleDelete(item.id)}
                       data-testid={`button-delete-${item.id}`}
@@ -5176,43 +5195,505 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle data-testid={`${type}-title`}>{getTitle()}</CardTitle>
-          {type !== "tours" && (
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button onClick={openCreateDialog} data-testid={`button-add-${type}`}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add {type.slice(0, -1)}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle data-testid={`dialog-title-${type}`}>
-                    {editingItem ? "Edit" : "Create"} {type.slice(0, -1)}
-                  </DialogTitle>
-                </DialogHeader>
-                {renderForm()}
-              </DialogContent>
-            </Dialog>
+    <>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle data-testid={`${type}-title`}>{getTitle()}</CardTitle>
+            {type !== "tours" && (
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button onClick={openCreateDialog} data-testid={`button-add-${type}`}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add {type.slice(0, -1)}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle data-testid={`dialog-title-${type}`}>
+                      {editingItem ? "Edit" : "Create"} {type.slice(0, -1)}
+                    </DialogTitle>
+                  </DialogHeader>
+                  {renderForm()}
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="text-center py-8" data-testid={`${type}-loading`}>
+              Loading...
+            </div>
+          ) : items.length > 0 ? (
+            renderTable()
+          ) : (
+            <div className="text-center py-8 text-muted-foreground" data-testid={`${type}-empty`}>
+              No {type} found. Create your first one to get started.
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Community Features Management Dialog */}
+      {type === "communities" && (
+        <CommunityFeaturesDialog
+          isOpen={isFeaturesDialogOpen}
+          onClose={() => {
+            setIsFeaturesDialogOpen(false);
+            setEditingFeature(null);
+          }}
+          communityId={selectedCommunityForFeatures}
+          communities={communities}
+        />
+      )}
+    </>
+  );
+}
+
+// Community Features Management Dialog Component
+function CommunityFeaturesDialog({ isOpen, onClose, communityId, communities }: {
+  isOpen: boolean;
+  onClose: () => void;
+  communityId: string | null;
+  communities: Community[];
+}) {
+  const [editingFeature, setEditingFeature] = useState<CommunityFeature | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  const community = communities.find(c => c.id === communityId);
+  
+  // Fetch features for the selected community
+  const { data: features = [], isLoading } = useQuery<CommunityFeature[]>({
+    queryKey: [`/api/communities/${communityId}/features`],
+    enabled: !!communityId && isOpen,
+  });
+  
+  // Form for creating/editing features
+  const featureForm = useForm<InsertCommunityFeature>({
+    resolver: zodResolver(insertCommunityFeatureSchema),
+    defaultValues: {
+      communityId: communityId || "",
+      eyebrow: "",
+      title: "",
+      body: "",
+      imageId: null,
+      imageAlt: "",
+      ctaLabel: "",
+      ctaHref: "",
+      imageLeft: false,
+      sortOrder: 0,
+      active: true,
+    },
+  });
+  
+  // Create mutation
+  const createMutation = useMutation({
+    mutationFn: async (data: InsertCommunityFeature) => {
+      const response = await apiRequest("POST", `/api/community-features`, data);
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/communities/${communityId}/features`] });
+      setIsFormOpen(false);
+      featureForm.reset();
+      toast({
+        title: "Success",
+        description: "Feature created successfully.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to create feature",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Update mutation
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<InsertCommunityFeature> }) => {
+      const response = await apiRequest("PUT", `/api/community-features/${id}`, data);
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/communities/${communityId}/features`] });
+      setIsFormOpen(false);
+      setEditingFeature(null);
+      featureForm.reset();
+      toast({
+        title: "Success",
+        description: "Feature updated successfully.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update feature",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await apiRequest("DELETE", `/api/community-features/${id}`);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/communities/${communityId}/features`] });
+      toast({
+        title: "Success",
+        description: "Feature deleted successfully.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete feature",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  const handleSubmit = (data: InsertCommunityFeature) => {
+    if (editingFeature) {
+      updateMutation.mutate({ id: editingFeature.id, data });
+    } else {
+      createMutation.mutate(data);
+    }
+  };
+  
+  const handleEdit = (feature: CommunityFeature) => {
+    setEditingFeature(feature);
+    featureForm.reset({
+      communityId: feature.communityId,
+      eyebrow: feature.eyebrow || "",
+      title: feature.title,
+      body: feature.body,
+      imageId: feature.imageId,
+      imageAlt: feature.imageAlt || "",
+      ctaLabel: feature.ctaLabel || "",
+      ctaHref: feature.ctaHref || "",
+      imageLeft: feature.imageLeft,
+      sortOrder: feature.sortOrder,
+      active: feature.active,
+    });
+    setIsFormOpen(true);
+  };
+  
+  const handleDelete = (id: string) => {
+    if (confirm("Are you sure you want to delete this feature?")) {
+      deleteMutation.mutate(id);
+    }
+  };
+  
+  const moveFeature = async (index: number, direction: 'up' | 'down') => {
+    const newFeatures = [...features];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    
+    if (targetIndex >= 0 && targetIndex < features.length) {
+      // Swap features
+      [newFeatures[index], newFeatures[targetIndex]] = [newFeatures[targetIndex], newFeatures[index]];
+      
+      // Update sort orders
+      const updates = newFeatures.map((feature, idx) => 
+        updateMutation.mutateAsync({ id: feature.id, data: { sortOrder: idx } })
+      );
+      
+      await Promise.all(updates);
+    }
+  };
+  
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>
+            Manage Experience Features - {community?.name}
+          </DialogTitle>
+        </DialogHeader>
+        
+        <div className="space-y-6">
+          {/* Add/Edit Feature Form */}
+          {isFormOpen ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>{editingFeature ? "Edit" : "Add"} Feature</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Form {...featureForm}>
+                  <form onSubmit={featureForm.handleSubmit(handleSubmit)} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={featureForm.control}
+                        name="eyebrow"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Eyebrow (Category)</FormLabel>
+                            <FormControl>
+                              <Input {...field} value={field.value || ""} placeholder="e.g., Fine Dining" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={featureForm.control}
+                        name="title"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Title *</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="Feature title" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    <FormField
+                      control={featureForm.control}
+                      name="body"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description *</FormLabel>
+                          <FormControl>
+                            <Textarea {...field} rows={4} placeholder="Feature description" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={featureForm.control}
+                        name="imageId"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Feature Image</FormLabel>
+                            <FormControl>
+                              <ImageUploader
+                                value={field.value || ""}
+                                onChange={(imageId) => field.onChange(imageId)}
+                                onRemove={() => field.onChange(null)}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={featureForm.control}
+                        name="imageAlt"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Image Alt Text</FormLabel>
+                            <FormControl>
+                              <Input {...field} value={field.value || ""} placeholder="Description for accessibility" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={featureForm.control}
+                        name="ctaLabel"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>CTA Button Label</FormLabel>
+                            <FormControl>
+                              <Input {...field} value={field.value || ""} placeholder="e.g., Learn More" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={featureForm.control}
+                        name="ctaHref"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>CTA Button Link</FormLabel>
+                            <FormControl>
+                              <Input {...field} value={field.value || ""} placeholder="e.g., /events" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-4">
+                      <FormField
+                        control={featureForm.control}
+                        name="imageLeft"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center space-x-2">
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormLabel className="!mt-0">Image on Left</FormLabel>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={featureForm.control}
+                        name="sortOrder"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Sort Order</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="number" onChange={(e) => field.onChange(parseInt(e.target.value))} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={featureForm.control}
+                        name="active"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center space-x-2">
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormLabel className="!mt-0">Active</FormLabel>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setIsFormOpen(false);
+                          setEditingFeature(null);
+                          featureForm.reset();
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                        {createMutation.isPending || updateMutation.isPending ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          editingFeature ? "Update Feature" : "Create Feature"
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+          ) : (
+            <Button onClick={() => setIsFormOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add New Feature
+            </Button>
+          )}
+          
+          {/* Features List */}
+          {isLoading ? (
+            <div className="text-center py-8">Loading features...</div>
+          ) : features.length > 0 ? (
+            <div className="space-y-4">
+              {features.map((feature, index) => (
+                <Card key={feature.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 space-y-2">
+                        {feature.eyebrow && (
+                          <Badge variant="outline">{feature.eyebrow}</Badge>
+                        )}
+                        <h3 className="font-semibold text-lg">{feature.title}</h3>
+                        <p className="text-sm text-muted-foreground line-clamp-2">{feature.body}</p>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <span>Order: {feature.sortOrder}</span>
+                          <span>Image: {feature.imageLeft ? "Left" : "Right"}</span>
+                          {feature.ctaLabel && <span>CTA: {feature.ctaLabel}</span>}
+                          <Badge variant={feature.active ? "default" : "secondary"}>
+                            {feature.active ? "Active" : "Inactive"}
+                          </Badge>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-1 ml-4">
+                        {index > 0 && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => moveFeature(index, 'up')}
+                          >
+                            <ChevronUp className="w-4 h-4" />
+                          </Button>
+                        )}
+                        {index < features.length - 1 && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => moveFeature(index, 'down')}
+                          >
+                            <ChevronDown className="w-4 h-4" />
+                          </Button>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleEdit(feature)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleDelete(feature.id)}
+                          className="text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="text-center py-8">
+                <p className="text-muted-foreground">No features yet. Add your first feature to get started.</p>
+              </CardContent>
+            </Card>
           )}
         </div>
-      </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <div className="text-center py-8" data-testid={`${type}-loading`}>
-            Loading...
-          </div>
-        ) : items.length > 0 ? (
-          renderTable()
-        ) : (
-          <div className="text-center py-8 text-muted-foreground" data-testid={`${type}-empty`}>
-            No {type} found. Create your first one to get started.
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      </DialogContent>
+    </Dialog>
   );
 }

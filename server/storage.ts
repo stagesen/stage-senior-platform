@@ -15,6 +15,7 @@ import {
   amenities,
   communitiesAmenities,
   communityHighlights,
+  communityFeatures,
   users,
   images,
   type Community,
@@ -37,6 +38,8 @@ import {
   type InsertTestimonial,
   type CommunityHighlight,
   type InsertCommunityHighlight,
+  type CommunityFeature,
+  type InsertCommunityFeature,
   type GalleryImage,
   type InsertGalleryImage,
   type GalleryImageWithDetails,
@@ -194,6 +197,13 @@ export interface IStorage {
   createCommunityHighlight(highlight: InsertCommunityHighlight): Promise<CommunityHighlight>;
   updateCommunityHighlight(id: string, highlight: Partial<InsertCommunityHighlight>): Promise<CommunityHighlight>;
   deleteCommunityHighlight(id: string): Promise<void>;
+
+  // Community features operations
+  getCommunityFeatures(communityId: string): Promise<CommunityFeature[]>;
+  getCommunityFeature(id: string): Promise<CommunityFeature | undefined>;
+  createCommunityFeature(feature: InsertCommunityFeature): Promise<CommunityFeature>;
+  updateCommunityFeature(id: string, feature: Partial<InsertCommunityFeature>): Promise<CommunityFeature>;
+  deleteCommunityFeature(id: string): Promise<void>;
 
   // Gallery image operations
   getFilteredGalleryImages(filters?: {
@@ -995,6 +1005,53 @@ export class DatabaseStorage implements IStorage {
 
   async deleteCommunityHighlight(id: string): Promise<void> {
     await db.delete(communityHighlights).where(eq(communityHighlights.id, id));
+  }
+
+  // Community features operations
+  async getCommunityFeatures(communityId: string): Promise<CommunityFeature[]> {
+    const features = await db
+      .select()
+      .from(communityFeatures)
+      .where(
+        and(
+          eq(communityFeatures.communityId, communityId),
+          eq(communityFeatures.active, true)
+        )
+      )
+      .orderBy(asc(communityFeatures.sortOrder));
+    return features;
+  }
+
+  async getCommunityFeature(id: string): Promise<CommunityFeature | undefined> {
+    const [feature] = await db
+      .select()
+      .from(communityFeatures)
+      .where(eq(communityFeatures.id, id));
+    return feature;
+  }
+
+  async createCommunityFeature(feature: InsertCommunityFeature): Promise<CommunityFeature> {
+    const [created] = await db
+      .insert(communityFeatures)
+      .values(feature)
+      .returning();
+    return created;
+  }
+
+  async updateCommunityFeature(id: string, feature: Partial<InsertCommunityFeature>): Promise<CommunityFeature> {
+    const [updated] = await db
+      .update(communityFeatures)
+      .set({
+        ...feature,
+        updatedAt: new Date()
+      })
+      .where(eq(communityFeatures.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteCommunityFeature(id: string): Promise<void> {
+    await db.delete(communityFeatures).where(eq(communityFeatures.id, id));
   }
 
   // Gallery image operations

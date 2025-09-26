@@ -415,6 +415,8 @@ const FeatureSection = ({
   cta?: { label: string; href: string; };
   imageLeft?: boolean;
 }) => {
+  const resolvedImageUrl = useResolveImageUrl(imageUrl);
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
       <div className={`${imageLeft ? 'md:order-2' : ''}`}>
@@ -437,13 +439,107 @@ const FeatureSection = ({
       <div className={`${imageLeft ? 'md:order-1' : ''}`}>
         <AspectRatio ratio={4/3}>
           <img
-            src={imageUrl}
+            src={resolvedImageUrl || imageUrl}
             alt={imageAlt}
             className="w-full h-full object-cover rounded-2xl shadow-xl"
           />
         </AspectRatio>
       </div>
     </div>
+  );
+};
+
+// Component to fetch and display community features
+const CommunityFeatures = ({ community }: { community: Community }) => {
+  // Fetch features from database
+  const { data: features = [], isLoading } = useQuery<any[]>({
+    queryKey: [`/api/communities/${community.id}/features`],
+  });
+
+  // Default hardcoded features as fallback
+  const defaultFeatures = [
+    {
+      eyebrow: "Fine Dining",
+      title: "Extraordinary Dining Experience",
+      body: "There's no need to worry about cooking. You can dine on nutritious, homestyle cuisine in our beautiful dining room—complete with great conversation. Our professional chefs prepare fresh, locally-sourced meals daily, with menus designed by nutritionists to meet your dietary needs.",
+      imageUrl: "https://images.unsplash.com/photo-1577308856961-1d3371de3c2b?q=80&w=800&auto=format&fit=crop",
+      imageAlt: "Extraordinary dining experience featuring seniors enjoying nutritious, homestyle cuisine in a beautiful dining room",
+      ctaLabel: "View Sample Menu",
+      ctaHref: "#menu",
+      imageLeft: false
+    },
+    {
+      eyebrow: "Active Living",
+      title: "Engaging Lifestyle Programs",
+      body: "From staying active to getting creative to learning new skills, we offer a diverse variety of ways for you to pursue your hobbies and interests. Our activities director creates a monthly calendar filled with fitness classes, art workshops, educational seminars, and social events tailored to your preferences.",
+      imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop",
+      imageAlt: "Engaging lifestyle activities featuring seniors staying active, getting creative, and learning new skills",
+      ctaLabel: "View Engagement Calendar",
+      ctaHref: `/events?community=${community.slug || community.id}`,
+      imageLeft: true
+    },
+    {
+      eyebrow: "Prime Location",
+      title: "Ideal Location & Neighborhood",
+      body: "You can easily enjoy the area with nearby attractions, dining options, and recreational activities perfectly suited for an active lifestyle. Our community is conveniently located near medical facilities, shopping centers, parks, and cultural destinations, keeping you connected to everything you love.",
+      imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800&auto=format&fit=crop",
+      imageAlt: "Seniors enjoying ideal location lifestyle with access to golf courses, local eateries, and parks",
+      ctaLabel: "Get Directions",
+      ctaHref: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(community.address || `${community.city}, ${community.state} ${community.zipCode}`)}`,
+      imageLeft: false
+    },
+    {
+      eyebrow: "Personalized Care",
+      title: "24/7 Professional Care Team",
+      body: "Rest assured knowing our dedicated team of licensed nurses and certified caregivers is available around the clock. We provide personalized care plans tailored to your unique needs, from medication management to assistance with daily activities, all while preserving your independence and dignity.",
+      imageUrl: "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=800&auto=format&fit=crop",
+      imageAlt: "Professional care team assisting seniors with compassion and expertise",
+      imageLeft: true
+    }
+  ];
+
+  // Use database features if available, otherwise use defaults
+  const displayFeatures = features.length > 0 ? features : defaultFeatures;
+
+  if (isLoading) {
+    return (
+      <div className="space-y-20">
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            <Skeleton className="h-64" />
+            <div className="space-y-4">
+              <Skeleton className="h-8 w-24" />
+              <Skeleton className="h-10 w-3/4" />
+              <Skeleton className="h-24" />
+              <Skeleton className="h-10 w-32" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {displayFeatures
+        .filter((feature: any) => feature.active !== false) // Show all features if active is undefined or true
+        .sort((a: any, b: any) => (a.sortOrder || 0) - (b.sortOrder || 0))
+        .map((feature: any, index: number) => (
+          <FeatureSection
+            key={feature.id || index}
+            eyebrow={feature.eyebrow}
+            title={feature.title}
+            body={feature.body}
+            imageUrl={feature.imageUrl || (feature.imageId ? `/api/images/${feature.imageId}` : "")}
+            imageAlt={feature.imageAlt || `${feature.title} image`}
+            cta={feature.ctaLabel && feature.ctaHref ? {
+              label: feature.ctaLabel,
+              href: feature.ctaHref
+            } : undefined}
+            imageLeft={feature.imageLeft}
+          />
+        ))}
+    </>
   );
 };
 
@@ -1910,44 +2006,7 @@ export default function CommunityDetail() {
             </p>
           </div>
 
-          <FeatureSection
-            eyebrow="Fine Dining"
-            title="Extraordinary Dining Experience"
-            body="There's no need to worry about cooking. You can dine on nutritious, homestyle cuisine in our beautiful dining room—complete with great conversation. Our professional chefs prepare fresh, locally-sourced meals daily, with menus designed by nutritionists to meet your dietary needs."
-            imageUrl="https://images.unsplash.com/photo-1577308856961-1d3371de3c2b?q=80&w=800&auto=format&fit=crop"
-            imageAlt="Extraordinary dining experience featuring seniors enjoying nutritious, homestyle cuisine in a beautiful dining room"
-            cta={{ label: "View Sample Menu", href: "#menu" }}
-            imageLeft={false}
-          />
-
-          <FeatureSection
-            eyebrow="Active Living"
-            title="Engaging Lifestyle Programs"
-            body="From staying active to getting creative to learning new skills, we offer a diverse variety of ways for you to pursue your hobbies and interests. Our activities director creates a monthly calendar filled with fitness classes, art workshops, educational seminars, and social events tailored to your preferences."
-            imageUrl="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop"
-            imageAlt="Engaging lifestyle activities featuring seniors staying active, getting creative, and learning new skills"
-            cta={{ label: "View Engagement Calendar", href: `/events?community=${community.slug || community.id}` }}
-            imageLeft={true}
-          />
-
-          <FeatureSection
-            eyebrow="Prime Location"
-            title="Ideal Location & Neighborhood"
-            body="You can easily enjoy the area with nearby attractions, dining options, and recreational activities perfectly suited for an active lifestyle. Our community is conveniently located near medical facilities, shopping centers, parks, and cultural destinations, keeping you connected to everything you love."
-            imageUrl="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800&auto=format&fit=crop"
-            imageAlt="Seniors enjoying ideal location lifestyle with access to golf courses, local eateries, and parks"
-            cta={{ label: "Get Directions", href: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(community.address || `${community.city}, ${community.state} ${community.zipCode}`)}` }}
-            imageLeft={false}
-          />
-
-          <FeatureSection
-            eyebrow="Personalized Care"
-            title="24/7 Professional Care Team"
-            body="Rest assured knowing our dedicated team of licensed nurses and certified caregivers is available around the clock. We provide personalized care plans tailored to your unique needs, from medication management to assistance with daily activities, all while preserving your independence and dignity."
-            imageUrl="https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=800&auto=format&fit=crop"
-            imageAlt="Professional care team assisting seniors with compassion and expertise"
-            imageLeft={true}
-          />
+          <CommunityFeatures community={community} />
         </section>
 
             {/* Floor Plans Section */}

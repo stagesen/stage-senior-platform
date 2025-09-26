@@ -122,6 +122,24 @@ export const communityHighlights = pgTable("community_highlights", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Community features table for "Experience the Difference" section
+export const communityFeatures = pgTable("community_features", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  communityId: uuid("community_id").notNull().references(() => communities.id, { onDelete: "cascade" }),
+  eyebrow: varchar("eyebrow", { length: 100 }),
+  title: varchar("title", { length: 255 }).notNull(),
+  body: text("body").notNull(),
+  imageId: varchar("image_id", { length: 255 }).references(() => images.id),
+  imageAlt: varchar("image_alt", { length: 500 }),
+  ctaLabel: varchar("cta_label", { length: 100 }),
+  ctaHref: varchar("cta_href", { length: 500 }),
+  imageLeft: boolean("image_left").default(false),
+  sortOrder: integer("sort_order").default(0),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const posts = pgTable("posts", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
@@ -568,6 +586,12 @@ export const insertCommunityHighlightSchema = createInsertSchema(communityHighli
   updatedAt: true,
 });
 
+export const insertCommunityFeatureSchema = createInsertSchema(communityFeatures).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertGalleryImageSchema = createInsertSchema(galleryImages).omit({
   id: true,
   createdAt: true,
@@ -647,6 +671,8 @@ export type Testimonial = typeof testimonials.$inferSelect;
 export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
 export type CommunityHighlight = typeof communityHighlights.$inferSelect;
 export type InsertCommunityHighlight = z.infer<typeof insertCommunityHighlightSchema>;
+export type CommunityFeature = typeof communityFeatures.$inferSelect;
+export type InsertCommunityFeature = z.infer<typeof insertCommunityFeatureSchema>;
 export type GalleryImage = typeof galleryImages.$inferSelect;
 export type InsertGalleryImage = z.infer<typeof insertGalleryImageSchema>;
 export type FloorPlanImage = typeof floorPlanImages.$inferSelect;

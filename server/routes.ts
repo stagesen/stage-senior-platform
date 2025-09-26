@@ -21,6 +21,7 @@ import {
   insertFloorPlanSchema,
   insertTestimonialSchema,
   insertCommunityHighlightSchema,
+  insertCommunityFeatureSchema,
   insertGalleryImageSchema,
   insertCareTypeSchema,
   insertAmenitySchema,
@@ -802,6 +803,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting community highlight:", error);
       res.status(500).json({ message: "Failed to delete community highlight" });
+    }
+  });
+
+  // Community features routes (Experience the Difference section)
+  app.get("/api/communities/:communityId/features", async (req, res) => {
+    try {
+      const features = await storage.getCommunityFeatures(req.params.communityId);
+      res.json(features);
+    } catch (error) {
+      console.error("Error fetching community features:", error);
+      res.status(500).json({ message: "Failed to fetch community features" });
+    }
+  });
+
+  app.get("/api/community-features/:id", async (req, res) => {
+    try {
+      const feature = await storage.getCommunityFeature(req.params.id);
+      if (!feature) {
+        return res.status(404).json({ message: "Feature not found" });
+      }
+      res.json(feature);
+    } catch (error) {
+      console.error("Error fetching community feature:", error);
+      res.status(500).json({ message: "Failed to fetch community feature" });
+    }
+  });
+
+  app.post("/api/community-features", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertCommunityFeatureSchema.parse(req.body);
+      const feature = await storage.createCommunityFeature(validatedData);
+      res.status(201).json(feature);
+    } catch (error) {
+      console.error("Error creating community feature:", error);
+      res.status(400).json({ message: "Failed to create community feature" });
+    }
+  });
+
+  app.put("/api/community-features/:id", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertCommunityFeatureSchema.partial().parse(req.body);
+      const feature = await storage.updateCommunityFeature(req.params.id, validatedData);
+      res.json(feature);
+    } catch (error) {
+      console.error("Error updating community feature:", error);
+      res.status(400).json({ message: "Failed to update community feature" });
+    }
+  });
+
+  app.delete("/api/community-features/:id", requireAuth, async (req, res) => {
+    try {
+      await storage.deleteCommunityFeature(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting community feature:", error);
+      res.status(500).json({ message: "Failed to delete community feature" });
     }
   });
 
