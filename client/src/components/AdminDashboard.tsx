@@ -3797,25 +3797,32 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     multiple={true}
                     label="Upload gallery images"
                     maxSize={10 * 1024 * 1024}
-                    onUpload={async (images) => {
-                      // Add each uploaded image to the floor plan
-                      for (const imageData of images) {
-                        try {
-                          await apiRequest("POST", `/api/floor-plans/${editingItem.id}/images`, {
-                            imageId: imageData.id,
-                            caption: "",
-                            sortOrder: 0
-                          });
-                        } catch (error) {
-                          console.error("Failed to add image to floor plan:", error);
+                    value={undefined}
+                    onChange={async (imageIds) => {
+                      // When images are uploaded, imageIds will be an array of image IDs
+                      if (imageIds && Array.isArray(imageIds)) {
+                        // Add each uploaded image to the floor plan
+                        for (const imageId of imageIds) {
+                          try {
+                            await apiRequest(`/api/floor-plans/${editingItem.id}/images`, {
+                              method: "POST",
+                              body: JSON.stringify({
+                                imageId: imageId,
+                                caption: "",
+                                sortOrder: 0
+                              }),
+                            });
+                          } catch (error) {
+                            console.error("Failed to add image to floor plan:", error);
+                          }
                         }
+                        // Refresh the floor plan images
+                        queryClient.invalidateQueries({ queryKey: ["/api/floor-plans", editingItem.id, "images"] });
+                        toast({
+                          title: "Images Added",
+                          description: `Successfully added ${imageIds.length} image(s) to the floor plan.`,
+                        });
                       }
-                      // Refresh the floor plan images
-                      queryClient.invalidateQueries({ queryKey: ["/api/floor-plans", editingItem.id, "images"] });
-                      toast({
-                        title: "Images Added",
-                        description: `Successfully added ${images.length} image(s) to the floor plan.`,
-                      });
                     }}
                   />
                   
