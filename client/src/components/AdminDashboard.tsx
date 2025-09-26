@@ -52,7 +52,10 @@ import {
   insertCareTypeSchema,
   insertAmenitySchema,
   insertTourRequestSchema,
+  insertCommunityHighlightSchema,
   type Community,
+  type CommunityHighlight,
+  type InsertCommunityHighlight,
   type Post,
   type BlogPost,
   type Event,
@@ -79,7 +82,7 @@ import {
 } from "@shared/schema";
 
 interface AdminDashboardProps {
-  type: "communities" | "posts" | "blog-posts" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities";
+  type: "communities" | "posts" | "blog-posts" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "community-highlights";
 }
 
 // Helper function to generate slug from title
@@ -884,12 +887,18 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   const [isLoadingGalleryImages, setIsLoadingGalleryImages] = useState(false);
   const [selectedCareTypes, setSelectedCareTypes] = useState<string[]>([]);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [selectedCommunityForHighlights, setSelectedCommunityForHighlights] = useState<string | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   // Map type to API endpoint (handle tour-requests special case)
   const getApiEndpoint = (type: string) => {
-    return type === "tours" ? "tour-requests" : type;
+    if (type === "tours") return "tour-requests";
+    if (type === "community-highlights") {
+      // For community highlights, we need to select a community first
+      return selectedCommunityForHighlights ? `communities/${selectedCommunityForHighlights}/highlights` : "community-highlights";
+    }
+    return type;
   };
 
   const apiEndpoint = getApiEndpoint(type);
@@ -901,7 +910,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
 
   const { data: communities = [] } = useQuery<Community[]>({
     queryKey: ["/api/communities"],
-    enabled: type !== "communities",
+    enabled: type !== "communities" || type === "community-highlights",
   });
 
   // Fetch care types and amenities for multi-select
@@ -1037,6 +1046,18 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     },
   });
 
+  const communityHighlightForm = useForm<InsertCommunityHighlight>({
+    resolver: zodResolver(insertCommunityHighlightSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      imageId: undefined,
+      communityId: selectedCommunityForHighlights || undefined,
+      sortOrder: 0,
+      active: true,
+    },
+  });
+
   const pageHeroForm = useForm<InsertPageHero>({
     resolver: zodResolver(insertPageHeroSchema),
     defaultValues: {
@@ -1134,6 +1155,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "floor-plans": return floorPlanForm;
       case "care-types": return careTypeForm;
       case "amenities": return amenityForm;
+      case "community-highlights": return communityHighlightForm;
       default: return communityForm;
     }
   };
@@ -2932,6 +2954,130 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
           </Form>
         );
 
+      case "community-highlights":
+        return (
+          <Form {...communityHighlightForm}>
+            <form onSubmit={communityHighlightForm.handleSubmit(handleSubmit)} className="space-y-4">
+              <FormField
+                control={communityHighlightForm.control}
+                name="communityId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Community</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger data-testid="select-highlight-community">
+                          <SelectValue placeholder="Select a community" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {communities.map((community) => (
+                          <SelectItem key={community.id} value={community.id}>
+                            {community.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityHighlightForm.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input {...field} data-testid="input-highlight-title" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityHighlightForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} rows={3} data-testid="textarea-highlight-description" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityHighlightForm.control}
+                name="imageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Image (Optional)</FormLabel>
+                    <FormControl>
+                      <Input 
+                        {...field} 
+                        value={field.value || ""} 
+                        placeholder="Image ID from gallery (optional)" 
+                        data-testid="input-highlight-image" 
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Enter an image ID from the gallery, or leave blank for no image
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={communityHighlightForm.control}
+                  name="sortOrder"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sort Order</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || 0} 
+                          onChange={(e) => field.onChange(Number(e.target.value))} 
+                          data-testid="input-highlight-sort" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={communityHighlightForm.control}
+                  name="active"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2 mt-8">
+                      <FormControl>
+                        <Switch 
+                          checked={field.value} 
+                          onCheckedChange={field.onChange} 
+                          data-testid="switch-highlight-active" 
+                        />
+                      </FormControl>
+                      <FormLabel>Active</FormLabel>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="button-submit">
+                  {editingItem ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        );
+
       case "page-heroes":
         return (
           <Form {...pageHeroForm}>
@@ -4638,6 +4784,80 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       );
     }
 
+    // Community Highlights table
+    if (type === "community-highlights") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Title</TableHead>
+              <TableHead>Community</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Image</TableHead>
+              <TableHead>Sort Order</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: CommunityHighlight) => {
+              const community = communities.find(c => c.id === item.communityId);
+              return (
+                <TableRow key={item.id} data-testid={`highlight-row-${item.id}`}>
+                  <TableCell className="font-medium">
+                    <div className="font-semibold">{item.title}</div>
+                  </TableCell>
+                  <TableCell>
+                    {community?.name || "Unknown"}
+                  </TableCell>
+                  <TableCell className="max-w-[300px]">
+                    <div className="truncate">
+                      {item.description.substring(0, 100)}...
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {item.imageId ? (
+                      <Badge variant="outline">Has Image</Badge>
+                    ) : (
+                      <Badge variant="secondary">No Image</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{item.sortOrder}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={item.active ? "default" : "secondary"}>
+                      {item.active ? "Active" : "Inactive"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleEdit(item)}
+                        data-testid={`button-edit-${item.id}`}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={() => handleDelete(item.id)}
+                        data-testid={`button-delete-${item.id}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      );
+    }
+
     // Page Heroes table
     if (type === "page-heroes") {
       return (
@@ -4950,6 +5170,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "care-types": return "Care Types";
       case "amenities": return "Amenities";
       case "blog-posts": return "Blog Posts";
+      case "community-highlights": return "Community Highlights";
       default: return type;
     }
   };

@@ -109,6 +109,19 @@ export const communitiesAmenities = pgTable("communities_amenities", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Community highlights table
+export const communityHighlights = pgTable("community_highlights", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  communityId: uuid("community_id").notNull().references(() => communities.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  imageId: varchar("image_id", { length: 255 }).references(() => images.id),
+  sortOrder: integer("sort_order").default(0),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const posts = pgTable("posts", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
@@ -318,6 +331,7 @@ export const communitiesRelations = relations(communities, ({ one, many }) => ({
   testimonials: many(testimonials),
   careTypes: many(communitiesCareTypes),
   amenities: many(communitiesAmenities),
+  highlights: many(communityHighlights),
   image: one(images, {
     fields: [communities.imageId],
     references: [images.id],
@@ -413,6 +427,17 @@ export const testimonialsRelations = relations(testimonials, ({ one }) => ({
   community: one(communities, {
     fields: [testimonials.communityId],
     references: [communities.id],
+  }),
+}));
+
+export const communityHighlightsRelations = relations(communityHighlights, ({ one }) => ({
+  community: one(communities, {
+    fields: [communityHighlights.communityId],
+    references: [communities.id],
+  }),
+  image: one(images, {
+    fields: [communityHighlights.imageId],
+    references: [images.id],
   }),
 }));
 
@@ -537,6 +562,12 @@ export const insertTestimonialSchema = createInsertSchema(testimonials).omit({
   updatedAt: true,
 });
 
+export const insertCommunityHighlightSchema = createInsertSchema(communityHighlights).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertGalleryImageSchema = createInsertSchema(galleryImages).omit({
   id: true,
   createdAt: true,
@@ -614,6 +645,8 @@ export type FloorPlan = typeof floorPlans.$inferSelect;
 export type InsertFloorPlan = z.infer<typeof insertFloorPlanSchema>;
 export type Testimonial = typeof testimonials.$inferSelect;
 export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
+export type CommunityHighlight = typeof communityHighlights.$inferSelect;
+export type InsertCommunityHighlight = z.infer<typeof insertCommunityHighlightSchema>;
 export type GalleryImage = typeof galleryImages.$inferSelect;
 export type InsertGalleryImage = z.infer<typeof insertGalleryImageSchema>;
 export type FloorPlanImage = typeof floorPlanImages.$inferSelect;

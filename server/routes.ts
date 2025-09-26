@@ -20,6 +20,7 @@ import {
   insertTourRequestSchema,
   insertFloorPlanSchema,
   insertTestimonialSchema,
+  insertCommunityHighlightSchema,
   insertGalleryImageSchema,
   insertCareTypeSchema,
   insertAmenitySchema,
@@ -745,6 +746,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting testimonial:", error);
       res.status(500).json({ message: "Failed to delete testimonial" });
+    }
+  });
+
+  // Community highlights routes
+  app.get("/api/communities/:communityId/highlights", async (req, res) => {
+    try {
+      const highlights = await storage.getCommunityHighlights(req.params.communityId);
+      res.json(highlights);
+    } catch (error) {
+      console.error("Error fetching community highlights:", error);
+      res.status(500).json({ message: "Failed to fetch community highlights" });
+    }
+  });
+
+  app.get("/api/community-highlights/:id", async (req, res) => {
+    try {
+      const highlight = await storage.getCommunityHighlight(req.params.id);
+      if (!highlight) {
+        return res.status(404).json({ message: "Highlight not found" });
+      }
+      res.json(highlight);
+    } catch (error) {
+      console.error("Error fetching community highlight:", error);
+      res.status(500).json({ message: "Failed to fetch community highlight" });
+    }
+  });
+
+  app.post("/api/community-highlights", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertCommunityHighlightSchema.parse(req.body);
+      const highlight = await storage.createCommunityHighlight(validatedData);
+      res.status(201).json(highlight);
+    } catch (error) {
+      console.error("Error creating community highlight:", error);
+      res.status(400).json({ message: "Failed to create community highlight" });
+    }
+  });
+
+  app.put("/api/community-highlights/:id", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertCommunityHighlightSchema.partial().parse(req.body);
+      const highlight = await storage.updateCommunityHighlight(req.params.id, validatedData);
+      res.json(highlight);
+    } catch (error) {
+      console.error("Error updating community highlight:", error);
+      res.status(400).json({ message: "Failed to update community highlight" });
+    }
+  });
+
+  app.delete("/api/community-highlights/:id", requireAuth, async (req, res) => {
+    try {
+      await storage.deleteCommunityHighlight(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting community highlight:", error);
+      res.status(500).json({ message: "Failed to delete community highlight" });
     }
   });
 

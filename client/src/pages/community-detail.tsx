@@ -56,7 +56,8 @@ import type {
   Testimonial, 
   GalleryImageWithDetails, 
   Post, 
-  BlogPost 
+  BlogPost,
+  CommunityHighlight 
 } from "@shared/schema";
 import {
   Carousel,
@@ -78,6 +79,28 @@ const formatPrice = (price: number | undefined | null): string => {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
   }).format(price);
+};
+
+// Local subcomponent: Highlight Card
+const HighlightCard = ({ highlight }: { highlight: { title: string; description: string; imageUrl?: string; imageId?: string } }) => {
+  const resolvedImageUrl = useResolveImageUrl(highlight.imageId ? `/api/images/${highlight.imageId}` : highlight.imageUrl);
+  
+  return (
+    <Card className="overflow-hidden">
+      <AspectRatio ratio={16 / 9}>
+        <img
+          src={resolvedImageUrl || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"}
+          alt={highlight.title}
+          className="w-full h-full object-cover"
+          data-testid={`highlight-${highlight.title.toLowerCase().replace(/\s+/g, '-')}`}
+        />
+      </AspectRatio>
+      <CardContent className="p-6">
+        <h3 className="text-xl font-semibold mb-2 text-primary">{highlight.title}</h3>
+        <p className="text-gray-600">{highlight.description}</p>
+      </CardContent>
+    </Card>
+  );
 };
 
 // Local subcomponent: Floor Plan Card
@@ -835,6 +858,11 @@ export default function CommunityDetail() {
     enabled: !!slug && !!community?.id,
   });
 
+  const { data: highlights = [] } = useQuery<CommunityHighlight[]>({
+    queryKey: [`/api/communities/${community?.id || ''}/highlights`],
+    enabled: !!slug && !!community?.id,
+  });
+
   // Resolve hero image URL (handle both image ID and full URL)
   const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
 
@@ -1327,7 +1355,12 @@ export default function CommunityDetail() {
             <section id="highlights" className="scroll-mt-24">
               <h2 className="text-3xl font-bold mb-8">Community Highlights</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {community.slug === 'golden-pond' ? (
+                {highlights.length > 0 ? (
+                  // Use database highlights if available
+                  highlights.map((highlight) => (
+                    <HighlightCard key={highlight.id} highlight={highlight} />
+                  ))
+                ) : community.slug === 'golden-pond' ? (
                   <>
                     <Card className="overflow-hidden">
                       <AspectRatio ratio={16 / 9}>
