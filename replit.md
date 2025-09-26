@@ -89,6 +89,7 @@ The platform includes a comprehensive admin interface for content management:
 - **Page Heroes**: Dynamic hero sections with background image uploads for all major pages manageable through admin dashboard
 - **Floor Plans**: Complete floor plan management with image uploads, pricing, and availability tracking
 - **Testimonials**: Customer testimonials with community associations
+- **Community Highlights**: Dynamic highlight cards for each community with customizable titles, descriptions, and images, replacing hardcoded content
 
 ### Image Management System
 The platform features a comprehensive image management system integrated with Replit's object storage:
