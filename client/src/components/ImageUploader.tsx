@@ -17,6 +17,10 @@ import {
   GripVertical,
   AlertCircle,
   FileImage,
+  Star,
+  StarOff,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +34,13 @@ interface ImageUploaderProps {
   maxFiles?: number; // for multiple mode
   disabled?: boolean;
   className?: string;
+  // Gallery-specific props
+  showDelete?: boolean;
+  showReorder?: boolean;
+  showThumbnailSelector?: boolean;
+  thumbnailIndex?: number;
+  onThumbnailChange?: (index: number | undefined) => void;
+  onReorder?: (reorderedImages: string[]) => void;
 }
 
 interface PreviewImage {
@@ -52,6 +63,12 @@ export default function ImageUploader({
   maxFiles = 10,
   disabled = false,
   className,
+  showDelete = true,
+  showReorder = false,
+  showThumbnailSelector = false,
+  thumbnailIndex,
+  onThumbnailChange,
+  onReorder,
 }: ImageUploaderProps) {
   const [isDragActive, setIsDragActive] = useState(false);
   const [previewImages, setPreviewImages] = useState<PreviewImage[]>([]);
@@ -282,6 +299,62 @@ export default function ImageUploader({
     }
   };
 
+  // Handle reordering
+  const handleMoveUp = (index: number) => {
+    if (index === 0 || !multiple) return;
+    
+    const newIds = [...imageIds];
+    [newIds[index], newIds[index - 1]] = [newIds[index - 1], newIds[index]];
+    onChange(newIds);
+    
+    if (onReorder) {
+      onReorder(newIds);
+    }
+
+    // Update preview images order
+    const newPreviews = [...previewImages];
+    [newPreviews[index], newPreviews[index - 1]] = [newPreviews[index - 1], newPreviews[index]];
+    setPreviewImages(newPreviews);
+
+    // Update thumbnail index if needed
+    if (thumbnailIndex === index) {
+      onThumbnailChange?.(index - 1);
+    } else if (thumbnailIndex === index - 1) {
+      onThumbnailChange?.(index);
+    }
+  };
+
+  const handleMoveDown = (index: number) => {
+    if (index === imageIds.length - 1 || !multiple) return;
+    
+    const newIds = [...imageIds];
+    [newIds[index], newIds[index + 1]] = [newIds[index + 1], newIds[index]];
+    onChange(newIds);
+    
+    if (onReorder) {
+      onReorder(newIds);
+    }
+
+    // Update preview images order
+    const newPreviews = [...previewImages];
+    [newPreviews[index], newPreviews[index + 1]] = [newPreviews[index + 1], newPreviews[index]];
+    setPreviewImages(newPreviews);
+
+    // Update thumbnail index if needed
+    if (thumbnailIndex === index) {
+      onThumbnailChange?.(index + 1);
+    } else if (thumbnailIndex === index + 1) {
+      onThumbnailChange?.(index);
+    }
+  };
+
+  // Handle thumbnail selection
+  const handleSetThumbnail = (index: number) => {
+    if (onThumbnailChange) {
+      onThumbnailChange(thumbnailIndex === index ? undefined : index);
+    }
+  };
+
   // Handle drag events
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -390,26 +463,86 @@ export default function ImageUploader({
                   </div>
                 )}
 
-                {/* Delete Button */}
+                {/* Gallery Controls */}
                 {!image.isUploading && image.id && (
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(image.id!)}
-                    disabled={disabled || deleteMutation.isPending}
-                    className={cn(
-                      "absolute top-2 right-2 p-1.5 rounded-md",
-                      "bg-red-500 text-white opacity-0 group-hover:opacity-100",
-                      "transition-opacity duration-200",
-                      "hover:bg-red-600 disabled:opacity-50"
+                  <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    {/* Thumbnail Selector */}
+                    {showThumbnailSelector && multiple && (
+                      <button
+                        type="button"
+                        onClick={() => handleSetThumbnail(index)}
+                        disabled={disabled}
+                        className={cn(
+                          "p-1.5 rounded-md",
+                          thumbnailIndex === index
+                            ? "bg-yellow-500 text-white opacity-100"
+                            : "bg-gray-800 text-white",
+                          "hover:bg-opacity-90 disabled:opacity-50"
+                        )}
+                        title={thumbnailIndex === index ? "Remove as thumbnail" : "Set as thumbnail"}
+                        data-testid={`button-thumbnail-image-${image.id}`}
+                      >
+                        {thumbnailIndex === index ? (
+                          <Star className="h-4 w-4 fill-current" />
+                        ) : (
+                          <StarOff className="h-4 w-4" />
+                        )}
+                      </button>
                     )}
-                    data-testid={`button-delete-image-${image.id}`}
-                  >
-                    {deleteMutation.isPending ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <X className="h-4 w-4" />
+
+                    {/* Reorder Buttons */}
+                    {showReorder && multiple && (
+                      <div className="flex flex-col gap-0.5">
+                        <button
+                          type="button"
+                          onClick={() => handleMoveUp(index)}
+                          disabled={disabled || index === 0}
+                          className={cn(
+                            "p-1 rounded-t-md bg-gray-800 text-white",
+                            "hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          )}
+                          title="Move up"
+                          data-testid={`button-move-up-${image.id}`}
+                        >
+                          <ChevronUp className="h-3 w-3" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleMoveDown(index)}
+                          disabled={disabled || index === previewImages.length - 1}
+                          className={cn(
+                            "p-1 rounded-b-md bg-gray-800 text-white",
+                            "hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          )}
+                          title="Move down"
+                          data-testid={`button-move-down-${image.id}`}
+                        >
+                          <ChevronDown className="h-3 w-3" />
+                        </button>
+                      </div>
                     )}
-                  </button>
+
+                    {/* Delete Button */}
+                    {showDelete && (
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(image.id!)}
+                        disabled={disabled || deleteMutation.isPending}
+                        className={cn(
+                          "p-1.5 rounded-md",
+                          "bg-red-500 text-white",
+                          "hover:bg-red-600 disabled:opacity-50"
+                        )}
+                        data-testid={`button-delete-image-${image.id}`}
+                      >
+                        {deleteMutation.isPending ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <X className="h-4 w-4" />
+                        )}
+                      </button>
+                    )}
+                  </div>
                 )}
 
                 {/* Error State */}
@@ -423,19 +556,30 @@ export default function ImageUploader({
                 )}
               </div>
               
-              {/* Image Name */}
-              {image.name && (
-                <div className="p-2 bg-muted">
+              {/* Image Name and Info */}
+              <div className="p-2 bg-muted">
+                {thumbnailIndex === index && (
+                  <Badge variant="default" className="mb-1 text-xs">
+                    <Star className="h-3 w-3 mr-1 fill-current" />
+                    Thumbnail
+                  </Badge>
+                )}
+                {image.name && (
                   <p className="text-xs truncate" title={image.name}>
                     {image.name}
                   </p>
-                  {image.size && (
-                    <p className="text-xs text-muted-foreground">
-                      {(image.size / 1024).toFixed(1)} KB
-                    </p>
-                  )}
-                </div>
-              )}
+                )}
+                {image.size && (
+                  <p className="text-xs text-muted-foreground">
+                    {(image.size / 1024).toFixed(1)} KB
+                  </p>
+                )}
+                {showReorder && multiple && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Position: {index + 1} of {previewImages.length}
+                  </p>
+                )}
+              </div>
             </Card>
           ))}
         </div>

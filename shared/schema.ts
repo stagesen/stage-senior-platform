@@ -177,6 +177,7 @@ export const galleries = pgTable("galleries", {
   tags: jsonb("tags").$type<string[]>().default([]), // Additional field from CSV
   communityId: uuid("community_id").references(() => communities.id),
   category: varchar("category", { length: 100 }),
+  thumbnailIndex: integer("thumbnail_index"), // New field for selecting thumbnail image
   active: boolean("active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

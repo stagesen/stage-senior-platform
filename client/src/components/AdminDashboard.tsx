@@ -180,6 +180,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       tags: [],
       category: "",
       communityId: undefined,
+      thumbnailIndex: undefined,
       hero: false,
       published: false,
       active: true,
@@ -1731,38 +1732,60 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                           if (Array.isArray(imageIds) && imageIds.length > 0) {
                             setIsFetchingImages(true);
                             try {
-                              // Fetch image details for each ID
-                              const imagePromises = imageIds.map(id => 
-                                fetch(`/api/images/${id}`, { 
-                                  credentials: 'include',
-                                  headers: {
-                                    'Content-Type': 'application/json',
-                                  }
-                                }).then(r => {
-                                  if (!r.ok) throw new Error(`Failed to fetch image ${id}`);
-                                  return r.json();
-                                })
-                              );
+                              const imagesToFetch = [];
+                              const existingImages = [];
                               
-                              const images = await Promise.all(imagePromises);
+                              // Separate URLs from IDs
+                              for (const item of imageIds) {
+                                if (typeof item === 'string' && (item.startsWith('http://') || item.startsWith('https://'))) {
+                                  // Already a URL, use as-is
+                                  existingImages.push({ url: item, alt: '', caption: '' });
+                                } else {
+                                  // It's an ID, needs fetching
+                                  imagesToFetch.push(item);
+                                }
+                              }
                               
-                              // Map to the gallery images format with proper URLs and metadata
-                              field.onChange(images.map((img: any) => ({
-                                url: img.url || img.secureUrl || '',
-                                alt: img.alt || img.originalName || '',
-                                caption: '',
-                                width: img.width || undefined,
-                                height: img.height || undefined
-                              })));
-                              
+                              // Fetch details only for IDs
+                              if (imagesToFetch.length > 0) {
+                                const imagePromises = imagesToFetch.map(id => 
+                                  fetch(`/api/images/${id}`, { 
+                                    credentials: 'include',
+                                    headers: {
+                                      'Content-Type': 'application/json',
+                                    }
+                                  }).then(r => {
+                                    if (!r.ok) throw new Error(`Failed to fetch image ${id}`);
+                                    return r.json();
+                                  })
+                                );
+                                
+                                const fetchedImages = await Promise.all(imagePromises);
+                                
+                                // Combine with existing URLs
+                                const allImages = [
+                                  ...existingImages,
+                                  ...fetchedImages.map((img: any) => ({
+                                    url: img.url || img.secureUrl || '',
+                                    alt: img.alt || img.originalName || '',
+                                    caption: '',
+                                    width: img.width || undefined,
+                                    height: img.height || undefined
+                                  }))
+                                ];
+                                
+                                field.onChange(allImages);
+                              } else {
+                                field.onChange(existingImages);
+                              }
                             } catch (error) {
-                              console.error('Error fetching image details:', error);
+                              console.error('Error fetching some images:', error);
                               toast({
                                 title: "Error fetching images",
-                                description: "Failed to load image details. Please try again.",
+                                description: "Failed to load some image details. Using URLs directly.",
                                 variant: "destructive",
                               });
-                              // Fallback: store just the IDs as URLs (better than nothing)
+                              // Fallback: treat all as URLs
                               field.onChange(imageIds.map(id => ({ 
                                 url: id, 
                                 alt: '', 
@@ -1780,6 +1803,19 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         maxSize={10 * 1024 * 1024}
                         maxFiles={20}
                         disabled={isFetchingImages}
+                        // Gallery-specific props
+                        showDelete={true}
+                        showReorder={true}
+                        showThumbnailSelector={true}
+                        thumbnailIndex={galleryForm.watch('thumbnailIndex')}
+                        onThumbnailChange={(index) => galleryForm.setValue('thumbnailIndex', index)}
+                        onReorder={(reorderedImages) => {
+                          field.onChange(reorderedImages.map(url => ({ 
+                            url, 
+                            alt: field.value?.find((img: any) => img.url === url)?.alt || '', 
+                            caption: field.value?.find((img: any) => img.url === url)?.caption || '' 
+                          })));
+                        }}
                       />
                     </FormControl>
                     {isFetchingImages && (
