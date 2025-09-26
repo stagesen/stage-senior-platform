@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { apiRequest } from "@/lib/queryClient";
+import ImageUploader from "@/components/ImageUploader";
 import { 
   Plus, 
   Edit, 
@@ -659,9 +660,14 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 name="heroImageUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Hero Image URL</FormLabel>
+                    <FormLabel>Hero Image</FormLabel>
                     <FormControl>
-                      <Input {...field} value={field.value || ""} placeholder="https://..." data-testid="input-community-hero-image" />
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload hero image for the community"
+                        maxSize={10 * 1024 * 1024}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -860,9 +866,14 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 name="heroImageUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Hero Image URL</FormLabel>
+                    <FormLabel>Hero Image</FormLabel>
                     <FormControl>
-                      <Input {...field} value={field.value || ""} placeholder="https://example.com/image.jpg" data-testid="input-post-hero-image" />
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload hero image for the blog post"
+                        maxSize={10 * 1024 * 1024}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1081,9 +1092,14 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   name="imageUrl"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Image URL</FormLabel>
+                      <FormLabel>Event Image</FormLabel>
                       <FormControl>
-                        <Input {...field} value={field.value || ""} placeholder="https://example.com/event-image.jpg" data-testid="input-event-image" />
+                        <ImageUploader
+                          value={field.value || undefined}
+                          onChange={field.onChange}
+                          label="Upload image for the event"
+                          maxSize={10 * 1024 * 1024}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1507,9 +1523,14 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 name="backgroundImageUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Background Image URL</FormLabel>
+                    <FormLabel>Background Image</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="https://example.com/image.jpg" data-testid="input-background-image" />
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload background image for the page hero"
+                        maxSize={10 * 1024 * 1024}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1701,28 +1722,21 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 name="images"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Images (One per line - URL, alt text, caption)</FormLabel>
+                    <FormLabel>Gallery Images</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="https://example.com/image1.jpg|Alt text|Caption
-https://example.com/image2.jpg|Second alt|Another caption"
-                        value={field.value?.map(img => 
-                          `${img.url}${img.alt ? `|${img.alt}` : ''}${img.caption ? `|${img.caption}` : ''}`
-                        ).join('\n') || ''}
-                        onChange={(e) => {
-                          const lines = e.target.value.split('\n').filter(line => line.trim());
-                          const images = lines.map(line => {
-                            const parts = line.split('|');
-                            return {
-                              url: parts[0]?.trim() || '',
-                              alt: parts[1]?.trim() || '',
-                              caption: parts[2]?.trim() || ''
-                            };
-                          }).filter(img => img.url);
-                          field.onChange(images);
+                      <ImageUploader
+                        value={field.value?.map(img => img.url) || []}
+                        onChange={(imageIds) => {
+                          if (Array.isArray(imageIds)) {
+                            field.onChange(imageIds.map(id => ({ url: id, alt: '', caption: '' })));
+                          } else {
+                            field.onChange([]);
+                          }
                         }}
-                        rows={6}
-                        data-testid="textarea-gallery-images"
+                        multiple={true}
+                        label="Upload images for the gallery"
+                        maxSize={10 * 1024 * 1024}
+                        maxFiles={20}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1986,13 +2000,13 @@ https://example.com/image2.jpg|Second alt|Another caption"
                 name="imageUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Image URL</FormLabel>
+                    <FormLabel>Floor Plan Image</FormLabel>
                     <FormControl>
-                      <Input 
-                        {...field} 
-                        value={field.value || ""} 
-                        placeholder="https://example.com/floor-plan.jpg"
-                        data-testid="input-floor-plan-image" 
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload floor plan image"
+                        maxSize={10 * 1024 * 1024}
                       />
                     </FormControl>
                     <FormMessage />
