@@ -37,6 +37,38 @@ export default function Home() {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  // Fetch homepage hero data
+  const { data: heroData } = useQuery({
+    queryKey: ['/api/page-heroes', '/'],
+    queryFn: async () => {
+      const response = await fetch('/api/page-heroes/' + encodeURIComponent('/'));
+      if (!response.ok) {
+        // Return null if no hero data exists
+        if (response.status === 404) return null;
+        throw new Error('Failed to fetch page hero');
+      }
+      return response.json();
+    },
+  });
+
+  // Default hero content for fallback
+  const defaultHero = {
+    title: "Colorado senior living that feels like home—and performs like a pro.",
+    subtitle: "Locally Owned • Resident‑Focused",
+    description: "Four Front Range communities + in‑home support. Transparent pricing, story‑first care, and a team cared for as well as they care for you.",
+    backgroundImageUrl: "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?q=80&w=1600&auto=format&fit=crop",
+    ctaText: "Find a Community",
+    ctaLink: "/communities",
+    overlayOpacity: "0.85",
+    textAlignment: "left",
+  };
+
+  // Merge hero data with defaults
+  const hero = {
+    ...defaultHero,
+    ...(heroData || {}),
+  };
+
   // Track selected carousel index for visual emphasis
   useEffect(() => {
     if (!carouselApi) {
@@ -71,37 +103,46 @@ export default function Home() {
       <section className="relative overflow-hidden">
         {/* Background Image */}
         <img
-          src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?q=80&w=1600&auto=format&fit=crop"
+          src={hero.backgroundImageUrl}
           alt="Senior living community with beautiful gardens"
           className="absolute inset-0 h-full w-full object-cover"
         />
         {/* Enhanced Multi-layer Overlay for Better Text Legibility */}
         <div className="absolute inset-0 bg-black/20" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/95 via-primary/85 to-primary/90" />
+        <div 
+          className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary"
+          style={{ opacity: parseFloat(hero.overlayOpacity || "0.85") }}
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-white">
-          <div className="max-w-3xl">
-            <p className="uppercase tracking-widest text-white text-xs mb-2 drop-shadow-sm" data-testid="hero-tagline">
-              Locally Owned • Resident‑Focused
-            </p>
+          <div className={`max-w-3xl ${hero.textAlignment === 'center' ? 'mx-auto text-center' : hero.textAlignment === 'right' ? 'ml-auto text-right' : ''}`}>
+            {hero.subtitle && (
+              <p className="uppercase tracking-widest text-white text-xs mb-2 drop-shadow-sm" data-testid="hero-tagline">
+                {hero.subtitle}
+              </p>
+            )}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white drop-shadow-md" data-testid="hero-title">
-              Colorado senior living that feels like home—and performs like a pro.
+              {hero.title}
             </h1>
-            <p className="mt-6 text-xl text-white leading-relaxed drop-shadow-sm" data-testid="hero-description">
-              Four Front Range communities + in‑home support. Transparent pricing, story‑first care, and a team cared for as well as they care for you.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Button 
-                size="lg" 
-                className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-lg px-8 py-6 text-lg"
-                asChild
-                data-testid="button-find-community"
-              >
-                <Link href="/communities">
-                  <MapPin className="w-5 h-5 mr-2" />
-                  Find a Community
-                </Link>
-              </Button>
+            {hero.description && (
+              <p className="mt-6 text-xl text-white leading-relaxed drop-shadow-sm" data-testid="hero-description">
+                {hero.description}
+              </p>
+            )}
+            <div className={`mt-8 flex flex-wrap gap-4 ${hero.textAlignment === 'center' ? 'justify-center' : hero.textAlignment === 'right' ? 'justify-end' : ''}`}>
+              {hero.ctaText && hero.ctaLink && (
+                <Button 
+                  size="lg" 
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-lg px-8 py-6 text-lg"
+                  asChild
+                  data-testid="button-hero-cta"
+                >
+                  <Link href={hero.ctaLink}>
+                    {hero.ctaLink.includes('communities') && <MapPin className="w-5 h-5 mr-2" />}
+                    {hero.ctaText}
+                  </Link>
+                </Button>
+              )}
               <Button 
                 size="lg" 
                 variant="glassmorphism"
