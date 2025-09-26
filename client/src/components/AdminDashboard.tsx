@@ -266,10 +266,7 @@ function TourRequestsTable({ items, communities }: { items: TourRequest[]; commu
   // Mutation for updating tour request
   const updateTourRequest = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<InsertTourRequest> }) => {
-      return apiRequest(`/api/tour-requests/${id}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      return apiRequest("PUT", `/api/tour-requests/${id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/tour-requests"] });
@@ -290,9 +287,7 @@ function TourRequestsTable({ items, communities }: { items: TourRequest[]; commu
   // Mutation for deleting tour request
   const deleteTourRequest = useMutation({
     mutationFn: async (id: string) => {
-      return apiRequest(`/api/tour-requests/${id}`, {
-        method: "DELETE",
-      });
+      return apiRequest("DELETE", `/api/tour-requests/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/tour-requests"] });
@@ -601,10 +596,7 @@ function TourRequestEditForm({
         data.lastContactedAt = new Date();
       }
 
-      await apiRequest(`/api/tour-requests/${request.id}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      await apiRequest("PUT", `/api/tour-requests/${request.id}`, data);
 
       await queryClient.invalidateQueries({ queryKey: ["/api/tour-requests"] });
       
@@ -3804,13 +3796,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         // Add each uploaded image to the floor plan
                         for (const imageId of imageIds) {
                           try {
-                            await apiRequest(`/api/floor-plans/${editingItem.id}/images`, {
-                              method: "POST",
-                              body: JSON.stringify({
-                                imageId: imageId,
-                                caption: "",
-                                sortOrder: 0
-                              }),
+                            await apiRequest("POST", `/api/floor-plans/${editingItem.id}/images`, {
+                              imageId: imageId,
+                              caption: "",
+                              sortOrder: 0
                             });
                           } catch (error) {
                             console.error("Failed to add image to floor plan:", error);
