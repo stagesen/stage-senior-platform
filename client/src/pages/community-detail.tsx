@@ -143,81 +143,129 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
   // Ensure galleries is always an array
   const items = galleries ?? [];
   
-  // Collect all images from all galleries for the photo grid
-  const allImages = items.flatMap(gallery => 
-    (gallery.images || []).map(img => ({
-      ...img,
-      galleryTitle: gallery.title,
-      galleryId: gallery.id
-    }))
-  );
-  
-  // Get first 12 images for the grid
-  const gridImages = allImages.slice(0, 12);
+  // Get galleries with images for the main grid (show first 4 galleries)
+  const galleriesWithImages = items.filter(g => g.images && g.images.length > 0);
+  const mainGalleries = galleriesWithImages.slice(0, 4);
 
   return (
     <div className="space-y-8">
-      {/* Photo Grid - 9-12 images */}
-      {gridImages.length > 0 && (
-        <div className="grid grid-cols-3 md:grid-cols-4 gap-2 rounded-lg overflow-hidden">
-          {gridImages.map((image, index) => (
-            <div 
-              key={index} 
-              className="aspect-square overflow-hidden cursor-pointer group"
-              onClick={() => {
-                const gallery = items.find(g => g.id === image.galleryId);
-                if (gallery) onGallerySelect(gallery);
-              }}
-              data-testid={`gallery-grid-image-${index}`}
-            >
-              <img
-                src={image.url}
-                alt={image.alt || `Gallery image ${index + 1}`}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                loading="lazy"
-              />
-            </div>
-          ))}
+      {/* Gallery Cards Grid - Show first 4 galleries as cards */}
+      {mainGalleries.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+          {mainGalleries.map((gallery) => {
+            const images = gallery.images || [];
+            const totalImages = images.length;
+            const previewImages = images.slice(0, 4);
+            
+            return (
+              <Card 
+                key={gallery.id}
+                className="overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer group bg-gradient-to-br from-gray-50 to-white border-gray-200"
+                onClick={() => onGallerySelect(gallery)}
+                data-testid={`gallery-card-${gallery.id}`}
+              >
+                {/* Gallery Preview Grid */}
+                <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
+                  {previewImages.length > 0 && (
+                    <div className={`grid ${previewImages.length === 1 ? 'grid-cols-1' : previewImages.length === 2 ? 'grid-cols-2' : 'grid-cols-2'} gap-0.5 h-full`}>
+                      {previewImages.map((image, idx) => (
+                        <div 
+                          key={idx}
+                          className={`relative overflow-hidden ${
+                            previewImages.length === 3 && idx === 0 ? 'col-span-2' : ''
+                          } ${previewImages.length === 4 ? '' : ''}`}
+                        >
+                          <img
+                            src={image.url}
+                            alt={image.alt || `${gallery.title} image ${idx + 1}`}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            loading="lazy"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Overlay with fade effect */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  
+                  {/* View Gallery Text on Hover */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="bg-white/95 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                      <span className="text-gray-900 font-semibold flex items-center gap-2">
+                        <Image className="w-5 h-5" />
+                        View Gallery
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Image Count Badge */}
+                  <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5 shadow-lg">
+                    <Image className="w-4 h-4" />
+                    <span>{totalImages} {totalImages === 1 ? 'Photo' : 'Photos'}</span>
+                  </div>
+                </div>
+                
+                {/* Gallery Info */}
+                <CardContent className="p-5 bg-white">
+                  <h3 className="font-bold text-lg text-gray-900 mb-1.5 group-hover:text-primary transition-colors" data-testid={`gallery-title-${gallery.id}`}>
+                    {gallery.title}
+                  </h3>
+                  {gallery.description && (
+                    <p className="text-sm text-gray-600 line-clamp-2">
+                      {gallery.description}
+                    </p>
+                  )}
+                  <div className="flex items-center mt-3 text-primary group-hover:translate-x-1 transition-transform">
+                    <span className="text-sm font-medium">Explore Gallery</span>
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
       
-      {/* Gallery Category Cards - 4 across on desktop */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {items.slice(0, 4).map((gallery) => {
-          const config = categoryConfig[gallery.category] || { icon: Image, displayName: gallery.title };
-          const IconComponent = config.icon;
-          const coverImage = gallery.images?.[0];
-          const totalImages = gallery.images?.length || 0;
-          
-          return (
-            <Card 
-              key={gallery.id} 
-              className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
-              onClick={() => onGallerySelect(gallery)}
-              data-testid={`gallery-category-${gallery.category}`}
-            >
-              <AspectRatio ratio={4/3}>
-                {coverImage ? (
-                  <img
-                    src={coverImage.url}
-                    alt={coverImage.alt || `${gallery.title} gallery`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
-                    <IconComponent className="w-12 h-12 text-primary/30" />
+      {/* Gallery Category Cards - Additional galleries or categories */}
+      {items.length > 4 && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {items.slice(4, 8).map((gallery) => {
+            const config = categoryConfig[gallery.category] || { icon: Image, displayName: gallery.title };
+            const IconComponent = config.icon;
+            const coverImage = gallery.images?.[0];
+            const totalImages = gallery.images?.length || 0;
+            
+            return (
+              <Card 
+                key={gallery.id} 
+                className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
+                onClick={() => onGallerySelect(gallery)}
+                data-testid={`gallery-category-${gallery.category}`}
+              >
+                <AspectRatio ratio={4/3}>
+                  {coverImage ? (
+                    <img
+                      src={coverImage.url}
+                      alt={coverImage.alt || `${gallery.title} gallery`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
+                      <IconComponent className="w-12 h-12 text-primary/30" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3 text-white">
+                    <h3 className="font-semibold text-sm mb-0.5">{gallery.title}</h3>
+                    <p className="text-xs opacity-90">{totalImages} Photos</p>
                   </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                <div className="absolute bottom-3 left-3 right-3 text-white">
-                  <h3 className="font-semibold text-sm mb-0.5">{gallery.title}</h3>
-                  <p className="text-xs opacity-90">{totalImages} Photos</p>
-                </div>
-              </AspectRatio>
-            </Card>
-          );
-        })}
-      </div>
+                </AspectRatio>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
