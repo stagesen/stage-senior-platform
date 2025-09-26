@@ -18,6 +18,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { Community } from "@shared/schema";
 
 interface CommunityCardProps {
@@ -28,6 +29,7 @@ interface CommunityCardProps {
 
 export default function CommunityCard({ community, isSelected, onSelect }: CommunityCardProps) {
   const [showLeadCapture, setShowLeadCapture] = useState(false);
+  const heroImageUrl = useResolveImageUrl(community.heroImageUrl);
   const formatPrice = (price: number | null) => {
     if (!price) return "Contact for pricing";
     return `$${price.toLocaleString()}`;
@@ -68,7 +70,7 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
             <Link href={`/communities/${community.slug}`}>
               <div className="aspect-[4/3] md:aspect-auto md:h-full">
                 <img
-                  src={community.heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600`}
+                  src={heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600`}
                   alt={`${community.name} - Senior Living Community`}
                   className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
                   data-testid={`image-${community.slug}`}

@@ -45,6 +45,7 @@ import {
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
 import ScrollToTop from "@/components/ScrollToTop";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import stageSeniorLogo from "@assets/stagesenior-logo_1758726889154.webp";
 import type { 
   Community, 
@@ -560,12 +561,14 @@ const ActionPanel = ({ community }: { community: any }) => {
 
 // Local subcomponent: Enhanced Bottom CTA
 const EnhancedBottomCTA = ({ community }: { community: any }) => {
+  const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
+  
   return (
     <section className="relative py-24 overflow-hidden">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <img
-          src={community.heroImageUrl || 'https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=2000'}
+          src={heroImageUrl || 'https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=2000'}
           alt="Community background"
           className="w-full h-full object-cover"
         />
@@ -693,6 +696,9 @@ export default function CommunityDetail() {
     queryKey: [`/api/blog-posts?communityId=${community?.id || ''}&published=true`],
     enabled: !!slug && !!community?.id,
   });
+
+  // Resolve hero image URL (handle both image ID and full URL)
+  const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
 
   // Computed values based on query data
   const galleryCategories = Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean)));
@@ -945,7 +951,7 @@ export default function CommunityDetail() {
       {/* Hero Section */}
       <section className="relative h-[500px] md:h-[600px] overflow-hidden">
         <img
-          src={community.heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600`}
+          src={heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600`}
           alt={`${community.name} - Senior Living Community`}
           className="w-full h-full object-cover"
           data-testid="hero-image"
@@ -1835,12 +1841,12 @@ export default function CommunityDetail() {
             )}
 
             {/* Featured Image Section */}
-            {community.heroImageUrl && (
+            {heroImageUrl && (
               <section>
                 <h2 className="text-3xl font-bold mb-8">Experience Our Community</h2>
                 <div className="rounded-2xl overflow-hidden shadow-2xl mb-12">
                   <img
-                    src={community.heroImageUrl}
+                    src={heroImageUrl}
                     alt={`${community.name} - Featured Image`}
                     className="w-full h-[400px] object-cover"
                     data-testid="featured-image"
