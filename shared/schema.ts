@@ -71,6 +71,9 @@ export const communities = pgTable("communities", {
   email: varchar("email", { length: 255 }),
   heroImageUrl: text("hero_image_url"), // Keep for backward compatibility
   imageId: varchar("image_id", { length: 255 }).references(() => images.id), // New image reference
+  logoImageId: varchar("logo_image_id", { length: 255 }).references(() => images.id), // Logo image reference
+  contactImageId: varchar("contact_image_id", { length: 255 }).references(() => images.id), // Contact Us card image reference
+  brochureImageId: varchar("brochure_image_id", { length: 255 }).references(() => images.id), // Brochure card image reference
   overview: text("overview"),
   description: text("description"),
   shortDescription: text("short_description"),
