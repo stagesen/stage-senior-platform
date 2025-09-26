@@ -351,7 +351,7 @@ const TestimonialsCarousel = ({ testimonials }: { testimonials: any[] }) => {
           {testimonials.map((testimonial) => (
             <CarouselItem key={testimonial.id}>
               <div className="px-8 py-12 text-center">
-                <blockquote className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-8 leading-tight" data-testid={`testimonial-quote-${testimonial.id}`}>
+                <blockquote className="text-xl md:text-2xl font-bold text-gray-900 mb-8 leading-tight" data-testid={`testimonial-quote-${testimonial.id}`}>
                   "{testimonial.content}"
                 </blockquote>
                 <div className="space-y-2">
@@ -647,7 +647,7 @@ const BlogPostCard = ({ post }: { post: BlogPost }) => {
             </div>
           )}
         </div>
-        <h3 className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors" data-testid={`blog-post-title-${post.id}`}>
+        <h3 className="text-lg font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors" data-testid={`blog-post-title-${post.id}`}>
           {post.title}
         </h3>
         <p className="text-gray-600 text-sm line-clamp-3 mb-4" data-testid={`blog-post-summary-${post.id}`}>
@@ -843,7 +843,7 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
           />
         )}
 
-        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
           Ready to Experience {community.name}?
         </h2>
         <p className="text-lg md:text-xl text-white/90 mb-12 max-w-3xl mx-auto">
@@ -1407,7 +1407,7 @@ export default function CommunityDetail() {
           <div className="lg:col-span-2 space-y-16">
             {/* Overview Section */}
             <section id="overview" className="scroll-mt-24">
-              <h2 className="text-2xl font-bold mb-6" data-testid="overview-title">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6" data-testid="overview-title">
                 Welcome to {community.name}
               </h2>
               <p className="text-lg text-gray-600 leading-relaxed mb-6" data-testid="community-description">
@@ -1452,7 +1452,7 @@ export default function CommunityDetail() {
 
             {/* Features & Highlights */}
             <section id="highlights" className="scroll-mt-24">
-              <h2 className="text-2xl font-bold mb-8">Community Highlights</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-8">Community Highlights</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {highlights.length > 0 ? (
                   // Use database highlights if available
@@ -1801,7 +1801,7 @@ export default function CommunityDetail() {
             {/* Amenities Showcase */}
             {community.amenities && community.amenities.length > 0 && (
               <section id="amenities" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold mb-8">Amenities & Services</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-8">Amenities & Services</h2>
                 <div className="bg-gray-50 rounded-2xl p-8">
                   <p className="text-lg text-gray-600 mb-8">
                     Step into a lifestyle where every day feels like a retreat. Our community is packed with thoughtful amenities designed to make life easier and more enjoyable.
@@ -2003,7 +2003,7 @@ export default function CommunityDetail() {
         {/* Experience the Difference - Feature Sections */}
         <section id="features" className="scroll-mt-24 space-y-20">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold mb-4">Experience the Difference</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Experience the Difference</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Discover a community where every detail is designed for your comfort, enjoyment, and well-being.
             </p>
@@ -2015,7 +2015,7 @@ export default function CommunityDetail() {
             {/* Floor Plans Section */}
             {floorPlans.length > 0 && (
               <section id="floor-plans" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold mb-8">Floor Plans & Pricing</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-8">Floor Plans & Pricing</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Each apartment home is designed for comfort and independence, with modern conveniences and thoughtful layouts.
                 </p>
@@ -2038,7 +2038,7 @@ export default function CommunityDetail() {
 
             {/* Experience Our Community Section */}
             <section>
-              <h2 className="text-2xl font-bold mb-8">Experience Our Community</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-8">Experience Our Community</h2>
               {experienceImageUrl && (
                 <div className="rounded-2xl overflow-hidden shadow-2xl mb-12">
                   <img
@@ -2059,7 +2059,7 @@ export default function CommunityDetail() {
             {/* Photo Gallery */}
             {galleries.length > 0 && (
               <section id="gallery" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold mb-8">Photo Gallery</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-8">Photo Gallery</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Explore our vibrant community life, comfortable living spaces, dedicated care team, and beautiful Colorado surroundings.
                 </p>
@@ -2076,7 +2076,7 @@ export default function CommunityDetail() {
             {/* Events & Activities - Full Width */}
             {events.length > 0 && (
               <section id="events" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold mb-8">Upcoming Events</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-8">Upcoming Events</h2>
                 <div className="space-y-6">
                   {events.slice(0, 4).map((event) => (
                     <div key={event.id} className="w-full">
@@ -2100,7 +2100,7 @@ export default function CommunityDetail() {
             {/* Testimonials */}
             {testimonials.length > 0 && (
               <section id="testimonials" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold mb-8">What Residents & Families Say</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-8">What Residents & Families Say</h2>
                 <TestimonialsCarousel testimonials={testimonials} />
               </section>
             )}
@@ -2110,7 +2110,7 @@ export default function CommunityDetail() {
               <section id="news" className="py-8 scroll-mt-24">
                 <div className="flex items-center justify-between mb-8">
                   <div>
-                    <h2 className="text-2xl font-bold mb-2">Latest News & Activities</h2>
+                    <h2 className="text-2xl md:text-3xl font-bold mb-2">Latest News & Activities</h2>
                     <p className="text-lg text-gray-600">
                       Discover what's happening in our vibrant {community.name} community
                     </p>
@@ -2148,7 +2148,7 @@ export default function CommunityDetail() {
             {/* Resources Section - Regular Posts */}
             {posts.length > 0 && (
               <section className="py-8">
-                <h2 className="text-2xl font-bold mb-8">Helpful Resources</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-8">Helpful Resources</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Educational articles about senior living, health tips, and care guidance.
                 </p>
@@ -2175,7 +2175,7 @@ export default function CommunityDetail() {
                             </Badge>
                           )}
                         </div>
-                        <h3 className="text-xl font-semibold mb-2 line-clamp-2" data-testid={`resource-title-${post.id}`}>
+                        <h3 className="text-lg font-semibold mb-2 line-clamp-2" data-testid={`resource-title-${post.id}`}>
                           {post.title}
                         </h3>
                         <p className="text-sm text-gray-600 line-clamp-2 mb-3" data-testid={`resource-summary-${post.id}`}>
@@ -2196,7 +2196,7 @@ export default function CommunityDetail() {
             {/* FAQs */}
             {faqs.length > 0 && (
               <section id="faqs" className="scroll-mt-24">
-                <h2 className="text-2xl font-bold mb-8">Frequently Asked Questions</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-8">Frequently Asked Questions</h2>
                 <Accordion type="single" collapsible className="space-y-4">
                   {faqs.slice(0, 6).map((faq) => (
                     <AccordionItem key={faq.id} value={faq.id} className="border rounded-lg px-6 bg-gray-50" data-testid={`faq-${faq.id}`}>
@@ -2224,7 +2224,7 @@ export default function CommunityDetail() {
 
             {/* Location & Neighborhood */}
             <section id="neighborhood" className="scroll-mt-24">
-              <h2 className="text-2xl font-bold mb-8">Location & Neighborhood</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-8">Location & Neighborhood</h2>
               <Card className="mb-6 overflow-hidden">
                 <CardContent className="p-0">
                   <div className="h-96" data-testid="community-map">
