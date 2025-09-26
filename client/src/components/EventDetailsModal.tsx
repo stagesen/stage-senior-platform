@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, MapPin, ExternalLink, Users } from "lucide-react";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { Event } from "@shared/schema";
 
 interface EventDetailsModalProps {
@@ -16,6 +17,9 @@ interface EventDetailsModalProps {
 }
 
 export default function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalProps) {
+  // Resolve image URL
+  const resolvedImageUrl = useResolveImageUrl(event?.imageUrl);
+  
   if (!event) return null;
 
   const formatDateTime = (date: Date) => {
@@ -49,10 +53,10 @@ export default function EventDetailsModal({ event, isOpen, onClose }: EventDetai
         
         <div className="space-y-6">
           {/* Event Image */}
-          {event.imageUrl && (
+          {resolvedImageUrl && (
             <div className="w-full h-64 rounded-lg overflow-hidden">
               <img
-                src={event.imageUrl}
+                src={resolvedImageUrl}
                 alt={event.title}
                 className="w-full h-full object-cover"
                 data-testid="modal-event-image"

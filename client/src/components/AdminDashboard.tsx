@@ -38,6 +38,7 @@ import {
   FileText
 } from "lucide-react";
 import { format } from "date-fns";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import {
   insertCommunitySchema,
   insertPostSchema,
@@ -145,6 +146,106 @@ import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
+
+// Sub-component for gallery images to use the image resolution hook
+const GalleryImageItem = ({ image, index, onMoveUp, onMoveDown, onDelete, showControls = true, totalImages = 0 }: {
+  image: any;
+  index: number;
+  onMoveUp?: (index: number) => void;
+  onMoveDown?: (index: number) => void;
+  onDelete?: () => void;
+  showControls?: boolean;
+  totalImages?: number;
+}) => {
+  const resolvedImageUrl = useResolveImageUrl(image.imageUrl || image.url);
+  
+  return (
+    <div className="relative group">
+      <div className="aspect-square rounded-lg overflow-hidden bg-muted">
+        {resolvedImageUrl && (
+          <img
+            src={resolvedImageUrl}
+            alt={image.caption || image.alt || `Gallery image ${index + 1}`}
+            className="w-full h-full object-cover"
+          />
+        )}
+      </div>
+      {showControls && (
+        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          {index > 0 && onMoveUp && (
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => onMoveUp(index)}
+              className="h-8 w-8 p-0"
+            >
+              <ChevronUp className="h-4 w-4" />
+            </Button>
+          )}
+          {index < totalImages - 1 && onMoveDown && (
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => onMoveDown(index)}
+              className="h-8 w-8 p-0"
+            >
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          )}
+          {onDelete && (
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={onDelete}
+              className="h-8 w-8 p-0"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      )}
+      {image.caption && (
+        <p className="mt-2 text-sm text-muted-foreground truncate">{image.caption}</p>
+      )}
+    </div>
+  );
+};
+
+// Sub-component for existing gallery images in form
+const ExistingGalleryImage = ({ image, index, onDelete }: {
+  image: any;
+  index: number;
+  onDelete: () => void;
+}) => {
+  const resolvedImageUrl = useResolveImageUrl(image.imageUrl || image.url);
+  
+  return (
+    <div className="relative group">
+      {resolvedImageUrl && (
+        <img 
+          src={resolvedImageUrl} 
+          alt={image.alt || `Gallery image ${index + 1}`}
+          className="w-full h-24 object-cover rounded-md border"
+        />
+      )}
+      <Button
+        type="button"
+        size="sm"
+        variant="destructive"
+        className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+        onClick={onDelete}
+        data-testid={`button-delete-gallery-image-${image.id}`}
+      >
+        <Trash2 className="w-3 h-3" />
+      </Button>
+      {image.sortOrder !== undefined && (
+        <div className="absolute bottom-1 left-1 bg-black/50 text-white text-xs px-1 rounded">
+          #{image.sortOrder + 1}
+        </div>
+      )}
+    </div>
+  );
+};
 
 // TourRequestsTable Component for managing tour requests with lead management features
 function TourRequestsTable({ items, communities }: { items: TourRequest[]; communities: Community[] }) {
@@ -760,48 +861,15 @@ function FloorPlanImageManager({ floorPlanId }: { floorPlanId: string }) {
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {images.map((image: any, index: number) => (
-          <div key={image.id} className="relative group">
-            <div className="aspect-square rounded-lg overflow-hidden bg-muted">
-              <img
-                src={image.imageUrl || image.url}
-                alt={image.caption || "Floor plan gallery image"}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              {index > 0 && (
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => handleMoveUp(index)}
-                  className="h-8 w-8 p-0"
-                >
-                  <ChevronUp className="h-4 w-4" />
-                </Button>
-              )}
-              {index < images.length - 1 && (
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => handleMoveDown(index)}
-                  className="h-8 w-8 p-0"
-                >
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              )}
-              <Button
-                size="sm"
-                variant="destructive"
-                onClick={() => deleteImageMutation.mutate(image.imageId)}
-                className="h-8 w-8 p-0"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-            {image.caption && (
-              <p className="mt-2 text-sm text-muted-foreground truncate">{image.caption}</p>
-            )}
-          </div>
+          <GalleryImageItem
+            key={image.id}
+            image={image}
+            index={index}
+            onMoveUp={handleMoveUp}
+            onMoveDown={handleMoveDown}
+            onDelete={() => deleteImageMutation.mutate(image.imageId)}
+            totalImages={images.length}
+          />
         ))}
       </div>
     </div>
@@ -3092,59 +3160,43 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         <h4 className="text-sm font-medium mb-2">Existing Gallery Images ({galleryImages.length})</h4>
                         <div className="grid grid-cols-4 gap-4">
                           {galleryImages.map((image: any, index: number) => (
-                            <div key={image.id} className="relative group">
-                              <img 
-                                src={image.imageUrl || image.url} 
-                                alt={image.alt || `Gallery image ${index + 1}`}
-                                className="w-full h-24 object-cover rounded-md border"
-                              />
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="destructive"
-                                className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={async () => {
-                                  if (confirm('Are you sure you want to remove this image from the gallery?')) {
-                                    try {
-                                      const response = await apiRequest(
-                                        'DELETE',
-                                        `/api/galleries/${editingItem.id}/images/${image.id}`
-                                      );
-                                      
-                                      // Remove from local state
-                                      setGalleryImages(galleryImages.filter(img => img.id !== image.id));
-                                      
-                                      // Update form value
-                                      const currentImages = galleryForm.getValues('images') || [];
-                                      const updatedImages = currentImages.filter(
-                                        (img: any) => (img.url || img) !== (image.imageUrl || image.url)
-                                      );
-                                      galleryForm.setValue('images', updatedImages);
-                                      
-                                      toast({
-                                        title: "Success",
-                                        description: "Image removed from gallery",
-                                      });
-                                    } catch (error) {
-                                      console.error('Error deleting gallery image:', error);
-                                      toast({
-                                        title: "Error",
-                                        description: "Failed to remove image from gallery",
-                                        variant: "destructive",
-                                      });
-                                    }
+                            <ExistingGalleryImage
+                              key={image.id}
+                              image={image}
+                              index={index}
+                              onDelete={async () => {
+                                if (confirm('Are you sure you want to remove this image from the gallery?')) {
+                                  try {
+                                    const response = await apiRequest(
+                                      'DELETE',
+                                      `/api/galleries/${editingItem.id}/images/${image.id}`
+                                    );
+                                    
+                                    // Remove from local state
+                                    setGalleryImages(galleryImages.filter(img => img.id !== image.id));
+                                    
+                                    // Update form value
+                                    const currentImages = galleryForm.getValues('images') || [];
+                                    const updatedImages = currentImages.filter(
+                                      (img: any) => (img.url || img) !== (image.imageUrl || image.url)
+                                    );
+                                    galleryForm.setValue('images', updatedImages);
+                                    
+                                    toast({
+                                      title: "Success",
+                                      description: "Image removed from gallery",
+                                    });
+                                  } catch (error) {
+                                    console.error('Error deleting gallery image:', error);
+                                    toast({
+                                      title: "Error",
+                                      description: "Failed to remove image from gallery",
+                                      variant: "destructive",
+                                    });
                                   }
-                                }}
-                                data-testid={`button-delete-gallery-image-${image.id}`}
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </Button>
-                              {image.sortOrder !== undefined && (
-                                <div className="absolute bottom-1 left-1 bg-black/50 text-white text-xs px-1 rounded">
-                                  #{image.sortOrder + 1}
-                                </div>
-                              )}
-                            </div>
+                                }
+                              }}
+                            />
                           ))}
                         </div>
                       </div>

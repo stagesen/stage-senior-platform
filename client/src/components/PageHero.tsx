@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 
 interface PageHeroProps {
   pagePath: string;
@@ -37,12 +38,15 @@ export function PageHero({
   const title = hero?.title || defaultTitle || "";
   const subtitle = hero?.subtitle || defaultSubtitle || "";
   const description = hero?.description || "";
-  const backgroundImage = hero?.backgroundImageUrl || defaultBackgroundImage || "";
+  const backgroundImageRaw = hero?.backgroundImageUrl || defaultBackgroundImage || "";
   const ctaText = hero?.ctaText || "";
   const ctaLink = hero?.ctaLink || "";
   const overlayOpacity = hero?.overlayOpacity || 0.5;
   const textAlignment = hero?.textAlignment || "center";
   const isActive = hero?.active !== false; // Default to true if no hero or not specified
+  
+  // Resolve background image URL
+  const backgroundImage = useResolveImageUrl(backgroundImageRaw) || backgroundImageRaw;
 
   // Don't render if hero exists but is inactive
   if (hero && !isActive) {

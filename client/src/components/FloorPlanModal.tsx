@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { FloorPlan, FloorPlanImageWithDetails } from "@shared/schema";
 
 interface FloorPlanModalProps {
@@ -48,21 +49,29 @@ export default function FloorPlanModal({
     enabled: isOpen && !!floorPlan.id,
   });
   
+  // Resolve image URLs
+  const resolvedPlanImageUrl = useResolveImageUrl(floorPlan.planImageUrl);
+  const resolvedImageUrl = useResolveImageUrl(floorPlan.imageUrl);
+  
   // Combine main floor plan image with gallery images
   const images: { url: string; caption: string; type: 'plan' | 'photo' }[] = [];
-  if (floorPlan.planImageUrl) {
-    images.push({ url: floorPlan.planImageUrl, caption: "Floor Plan Layout", type: 'plan' });
+  if (resolvedPlanImageUrl) {
+    images.push({ url: resolvedPlanImageUrl, caption: "Floor Plan Layout", type: 'plan' });
   }
-  if (floorPlan.imageUrl) {
-    images.push({ url: floorPlan.imageUrl, caption: "Living Space", type: 'photo' });
+  if (resolvedImageUrl) {
+    images.push({ url: resolvedImageUrl, caption: "Living Space", type: 'photo' });
   }
   // Add gallery images from the database
   floorPlanImages.forEach((img) => {
-    images.push({ 
-      url: img.imageUrl || img.url, 
-      caption: img.caption || "Gallery Image", 
-      type: 'photo' 
-    });
+    const imgUrl = img.imageUrl || img.url;
+    // Note: Gallery images are already resolved URLs from the database
+    if (imgUrl) {
+      images.push({ 
+        url: imgUrl, 
+        caption: img.caption || "Gallery Image", 
+        type: 'photo' 
+      });
+    }
   });
   
   // Reset image index when floor plan changes

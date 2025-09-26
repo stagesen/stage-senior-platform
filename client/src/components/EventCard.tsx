@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, MapPin, ExternalLink } from "lucide-react";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { Event } from "@shared/schema";
 
 interface EventCardProps {
@@ -9,6 +10,9 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event }: EventCardProps) {
+  // Resolve image URL
+  const resolvedImageUrl = useResolveImageUrl(event.imageUrl);
+  
   const formatDateTime = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
       weekday: 'short',
@@ -29,7 +33,7 @@ export default function EventCard({ event }: EventCardProps) {
           {/* Event Image */}
           <div className="md:col-span-1">
             <img
-              src={event.imageUrl || `https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300`}
+              src={resolvedImageUrl || `https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300`}
               alt={event.title}
               className="w-full h-48 md:h-full object-cover"
               data-testid={`event-image-${event.slug}`}

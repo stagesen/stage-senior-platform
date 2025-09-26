@@ -80,62 +80,70 @@ const formatPrice = (price: number | undefined | null): string => {
   }).format(price);
 };
 
+// Local subcomponent: Floor Plan Card
+const FloorPlanCard = ({ plan, onOpen }: { plan: any, onOpen: (plan: any) => void }) => {
+  const resolvedImageUrl = useResolveImageUrl(plan.imageUrl);
+  
+  return (
+    <Card 
+      className="overflow-hidden hover:shadow-xl transition-all cursor-pointer group" 
+      onClick={() => onOpen(plan)}
+      data-testid={`floor-plan-${plan.id}`}
+    >
+      {resolvedImageUrl && (
+        <AspectRatio ratio={4/3}>
+          <img
+            src={resolvedImageUrl}
+            alt={`${plan.name} floor plan`}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            data-testid={`floor-plan-image-${plan.id}`}
+          />
+        </AspectRatio>
+      )}
+      <CardContent className="p-5">
+        <h4 className="font-semibold text-lg mb-2" data-testid={`floor-plan-name-${plan.id}`}>
+          {plan.name}
+        </h4>
+        {plan.startingPrice && (
+          <p className="text-2xl font-bold text-primary mb-3" data-testid={`floor-plan-price-${plan.id}`}>
+            {formatPrice(plan.startingPrice)}<span className="text-sm font-normal">/mo</span>
+          </p>
+        )}
+        <div className="flex flex-wrap gap-3 text-sm text-gray-600 mb-3">
+          {plan.bedrooms !== null && (
+            <span className="flex items-center gap-1" data-testid={`floor-plan-bedrooms-${plan.id}`}>
+              <Bed className="w-4 h-4" />
+              {plan.bedrooms} {plan.bedrooms === 1 ? 'Bed' : 'Beds'}
+            </span>
+          )}
+          {plan.bathrooms !== null && (
+            <span className="flex items-center gap-1" data-testid={`floor-plan-bathrooms-${plan.id}`}>
+              <Bath className="w-4 h-4" />
+              {Number(plan.bathrooms)} {Number(plan.bathrooms) === 1 ? 'Bath' : 'Baths'}
+            </span>
+          )}
+          {plan.squareFeet && (
+            <span className="flex items-center gap-1" data-testid={`floor-plan-sqft-${plan.id}`}>
+              <Square className="w-4 h-4" />
+              {plan.squareFeet} sq ft
+            </span>
+          )}
+        </div>
+        <div className="flex items-center text-primary group-hover:translate-x-1 transition-transform">
+          <span className="text-sm font-medium">View Details</span>
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 // Local subcomponent: Floor Plans Grid
 const FloorPlansGrid = ({ plans, onOpen }: { plans: any[], onOpen: (plan: any) => void }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
       {plans.map((plan) => (
-        <Card 
-          key={plan.id} 
-          className="overflow-hidden hover:shadow-xl transition-all cursor-pointer group" 
-          onClick={() => onOpen(plan)}
-          data-testid={`floor-plan-${plan.id}`}
-        >
-          {plan.imageUrl && (
-            <AspectRatio ratio={4/3}>
-              <img
-                src={plan.imageUrl}
-                alt={`${plan.name} floor plan`}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                data-testid={`floor-plan-image-${plan.id}`}
-              />
-            </AspectRatio>
-          )}
-          <CardContent className="p-5">
-            <h4 className="font-semibold text-lg mb-2" data-testid={`floor-plan-name-${plan.id}`}>
-              {plan.name}
-            </h4>
-            {plan.startingPrice && (
-              <p className="text-2xl font-bold text-primary mb-3" data-testid={`floor-plan-price-${plan.id}`}>
-                {formatPrice(plan.startingPrice)}<span className="text-sm font-normal">/mo</span>
-              </p>
-            )}
-            <div className="flex flex-wrap gap-3 text-sm text-gray-600 mb-3">
-              {plan.bedrooms !== null && (
-                <span className="flex items-center gap-1" data-testid={`floor-plan-bedrooms-${plan.id}`}>
-                  <Bed className="w-4 h-4" />
-                  {plan.bedrooms} {plan.bedrooms === 1 ? 'Bed' : 'Beds'}
-                </span>
-              )}
-              {plan.bathrooms !== null && (
-                <span className="flex items-center gap-1" data-testid={`floor-plan-bathrooms-${plan.id}`}>
-                  <Bath className="w-4 h-4" />
-                  {Number(plan.bathrooms)} {Number(plan.bathrooms) === 1 ? 'Bath' : 'Baths'}
-                </span>
-              )}
-              {plan.squareFeet && (
-                <span className="flex items-center gap-1" data-testid={`floor-plan-sqft-${plan.id}`}>
-                  <Square className="w-4 h-4" />
-                  {plan.squareFeet} sq ft
-                </span>
-              )}
-            </div>
-            <div className="flex items-center text-primary group-hover:translate-x-1 transition-transform">
-              <span className="text-sm font-medium">View Details</span>
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </div>
-          </CardContent>
-        </Card>
+        <FloorPlanCard key={plan.id} plan={plan} onOpen={onOpen} />
       ))}
     </div>
   );
@@ -413,6 +421,136 @@ const FeatureSection = ({
         </AspectRatio>
       </div>
     </div>
+  );
+};
+
+// Local subcomponent: Featured Amenity Card
+const FeaturedAmenityCard = ({ amenity, index }: { amenity: any; index: number }) => {
+  const resolvedImageUrl = useResolveImageUrl(amenity.imageUrl);
+  
+  const getAmenityIcon = (name: string) => {
+    const nameLower = name.toLowerCase();
+    if (nameLower.includes('dining') || nameLower.includes('meal')) return Coffee;
+    if (nameLower.includes('transport') || nameLower.includes('shuttle')) return Car;
+    if (nameLower.includes('fitness') || nameLower.includes('exercise')) return Activity;
+    if (nameLower.includes('library') || nameLower.includes('education')) return BookOpen;
+    if (nameLower.includes('health') || nameLower.includes('medical')) return Heart;
+    if (nameLower.includes('social') || nameLower.includes('community')) return Users;
+    if (nameLower.includes('wifi') || nameLower.includes('internet')) return Wifi;
+    return Sparkles;
+  };
+  
+  const IconComponent = amenity.icon ? 
+    (amenity.icon === 'Utensils' ? Coffee : 
+     amenity.icon === 'Coffee' ? Coffee :
+     amenity.icon === 'Car' ? Car :
+     amenity.icon === 'Activity' ? Activity :
+     amenity.icon === 'BookOpen' ? BookOpen :
+     amenity.icon === 'Heart' ? Heart :
+     amenity.icon === 'Users' ? Users :
+     amenity.icon === 'Wifi' ? Wifi :
+     Sparkles) : 
+    getAmenityIcon(amenity.name);
+    
+  return (
+    <Card 
+      className="overflow-hidden hover:shadow-lg transition-shadow"
+      data-testid={`featured-amenity-${index}`}
+    >
+      {resolvedImageUrl && (
+        <div className="h-48 overflow-hidden">
+          <img 
+            src={resolvedImageUrl} 
+            alt={amenity.name}
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          />
+        </div>
+      )}
+      <CardContent className="p-4">
+        <div className="flex items-start space-x-3">
+          <IconComponent className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+          <div>
+            <h4 className="font-semibold text-base">{amenity.name}</h4>
+            {amenity.description && (
+              <p className="text-sm text-gray-600 mt-1">{amenity.description}</p>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// Local subcomponent: Blog Post Card
+const BlogPostCard = ({ post }: { post: BlogPost }) => {
+  const resolvedThumbnail = useResolveImageUrl(post.thumbnailImage);
+  const resolvedMainImage = useResolveImageUrl(post.mainImage);
+  
+  return (
+    <Card className="group hover:shadow-2xl transition-all duration-300 border-0 overflow-hidden bg-white" data-testid={`blog-post-${post.id}`}>
+      <div className="relative">
+        {(resolvedThumbnail || resolvedMainImage) ? (
+          <div className="h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+            <img
+              src={resolvedThumbnail || resolvedMainImage || ''}
+              alt={post.title}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              loading="lazy"
+            />
+          </div>
+        ) : (
+          <div className="h-56 bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center">
+            <Image className="w-16 h-16 text-primary/30" />
+          </div>
+        )}
+        {post.featured && (
+          <Badge className="absolute top-4 left-4 bg-yellow-500 text-white border-0">
+            <Star className="w-3 h-3 mr-1 fill-current" />
+            Featured
+          </Badge>
+        )}
+        {post.category && (
+          <Badge className="absolute top-4 right-4 bg-white/90 text-gray-700 backdrop-blur-sm">
+            {post.category}
+          </Badge>
+        )}
+      </div>
+      <CardContent className="p-6">
+        <div className="flex items-center gap-3 mb-3 text-sm text-gray-500">
+          <div className="flex items-center gap-1">
+            <Calendar className="w-3 h-3" />
+            <span>{new Date(post.publishedAt || post.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+          </div>
+          {post.author && (
+            <div className="flex items-center gap-1">
+              <Users className="w-3 h-3" />
+              <span className="capitalize">{post.author.replace(/-/g, ' ')}</span>
+            </div>
+          )}
+        </div>
+        <h3 className="text-lg font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors" data-testid={`blog-post-title-${post.id}`}>
+          {post.title}
+        </h3>
+        <p className="text-gray-600 text-sm line-clamp-3 mb-4" data-testid={`blog-post-summary-${post.id}`}>
+          {post.summary || post.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'}
+        </p>
+        <div className="flex items-center justify-between">
+          <div className="flex gap-1">
+            {post.tags && post.tags.slice(0, 2).map((tag, idx) => (
+              <Badge key={idx} variant="secondary" className="text-xs bg-gray-100 text-gray-600">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+          <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/5 group/btn" asChild>
+            <Link href={`/blog/${post.slug}`}>
+              <span className="mr-1">Read</span>
+              <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+            </Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
@@ -1545,45 +1683,9 @@ export default function CommunityDetail() {
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {(community as any).amenities
                           .filter((am: any) => am.imageUrl)
-                          .map((amenity: any, index: number) => {
-                            const IconComponent = amenity.icon ? 
-                              (amenity.icon === 'Utensils' ? Coffee : 
-                               amenity.icon === 'Coffee' ? Coffee :
-                               amenity.icon === 'Car' ? Car :
-                               amenity.icon === 'Activity' ? Activity :
-                               amenity.icon === 'BookOpen' ? BookOpen :
-                               amenity.icon === 'Heart' ? Heart :
-                               amenity.icon === 'Users' ? Users :
-                               amenity.icon === 'Wifi' ? Wifi :
-                               Sparkles) : 
-                              getAmenityIcon(amenity.name);
-                            return (
-                              <Card 
-                                key={`featured-${index}`}
-                                className="overflow-hidden hover:shadow-lg transition-shadow"
-                                data-testid={`featured-amenity-${index}`}
-                              >
-                                <div className="h-48 overflow-hidden">
-                                  <img 
-                                    src={amenity.imageUrl} 
-                                    alt={amenity.name}
-                                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                                  />
-                                </div>
-                                <CardContent className="p-4">
-                                  <div className="flex items-start space-x-3">
-                                    <IconComponent className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                                    <div>
-                                      <h4 className="font-semibold text-base">{amenity.name}</h4>
-                                      {amenity.description && (
-                                        <p className="text-sm text-gray-600 mt-1">{amenity.description}</p>
-                                      )}
-                                    </div>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            );
-                          })}
+                          .map((amenity: any, index: number) => (
+                            <FeaturedAmenityCard key={`featured-${index}`} amenity={amenity} index={index} />
+                          ))}
                       </div>
                     </div>
                   )}
@@ -1921,70 +2023,7 @@ export default function CommunityDetail() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {blogPosts.slice(0, 3).map((post) => (
-                    <Card key={post.id} className="group hover:shadow-2xl transition-all duration-300 border-0 overflow-hidden bg-white" data-testid={`blog-post-${post.id}`}>
-                      <div className="relative">
-                        {(post.mainImage || post.thumbnailImage) ? (
-                          <div className="h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
-                            <img
-                              src={post.thumbnailImage || post.mainImage || ''}
-                              alt={post.title}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                              loading="lazy"
-                            />
-                          </div>
-                        ) : (
-                          <div className="h-56 bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center">
-                            <Image className="w-16 h-16 text-primary/30" />
-                          </div>
-                        )}
-                        {post.featured && (
-                          <Badge className="absolute top-4 left-4 bg-yellow-500 text-white border-0">
-                            <Star className="w-3 h-3 mr-1 fill-current" />
-                            Featured
-                          </Badge>
-                        )}
-                        {post.category && (
-                          <Badge className="absolute top-4 right-4 bg-white/90 text-gray-700 backdrop-blur-sm">
-                            {post.category}
-                          </Badge>
-                        )}
-                      </div>
-                      <CardContent className="p-6">
-                        <div className="flex items-center gap-3 mb-3 text-sm text-gray-500">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            <span>{new Date(post.publishedAt || post.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                          </div>
-                          {post.author && (
-                            <div className="flex items-center gap-1">
-                              <Users className="w-3 h-3" />
-                              <span className="capitalize">{post.author.replace(/-/g, ' ')}</span>
-                            </div>
-                          )}
-                        </div>
-                        <h3 className="text-lg font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors" data-testid={`blog-post-title-${post.id}`}>
-                          {post.title}
-                        </h3>
-                        <p className="text-gray-600 text-sm line-clamp-3 mb-4" data-testid={`blog-post-summary-${post.id}`}>
-                          {post.summary || post.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex gap-1">
-                            {post.tags && post.tags.slice(0, 2).map((tag, idx) => (
-                              <Badge key={idx} variant="secondary" className="text-xs bg-gray-100 text-gray-600">
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                          <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/5 group/btn" asChild>
-                            <Link href={`/blog/${post.slug}`}>
-                              <span className="mr-1">Read</span>
-                              <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
-                            </Link>
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <BlogPostCard key={post.id} post={post} />
                   ))}
                 </div>
                 {blogPosts.length > 3 && (

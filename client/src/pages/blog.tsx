@@ -11,6 +11,7 @@ import BlogCard from "@/components/BlogCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 import { PageHero } from "@/components/PageHero";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { BlogPost, Community } from "@shared/schema";
 
 export default function Blog() {
@@ -37,6 +38,9 @@ export default function Blog() {
     queryKey: [`/api/blog-posts/${postSlug}`],
     enabled: !!postSlug,
   });
+
+  // Resolve main image URL for current post
+  const resolvedMainImage = useResolveImageUrl(currentPost?.mainImage);
 
   // Get all unique tags
   const allTags = Array.from(
@@ -162,9 +166,9 @@ export default function Blog() {
         {/* Post Content */}
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <article className="prose prose-lg max-w-none" data-testid="post-content">
-            {currentPost.mainImage && (
+            {resolvedMainImage && (
               <img
-                src={currentPost.mainImage}
+                src={resolvedMainImage}
                 alt={currentPost.title}
                 className="w-full h-96 object-cover rounded-lg mb-8"
                 data-testid="post-hero-image"
