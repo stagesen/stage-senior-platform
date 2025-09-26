@@ -23,7 +23,7 @@ import {
   Trash2, 
   Eye, 
   EyeOff,
-  Calendar,
+  Calendar as CalendarIcon,
   MapPin,
   Phone,
   Mail,
@@ -31,7 +31,11 @@ import {
   ChevronUp,
   Loader2,
   Star,
-  Settings
+  Settings,
+  Download,
+  Filter,
+  Search,
+  FileText
 } from "lucide-react";
 import { format } from "date-fns";
 import {
@@ -46,11 +50,13 @@ import {
   insertFloorPlanSchema,
   insertCareTypeSchema,
   insertAmenitySchema,
+  insertTourRequestSchema,
   type Community,
   type Post,
   type BlogPost,
   type Event,
   type TourRequest,
+  type InsertTourRequest,
   type Faq,
   type Gallery,
   type Testimonial,
@@ -134,6 +140,546 @@ const COMMON_ICONS = [
   "Phone",
   "MapPin"
 ];
+
+import { Separator } from "@/components/ui/separator";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+
+// TourRequestsTable Component for managing tour requests with lead management features
+function TourRequestsTable({ items, communities }: { items: TourRequest[]; communities: Community[] }) {
+  const [selectedRequest, setSelectedRequest] = useState<TourRequest | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [communityFilter, setCommunityFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const { toast } = useToast();
+
+  // Mutation for updating tour request
+  const updateTourRequest = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<InsertTourRequest> }) => {
+      return apiRequest(`/api/tour-requests/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/tour-requests"] });
+      toast({
+        title: "Success",
+        description: "Tour request updated successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update tour request",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Mutation for deleting tour request
+  const deleteTourRequest = useMutation({
+    mutationFn: async (id: string) => {
+      return apiRequest(`/api/tour-requests/${id}`, {
+        method: "DELETE",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/tour-requests"] });
+      toast({
+        title: "Success",
+        description: "Tour request deleted successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete tour request",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Get status color for badges
+  const getStatusColor = (status: string) => {
+    const colors: Record<string, string> = {
+      new: "bg-blue-500 text-white",
+      contacted: "bg-yellow-500 text-white",
+      scheduled: "bg-purple-500 text-white",
+      toured: "bg-cyan-500 text-white",
+      "follow-up": "bg-orange-500 text-white",
+      converted: "bg-green-500 text-white",
+      "not-interested": "bg-gray-500 text-white",
+    };
+    return colors[status] || "bg-gray-400 text-white";
+  };
+
+  // Filter items
+  const filteredItems = items.filter(item => {
+    const matchesStatus = statusFilter === "all" || item.status === statusFilter;
+    const matchesCommunity = communityFilter === "all" || item.communityId === communityFilter;
+    const matchesSearch = searchQuery === "" || 
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.email && item.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      item.phone.includes(searchQuery);
+    
+    return matchesStatus && matchesCommunity && matchesSearch;
+  });
+
+  // Export to CSV
+  const exportToCSV = () => {
+    const headers = ["Name", "Email", "Phone", "Community", "Status", "Notes", "Preferred Date", "Scheduled Date", "Last Contacted", "Submitted Date"];
+    const rows = filteredItems.map(item => {
+      const community = communities.find(c => c.id === item.communityId);
+      return [
+        item.name,
+        item.email || "",
+        item.phone,
+        community?.name || "General",
+        item.status || "new",
+        item.notes || "",
+        item.preferredDate ? new Date(item.preferredDate).toLocaleDateString() : "",
+        item.scheduledDate ? new Date(item.scheduledDate).toLocaleDateString() : "",
+        item.lastContactedAt ? new Date(item.lastContactedAt).toLocaleDateString() : "",
+        new Date(item.createdAt).toLocaleDateString(),
+      ];
+    });
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `tour-requests-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Success",
+      description: `Exported ${filteredItems.length} tour requests to CSV`,
+    });
+  };
+
+  // Handle quick status update
+  const handleQuickStatusUpdate = async (id: string, status: string) => {
+    const updates: Partial<InsertTourRequest> = { status };
+    
+    // Update lastContactedAt when status changes to contacted
+    if (status === "contacted") {
+      updates.lastContactedAt = new Date();
+    }
+
+    updateTourRequest.mutate({ id, data: updates });
+  };
+
+  // Handle delete
+  const handleDelete = (id: string) => {
+    if (confirm("Are you sure you want to delete this tour request?")) {
+      deleteTourRequest.mutate(id);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Filters and Actions */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-2 md:flex-row md:items-center">
+          <div className="flex items-center gap-2">
+            <Search className="w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by name, email, or phone..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-64"
+              data-testid="input-search-tours"
+            />
+          </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-48" data-testid="select-status-filter">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="new">New</SelectItem>
+              <SelectItem value="contacted">Contacted</SelectItem>
+              <SelectItem value="scheduled">Scheduled</SelectItem>
+              <SelectItem value="toured">Toured</SelectItem>
+              <SelectItem value="follow-up">Follow Up</SelectItem>
+              <SelectItem value="converted">Converted</SelectItem>
+              <SelectItem value="not-interested">Not Interested</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={communityFilter} onValueChange={setCommunityFilter}>
+            <SelectTrigger className="w-48" data-testid="select-community-filter">
+              <SelectValue placeholder="Filter by community" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Communities</SelectItem>
+              {communities.map(community => (
+                <SelectItem key={community.id} value={community.id}>
+                  {community.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <Button onClick={exportToCSV} variant="outline" data-testid="button-export-csv">
+          <Download className="w-4 h-4 mr-2" />
+          Export to CSV
+        </Button>
+      </div>
+
+      {/* Table */}
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Contact</TableHead>
+            <TableHead>Community</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Dates</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredItems.map((item) => {
+            const community = communities.find(c => c.id === item.communityId);
+            return (
+              <TableRow key={item.id} data-testid={`tour-row-${item.id}`}>
+                <TableCell className="font-medium">
+                  <div>
+                    <div>{item.name}</div>
+                    {item.email && (
+                      <div className="text-sm text-muted-foreground">{item.email}</div>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>{item.phone}</TableCell>
+                <TableCell>{community?.name || "General"}</TableCell>
+                <TableCell>
+                  <Select
+                    value={item.status || "new"}
+                    onValueChange={(value) => handleQuickStatusUpdate(item.id, value)}
+                  >
+                    <SelectTrigger className="w-32 border-0" data-testid={`select-status-${item.id}`}>
+                      <Badge className={cn("w-full justify-center", getStatusColor(item.status || "new"))}>
+                        {item.status || "new"}
+                      </Badge>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="new">New</SelectItem>
+                      <SelectItem value="contacted">Contacted</SelectItem>
+                      <SelectItem value="scheduled">Scheduled</SelectItem>
+                      <SelectItem value="toured">Toured</SelectItem>
+                      <SelectItem value="follow-up">Follow Up</SelectItem>
+                      <SelectItem value="converted">Converted</SelectItem>
+                      <SelectItem value="not-interested">Not Interested</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </TableCell>
+                <TableCell>
+                  <div className="text-sm space-y-1">
+                    <div>Submitted: {new Date(item.createdAt).toLocaleDateString()}</div>
+                    {item.preferredDate && (
+                      <div>Preferred: {new Date(item.preferredDate).toLocaleDateString()}</div>
+                    )}
+                    {item.scheduledDate && (
+                      <div className="font-medium">Scheduled: {new Date(item.scheduledDate).toLocaleDateString()}</div>
+                    )}
+                    {item.lastContactedAt && (
+                      <div className="text-muted-foreground">Last Contact: {new Date(item.lastContactedAt).toLocaleDateString()}</div>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedRequest(item);
+                        setIsEditModalOpen(true);
+                      }}
+                      data-testid={`button-edit-${item.id}`}
+                    >
+                      <Eye className="w-4 h-4 mr-1" />
+                      View
+                    </Button>
+                    <Button size="sm" variant="outline" asChild data-testid={`button-call-${item.id}`}>
+                      <a href={`tel:${item.phone}`}>
+                        <Phone className="w-4 h-4" />
+                      </a>
+                    </Button>
+                    {item.email && (
+                      <Button size="sm" variant="outline" asChild data-testid={`button-email-${item.id}`}>
+                        <a href={`mailto:${item.email}`}>
+                          <Mail className="w-4 h-4" />
+                        </a>
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleDelete(item.id)}
+                      data-testid={`button-delete-${item.id}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+
+      {/* Edit Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Tour Request Details</DialogTitle>
+          </DialogHeader>
+          {selectedRequest && (
+            <TourRequestEditForm
+              request={selectedRequest}
+              communities={communities}
+              onClose={() => {
+                setIsEditModalOpen(false);
+                setSelectedRequest(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+// Tour Request Edit Form Component
+function TourRequestEditForm({ 
+  request, 
+  communities, 
+  onClose 
+}: { 
+  request: TourRequest; 
+  communities: Community[]; 
+  onClose: () => void;
+}) {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const form = useForm<Partial<InsertTourRequest>>({
+    resolver: zodResolver(insertTourRequestSchema.partial()),
+    defaultValues: {
+      status: request.status || "new",
+      notes: request.notes || "",
+      scheduledDate: request.scheduledDate ? new Date(request.scheduledDate) : undefined,
+    },
+  });
+
+  const onSubmit = async (data: Partial<InsertTourRequest>) => {
+    setIsSubmitting(true);
+    try {
+      // Update lastContactedAt if status changes to contacted
+      if (data.status === "contacted" && request.status !== "contacted") {
+        data.lastContactedAt = new Date();
+      }
+
+      await apiRequest(`/api/tour-requests/${request.id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ["/api/tour-requests"] });
+      
+      toast({
+        title: "Success",
+        description: "Tour request updated successfully",
+      });
+      
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update tour request",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const community = communities.find(c => c.id === request.communityId);
+
+  return (
+    <div className="space-y-6">
+      {/* Read-only Details */}
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-medium text-muted-foreground">Name</label>
+            <div className="font-medium">{request.name}</div>
+          </div>
+          <div>
+            <label className="text-sm font-medium text-muted-foreground">Phone</label>
+            <div className="font-medium">{request.phone}</div>
+          </div>
+          {request.email && (
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">Email</label>
+              <div className="font-medium">{request.email}</div>
+            </div>
+          )}
+          <div>
+            <label className="text-sm font-medium text-muted-foreground">Community</label>
+            <div className="font-medium">{community?.name || "General"}</div>
+          </div>
+          {request.preferredDate && (
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">Preferred Date</label>
+              <div className="font-medium">{new Date(request.preferredDate).toLocaleDateString()}</div>
+            </div>
+          )}
+          <div>
+            <label className="text-sm font-medium text-muted-foreground">Submitted</label>
+            <div className="font-medium">{new Date(request.createdAt).toLocaleDateString()}</div>
+          </div>
+        </div>
+
+        {request.message && (
+          <div>
+            <label className="text-sm font-medium text-muted-foreground">Message</label>
+            <div className="mt-1 p-3 bg-muted rounded-md">{request.message}</div>
+          </div>
+        )}
+      </div>
+
+      <Separator />
+
+      {/* Editable Form */}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Status</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="new">New</SelectItem>
+                    <SelectItem value="contacted">Contacted</SelectItem>
+                    <SelectItem value="scheduled">Scheduled</SelectItem>
+                    <SelectItem value="toured">Toured</SelectItem>
+                    <SelectItem value="follow-up">Follow Up</SelectItem>
+                    <SelectItem value="converted">Converted</SelectItem>
+                    <SelectItem value="not-interested">Not Interested</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="scheduledDate"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Scheduled Date</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date < new Date(new Date().setHours(0, 0, 0, 0))
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormDescription>
+                  Select the scheduled tour date
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="notes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Internal Notes</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Add internal notes about this lead..."
+                    className="min-h-[100px]"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  These notes are for internal tracking only
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="flex justify-end space-x-2">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                "Update Tour Request"
+              )}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
+  );
+}
 
 // FloorPlanImageManager Component for managing floor plan gallery images
 function FloorPlanImageManager({ floorPlanId }: { floorPlanId: string }) {
@@ -3468,62 +4014,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     }
 
     if (type === "tours") {
-      return (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Community</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.map((item: TourRequest) => {
-              const community = communities.find(c => c.id === item.communityId);
-              return (
-                <TableRow key={item.id} data-testid={`tour-row-${item.id}`}>
-                  <TableCell className="font-medium">{item.name}</TableCell>
-                  <TableCell>{item.phone}</TableCell>
-                  <TableCell>{community?.name || "General"}</TableCell>
-                  <TableCell>
-                    <Badge variant={item.status === "pending" ? "default" : "secondary"}>
-                      {item.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <Button size="sm" variant="outline" asChild data-testid={`button-call-${item.id}`}>
-                        <a href={`tel:${item.phone}`}>
-                          <Phone className="w-4 h-4" />
-                        </a>
-                      </Button>
-                      {item.email && (
-                        <Button size="sm" variant="outline" asChild data-testid={`button-email-${item.id}`}>
-                          <a href={`mailto:${item.email}`}>
-                            <Mail className="w-4 h-4" />
-                          </a>
-                        </Button>
-                      )}
-                      <Button 
-                        size="sm" 
-                        variant="destructive" 
-                        onClick={() => handleDelete(item.id)}
-                        data-testid={`button-delete-${item.id}`}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      );
+      return <TourRequestsTable items={items} communities={communities} />;
     }
 
     // Floor Plans table

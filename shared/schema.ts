@@ -211,7 +211,10 @@ export const tourRequests = pgTable("tour_requests", {
   communityId: uuid("community_id").references(() => communities.id),
   preferredDate: timestamp("preferred_date"),
   message: text("message"),
-  status: varchar("status", { length: 50 }).default("pending"),
+  status: varchar("status", { length: 50 }).default("new"),
+  notes: text("notes"),
+  lastContactedAt: timestamp("last_contacted_at"),
+  scheduledDate: timestamp("scheduled_date"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -513,6 +516,10 @@ export const insertTourRequestSchema = createInsertSchema(tourRequests).omit({
   phone: z.string().min(10, "Please enter a valid phone number").regex(/^[\+]?[1-9][\d]{0,15}$/, "Please enter a valid phone number"),
   email: z.string().email("Please enter a valid email address").optional().or(z.literal("")),
   message: z.string().max(1000, "Message is too long").optional(),
+  status: z.enum(["new", "contacted", "scheduled", "toured", "follow-up", "converted", "not-interested"]).optional(),
+  notes: z.string().optional(),
+  lastContactedAt: z.date().optional(),
+  scheduledDate: z.date().optional(),
 });
 
 export const insertFloorPlanSchema = createInsertSchema(floorPlans).omit({
