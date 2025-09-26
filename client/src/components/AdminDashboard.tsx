@@ -373,6 +373,29 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
         item.lng = item.longitude;
       }
     }
+    
+    // For galleries, ensure images field is properly set
+    if (type === "galleries") {
+      const galleryData = {
+        title: item.title || "",
+        gallerySlug: item.gallerySlug || "",
+        communityId: item.communityId || undefined,
+        description: item.description || "",
+        // Keep images as objects for backend compatibility
+        images: item.images || [],
+        tags: item.tags || [],
+        category: item.category || "",
+        hero: item.hero || false,
+        published: item.published || false,
+        active: item.active !== false,
+        thumbnailIndex: item.thumbnailIndex || null
+      };
+      setEditingItem(item);
+      galleryForm.reset(galleryData);
+      setIsDialogOpen(true);
+      return;
+    }
+    
     setEditingItem(item);
     getCurrentForm().reset(item);
     setIsDialogOpen(true);
@@ -1727,7 +1750,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     <FormLabel>Gallery Images</FormLabel>
                     <FormControl>
                       <ImageUploader
-                        value={field.value?.map(img => img.url) || []}
+                        value={field.value ? (Array.isArray(field.value) && field.value.length > 0 && typeof field.value[0] === 'object' ? field.value.map((img: any) => img.url || img) : field.value) : []}
                         onChange={async (imageIds) => {
                           if (Array.isArray(imageIds) && imageIds.length > 0) {
                             setIsFetchingImages(true);
