@@ -1098,7 +1098,7 @@ export default function CommunityDetail() {
         {/* Hero Logo Overlay */}
         {heroLogoSrc && (
           <div className="absolute top-6 right-6 md:top-10 md:right-10 z-20">
-            <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg px-4 py-3 md:px-6 md:py-4 border border-white/60">
+            <div className="bg-white rounded-2xl shadow-lg px-4 py-3 md:px-6 md:py-4 border border-gray-300">
               <img
                 src={heroLogoSrc}
                 alt={heroLogoAlt}
