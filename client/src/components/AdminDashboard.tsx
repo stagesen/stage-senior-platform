@@ -44,6 +44,8 @@ import {
   insertTestimonialSchema,
   insertPageHeroSchema,
   insertFloorPlanSchema,
+  insertCareTypeSchema,
+  insertAmenitySchema,
   type Community,
   type Post,
   type BlogPost,
@@ -54,6 +56,8 @@ import {
   type Testimonial,
   type PageHero,
   type FloorPlan,
+  type CareType,
+  type Amenity,
   type InsertCommunity,
   type InsertPost,
   type InsertBlogPost,
@@ -63,10 +67,12 @@ import {
   type InsertTestimonial,
   type InsertPageHero,
   type InsertFloorPlan,
+  type InsertCareType,
+  type InsertAmenity,
 } from "@shared/schema";
 
 interface AdminDashboardProps {
-  type: "communities" | "posts" | "blog-posts" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans";
+  type: "communities" | "posts" | "blog-posts" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities";
 }
 
 // Helper function to generate slug from title
@@ -93,6 +99,40 @@ const BLOG_CATEGORIES = [
   "health",
   "lifestyle",
   "community-spotlight"
+];
+
+// Amenity categories
+const AMENITY_CATEGORIES = [
+  "wellness",
+  "dining",
+  "social",
+  "services",
+  "safety",
+  "comfort"
+];
+
+// Common Lucide icon names
+const COMMON_ICONS = [
+  "Home",
+  "Heart",
+  "Users",
+  "Coffee",
+  "Wifi",
+  "Car",
+  "Activity",
+  "BookOpen",
+  "Shield",
+  "Sparkles",
+  "Utensils",
+  "Music",
+  "Palette",
+  "Sun",
+  "Moon",
+  "Star",
+  "Dumbbell",
+  "Trees",
+  "Phone",
+  "MapPin"
 ];
 
 // FloorPlanImageManager Component for managing floor plan gallery images
@@ -425,6 +465,31 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     },
   });
 
+  const careTypeForm = useForm<InsertCareType>({
+    resolver: zodResolver(insertCareTypeSchema),
+    defaultValues: {
+      name: "",
+      slug: "",
+      description: "",
+      sortOrder: 0,
+      active: true,
+    },
+  });
+
+  const amenityForm = useForm<InsertAmenity>({
+    resolver: zodResolver(insertAmenitySchema),
+    defaultValues: {
+      name: "",
+      slug: "",
+      category: "",
+      description: "",
+      icon: "",
+      imageUrl: "",
+      sortOrder: 0,
+      active: true,
+    },
+  });
+
   // Get current form based on type
   const getCurrentForm = () => {
     switch (type) {
@@ -437,6 +502,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "testimonials": return testimonialForm;
       case "page-heroes": return pageHeroForm;
       case "floor-plans": return floorPlanForm;
+      case "care-types": return careTypeForm;
+      case "amenities": return amenityForm;
       default: return communityForm;
     }
   };
@@ -510,6 +577,18 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   });
 
   const handleSubmit = (data: any) => {
+    // For care types, generate slug if not provided
+    if (type === "care-types") {
+      if (!data.slug && data.name) {
+        data.slug = generateSlug(data.name);
+      }
+    }
+    // For amenities, generate slug if not provided
+    if (type === "amenities") {
+      if (!data.slug && data.name) {
+        data.slug = generateSlug(data.name);
+      }
+    }
     // For communities, normalize lat/lng fields
     if (type === "communities") {
       // If lat/lng are provided but not latitude/longitude, copy them
@@ -2877,6 +2956,271 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
           </Form>
         );
 
+      case "care-types":
+        return (
+          <Form {...careTypeForm}>
+            <form onSubmit={careTypeForm.handleSubmit(handleSubmit)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={careTypeForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="e.g., Independent Living" data-testid="input-care-type-name" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={careTypeForm.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Auto-generated from name" data-testid="input-care-type-slug" />
+                      </FormControl>
+                      <FormDescription>URL-safe identifier (auto-generated if empty)</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <FormField
+                control={careTypeForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        {...field} 
+                        value={field.value || ""}
+                        placeholder="Describe this care type"
+                        data-testid="textarea-care-type-description" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={careTypeForm.control}
+                  name="sortOrder"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Display Order</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || 0} 
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          data-testid="input-care-type-sort-order" 
+                        />
+                      </FormControl>
+                      <FormDescription>Lower numbers appear first</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={careTypeForm.control}
+                  name="active"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2 mt-8">
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-care-type-active" />
+                      </FormControl>
+                      <FormLabel>Active</FormLabel>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="button-submit">
+                  {editingItem ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        );
+
+      case "amenities":
+        return (
+          <Form {...amenityForm}>
+            <form onSubmit={amenityForm.handleSubmit(handleSubmit)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={amenityForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="e.g., Fitness Center" data-testid="input-amenity-name" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={amenityForm.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Auto-generated from name" data-testid="input-amenity-slug" />
+                      </FormControl>
+                      <FormDescription>URL-safe identifier (auto-generated if empty)</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <FormField
+                control={amenityForm.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value || undefined}>
+                      <FormControl>
+                        <SelectTrigger data-testid="select-amenity-category">
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {AMENITY_CATEGORIES.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category.charAt(0).toUpperCase() + category.slice(1)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={amenityForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        {...field} 
+                        value={field.value || ""}
+                        placeholder="Describe this amenity"
+                        data-testid="textarea-amenity-description" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={amenityForm.control}
+                name="icon"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Icon Name</FormLabel>
+                    <FormControl>
+                      <Input 
+                        {...field} 
+                        value={field.value || ""}
+                        placeholder="e.g., Home, Heart, Users, Coffee, Wifi"
+                        data-testid="input-amenity-icon" 
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Common icons: {COMMON_ICONS.slice(0, 10).join(", ")}...
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={amenityForm.control}
+                name="imageUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Amenity Image</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload amenity image"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={amenityForm.control}
+                  name="sortOrder"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Display Order</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || 0} 
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          data-testid="input-amenity-sort-order" 
+                        />
+                      </FormControl>
+                      <FormDescription>Lower numbers appear first</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={amenityForm.control}
+                  name="active"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2 mt-8">
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-amenity-active" />
+                      </FormControl>
+                      <FormLabel>Active</FormLabel>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="button-submit">
+                  {editingItem ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        );
+
       default:
         return <div>Form not implemented for {type}</div>;
     }
@@ -3707,6 +4051,140 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
         </TableBody>
       </Table>
     );
+    
+    // Care Types table
+    if (type === "care-types") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Slug</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Display Order</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: CareType) => (
+              <TableRow key={item.id} data-testid={`care-type-row-${item.id}`}>
+                <TableCell className="font-medium">
+                  {item.name}
+                </TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  {item.slug}
+                </TableCell>
+                <TableCell className="max-w-[300px]">
+                  <div className="truncate">
+                    {item.description || "No description"}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {item.sortOrder || 0}
+                </TableCell>
+                <TableCell>
+                  <Badge variant={item.active ? "default" : "secondary"}>
+                    {item.active ? "Active" : "Inactive"}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => handleEdit(item)}
+                      data-testid={`button-edit-${item.id}`}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="destructive" 
+                      onClick={() => handleDelete(item.id)}
+                      data-testid={`button-delete-${item.id}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      );
+    }
+    
+    // Amenities table
+    if (type === "amenities") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Slug</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Icon</TableHead>
+              <TableHead>Display Order</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: Amenity) => (
+              <TableRow key={item.id} data-testid={`amenity-row-${item.id}`}>
+                <TableCell className="font-medium">
+                  {item.name}
+                </TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  {item.slug}
+                </TableCell>
+                <TableCell>
+                  {item.category ? (
+                    <Badge variant="outline">
+                      {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
+                    </Badge>
+                  ) : (
+                    "Uncategorized"
+                  )}
+                </TableCell>
+                <TableCell>
+                  {item.icon || "No icon"}
+                </TableCell>
+                <TableCell>
+                  {item.sortOrder || 0}
+                </TableCell>
+                <TableCell>
+                  <Badge variant={item.active ? "default" : "secondary"}>
+                    {item.active ? "Active" : "Inactive"}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => handleEdit(item)}
+                      data-testid={`button-edit-${item.id}`}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="destructive" 
+                      onClick={() => handleDelete(item.id)}
+                      data-testid={`button-delete-${item.id}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      );
+    }
   };
 
   const getTitle = () => {
@@ -3720,6 +4198,9 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "testimonials": return "Testimonials";
       case "page-heroes": return "Page Heroes";
       case "floor-plans": return "Floor Plans";
+      case "care-types": return "Care Types";
+      case "amenities": return "Amenities";
+      case "blog-posts": return "Blog Posts";
       default: return type;
     }
   };

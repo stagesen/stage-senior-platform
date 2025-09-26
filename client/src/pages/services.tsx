@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Home, Heart, Brain, Clock, Shield, Users, Star, Phone, Calendar, MapPin, CheckCircle } from "lucide-react";
+import { Home, Heart, Brain, Clock, Shield, Users, Star, Phone, Calendar, MapPin, CheckCircle, ArrowRight, Building2, HeartHandshake, FileCheck } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 
 export default function Services() {
@@ -135,15 +135,101 @@ export default function Services() {
       </div>
 
 
-      {/* Services Grid */}
+      {/* Management Solutions Section */}
       <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+              Senior Living Management Solutions
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              At Stage Management, we deliver comprehensive solutions tailored to the unique needs of senior living communities.
+              Our specialized services ensure operational excellence, compassionate care, and sustainable growth for your community.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <Card className="group hover:shadow-xl transition-all duration-300 border-t-4 border-primary">
+              <CardHeader>
+                <div className="mb-4">
+                  <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <Building2 className="w-7 h-7 text-primary" />
+                  </div>
+                </div>
+                <CardTitle className="text-xl mb-2">Expert Management Services</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-6">
+                  Transform your senior living community with our proven management expertise. From independent living to memory care,
+                  we optimize operations while maintaining the highest standards of resident care and satisfaction.
+                </p>
+                <Button variant="link" className="p-0 h-auto font-semibold group" asChild>
+                  <Link href="/contact">
+                    Learn More
+                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-xl transition-all duration-300 border-t-4 border-purple-500">
+              <CardHeader>
+                <div className="mb-4">
+                  <div className="w-14 h-14 bg-purple-500/10 rounded-lg flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">
+                    <HeartHandshake className="w-7 h-7 text-purple-500" />
+                  </div>
+                </div>
+                <CardTitle className="text-xl mb-2">Spiritual Care & Support</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-6">
+                  Our dedicated chaplaincy program provides essential spiritual and emotional support throughout your community.
+                  We build meaningful relationships that enhance the well-being of residents, families, and staff alike.
+                </p>
+                <Button variant="link" className="p-0 h-auto font-semibold group" asChild>
+                  <Link href="/stage-cares">
+                    Explore
+                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-xl transition-all duration-300 border-t-4 border-green-500">
+              <CardHeader>
+                <div className="mb-4">
+                  <div className="w-14 h-14 bg-green-500/10 rounded-lg flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
+                    <FileCheck className="w-7 h-7 text-green-500" />
+                  </div>
+                </div>
+                <CardTitle className="text-xl mb-2">Long-Term Care Insurance Excellence</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-6">
+                  Navigate the complexities of long-term care insurance with confidence. Our specialized team handles everything
+                  from policy review to claims processing, ensuring maximum benefits and full compliance.
+                </p>
+                <Button variant="link" className="p-0 h-auto font-semibold group" asChild>
+                  <Link href="/services/long-term-care">
+                    Learn More
+                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Grid */}
+      <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="services-title">
               Tailored Care for Every Stage of Life
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Our continuum of care ensures you can age in place with the right level of support, 
+              Our continuum of care ensures you can age in place with the right level of support,
               maintaining your independence while receiving the assistance you need.
             </p>
           </div>
@@ -206,7 +292,7 @@ export default function Services() {
       </section>
 
       {/* Additional Services */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="additional-services-title">

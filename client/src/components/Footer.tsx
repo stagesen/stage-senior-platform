@@ -18,7 +18,8 @@ export default function Footer() {
     { name: "About Us", href: "/about-us" },
     { name: "Care Points", href: "/care-points" },
     { name: "Stage Cares", href: "/stage-cares" },
-    { name: "Professional Management Services", href: "/services/management" }
+    { name: "Professional Management Services", href: "/services/management" },
+    { name: "Long-Term Care Insurance", href: "/services/long-term-care" }
   ];
 
   return (

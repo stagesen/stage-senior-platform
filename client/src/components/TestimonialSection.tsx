@@ -24,58 +24,69 @@ interface Testimonial {
 const testimonials: Testimonial[] = [
   {
     id: 1,
-    name: "Sarah Mitchell",
-    relation: "Daughter of Resident",
-    community: "The Gardens at Columbine",
+    name: "Resident's Son",
+    relation: "Son of Resident",
+    community: "Stonebridge Senior",
     rating: 5,
-    text: "The care my mother receives here goes beyond what I ever expected. The staff knows her by name, her favorite foods, and even her favorite TV shows. It truly feels like she's found a new family, not just a place to live.",
-    highlight: "It truly feels like she's found a new family",
-    imageUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150&h=150&auto=format&fit=crop",
-    date: "2 weeks ago"
+    text: "The Stonebridge staff are an extremely professional care team and has the best management a family could ask for (which is almost unheard of in this industry)!!",
+    highlight: "The best management a family could ask for",
+    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&h=150&auto=format&fit=crop",
+    date: "Recent"
   },
   {
     id: 2,
-    name: "Robert & Linda Thompson",
-    relation: "Residents",
-    community: "Golden Pond",
-    rating: 5,
-    text: "We've been here for 3 years now, and it's the best decision we ever made. The transparent pricing means no surprises, and the activities keep us engaged every day. We've made more friends here than we had in our old neighborhood!",
-    highlight: "The best decision we ever made",
-    imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&h=150&auto=format&fit=crop",
-    date: "1 month ago"
-  },
-  {
-    id: 3,
-    name: "Michael Chen",
-    relation: "Son of Resident",
-    community: "The Gardens on Quail",
-    rating: 5,
-    text: "Dad was resistant to moving at first, but the Your Story First® approach won him over. They took time to learn about his engineering background and now he leads a weekly tech discussion group. He's happier than he's been in years.",
-    highlight: "He's happier than he's been in years",
-    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&h=150&auto=format&fit=crop",
-    date: "3 weeks ago"
-  },
-  {
-    id: 4,
-    name: "Patricia Williams",
+    name: "Family Member",
     relation: "Daughter of Resident",
     community: "Stonebridge Senior",
     rating: 5,
-    text: "The memory care program here is exceptional. Even as Mom's condition has progressed, the staff adapts with such patience and creativity. The small moments of joy they create for her mean everything to our family.",
-    highlight: "Small moments of joy mean everything",
+    text: "My father has made some great friends, loves the meals, and raves about the activities. The seniors have structure here and a bustling social life – if they choose to. We are so blessed to have found Stonebridge for his new home.",
+    highlight: "We are so blessed to have found Stonebridge",
+    imageUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150&h=150&auto=format&fit=crop",
+    date: "Recent"
+  },
+  {
+    id: 3,
+    name: "Resident Family",
+    relation: "Family of Resident",
+    community: "Golden Pond",
+    rating: 5,
+    text: "Golden Pond has exceeded our expectations in every way. With over 98% resident satisfaction, it's clear why families trust them. The continuity of care means our loved one can stay here through all stages of aging.",
+    highlight: "Exceeded our expectations in every way",
+    imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&h=150&auto=format&fit=crop",
+    date: "Recent"
+  },
+  {
+    id: 4,
+    name: "Family Member",
+    relation: "Family of Resident",
+    community: "The Gardens at Columbine",
+    rating: 5,
+    text: "The staff here are so kind and courteous. The community and grounds are absolutely lovely. Many staff members have been here since the community opened, which shows how much they care. It truly feels like family.",
+    highlight: "It truly feels like family",
     imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=150&h=150&auto=format&fit=crop",
-    date: "1 week ago"
+    date: "Recent"
   },
   {
     id: 5,
-    name: "James Anderson",
-    relation: "Resident",
+    name: "Resident's Family",
+    relation: "Family of Memory Care Resident",
     community: "The Gardens at Columbine",
     rating: 5,
-    text: "As a veteran, finding a community that understands service and camaraderie was important to me. Stage Senior has exceeded every expectation. The staff here treats everyone with dignity and respect.",
-    highlight: "Exceeded every expectation",
+    text: "The memory care building is one of the most beautiful and thoughtfully designed memory care communities in the state. The 2 acres of gardens with water features provide such a therapeutic environment for our loved one.",
+    highlight: "The most beautiful and thoughtfully designed",
     imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150&h=150&auto=format&fit=crop",
-    date: "2 months ago"
+    date: "Recent"
+  },
+  {
+    id: 6,
+    name: "Family Member",
+    relation: "Family of Resident",
+    community: "The Gardens on Quail",
+    rating: 5,
+    text: "The intergenerational programs and community partnerships make this place special. Residents regularly engage with local schools, churches, and businesses. It's not just a place to live – it's truly part of the Arvada community.",
+    highlight: "Truly part of the Arvada community",
+    imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&h=150&auto=format&fit=crop",
+    date: "Recent"
   }
 ];
 

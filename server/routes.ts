@@ -22,6 +22,7 @@ import {
   insertTestimonialSchema,
   insertGalleryImageSchema,
   insertCareTypeSchema,
+  insertAmenitySchema,
   insertPageHeroSchema,
 } from "@shared/schema";
 
@@ -804,6 +805,132 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching care type:", error);
       res.status(500).json({ message: "Failed to fetch care type" });
+    }
+  });
+
+  // Care type routes
+  app.get("/api/care-types", async (req, res) => {
+    try {
+      const { active } = req.query;
+      const filters: any = {};
+      
+      if (active !== undefined) {
+        filters.active = active === 'true';
+      }
+      
+      const careTypes = await storage.getCareTypes(filters);
+      res.json(careTypes);
+    } catch (error) {
+      console.error("Error fetching care types:", error);
+      res.status(500).json({ message: "Failed to fetch care types" });
+    }
+  });
+
+  app.get("/api/care-types/:id", async (req, res) => {
+    try {
+      const careType = await storage.getCareTypeById(req.params.id);
+      if (!careType) {
+        return res.status(404).json({ message: "Care type not found" });
+      }
+      res.json(careType);
+    } catch (error) {
+      console.error("Error fetching care type:", error);
+      res.status(500).json({ message: "Failed to fetch care type" });
+    }
+  });
+
+  app.post("/api/care-types", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertCareTypeSchema.parse(req.body);
+      const careType = await storage.createCareType(validatedData);
+      res.status(201).json(careType);
+    } catch (error) {
+      console.error("Error creating care type:", error);
+      res.status(400).json({ message: "Failed to create care type" });
+    }
+  });
+
+  app.put("/api/care-types/:id", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertCareTypeSchema.partial().parse(req.body);
+      const careType = await storage.updateCareType(req.params.id, validatedData);
+      res.json(careType);
+    } catch (error) {
+      console.error("Error updating care type:", error);
+      res.status(400).json({ message: "Failed to update care type" });
+    }
+  });
+
+  app.delete("/api/care-types/:id", requireAuth, async (req, res) => {
+    try {
+      await storage.deleteCareType(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting care type:", error);
+      res.status(500).json({ message: "Failed to delete care type" });
+    }
+  });
+
+  // Amenity routes
+  app.get("/api/amenities", async (req, res) => {
+    try {
+      const { active } = req.query;
+      const filters: any = {};
+      
+      if (active !== undefined) {
+        filters.active = active === 'true';
+      }
+      
+      const amenities = await storage.getAmenities(filters);
+      res.json(amenities);
+    } catch (error) {
+      console.error("Error fetching amenities:", error);
+      res.status(500).json({ message: "Failed to fetch amenities" });
+    }
+  });
+
+  app.get("/api/amenities/:id", async (req, res) => {
+    try {
+      const amenity = await storage.getAmenityById(req.params.id);
+      if (!amenity) {
+        return res.status(404).json({ message: "Amenity not found" });
+      }
+      res.json(amenity);
+    } catch (error) {
+      console.error("Error fetching amenity:", error);
+      res.status(500).json({ message: "Failed to fetch amenity" });
+    }
+  });
+
+  app.post("/api/amenities", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertAmenitySchema.parse(req.body);
+      const amenity = await storage.createAmenity(validatedData);
+      res.status(201).json(amenity);
+    } catch (error) {
+      console.error("Error creating amenity:", error);
+      res.status(400).json({ message: "Failed to create amenity" });
+    }
+  });
+
+  app.put("/api/amenities/:id", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertAmenitySchema.partial().parse(req.body);
+      const amenity = await storage.updateAmenity(req.params.id, validatedData);
+      res.json(amenity);
+    } catch (error) {
+      console.error("Error updating amenity:", error);
+      res.status(400).json({ message: "Failed to update amenity" });
+    }
+  });
+
+  app.delete("/api/amenities/:id", requireAuth, async (req, res) => {
+    try {
+      await storage.deleteAmenity(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting amenity:", error);
+      res.status(500).json({ message: "Failed to delete amenity" });
     }
   });
 

@@ -163,7 +163,7 @@ export default function Home() {
         {/* Enhanced dark background overlay */}
         <div className="absolute inset-0 bg-primary/95 z-0" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Header with Search/Filter */}
+          {/* Header */}
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               Find your Colorado community
@@ -171,29 +171,6 @@ export default function Home() {
             <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
               Find a community near you and explore all the benefits of vibrant independent living.
             </p>
-            <div className="flex items-center justify-center flex-wrap gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search city or community..."
-                  className="pl-10 w-80 bg-white text-foreground"
-                  data-testid="input-community-search"
-                />
-              </div>
-              <Select value={selectedCareType} onValueChange={setSelectedCareType}>
-                <SelectTrigger className="w-48 bg-white text-foreground" data-testid="select-care-type">
-                  <SelectValue placeholder="Care level" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Care Types</SelectItem>
-                  <SelectItem value="independent-living">Independent Living</SelectItem>
-                  <SelectItem value="assisted-living">Assisted Living</SelectItem>
-                  <SelectItem value="memory-care">Memory Care</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
           
           {/* Carousel */}

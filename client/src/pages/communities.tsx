@@ -1,18 +1,16 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Input } from "@/components/ui/input";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, MapPin, Calendar, Phone, Info, Map, List, Star, Shield, ChevronDown } from "lucide-react";
+import { MapPin, Calendar, Phone, Star, HelpCircle, MessageCircle } from "lucide-react";
 import CommunityCard from "@/components/CommunityCard";
 import CommunityMap from "@/components/CommunityMap";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
 import { PageHero } from "@/components/PageHero";
-import type { Community, InsertTourRequest } from "@shared/schema";
+import type { Community } from "@shared/schema";
 
 const CARE_TYPES = [
   { value: "all", label: "All Communities" },
@@ -22,27 +20,20 @@ const CARE_TYPES = [
 ];
 
 export default function Communities() {
-  const [searchLocation, setSearchLocation] = useState("");
   const [selectedCareType, setSelectedCareType] = useState("all");
   const [sortBy, setSortBy] = useState("relevance");
   const [selectedCommunityId, setSelectedCommunityId] = useState<string | undefined>();
-  const [showMap, setShowMap] = useState(true);
-
-  const { toast } = useToast();
+  const [, navigate] = useLocation();
 
   const { data: communities = [], isLoading } = useQuery<Community[]>({
     queryKey: ["/api/communities"],
   });
 
   const filteredCommunities = communities.filter((community) => {
-    const matchesLocation = !searchLocation || 
-      community.city.toLowerCase().includes(searchLocation.toLowerCase()) ||
-      community.zipCode?.includes(searchLocation);
-    
-    const matchesCareType = selectedCareType === "all" || 
+    const matchesCareType = selectedCareType === "all" ||
       community.careTypes?.includes(selectedCareType);
 
-    return matchesLocation && matchesCareType;
+    return matchesCareType;
   });
 
   const sortedCommunities = [...filteredCommunities].sort((a, b) => {
@@ -81,100 +72,76 @@ export default function Communities() {
         defaultTitle="Independent Living Tailored to You"
         defaultSubtitle="Explore our four Colorado communities where exceptional care meets the comfort of home."
         defaultBackgroundImage="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=2000&q=80"
+        className="pb-40"
       />
 
-      {/* Search and Filter Section */}
-      <section className="bg-gray-50 py-8 border-b">
+      {/* Hero Actions & Map Overlap */}
+      <section className="relative z-20 -mt-20 sm:-mt-24 lg:-mt-32 pb-8 sm:pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-6">
-            {/* Search Bar */}
-            <div className="max-w-2xl mx-auto">
-              <div className="bg-card rounded-full shadow-lg p-2 flex items-center">
-                <div className="flex-1 flex items-center px-4">
-                  <MapPin className="w-5 h-5 text-muted-foreground mr-3" />
-                  <input
-                    type="text"
-                    placeholder="Search by city or ZIP code..."
-                    value={searchLocation}
-                    onChange={(e) => setSearchLocation(e.target.value)}
-                    className="flex-1 bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
-                    data-testid="input-hero-search"
-                  />
-                </div>
-                <Button 
-                  size="lg" 
-                  className="rounded-full px-8 bg-primary text-primary-foreground hover:bg-primary/90"
-                  data-testid="button-hero-search"
-                >
-                  <Search className="w-5 h-5 mr-2" />
-                  Search
-                </Button>
-              </div>
-            </div>
-            
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                size="lg" 
-                className="px-8 py-6 text-lg bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg shadow-lg hover:shadow-xl transition-all"
-                data-testid="button-schedule-tour"
+          <div className="bg-gradient-to-br from-primary to-primary/90 text-white rounded-2xl sm:rounded-3xl px-4 sm:px-8 py-6 sm:py-10 shadow-2xl flex flex-col items-center gap-4 sm:gap-6 animate-fadeIn">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+              <Button
+                size="lg"
+                className="w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-6 text-base sm:text-lg bg-white text-primary hover:bg-white/90 shadow-lg transform hover:scale-105 transition-all duration-200"
+                onClick={() => {
+                  const contactSection = document.getElementById('contact-section');
+                  if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    navigate({ to: '/contact' });
+                  }
+                }}
+                data-testid="button-get-help"
               >
-                <Calendar className="w-5 h-5 mr-2" />
-                Schedule Your Visit
+                <HelpCircle className="w-5 h-5 mr-2" />
+                Get Help Choosing
               </Button>
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="px-8 py-6 text-lg rounded-lg"
-                asChild
-                data-testid="button-call-hero"
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg bg-white/10 text-white border-white/30 hover:bg-white/20 backdrop-blur-sm"
+                onClick={() => window.open('tel:+1-303-436-2300', '_self')}
+                data-testid="button-quick-call"
               >
-                <a href="tel:+1-303-436-2300">
-                  <Phone className="w-5 h-5 mr-2" />
-                  (303) 436-2300
-                </a>
+                <Phone className="w-5 h-5 mr-2" />
+                <span className="sm:hidden">Call Now</span>
+                <span className="hidden sm:inline">(303) 436-2300</span>
               </Button>
             </div>
-            
-            {/* Trust Badges */}
-            <div className="flex flex-wrap justify-center gap-8 pt-8">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Badge variant="secondary" className="px-3 py-1">Since 2016</Badge>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Badge variant="secondary" className="px-3 py-1">4 Communities</Badge>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Badge variant="secondary" className="px-3 py-1">98% Satisfaction</Badge>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Prominent Map Section */}
-      <section className="bg-gray-50 py-12 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4">Explore Our Communities on the Map</h2>
-            <p className="text-lg text-gray-600">
-              Click on any location to learn more about that community
-            </p>
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-4 text-white/90">
+              <Badge className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-white/10 text-white border border-white/20 backdrop-blur-sm hover:bg-white/20 transition-colors">
+                Since 2016
+              </Badge>
+              <Badge className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-white/10 text-white border border-white/20 backdrop-blur-sm hover:bg-white/20 transition-colors">
+                4 Communities
+              </Badge>
+              <Badge className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-white/10 text-white border border-white/20 backdrop-blur-sm hover:bg-white/20 transition-colors">
+                98% Satisfaction
+              </Badge>
+            </div>
           </div>
-          
-          {/* Full Width Map */}
-          <Card className="shadow-xl overflow-hidden">
+
+          <Card className="mt-6 sm:mt-10 shadow-2xl overflow-hidden border-0 animate-slideUp">
+            <CardHeader className="bg-gradient-to-r from-gray-50 to-white px-4 sm:px-6">
+              <CardTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                Explore Our Communities on the Map
+              </CardTitle>
+              <CardDescription className="text-sm sm:text-base text-muted-foreground">
+                Click on any location to learn more about that community
+              </CardDescription>
+            </CardHeader>
             <CardContent className="p-0">
-              <div className="h-[500px] relative">
+              <div className="h-[350px] sm:h-[450px] lg:h-[500px] relative">
                 {isLoading ? (
                   <div className="h-full bg-gray-100 flex items-center justify-center">
                     <div className="text-center">
-                      <MapPin className="w-16 h-16 text-gray-400 mx-auto mb-4 animate-pulse" />
-                      <p className="text-lg text-gray-600">Loading map...</p>
+                      <MapPin className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-4 animate-pulse" />
+                      <p className="text-base sm:text-lg text-gray-600">Loading map...</p>
                     </div>
                   </div>
                 ) : (
-                  <CommunityMap 
+                  <CommunityMap
                     communities={sortedCommunities}
                     selectedCommunityId={selectedCommunityId}
                     onCommunitySelect={(community) => {
@@ -186,26 +153,13 @@ export default function Communities() {
               </div>
             </CardContent>
           </Card>
-          
-          {/* Toggle Map Visibility Button */}
-          <div className="text-center mt-6">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowMap(!showMap)}
-              className="gap-2"
-              data-testid="button-toggle-map"
-            >
-              <ChevronDown className={`w-4 h-4 transition-transform ${showMap ? 'rotate-180' : ''}`} />
-              {showMap ? 'Hide Map' : 'Show Map'}
-            </Button>
-          </div>
         </div>
       </section>
 
       {/* Search and Filters */}
-      <section className="bg-white py-6 sticky top-0 z-40 border-b border-gray-200 shadow-sm">
+      <section className="bg-white py-4 sm:py-6 sticky top-0 z-40 border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             {/* Care Type Filter */}
             <div className="flex flex-wrap gap-2">
               {CARE_TYPES.map((type) => (
@@ -214,9 +168,9 @@ export default function Communities() {
                   variant={selectedCareType === type.value ? "default" : "outline"}
                   size="sm"
                   onClick={() => setSelectedCareType(type.value)}
-                  className={`rounded-full px-4 py-2 transition-all ${
-                    selectedCareType === type.value 
-                      ? "bg-primary text-primary-foreground shadow-md" 
+                  className={`rounded-full px-3 sm:px-4 py-2 text-xs sm:text-sm transition-all ${
+                    selectedCareType === type.value
+                      ? "bg-primary text-primary-foreground shadow-md"
                       : "hover:bg-primary/10"
                   }`}
                   data-testid={`filter-${type.value}`}
@@ -225,10 +179,10 @@ export default function Communities() {
                 </Button>
               ))}
             </div>
-            
+
             {/* Sort Control */}
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-40 rounded-full" data-testid="select-sort">
+              <SelectTrigger className="w-full sm:w-40 rounded-full" data-testid="select-sort">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -243,24 +197,24 @@ export default function Communities() {
       </section>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Results Header */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-foreground" data-testid="results-count">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground" data-testid="results-count">
             {sortedCommunities.length} {sortedCommunities.length === 1 ? 'Community' : 'Communities'} Found
           </h2>
-          <p className="text-muted-foreground mt-2">Discover the perfect senior living community for your loved one</p>
+          <p className="text-sm sm:text-base text-muted-foreground mt-2">Discover the perfect senior living community for your loved one</p>
         </div>
-        
+
         {/* Communities List */}
         {isLoading ? (
           <div className="space-y-6">
             {[...Array(3)].map((_, i) => (
               <Card key={i} className="overflow-hidden">
-                <CardContent className="p-6">
+                <CardContent className="p-4 sm:p-6">
                   <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <div className="md:col-span-2">
-                      <Skeleton className="w-full h-64" />
+                      <Skeleton className="w-full h-48 sm:h-64" />
                     </div>
                     <div className="md:col-span-3 space-y-4">
                       <Skeleton className="h-6 w-3/4" />
@@ -283,12 +237,12 @@ export default function Communities() {
         ) : sortedCommunities.length > 0 ? (
           <div className="space-y-6">
             {sortedCommunities.map((community) => (
-              <div 
-                key={community.id} 
+              <div
+                key={community.id}
                 id={`community-card-${community.id}`}
                 className="transform transition-all hover:-translate-y-1 duration-300"
               >
-                <CommunityCard 
+                <CommunityCard
                   community={community}
                   isSelected={selectedCommunityId === community.id}
                   onSelect={() => setSelectedCommunityId(community.id)}
@@ -308,66 +262,66 @@ export default function Communities() {
       </main>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/5 to-background">
+      <section className="py-12 sm:py-20 bg-gradient-to-br from-primary/5 to-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">
               Why Families Choose Stage Senior
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto">
               Hear directly from families who've found peace of mind with our communities
             </p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {/* Testimonial Cards */}
-            <Card className="hover:shadow-xl transition-shadow duration-300">
-              <CardContent className="p-8">
+            <Card className="hover:shadow-xl transition-shadow duration-300 hover-lift">
+              <CardContent className="p-6 sm:p-8">
                 <div className="flex mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-primary text-primary" />
+                    <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-primary text-primary" />
                   ))}
                 </div>
-                <p className="text-muted-foreground mb-6 italic">
+                <p className="text-sm sm:text-base text-muted-foreground mb-6 italic">
                   "The staff at Golden Pond has been amazing with my mother. She's happier and more active than she's been in years. The community activities and personalized care have truly made a difference."
                 </p>
                 <div className="border-t pt-4">
                   <p className="font-semibold text-foreground">Sarah Johnson</p>
-                  <p className="text-sm text-muted-foreground">Daughter of Resident</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Daughter of Resident</p>
                 </div>
               </CardContent>
             </Card>
-            
-            <Card className="hover:shadow-xl transition-shadow duration-300">
-              <CardContent className="p-8">
+
+            <Card className="hover:shadow-xl transition-shadow duration-300 hover-lift">
+              <CardContent className="p-6 sm:p-8">
                 <div className="flex mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-primary text-primary" />
+                    <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-primary text-primary" />
                   ))}
                 </div>
-                <p className="text-muted-foreground mb-6 italic">
+                <p className="text-sm sm:text-base text-muted-foreground mb-6 italic">
                   "Moving my father to The Gardens on Quail was the best decision. The memory care program is exceptional, and the staff treats him with such dignity and respect. I finally have peace of mind."
                 </p>
                 <div className="border-t pt-4">
                   <p className="font-semibold text-foreground">Michael Chen</p>
-                  <p className="text-sm text-muted-foreground">Son of Resident</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Son of Resident</p>
                 </div>
               </CardContent>
             </Card>
-            
-            <Card className="hover:shadow-xl transition-shadow duration-300">
-              <CardContent className="p-8">
+
+            <Card className="hover:shadow-xl transition-shadow duration-300 hover-lift">
+              <CardContent className="p-6 sm:p-8">
                 <div className="flex mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-primary text-primary" />
+                    <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-primary text-primary" />
                   ))}
                 </div>
-                <p className="text-muted-foreground mb-6 italic">
+                <p className="text-sm sm:text-base text-muted-foreground mb-6 italic">
                   "The Gardens at Columbine feels like a real home, not an institution. My mom loves the garden spaces and has made wonderful friends. The locally-owned aspect really shows in their attention to detail."
                 </p>
                 <div className="border-t pt-4">
                   <p className="font-semibold text-foreground">Emily Rodriguez</p>
-                  <p className="text-sm text-muted-foreground">Daughter of Resident</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Daughter of Resident</p>
                 </div>
               </CardContent>
             </Card>
@@ -375,36 +329,46 @@ export default function Communities() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="bg-primary text-white py-16">
+      {/* CTA Section with Contact */}
+      <section id="contact-section" className="bg-gradient-to-br from-primary to-primary/90 text-white py-12 sm:py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 animate-fadeIn">
             Ready to Find the Right Community?
           </h2>
-          <p className="text-xl mb-8 opacity-90">
+          <p className="text-base sm:text-xl mb-6 sm:mb-8 opacity-90">
             Our senior living advisors are here to help you every step of the way
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+            <Button
+              size="lg"
               variant="secondary"
-              className="text-lg px-8 py-6"
+              className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transform hover:scale-105 transition-all duration-200"
+              onClick={() => navigate({ to: '/contact' })}
               data-testid="button-schedule-tour-cta"
             >
               <Calendar className="w-5 h-5 mr-2" />
               Schedule Tours
             </Button>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
-              className="bg-transparent text-white border-white hover:bg-white hover:text-primary text-lg px-8 py-6"
-              asChild
+              className="bg-transparent text-white border-white hover:bg-white hover:text-primary text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transform hover:scale-105 transition-all duration-200"
+              onClick={() => window.open('tel:+1-303-436-2300', '_self')}
               data-testid="button-call-cta"
             >
-              <a href="tel:+1-303-436-2300">
-                <Phone className="w-5 h-5 mr-2" />
-                Call (303) 436-2300
-              </a>
+              <Phone className="w-5 h-5 mr-2" />
+              <span className="sm:hidden">Call Now</span>
+              <span className="hidden sm:inline">Call (303) 436-2300</span>
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="bg-transparent text-white border-white hover:bg-white hover:text-primary text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transform hover:scale-105 transition-all duration-200"
+              onClick={() => window.open('https://wa.me/13034362300', '_blank')}
+              data-testid="button-chat-cta"
+            >
+              <MessageCircle className="w-5 h-5 mr-2" />
+              Chat With Us
             </Button>
           </div>
         </div>

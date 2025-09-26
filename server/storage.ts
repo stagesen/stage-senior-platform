@@ -203,6 +203,19 @@ export interface IStorage {
   }): Promise<CareType[]>;
   getCareType(slug: string): Promise<CareType | undefined>;
   getCareTypeById(id: string): Promise<CareType | undefined>;
+  createCareType(careType: InsertCareType): Promise<CareType>;
+  updateCareType(id: string, careType: Partial<InsertCareType>): Promise<CareType>;
+  deleteCareType(id: string): Promise<void>;
+
+  // Amenity operations
+  getAmenities(filters?: {
+    active?: boolean;
+  }): Promise<Amenity[]>;
+  getAmenity(slug: string): Promise<Amenity | undefined>;
+  getAmenityById(id: string): Promise<Amenity | undefined>;
+  createAmenity(amenity: InsertAmenity): Promise<Amenity>;
+  updateAmenity(id: string, amenity: Partial<InsertAmenity>): Promise<Amenity>;
+  deleteAmenity(id: string): Promise<void>;
 
   // User operations - referenced by javascript_auth_all_persistance integration
   getUser(id: number): Promise<User | undefined>;
@@ -1009,6 +1022,77 @@ export class DatabaseStorage implements IStorage {
       .from(careTypes)
       .where(eq(careTypes.id, id));
     return careType;
+  }
+
+  async createCareType(careType: InsertCareType): Promise<CareType> {
+    const [created] = await db
+      .insert(careTypes)
+      .values(careType)
+      .returning();
+    return created;
+  }
+
+  async updateCareType(id: string, careType: Partial<InsertCareType>): Promise<CareType> {
+    const [updated] = await db
+      .update(careTypes)
+      .set(careType)
+      .where(eq(careTypes.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteCareType(id: string): Promise<void> {
+    await db.delete(careTypes).where(eq(careTypes.id, id));
+  }
+
+  // Amenity operations
+  async getAmenities(filters?: {
+    active?: boolean;
+  }): Promise<Amenity[]> {
+    let query = db.select().from(amenities);
+    
+    if (filters?.active !== undefined) {
+      query = query.where(eq(amenities.active, filters.active));
+    }
+    
+    return await query.orderBy(asc(amenities.sortOrder), asc(amenities.name));
+  }
+
+  async getAmenity(slug: string): Promise<Amenity | undefined> {
+    const [amenity] = await db
+      .select()
+      .from(amenities)
+      .where(eq(amenities.slug, slug));
+    return amenity;
+  }
+
+  async getAmenityById(id: string): Promise<Amenity | undefined> {
+    const [amenity] = await db
+      .select()
+      .from(amenities)
+      .where(eq(amenities.id, id));
+    return amenity;
+  }
+
+  async createAmenity(amenity: InsertAmenity): Promise<Amenity> {
+    const [created] = await db
+      .insert(amenities)
+      .values(amenity)
+      .returning();
+    return created;
+  }
+
+  async updateAmenity(id: string, amenity: Partial<InsertAmenity>): Promise<Amenity> {
+    const [updated] = await db
+      .update(amenities)
+      .set(amenity)
+      .where(eq(amenities.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteAmenity(id: string): Promise<void> {
+    await db.delete(amenities).where(eq(amenities.id, id));
   }
 
   // User operations - referenced by javascript_auth_all_persistance integration
