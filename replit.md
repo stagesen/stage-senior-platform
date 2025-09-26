@@ -80,13 +80,25 @@ The current implementation appears to use session-based authentication:
 ### Content Management
 The platform includes a comprehensive admin interface for content management:
 
-- **Community Management**: CRUD operations for community information, amenities, and care types
-- **Blog System**: Full blog management with categories, tags, and featured content
-- **Event Management**: Calendar-based event system with RSVP functionality
-- **FAQ System**: Categorized frequently asked questions with search capabilities
-- **Gallery Management**: Image galleries with lightbox functionality
+- **Community Management**: CRUD operations for community information, amenities, and care types with integrated image uploads
+- **Blog System**: Full blog management with categories, tags, featured content, and hero image uploads
+- **Event Management**: Calendar-based event system with RSVP functionality and event image uploads
+- **FAQ System**: Categorized frequently asked questions with search capabilities and HTML answer support
+- **Gallery Management**: Image galleries with multi-image upload support (up to 20 images) and drag-and-drop functionality
 - **Tour Requests**: Lead management system for potential residents
-- **Page Heroes**: Dynamic hero sections with background images for all major pages (/about-us, /blog, /services, /services/management, /stage-cares, /communities, /care-points, /events) manageable through admin dashboard
+- **Page Heroes**: Dynamic hero sections with background image uploads for all major pages manageable through admin dashboard
+- **Floor Plans**: Complete floor plan management with image uploads, pricing, and availability tracking
+- **Testimonials**: Customer testimonials with community associations
+
+### Image Management System
+The platform features a comprehensive image management system integrated with Replit's object storage:
+
+- **Database-Backed Storage**: All images stored in object storage with metadata tracked in PostgreSQL
+- **Upload Capabilities**: Drag-and-drop file uploads with progress tracking and preview
+- **Multi-Image Support**: Galleries support up to 20 images with reordering capabilities
+- **Reference Protection**: Images cannot be deleted while referenced by content
+- **Automatic Processing**: Dimension extraction and validation for all uploaded images
+- **Community Associations**: All content types can be associated with specific communities for better organization
 
 ## External Dependencies
 
