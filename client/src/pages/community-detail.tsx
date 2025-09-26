@@ -530,7 +530,7 @@ const CommunityFeatures = ({ community }: { community: Community }) => {
             eyebrow={feature.eyebrow}
             title={feature.title}
             body={feature.body}
-            imageUrl={feature.imageUrl || (feature.imageId ? `/api/images/${feature.imageId}` : "")}
+            imageUrl={feature.imageUrl || feature.imageId || ""}
             imageAlt={feature.imageAlt || `${feature.title} image`}
             cta={feature.ctaLabel && feature.ctaHref ? {
               label: feature.ctaLabel,
