@@ -1,0 +1,502 @@
+diff --git a/client/src/pages/community-detail.tsx b/client/src/pages/community-detail.tsx
+index 40b1d0b14f0208dc78f2ed46adc3bce2a82546fb..4d1a4486afbbd7af2be9db459a9525fc515e5d06 100644
+--- a/client/src/pages/community-detail.tsx
++++ b/client/src/pages/community-detail.tsx
+@@ -24,51 +24,61 @@ import {
+   Users,
+   Sparkles,
+   Image,
+   MessageSquare,
+   Wifi,
+   Car,
+   Coffee,
+   Heart,
+   Activity,
+   BookOpen,
+   Clock,
+   DollarSign,
+   CheckCircle,
+   ChevronRight,
+   Bath,
+   Bed,
+   Square,
+   Download,
+   ArrowRight,
+   Trees
+ } from "lucide-react";
+ import { Link } from "wouter";
+ import { cn } from "@/lib/utils";
+ import ScrollToTop from "@/components/ScrollToTop";
+ import stageSeniorLogo from "@assets/stagesenior-logo_1758726889154.webp";
+-import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryImage, Post, BlogPost } from "@shared/schema";
++import type {
++  Community,
++  Event,
++  Faq,
++  Gallery,
++  FloorPlan,
++  Testimonial,
++  GalleryImageWithDetails,
++  Post,
++  BlogPost,
++} from "@shared/schema";
+ import {
+   Carousel,
+   CarouselContent,
+   CarouselItem,
+   CarouselNext,
+   CarouselPrevious,
+   type CarouselApi,
+ } from "@/components/ui/carousel";
+ import { AspectRatio } from "@/components/ui/aspect-ratio";
+ 
+ // Helper function for formatting prices
+ const formatPrice = (price: number | undefined | null): string => {
+   if (price === null || price === undefined) return 'Contact for pricing';
+   if (price === 0) return '$0'; // Handle actual zero price
+   return new Intl.NumberFormat('en-US', {
+     style: 'currency',
+     currency: 'USD',
+     minimumFractionDigits: 0,
+     maximumFractionDigits: 0
+   }).format(price);
+ };
+ 
+ // Local subcomponent: Floor Plans Grid
+ const FloorPlansGrid = ({ plans, onOpen }: { plans: any[], onOpen: (plan: any) => void }) => {
+   return (
+@@ -647,51 +657,51 @@ export default function CommunityDetail() {
+   const { data: events = [] } = useQuery<Event[]>({
+     queryKey: [`/api/events?communityId=${community?.id || ''}&upcoming=true`],
+     enabled: !!slug && !!community?.id,
+   });
+ 
+   const { data: faqs = [] } = useQuery<Faq[]>({
+     queryKey: [`/api/faqs?communityId=${community?.id || ''}&active=true`],
+     enabled: !!slug && !!community?.id,
+   });
+ 
+   const { data: galleries = [] } = useQuery<Gallery[]>({
+     queryKey: [`/api/galleries?communityId=${community?.id || ''}&active=true`],
+     enabled: !!slug && !!community?.id,
+   });
+ 
+   const { data: floorPlans = [] } = useQuery<FloorPlan[]>({
+     queryKey: [`/api/floor-plans?communityId=${community?.id || ''}&active=true`],
+     enabled: !!slug && !!community?.id,
+   });
+ 
+   const { data: testimonials = [] } = useQuery<Testimonial[]>({
+     queryKey: [`/api/testimonials?communityId=${community?.id || ''}&approved=true`],
+     enabled: !!slug && !!community?.id,
+   });
+ 
+-  const { data: galleryImages = [] } = useQuery<GalleryImage[]>({
++  const { data: galleryImages = [] } = useQuery<GalleryImageWithDetails[]>({
+     queryKey: [`/api/gallery-images?communityId=${community?.id || ''}&active=true`],
+     enabled: !!slug && !!community?.id,
+   });
+ 
+   const { data: posts = [] } = useQuery<Post[]>({
+     queryKey: [`/api/posts?communityId=${community?.id || ''}&published=true`],
+     enabled: !!slug && !!community?.id,
+   });
+ 
+   const { data: blogPosts = [] } = useQuery<BlogPost[]>({
+     queryKey: [`/api/blog-posts?communityId=${community?.id || ''}&published=true`],
+     enabled: !!slug && !!community?.id,
+   });
+ 
+   // Computed values based on query data
+   const galleryCategories = Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean)));
+ 
+   const hasAmenities = Boolean(
+     (community as any)?.amenitiesData?.length || community?.amenities?.length
+   );
+   const hasFloorPlans = floorPlans.length > 0;
+   const hasGallery = galleries.length > 0 && galleries.some(g => g.images && g.images.length > 0);
+   const hasEvents = events.length > 0;
+   const hasTestimonials = testimonials.length > 0;
+   const hasPosts = posts.length > 0;
+diff --git a/server/storage.ts b/server/storage.ts
+index 21d81e276e4889aea35e7aa566a5bbb88f257230..044336502b85c1f04cc800bf3cc0262d404fdcce 100644
+--- a/server/storage.ts
++++ b/server/storage.ts
+@@ -12,68 +12,93 @@ import {
+   careTypes,
+   communitiesCareTypes,
+   amenities,
+   communitiesAmenities,
+   users,
+   images,
+   type Community,
+   type InsertCommunity,
+   type Post,
+   type InsertPost,
+   type BlogPost,
+   type InsertBlogPost,
+   type Event,
+   type InsertEvent,
+   type Faq,
+   type InsertFaq,
+   type Gallery,
+   type InsertGallery,
+   type TourRequest,
+   type InsertTourRequest,
+   type FloorPlan,
+   type InsertFloorPlan,
+   type Testimonial,
+   type InsertTestimonial,
+   type GalleryImage,
++  type GalleryImageWithDetails,
+   type InsertGalleryImage,
+   type CareType,
+   type InsertCareType,
+   type Amenity,
+   type User,
+   type InsertUser,
+   type Image,
+   type InsertImage,
+   pageHeroes,
+   type PageHero,
+   type InsertPageHero,
+ } from "@shared/schema";
+ import { db } from "./db";
+ import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm";
+ import session from "express-session";
+ import connectPg from "connect-pg-simple";
+ import { pool } from "./db";
+ 
++const galleryImageDetailsSelection = {
++  id: galleryImages.id,
++  galleryId: galleryImages.galleryId,
++  imageId: galleryImages.imageId,
++  caption: galleryImages.caption,
++  sortOrder: galleryImages.sortOrder,
++  createdAt: galleryImages.createdAt,
++  imageUrl: images.url,
++  url: images.url,
++  alt: images.alt,
++  width: images.width,
++  height: images.height,
++  objectKey: images.objectKey,
++  variants: images.variants,
++  uploadedAt: images.createdAt,
++  galleryTitle: galleries.title,
++  gallerySlug: galleries.gallerySlug,
++  category: galleries.category,
++  communityId: galleries.communityId,
++  hero: galleries.hero,
++  published: galleries.published,
++  galleryActive: galleries.active,
++};
++
+ export interface IStorage {
+   // Community operations
+   getCommunities(filters?: {
+     careTypes?: string[];
+     city?: string;
+     active?: boolean;
+   }): Promise<Community[]>;
+   getCommunity(slug: string): Promise<Community | undefined>;
+   getCommunityById(id: string): Promise<Community | undefined>;
+   createCommunity(community: InsertCommunity): Promise<Community>;
+   updateCommunity(id: string, community: Partial<InsertCommunity>): Promise<Community>;
+   deleteCommunity(id: string): Promise<void>;
+ 
+   // Post operations
+   getPosts(filters?: {
+     published?: boolean;
+     communityId?: string;
+     tags?: string[];
+   }): Promise<Post[]>;
+   getPost(slug: string): Promise<Post | undefined>;
+   getPostById(id: string): Promise<Post | undefined>;
+   createPost(post: InsertPost): Promise<Post>;
+   updatePost(id: string, post: Partial<InsertPost>): Promise<Post>;
+   deletePost(id: string): Promise<void>;
+ 
+@@ -140,91 +165,91 @@ export interface IStorage {
+     communityId?: string;
+     active?: boolean;
+   }): Promise<FloorPlan[]>;
+   getFloorPlan(id: string): Promise<FloorPlan | undefined>;
+   createFloorPlan(floorPlan: InsertFloorPlan): Promise<FloorPlan>;
+   updateFloorPlan(id: string, floorPlan: Partial<InsertFloorPlan>): Promise<FloorPlan>;
+   deleteFloorPlan(id: string): Promise<void>;
+ 
+   // Testimonial operations
+   getTestimonials(filters?: {
+     communityId?: string;
+     featured?: boolean;
+     approved?: boolean;
+   }): Promise<Testimonial[]>;
+   getTestimonial(id: string): Promise<Testimonial | undefined>;
+   createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
+   updateTestimonial(id: string, testimonial: Partial<InsertTestimonial>): Promise<Testimonial>;
+   deleteTestimonial(id: string): Promise<void>;
+ 
+   // Gallery image operations
+   getFilteredGalleryImages(filters?: {
+     communityId?: string;
+     category?: string;
+     featured?: boolean;
+     active?: boolean;
+-  }): Promise<GalleryImage[]>;
+-  getGalleryImage(id: string): Promise<GalleryImage | undefined>;
++  }): Promise<GalleryImageWithDetails[]>;
++  getGalleryImage(id: string): Promise<GalleryImageWithDetails | undefined>;
+   createGalleryImage(galleryImage: InsertGalleryImage): Promise<GalleryImage>;
+   updateGalleryImage(id: string, galleryImage: Partial<InsertGalleryImage>): Promise<GalleryImage>;
+   deleteGalleryImage(id: string): Promise<void>;
+ 
+   // Care type operations
+   getCareTypes(filters?: {
+     active?: boolean;
+   }): Promise<CareType[]>;
+   getCareType(slug: string): Promise<CareType | undefined>;
+   getCareTypeById(id: string): Promise<CareType | undefined>;
+ 
+   // User operations - referenced by javascript_auth_all_persistance integration
+   getUser(id: number): Promise<User | undefined>;
+   getUserByUsername(username: string): Promise<User | undefined>;
+   getUserCount(): Promise<number>;
+   createUser(user: InsertUser): Promise<User>;
+   updateUser(id: number, user: Partial<InsertUser>): Promise<User>;
+   deleteUser(id: number): Promise<void>;
+ 
+   // Session store - referenced by javascript_auth_all_persistance integration
+   sessionStore: session.Store;
+ 
+   // Page hero operations
+   getPageHeroes(filters?: {
+     active?: boolean;
+   }): Promise<PageHero[]>;
+   getPageHero(pagePath: string): Promise<PageHero | undefined>;
+   getPageHeroById(id: string): Promise<PageHero | undefined>;
+   createPageHero(pageHero: InsertPageHero): Promise<PageHero>;
+   updatePageHero(id: string, pageHero: Partial<InsertPageHero>): Promise<PageHero>;
+   deletePageHero(id: string): Promise<void>;
+ 
+   // Image operations
+   createImage(image: InsertImage): Promise<Image>;
+   getImage(id: string): Promise<Image | null>;
+   getImages(): Promise<Image[]>;
+   deleteImage(id: string): Promise<void>;
+   checkImageReferences(imageId: string): Promise<Array<{ table: string; count: number }>>;
+-  getGalleryImagesByGalleryId(galleryId: string): Promise<GalleryImage[]>;
++  getGalleryImagesByGalleryId(galleryId: string): Promise<GalleryImageWithDetails[]>;
+ }
+ 
+ export class DatabaseStorage implements IStorage {
+   // Community operations
+   async getCommunities(filters?: {
+     careTypes?: string[];
+     city?: string;
+     active?: boolean;
+   }): Promise<Community[]> {
+     let query = db.select().from(communities);
+     
+     const conditions = [];
+     if (filters?.active !== undefined) {
+       conditions.push(eq(communities.active, filters.active));
+     }
+     if (filters?.city) {
+       conditions.push(like(communities.city, `%${filters.city}%`));
+     }
+     
+     if (conditions.length > 0) {
+       query = query.where(and(...conditions));
+     }
+     
+     const communitiesData = await query.orderBy(desc(communities.featured), asc(communities.name));
+     
+@@ -868,78 +893,82 @@ export class DatabaseStorage implements IStorage {
+       .insert(testimonials)
+       .values(testimonial)
+       .returning();
+     return created;
+   }
+ 
+   async updateTestimonial(id: string, testimonial: Partial<InsertTestimonial>): Promise<Testimonial> {
+     const [updated] = await db
+       .update(testimonials)
+       .set(testimonial)
+       .where(eq(testimonials.id, id))
+       .returning();
+     return updated;
+   }
+ 
+   async deleteTestimonial(id: string): Promise<void> {
+     await db.delete(testimonials).where(eq(testimonials.id, id));
+   }
+ 
+   // Gallery image operations
+   async getFilteredGalleryImages(filters?: {
+     communityId?: string;
+     category?: string;
+     featured?: boolean;
+     active?: boolean;
+-  }): Promise<GalleryImage[]> {
+-    let query = db.select().from(galleryImages);
+-    
++  }): Promise<GalleryImageWithDetails[]> {
+     const conditions = [];
+     if (filters?.communityId) {
+-      conditions.push(eq(galleryImages.communityId, filters.communityId));
++      conditions.push(eq(galleries.communityId, filters.communityId));
+     }
+     if (filters?.category) {
+-      conditions.push(eq(galleryImages.category, filters.category));
++      conditions.push(eq(galleries.category, filters.category));
+     }
+     if (filters?.featured !== undefined) {
+-      conditions.push(eq(galleryImages.featured, filters.featured));
++      conditions.push(eq(galleries.hero, filters.featured));
+     }
+     if (filters?.active !== undefined) {
+-      conditions.push(eq(galleryImages.active, filters.active));
+-    }
+-    
+-    if (conditions.length > 0) {
+-      query = query.where(and(...conditions));
++      conditions.push(eq(galleries.active, filters.active));
+     }
+-    
+-    return await query.orderBy(desc(galleryImages.featured), asc(galleryImages.sortOrder), desc(galleryImages.createdAt));
++
++    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
++
++    return await db
++      .select(galleryImageDetailsSelection)
++      .from(galleryImages)
++      .leftJoin(images, eq(galleryImages.imageId, images.id))
++      .leftJoin(galleries, eq(galleryImages.galleryId, galleries.id))
++      .where(whereClause)
++      .orderBy(desc(galleries.hero), asc(galleryImages.sortOrder), desc(galleryImages.createdAt));
+   }
+ 
+-  async getGalleryImage(id: string): Promise<GalleryImage | undefined> {
++  async getGalleryImage(id: string): Promise<GalleryImageWithDetails | undefined> {
+     const [galleryImage] = await db
+-      .select()
++      .select(galleryImageDetailsSelection)
+       .from(galleryImages)
++      .leftJoin(images, eq(galleryImages.imageId, images.id))
++      .leftJoin(galleries, eq(galleryImages.galleryId, galleries.id))
+       .where(eq(galleryImages.id, id));
+     return galleryImage;
+   }
+ 
+   async createGalleryImage(galleryImage: InsertGalleryImage): Promise<GalleryImage> {
+     const [created] = await db
+       .insert(galleryImages)
+       .values(galleryImage)
+       .returning();
+     return created;
+   }
+ 
+   async updateGalleryImage(id: string, galleryImage: Partial<InsertGalleryImage>): Promise<GalleryImage> {
+     const [updated] = await db
+       .update(galleryImages)
+       .set(galleryImage)
+       .where(eq(galleryImages.id, id))
+       .returning();
+     return updated;
+   }
+ 
+   async deleteGalleryImage(id: string): Promise<void> {
+     await db.delete(galleryImages).where(eq(galleryImages.id, id));
+   }
+ 
+@@ -1144,35 +1173,37 @@ export class DatabaseStorage implements IStorage {
+     // Check page_heroes table
+     const [pageHeroesCount] = await db
+       .select({ count: sql<number>`count(*)::int` })
+       .from(pageHeroes)
+       .where(eq(pageHeroes.imageId, imageId));
+     if (pageHeroesCount.count > 0) {
+       references.push({ table: "page_heroes", count: pageHeroesCount.count });
+     }
+ 
+     // Check gallery_images table
+     const [galleryImagesCount] = await db
+       .select({ count: sql<number>`count(*)::int` })
+       .from(galleryImages)
+       .where(eq(galleryImages.imageId, imageId));
+     if (galleryImagesCount.count > 0) {
+       references.push({ table: "gallery_images", count: galleryImagesCount.count });
+     }
+ 
+     return references;
+   }
+ 
+   async deleteImage(id: string): Promise<void> {
+     await db.delete(images).where(eq(images.id, id));
+   }
+ 
+-  async getGalleryImagesByGalleryId(galleryId: string): Promise<GalleryImage[]> {
++  async getGalleryImagesByGalleryId(galleryId: string): Promise<GalleryImageWithDetails[]> {
+     return await db
+-      .select()
++      .select(galleryImageDetailsSelection)
+       .from(galleryImages)
++      .leftJoin(images, eq(galleryImages.imageId, images.id))
++      .leftJoin(galleries, eq(galleryImages.galleryId, galleries.id))
+       .where(eq(galleryImages.galleryId, galleryId))
+       .orderBy(asc(galleryImages.sortOrder));
+   }
+ }
+ 
+ export const storage = new DatabaseStorage();
+diff --git a/shared/schema.ts b/shared/schema.ts
+index 74953defe8d1381cd13660000739983ce226ef37..7eef0bf21d5d08d5264f8e2c26037226204929a1 100644
+--- a/shared/schema.ts
++++ b/shared/schema.ts
+@@ -558,29 +558,46 @@ export type Community = typeof communities.$inferSelect;
+ export type InsertCommunity = z.infer<typeof insertCommunitySchema>;
+ export type CommunityCareType = typeof communitiesCareTypes.$inferSelect;
+ export type InsertCommunityCareType = z.infer<typeof insertCommunityCareTypeSchema>;
+ export type CommunityAmenity = typeof communitiesAmenities.$inferSelect;
+ export type InsertCommunityAmenity = z.infer<typeof insertCommunityAmenitySchema>;
+ export type Post = typeof posts.$inferSelect;
+ export type InsertPost = z.infer<typeof insertPostSchema>;
+ export type BlogPost = typeof blogPosts.$inferSelect;
+ export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
+ export type Event = typeof events.$inferSelect;
+ export type InsertEvent = z.infer<typeof insertEventSchema>;
+ export type Faq = typeof faqs.$inferSelect;
+ export type InsertFaq = z.infer<typeof insertFaqSchema>;
+ export type Gallery = typeof galleries.$inferSelect;
+ export type InsertGallery = z.infer<typeof insertGallerySchema>;
+ export type TourRequest = typeof tourRequests.$inferSelect;
+ export type InsertTourRequest = z.infer<typeof insertTourRequestSchema>;
+ export type FloorPlan = typeof floorPlans.$inferSelect;
+ export type InsertFloorPlan = z.infer<typeof insertFloorPlanSchema>;
+ export type Testimonial = typeof testimonials.$inferSelect;
+ export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
+ export type GalleryImage = typeof galleryImages.$inferSelect;
+ export type InsertGalleryImage = z.infer<typeof insertGalleryImageSchema>;
+ export type Image = typeof images.$inferSelect;
+ export type InsertImage = z.infer<typeof insertImageSchema>;
++export type GalleryImageWithDetails = GalleryImage & {
++  imageUrl: string | null;
++  url: string | null;
++  alt: string | null;
++  width: number | null;
++  height: number | null;
++  objectKey: string | null;
++  variants: Image["variants"];
++  uploadedAt: Date | null;
++  galleryTitle: string | null;
++  gallerySlug: string | null;
++  category: string | null;
++  communityId: string | null;
++  hero: boolean | null;
++  published: boolean | null;
++  galleryActive: boolean | null;
++};
+ export type User = typeof users.$inferSelect;
+ export type InsertUser = z.infer<typeof insertUserSchema>;
+ export type PageHero = typeof pageHeroes.$inferSelect;
+ export type InsertPageHero = z.infer<typeof insertPageHeroSchema>;
