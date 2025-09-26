@@ -99,6 +99,9 @@ The platform features a comprehensive image management system integrated with Re
 - **Reference Protection**: Images cannot be deleted while referenced by content
 - **Automatic Processing**: Dimension extraction and validation for all uploaded images
 - **Community Associations**: All content types can be associated with specific communities for better organization
+- **Image Resolution System**: Custom `useResolveImageUrl` hook that automatically handles both UUID image IDs and direct URLs, resolving IDs to actual URLs via API
+- **Community Image Fields**: Communities support multiple image types - hero, logo, contact card, and brochure card images, all manageable through admin
+- **Carousel Image Support**: Homepage carousel properly displays community hero images with automatic resolution of stored image IDs
 
 ## External Dependencies
 

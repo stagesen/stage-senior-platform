@@ -30,7 +30,95 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { Community } from "@shared/schema";
+
+// Subcomponent for carousel items that handles image resolution
+const CarouselCommunityCard = ({ 
+  community, 
+  index, 
+  selectedIndex, 
+  setShowContactForm 
+}: { 
+  community: Community; 
+  index: number; 
+  selectedIndex: number; 
+  setShowContactForm: (show: boolean) => void;
+}) => {
+  const resolvedHeroUrl = useResolveImageUrl(community.heroImageUrl);
+  
+  return (
+    <div 
+      className={`relative overflow-hidden rounded-lg transition-all duration-500 ease-out ${
+        selectedIndex === index 
+          ? 'scale-110 opacity-100 shadow-2xl ring-4 ring-white/20 z-10' 
+          : 'scale-90 opacity-75 hover:scale-95 hover:opacity-85'
+      }`}
+    >
+      <Card className="border-0 shadow-lg">
+        <div className="relative h-80 overflow-hidden">
+          {resolvedHeroUrl ? (
+            <img 
+              src={resolvedHeroUrl} 
+              alt={community.name}
+              className="w-full h-full object-cover"
+              data-testid={`community-image-${community.id}`}
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-primary/40 to-primary/30 flex items-center justify-center">
+              <MapPin className="w-16 h-16 text-white drop-shadow-md" />
+            </div>
+          )}
+          {/* Enhanced gradient overlays for better text legibility */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+          
+          {/* Content overlay */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+            <h3 className="text-xl font-bold mb-2 drop-shadow-md" data-testid={`community-name-${community.id}`}>
+              {community.name}
+            </h3>
+            <p className="text-sm text-white mb-3 line-clamp-2 drop-shadow-sm">
+              {community.shortDescription || community.description}
+            </p>
+            <div className="flex items-center gap-1 text-sm text-white mb-4 drop-shadow-sm">
+              <MapPin className="w-4 h-4" />
+              <span data-testid={`community-address-${community.id}`}>
+                {community.street && community.city 
+                  ? `${community.street}, ${community.city}, ${community.state}`
+                  : `${community.city}, ${community.state}`}
+              </span>
+            </div>
+            
+            {/* CTAs */}
+            <div className="flex gap-2">
+              <Button 
+                asChild 
+                variant="secondary"
+                size="sm"
+                className="flex-1 text-xs"
+                data-testid={`button-learn-more-${community.id}`}
+              >
+                <Link href={`/communities/${community.slug}`}>
+                  Learn More
+                </Link>
+              </Button>
+              <Button 
+                variant="glassmorphism"
+                size="sm"
+                className="flex-1 text-xs font-medium"
+                onClick={() => setShowContactForm(true)}
+                data-testid={`button-get-pricing-${community.id}`}
+              >
+                Get Pricing
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+};
 
 export default function Home() {
   const [showContactForm, setShowContactForm] = useState(false);
@@ -246,75 +334,12 @@ export default function Home() {
                       className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3"
                       data-testid={`carousel-item-${community.id}`}
                     >
-                      <div 
-                        className={`relative overflow-hidden rounded-lg transition-all duration-500 ease-out ${
-                          selectedIndex === index 
-                            ? 'scale-110 opacity-100 shadow-2xl ring-4 ring-white/20 z-10' 
-                            : 'scale-90 opacity-75 hover:scale-95 hover:opacity-85'
-                        }`}
-                      >
-                        <Card className="border-0 shadow-lg">
-                          <div className="relative h-80 overflow-hidden">
-                            {community.heroImageUrl ? (
-                              <img 
-                                src={community.heroImageUrl} 
-                                alt={community.name}
-                                className="w-full h-full object-cover"
-                                data-testid={`community-image-${community.id}`}
-                              />
-                            ) : (
-                              <div className="w-full h-full bg-gradient-to-br from-primary/40 to-primary/30 flex items-center justify-center">
-                                <MapPin className="w-16 h-16 text-white drop-shadow-md" />
-                              </div>
-                            )}
-                            {/* Enhanced gradient overlays for better text legibility */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                            
-                            {/* Content overlay */}
-                            <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                              <h3 className="text-xl font-bold mb-2 drop-shadow-md" data-testid={`community-name-${community.id}`}>
-                                {community.name}
-                              </h3>
-                              <p className="text-sm text-white mb-3 line-clamp-2 drop-shadow-sm">
-                                {community.shortDescription || community.description}
-                              </p>
-                              <div className="flex items-center gap-1 text-sm text-white mb-4 drop-shadow-sm">
-                                <MapPin className="w-4 h-4" />
-                                <span data-testid={`community-address-${community.id}`}>
-                                  {community.street && community.city 
-                                    ? `${community.street}, ${community.city}, ${community.state}`
-                                    : `${community.city}, ${community.state}`}
-                                </span>
-                              </div>
-                              
-                              {/* CTAs */}
-                              <div className="flex gap-2">
-                                <Button 
-                                  asChild 
-                                  variant="secondary"
-                                  size="sm"
-                                  className="flex-1 text-xs"
-                                  data-testid={`button-learn-more-${community.id}`}
-                                >
-                                  <Link href={`/communities/${community.slug}`}>
-                                    Learn More
-                                  </Link>
-                                </Button>
-                                <Button 
-                                  variant="glassmorphism"
-                                  size="sm"
-                                  className="flex-1 text-xs font-medium"
-                                  onClick={() => setShowContactForm(true)}
-                                  data-testid={`button-get-pricing-${community.id}`}
-                                >
-                                  Get Pricing
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
-                      </div>
+                      <CarouselCommunityCard
+                        community={community}
+                        index={index}
+                        selectedIndex={selectedIndex}
+                        setShowContactForm={setShowContactForm}
+                      />
                     </CarouselItem>
                   ))}
                 </CarouselContent>
