@@ -3,8 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
 import TestimonialSection from "@/components/TestimonialSection";
 import { 
@@ -17,15 +15,14 @@ import {
   CarouselProgressBar,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { 
-  Search, 
-  MapPin, 
-  Calendar, 
-  Phone, 
-  Star, 
-  Shield, 
-  Heart, 
-  Users, 
+import {
+  MapPin,
+  Calendar,
+  Phone,
+  Star,
+  Shield,
+  Heart,
+  Users,
   Award,
   CheckCircle,
   ArrowRight,
@@ -36,8 +33,6 @@ import { useToast } from "@/hooks/use-toast";
 import type { Community } from "@shared/schema";
 
 export default function Home() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCareType, setSelectedCareType] = useState("all");
   const [showContactForm, setShowContactForm] = useState(false);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -64,18 +59,7 @@ export default function Home() {
     queryKey: ["/api/communities"],
   });
 
-  const filteredCommunities = communities.filter((community) => {
-    const matchesSearch = !searchQuery || 
-      community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      community.city.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesCareType = selectedCareType === "all" || 
-      community.careTypes?.includes(selectedCareType);
-
-    return matchesSearch && matchesCareType;
-  });
-
-  const featuredCommunities = filteredCommunities; // Show all filtered communities in carousel
+  const featuredCommunities = communities; // Show all communities in carousel
 
   const handleFormSuccess = () => {
     setShowContactForm(false);

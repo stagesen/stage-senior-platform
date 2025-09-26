@@ -68,7 +68,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!community) {
         return res.status(404).json({ message: "Community not found" });
       }
-      res.json(community);
+      
+      // Include care type and amenity IDs from junction tables
+      const careTypeIds = await storage.getCommunityCareTypes(community.id);
+      const amenityIds = await storage.getCommunityAmenities(community.id);
+      
+      res.json({
+        ...community,
+        careTypeIds,
+        amenityIds,
+      });
     } catch (error) {
       console.error("Error fetching community:", error);
       res.status(500).json({ message: "Failed to fetch community" });
@@ -77,9 +86,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/communities", requireAuth, async (req, res) => {
     try {
-      const validatedData = insertCommunitySchema.parse(req.body);
+      const { careTypeIds, amenityIds, ...communityData } = req.body;
+      const validatedData = insertCommunitySchema.parse(communityData);
       const community = await storage.createCommunity(validatedData);
-      res.status(201).json(community);
+      
+      // Set care types and amenities if provided
+      if (careTypeIds && Array.isArray(careTypeIds)) {
+        await storage.setCommunityCareTypes(community.id, careTypeIds);
+      }
+      if (amenityIds && Array.isArray(amenityIds)) {
+        await storage.setCommunityAmenities(community.id, amenityIds);
+      }
+      
+      // Return the community with its relationships
+      res.status(201).json({
+        ...community,
+        careTypeIds: careTypeIds || [],
+        amenityIds: amenityIds || [],
+      });
     } catch (error) {
       console.error("Error creating community:", error);
       res.status(400).json({ message: "Failed to create community" });
@@ -88,9 +112,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/communities/:id", requireAuth, async (req, res) => {
     try {
-      const validatedData = insertCommunitySchema.partial().parse(req.body);
+      const { careTypeIds, amenityIds, ...communityData } = req.body;
+      const validatedData = insertCommunitySchema.partial().parse(communityData);
       const community = await storage.updateCommunity(req.params.id, validatedData);
-      res.json(community);
+      
+      // Update care types and amenities if provided
+      if (careTypeIds !== undefined && Array.isArray(careTypeIds)) {
+        await storage.setCommunityCareTypes(req.params.id, careTypeIds);
+      }
+      if (amenityIds !== undefined && Array.isArray(amenityIds)) {
+        await storage.setCommunityAmenities(req.params.id, amenityIds);
+      }
+      
+      // Fetch the updated relationships
+      const updatedCareTypeIds = await storage.getCommunityCareTypes(req.params.id);
+      const updatedAmenityIds = await storage.getCommunityAmenities(req.params.id);
+      
+      // Return the community with its relationships
+      res.json({
+        ...community,
+        careTypeIds: updatedCareTypeIds,
+        amenityIds: updatedAmenityIds,
+      });
     } catch (error) {
       console.error("Error updating community:", error);
       res.status(400).json({ message: "Failed to update community" });

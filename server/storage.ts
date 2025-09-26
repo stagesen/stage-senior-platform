@@ -251,6 +251,14 @@ export interface IStorage {
   addFloorPlanImage(data: { floorPlanId: string; imageId: string; caption?: string; sortOrder?: number }): Promise<FloorPlanImage>;
   removeFloorPlanImage(floorPlanId: string, imageId: string): Promise<void>;
   updateFloorPlanImageOrder(floorPlanId: string, updates: Array<{ imageId: string; sortOrder: number }>): Promise<void>;
+
+  // Community-Care Type relationship operations
+  getCommunityCareTypes(communityId: string): Promise<string[]>;
+  setCommunityCareTypes(communityId: string, careTypeIds: string[]): Promise<void>;
+
+  // Community-Amenity relationship operations
+  getCommunityAmenities(communityId: string): Promise<string[]>;
+  setCommunityAmenities(communityId: string, amenityIds: string[]): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1371,6 +1379,62 @@ export class DatabaseStorage implements IStorage {
               eq(floorPlanImages.imageId, update.imageId)
             )
           );
+      }
+    });
+  }
+
+  // Community-Care Type relationships
+  async getCommunityCareTypes(communityId: string): Promise<string[]> {
+    const results = await db
+      .select({ careTypeId: communitiesCareTypes.careTypeId })
+      .from(communitiesCareTypes)
+      .where(eq(communitiesCareTypes.communityId, communityId));
+    
+    return results.map(r => r.careTypeId);
+  }
+
+  async setCommunityCareTypes(communityId: string, careTypeIds: string[]): Promise<void> {
+    await db.transaction(async (tx) => {
+      // Delete existing relationships
+      await tx.delete(communitiesCareTypes)
+        .where(eq(communitiesCareTypes.communityId, communityId));
+      
+      // Insert new relationships
+      if (careTypeIds.length > 0) {
+        const values = careTypeIds.map(careTypeId => ({
+          communityId,
+          careTypeId,
+        }));
+        
+        await tx.insert(communitiesCareTypes).values(values);
+      }
+    });
+  }
+
+  // Community-Amenity relationships
+  async getCommunityAmenities(communityId: string): Promise<string[]> {
+    const results = await db
+      .select({ amenityId: communitiesAmenities.amenityId })
+      .from(communitiesAmenities)
+      .where(eq(communitiesAmenities.communityId, communityId));
+    
+    return results.map(r => r.amenityId);
+  }
+
+  async setCommunityAmenities(communityId: string, amenityIds: string[]): Promise<void> {
+    await db.transaction(async (tx) => {
+      // Delete existing relationships
+      await tx.delete(communitiesAmenities)
+        .where(eq(communitiesAmenities.communityId, communityId));
+      
+      // Insert new relationships
+      if (amenityIds.length > 0) {
+        const values = amenityIds.map(amenityId => ({
+          communityId,
+          amenityId,
+        }));
+        
+        await tx.insert(communitiesAmenities).values(values);
       }
     });
   }

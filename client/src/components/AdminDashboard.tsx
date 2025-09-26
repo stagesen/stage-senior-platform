@@ -268,6 +268,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   const [isFetchingImages, setIsFetchingImages] = useState(false);
   const [galleryImages, setGalleryImages] = useState<any[]>([]);
   const [isLoadingGalleryImages, setIsLoadingGalleryImages] = useState(false);
+  const [selectedCareTypes, setSelectedCareTypes] = useState<string[]>([]);
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -286,6 +288,17 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   const { data: communities = [] } = useQuery<Community[]>({
     queryKey: ["/api/communities"],
     enabled: type !== "communities",
+  });
+
+  // Fetch care types and amenities for multi-select
+  const { data: allCareTypes = [] } = useQuery<CareType[]>({
+    queryKey: ["/api/care-types"],
+    enabled: type === "communities",
+  });
+
+  const { data: allAmenities = [] } = useQuery<Amenity[]>({
+    queryKey: ["/api/amenities"],
+    enabled: type === "communities",
   });
 
   // Forms for different types
@@ -589,8 +602,11 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
         data.slug = generateSlug(data.name);
       }
     }
-    // For communities, normalize lat/lng fields
+    // For communities, normalize lat/lng fields and add relationships
     if (type === "communities") {
+      // Add care type and amenity relationships
+      data.careTypeIds = selectedCareTypes;
+      data.amenityIds = selectedAmenities;
       // If lat/lng are provided but not latitude/longitude, copy them
       if (data.lat !== null && data.lat !== undefined && !data.latitude) {
         data.latitude = data.lat;
@@ -648,6 +664,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       if (item.longitude && !item.lng) {
         item.lng = item.longitude;
       }
+      
+      // Set selected care types and amenities
+      setSelectedCareTypes(item.careTypeIds || []);
+      setSelectedAmenities(item.amenityIds || []);
     }
     
     // For blog posts, convert tags array to string for editing
@@ -744,6 +764,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     setEditingItem(null);
     getCurrentForm().reset();
     setGalleryImages([]);
+    setSelectedCareTypes([]);
+    setSelectedAmenities([]);
     setIsDialogOpen(true);
   };
 
@@ -1099,6 +1121,133 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   </FormItem>
                 )}
               />
+              {/* Care Types Multi-Select */}
+              <div className="space-y-2">
+                <FormLabel>Care Types *</FormLabel>
+                <div className="border rounded-md p-3 space-y-2 max-h-48 overflow-y-auto">
+                  {allCareTypes.filter(ct => ct.active).map((careType) => (
+                    <label key={careType.id} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded" data-testid={`checkbox-care-type-${careType.slug}`}>
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        checked={selectedCareTypes.includes(careType.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedCareTypes([...selectedCareTypes, careType.id]);
+                          } else {
+                            setSelectedCareTypes(selectedCareTypes.filter(id => id !== careType.id));
+                          }
+                        }}
+                      />
+                      <div className="flex-1">
+                        <span className="font-medium">{careType.name}</span>
+                        {careType.description && (
+                          <p className="text-sm text-gray-500">{careType.description}</p>
+                        )}
+                      </div>
+                    </label>
+                  ))}
+                </div>
+                <div className="flex items-center justify-between text-sm text-gray-600">
+                  <span>{selectedCareTypes.length} care type(s) selected</span>
+                  <div className="space-x-2">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedCareTypes(allCareTypes.filter(ct => ct.active).map(ct => ct.id))}
+                      data-testid="button-select-all-care-types"
+                    >
+                      Select All
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedCareTypes([])}
+                      data-testid="button-clear-all-care-types"
+                    >
+                      Clear All
+                    </Button>
+                  </div>
+                </div>
+                {selectedCareTypes.length === 0 && (
+                  <p className="text-sm text-red-500">At least one care type must be selected</p>
+                )}
+              </div>
+              
+              {/* Amenities Multi-Select */}
+              <div className="space-y-2">
+                <FormLabel>Amenities</FormLabel>
+                <div className="border rounded-md p-3 space-y-4 max-h-96 overflow-y-auto">
+                  {/* Group amenities by category */}
+                  {Object.entries(
+                    allAmenities.filter(a => a.active).reduce((acc, amenity) => {
+                      const category = amenity.category || 'Other';
+                      if (!acc[category]) acc[category] = [];
+                      acc[category].push(amenity);
+                      return acc;
+                    }, {} as Record<string, typeof allAmenities>)
+                  ).map(([category, categoryAmenities]) => (
+                    <div key={category}>
+                      <h4 className="font-semibold text-sm text-gray-700 mb-2 capitalize">
+                        {category.replace(/_/g, ' ')}
+                      </h4>
+                      <div className="space-y-2 ml-4">
+                        {categoryAmenities.map((amenity) => (
+                          <label key={amenity.id} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded" data-testid={`checkbox-amenity-${amenity.slug}`}>
+                            <input
+                              type="checkbox"
+                              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                              checked={selectedAmenities.includes(amenity.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedAmenities([...selectedAmenities, amenity.id]);
+                                } else {
+                                  setSelectedAmenities(selectedAmenities.filter(id => id !== amenity.id));
+                                }
+                              }}
+                            />
+                            <div className="flex-1 flex items-center space-x-2">
+                              {amenity.icon && (
+                                <span className="text-gray-500">
+                                  {/* You could render an icon component here based on amenity.icon */}
+                                  {amenity.icon}
+                                </span>
+                              )}
+                              <span className="font-medium">{amenity.name}</span>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center justify-between text-sm text-gray-600">
+                  <span>{selectedAmenities.length} amenity(ies) selected</span>
+                  <div className="space-x-2">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedAmenities(allAmenities.filter(a => a.active).map(a => a.id))}
+                      data-testid="button-select-all-amenities"
+                    >
+                      Select All
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedAmenities([])}
+                      data-testid="button-clear-all-amenities"
+                    >
+                      Clear All
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              
               <div className="flex items-center space-x-4">
                 <FormField
                   control={communityForm.control}
