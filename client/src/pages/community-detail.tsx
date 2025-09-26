@@ -46,7 +46,17 @@ import { Link } from "wouter";
 import { cn } from "@/lib/utils";
 import ScrollToTop from "@/components/ScrollToTop";
 import stageSeniorLogo from "@assets/stagesenior-logo_1758726889154.webp";
-import type { Community, Event, Faq, Gallery, FloorPlan, Testimonial, GalleryImage, Post, BlogPost } from "@shared/schema";
+import type { 
+  Community, 
+  Event, 
+  Faq, 
+  Gallery, 
+  FloorPlan, 
+  Testimonial, 
+  GalleryImageWithDetails, 
+  Post, 
+  BlogPost 
+} from "@shared/schema";
 import {
   Carousel,
   CarouselContent,
@@ -669,7 +679,7 @@ export default function CommunityDetail() {
     enabled: !!slug && !!community?.id,
   });
 
-  const { data: galleryImages = [] } = useQuery<GalleryImage[]>({
+  const { data: galleryImages = [] } = useQuery<GalleryImageWithDetails[]>({
     queryKey: [`/api/gallery-images?communityId=${community?.id || ''}&active=true`],
     enabled: !!slug && !!community?.id,
   });

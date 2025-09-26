@@ -578,6 +578,25 @@ export type Testimonial = typeof testimonials.$inferSelect;
 export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
 export type GalleryImage = typeof galleryImages.$inferSelect;
 export type InsertGalleryImage = z.infer<typeof insertGalleryImageSchema>;
+
+export type GalleryImageWithDetails = GalleryImage & {
+  imageUrl: string;
+  url: string;
+  alt?: string | null;
+  width?: number | null;
+  height?: number | null;
+  objectKey?: string | null;
+  variants?: any | null;
+  uploadedAt?: Date | null;
+  galleryTitle?: string | null;
+  gallerySlug?: string | null;
+  category?: string | null;
+  communityId?: string | null;
+  hero?: boolean | null;
+  published?: boolean | null;
+  galleryActive?: boolean | null;
+};
+
 export type Image = typeof images.$inferSelect;
 export type InsertImage = z.infer<typeof insertImageSchema>;
 export type User = typeof users.$inferSelect;

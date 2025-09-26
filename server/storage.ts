@@ -35,6 +35,7 @@ import {
   type InsertTestimonial,
   type GalleryImage,
   type InsertGalleryImage,
+  type GalleryImageWithDetails,
   type CareType,
   type InsertCareType,
   type Amenity,
@@ -51,6 +52,30 @@ import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm"
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
+
+const galleryImageDetailsSelection = {
+  id: galleryImages.id,
+  galleryId: galleryImages.galleryId,
+  imageId: galleryImages.imageId,
+  caption: galleryImages.caption,
+  sortOrder: galleryImages.sortOrder,
+  createdAt: galleryImages.createdAt,
+  imageUrl: images.url,
+  url: images.url,
+  alt: images.alt,
+  width: images.width,
+  height: images.height,
+  objectKey: images.objectKey,
+  variants: images.variants,
+  uploadedAt: images.createdAt,
+  galleryTitle: galleries.title,
+  gallerySlug: galleries.gallerySlug,
+  category: galleries.category,
+  communityId: galleries.communityId,
+  hero: galleries.hero,
+  published: galleries.published,
+  galleryActive: galleries.active,
+};
 
 export interface IStorage {
   // Community operations
@@ -162,8 +187,8 @@ export interface IStorage {
     category?: string;
     featured?: boolean;
     active?: boolean;
-  }): Promise<GalleryImage[]>;
-  getGalleryImage(id: string): Promise<GalleryImage | undefined>;
+  }): Promise<GalleryImageWithDetails[]>;
+  getGalleryImage(id: string): Promise<GalleryImageWithDetails | undefined>;
   createGalleryImage(galleryImage: InsertGalleryImage): Promise<GalleryImage>;
   updateGalleryImage(id: string, galleryImage: Partial<InsertGalleryImage>): Promise<GalleryImage>;
   deleteGalleryImage(id: string): Promise<void>;
@@ -202,7 +227,7 @@ export interface IStorage {
   getImages(): Promise<Image[]>;
   deleteImage(id: string): Promise<void>;
   checkImageReferences(imageId: string): Promise<Array<{ table: string; count: number }>>;
-  getGalleryImagesByGalleryId(galleryId: string): Promise<GalleryImage[]>;
+  getGalleryImagesByGalleryId(galleryId: string): Promise<GalleryImageWithDetails[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -890,36 +915,40 @@ export class DatabaseStorage implements IStorage {
     category?: string;
     featured?: boolean;
     active?: boolean;
-  }): Promise<GalleryImage[]> {
-    let query = db.select().from(galleryImages);
-    
+  }): Promise<GalleryImageWithDetails[]> {
     const conditions = [];
     if (filters?.communityId) {
-      conditions.push(eq(galleryImages.communityId, filters.communityId));
+      conditions.push(eq(galleries.communityId, filters.communityId));
     }
     if (filters?.category) {
-      conditions.push(eq(galleryImages.category, filters.category));
+      conditions.push(eq(galleries.category, filters.category));
     }
     if (filters?.featured !== undefined) {
-      conditions.push(eq(galleryImages.featured, filters.featured));
+      conditions.push(eq(galleries.hero, filters.featured));
     }
     if (filters?.active !== undefined) {
-      conditions.push(eq(galleryImages.active, filters.active));
+      conditions.push(eq(galleries.active, filters.active));
     }
-    
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
-    
-    return await query.orderBy(desc(galleryImages.featured), asc(galleryImages.sortOrder), desc(galleryImages.createdAt));
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+    return await db
+      .select(galleryImageDetailsSelection)
+      .from(galleryImages)
+      .innerJoin(images, eq(galleryImages.imageId, images.id))
+      .innerJoin(galleries, eq(galleryImages.galleryId, galleries.id))
+      .where(whereClause)
+      .orderBy(desc(galleries.hero), asc(galleryImages.sortOrder), desc(galleryImages.createdAt));
   }
 
-  async getGalleryImage(id: string): Promise<GalleryImage | undefined> {
-    const [galleryImage] = await db
-      .select()
+  async getGalleryImage(id: string): Promise<GalleryImageWithDetails | undefined> {
+    const [result] = await db
+      .select(galleryImageDetailsSelection)
       .from(galleryImages)
+      .innerJoin(images, eq(galleryImages.imageId, images.id))
+      .innerJoin(galleries, eq(galleryImages.galleryId, galleries.id))
       .where(eq(galleryImages.id, id));
-    return galleryImage;
+    return result;
   }
 
   async createGalleryImage(galleryImage: InsertGalleryImage): Promise<GalleryImage> {
@@ -1166,10 +1195,12 @@ export class DatabaseStorage implements IStorage {
     await db.delete(images).where(eq(images.id, id));
   }
 
-  async getGalleryImagesByGalleryId(galleryId: string): Promise<GalleryImage[]> {
+  async getGalleryImagesByGalleryId(galleryId: string): Promise<GalleryImageWithDetails[]> {
     return await db
-      .select()
+      .select(galleryImageDetailsSelection)
       .from(galleryImages)
+      .innerJoin(images, eq(galleryImages.imageId, images.id))
+      .innerJoin(galleries, eq(galleryImages.galleryId, galleries.id))
       .where(eq(galleryImages.galleryId, galleryId))
       .orderBy(asc(galleryImages.sortOrder));
   }
