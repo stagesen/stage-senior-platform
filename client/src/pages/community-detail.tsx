@@ -2181,7 +2181,7 @@ export default function CommunityDetail() {
                         <p className="text-sm text-gray-600 line-clamp-2 mb-3" data-testid={`resource-summary-${post.id}`}>
                           {post.summary || post.content.substring(0, 100) + '...'}
                         </p>
-                        <Button variant="link" className="p-0 h-auto text-sm text-primary hover:text-primary/80" asChild>
+                        <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80" size="sm" asChild>
                           <Link href={`/resources/${post.slug}`}>
                             Learn More →
                           </Link>
