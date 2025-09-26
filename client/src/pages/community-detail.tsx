@@ -961,6 +961,9 @@ export default function CommunityDetail() {
 
   // Resolve hero image URL (handle both image ID and full URL)
   const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
+  
+  // Resolve experience image URL from experienceImageId field
+  const experienceImageUrl = useResolveImageUrl(community?.experienceImageId);
 
   // Computed values based on query data
   const galleryCategories = Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean)));
@@ -2033,20 +2036,25 @@ export default function CommunityDetail() {
               </section>
             )}
 
-            {/* Featured Image Section */}
-            {heroImageUrl && (
-              <section>
-                <h2 className="text-3xl font-bold mb-8">Experience Our Community</h2>
+            {/* Experience Our Community Section */}
+            <section>
+              <h2 className="text-3xl font-bold mb-8">Experience Our Community</h2>
+              {experienceImageUrl && (
                 <div className="rounded-2xl overflow-hidden shadow-2xl mb-12">
                   <img
-                    src={heroImageUrl}
-                    alt={`${community.name} - Featured Image`}
+                    src={experienceImageUrl}
+                    alt={`Experience ${community.name}`}
                     className="w-full h-[400px] object-cover"
-                    data-testid="featured-image"
+                    data-testid="experience-image"
                   />
                 </div>
-              </section>
-            )}
+              )}
+              <p className="text-lg text-gray-600 leading-relaxed mb-8">
+                Discover what makes {community.name} special. From our welcoming atmosphere to our dedicated care team, 
+                every aspect of our community is designed to help you live your best life. We invite you to experience 
+                the warmth, comfort, and vibrant lifestyle that defines our community.
+              </p>
+            </section>
 
             {/* Photo Gallery */}
             {galleries.length > 0 && (
