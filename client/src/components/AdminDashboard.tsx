@@ -8,13 +8,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { apiRequest } from "@/lib/queryClient";
 import ImageUploader from "@/components/ImageUploader";
+import RichTextEditor from "@/components/RichTextEditor";
 import { 
   Plus, 
   Edit, 
@@ -24,11 +26,18 @@ import {
   Calendar,
   MapPin,
   Phone,
-  Mail
+  Mail,
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+  Star,
+  Settings
 } from "lucide-react";
+import { format } from "date-fns";
 import {
   insertCommunitySchema,
   insertPostSchema,
+  insertBlogPostSchema,
   insertEventSchema,
   insertFaqSchema,
   insertGallerySchema,
@@ -37,6 +46,7 @@ import {
   insertFloorPlanSchema,
   type Community,
   type Post,
+  type BlogPost,
   type Event,
   type TourRequest,
   type Faq,
@@ -46,6 +56,7 @@ import {
   type FloorPlan,
   type InsertCommunity,
   type InsertPost,
+  type InsertBlogPost,
   type InsertEvent,
   type InsertFaq,
   type InsertGallery,
@@ -55,8 +66,34 @@ import {
 } from "@shared/schema";
 
 interface AdminDashboardProps {
-  type: "communities" | "posts" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans";
+  type: "communities" | "posts" | "blog-posts" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans";
 }
+
+// Helper function to generate slug from title
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// Predefined authors list
+const AUTHORS = [
+  "Stage Senior Team",
+  "Community Director",
+  "Healthcare Team",
+  "Activities Coordinator",
+  "Guest Contributor"
+];
+
+// Blog categories
+const BLOG_CATEGORIES = [
+  "news",
+  "events",
+  "health",
+  "lifestyle",
+  "community-spotlight"
+];
 
 // FloorPlanImageManager Component for managing floor plan gallery images
 function FloorPlanImageManager({ floorPlanId }: { floorPlanId: string }) {
@@ -368,11 +405,32 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     },
   });
 
+  const blogPostForm = useForm<InsertBlogPost>({
+    resolver: zodResolver(insertBlogPostSchema),
+    defaultValues: {
+      title: "",
+      slug: "",
+      content: "",
+      summary: "",
+      author: "Stage Senior Team",
+      category: "news",
+      tags: [],
+      featured: false,
+      published: false,
+      publishedAt: new Date(),
+      mainImage: undefined,
+      thumbnailImage: undefined,
+      galleryImages: [],
+      communityId: undefined,
+    },
+  });
+
   // Get current form based on type
   const getCurrentForm = () => {
     switch (type) {
       case "communities": return communityForm;
       case "posts": return postForm;
+      case "blog-posts": return blogPostForm;
       case "events": return eventForm;
       case "faqs": return faqForm;
       case "galleries": return galleryForm;
@@ -469,6 +527,16 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
         data.lng = data.longitude;
       }
     }
+    // For blog posts, generate slug if not provided and process tags
+    if (type === "blog-posts") {
+      if (!data.slug && data.title) {
+        data.slug = generateSlug(data.title);
+      }
+      // Convert tags string to array if needed
+      if (typeof data.tags === 'string') {
+        data.tags = data.tags.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag);
+      }
+    }
     // For floor plans, ensure planSlug is set to name if not provided
     if (type === "floor-plans" && !data.planSlug && data.name) {
       data.planSlug = data.name.toLowerCase().replace(/\s+/g, '-');
@@ -501,6 +569,19 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       if (item.longitude && !item.lng) {
         item.lng = item.longitude;
       }
+    }
+    
+    // For blog posts, convert tags array to string for editing
+    if (type === "blog-posts") {
+      const blogPostData = {
+        ...item,
+        tags: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '',
+        publishedAt: item.publishedAt ? new Date(item.publishedAt) : new Date(),
+      };
+      setEditingItem(item);
+      blogPostForm.reset(blogPostData);
+      setIsDialogOpen(true);
+      return;
     }
     
     // For galleries, ensure images field is properly set and fetch gallery images
@@ -1116,6 +1197,314 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   </FormItem>
                 )}
               />
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="button-submit">
+                  {editingItem ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        );
+
+      case "blog-posts":
+        return (
+          <Form {...blogPostForm}>
+            <form onSubmit={blogPostForm.handleSubmit(handleSubmit)} className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={blogPostForm.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          placeholder="Enter blog post title"
+                          onChange={(e) => {
+                            field.onChange(e);
+                            // Auto-generate slug from title if slug is empty
+                            const slugField = blogPostForm.getValues("slug");
+                            if (!slugField || slugField === generateSlug(blogPostForm.getValues("title"))) {
+                              blogPostForm.setValue("slug", generateSlug(e.target.value));
+                            }
+                          }}
+                          data-testid="input-blog-title" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={blogPostForm.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          placeholder="url-friendly-slug"
+                          data-testid="input-blog-slug" 
+                        />
+                      </FormControl>
+                      <FormDescription>URL-friendly version of the title</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={blogPostForm.control}
+                  name="author"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Author</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger data-testid="select-blog-author">
+                            <SelectValue placeholder="Select an author" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {AUTHORS.map((author) => (
+                            <SelectItem key={author} value={author}>
+                              {author}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={blogPostForm.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger data-testid="select-blog-category">
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {BLOG_CATEGORIES.map((category) => (
+                            <SelectItem key={category} value={category}>
+                              {category.charAt(0).toUpperCase() + category.slice(1).replace(/-/g, ' ')}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={blogPostForm.control}
+                name="summary"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Summary</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        {...field}
+                        value={field.value || ""}
+                        placeholder="Brief summary of the blog post"
+                        rows={3}
+                        data-testid="textarea-blog-summary" 
+                      />
+                    </FormControl>
+                    <FormDescription>A short description that appears in blog listings</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={blogPostForm.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Content *</FormLabel>
+                    <FormControl>
+                      <RichTextEditor
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Start writing your blog post..."
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={blogPostForm.control}
+                  name="mainImage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Main Image</FormLabel>
+                      <FormControl>
+                        <ImageUploader
+                          value={field.value || undefined}
+                          onChange={field.onChange}
+                          label="Upload main image for the blog post"
+                          maxSize={10 * 1024 * 1024}
+                        />
+                      </FormControl>
+                      <FormDescription>The primary image shown with the blog post</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={blogPostForm.control}
+                  name="thumbnailImage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thumbnail Image</FormLabel>
+                      <FormControl>
+                        <ImageUploader
+                          value={field.value || undefined}
+                          onChange={field.onChange}
+                          label="Upload thumbnail image"
+                          maxSize={5 * 1024 * 1024}
+                        />
+                      </FormControl>
+                      <FormDescription>Smaller image for listings and previews</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={blogPostForm.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tags</FormLabel>
+                    <FormControl>
+                      <Input 
+                        {...field}
+                        value={Array.isArray(field.value) ? field.value.join(', ') : field.value || ''}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(value);
+                        }}
+                        placeholder="Enter tags separated by commas (e.g., health, wellness, activities)"
+                        data-testid="input-blog-tags" 
+                      />
+                    </FormControl>
+                    <FormDescription>Comma-separated list of tags</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={blogPostForm.control}
+                name="communityId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Community (Optional)</FormLabel>
+                    <Select onValueChange={(value) => field.onChange(value === "none" ? undefined : value)} value={field.value || "none"}>
+                      <FormControl>
+                        <SelectTrigger data-testid="select-blog-community">
+                          <SelectValue placeholder="Select a community" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="none">No specific community</SelectItem>
+                        {communities.map((community) => (
+                          <SelectItem key={community.id} value={community.id}>
+                            {community.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>Associate this post with a specific community</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-3 gap-4">
+                <FormField
+                  control={blogPostForm.control}
+                  name="publishedAt"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Publish Date</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="datetime-local" 
+                          {...field} 
+                          value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ""} 
+                          onChange={(e) => field.onChange(new Date(e.target.value))}
+                          data-testid="input-blog-publish-date"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={blogPostForm.control}
+                  name="featured"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
+                      <div className="space-y-0.5">
+                        <FormLabel>Featured</FormLabel>
+                        <FormDescription>
+                          Show in featured section
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch 
+                          checked={field.value} 
+                          onCheckedChange={field.onChange}
+                          data-testid="switch-blog-featured" 
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={blogPostForm.control}
+                  name="published"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
+                      <div className="space-y-0.5">
+                        <FormLabel>Published</FormLabel>
+                        <FormDescription>
+                          Make post visible
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch 
+                          checked={field.value} 
+                          onCheckedChange={field.onChange}
+                          data-testid="switch-blog-published" 
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <div className="flex justify-end space-x-2">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
                   Cancel
@@ -2825,6 +3214,85 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   </TableCell>
                   <TableCell>
                     {new Date(item.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleEdit(item)}
+                        data-testid={`button-edit-${item.id}`}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={() => handleDelete(item.id)}
+                        data-testid={`button-delete-${item.id}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      );
+    }
+
+    // Blog Posts table (using blog-posts API)
+    if (type === "blog-posts") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Title</TableHead>
+              <TableHead>Author</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Community</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Published</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: BlogPost) => {
+              const community = communities.find(c => c.id === item.communityId);
+              return (
+                <TableRow key={item.id} data-testid={`blog-post-row-${item.id}`}>
+                  <TableCell className="font-medium max-w-[250px]">
+                    <div className="space-y-1">
+                      <div className="font-semibold truncate">{item.title}</div>
+                      <div className="text-xs text-muted-foreground truncate">
+                        {item.slug}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>{item.author || "Unknown"}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">
+                      {item.category ? item.category.charAt(0).toUpperCase() + item.category.slice(1).replace(/-/g, ' ') : "Uncategorized"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{community?.name || "General"}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-col gap-1">
+                      <Badge variant={item.published ? "default" : "secondary"}>
+                        {item.published ? "Published" : "Draft"}
+                      </Badge>
+                      {item.featured && (
+                        <Badge variant="outline" className="flex items-center gap-1">
+                          <Star className="h-3 w-3" />
+                          Featured
+                        </Badge>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {item.publishedAt ? format(new Date(item.publishedAt), "MMM d, yyyy") : "Not set"}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">

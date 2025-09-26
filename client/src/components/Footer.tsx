@@ -16,6 +16,7 @@ export default function Footer() {
   const quickLinks = [
     { name: "Services", href: "/services" },
     { name: "About Us", href: "/about-us" },
+    { name: "Care Points", href: "/care-points" },
     { name: "Stage Cares", href: "/stage-cares" },
     { name: "Professional Management Services", href: "/services/management" }
   ];
@@ -23,26 +24,27 @@ export default function Footer() {
   return (
     <footer className="bg-foreground text-background" data-testid="footer">
       {/* Newsletter Section */}
-      <div className="bg-gradient-to-r from-primary to-secondary py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="bg-gradient-to-br from-primary via-primary/90 to-secondary py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="flex justify-center mb-4">
             <Heart className="w-8 h-8 text-background/90" />
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-background mb-4" data-testid="newsletter-title">
+          <h2 className="text-3xl md:text-5xl font-bold text-background mb-6" data-testid="newsletter-title">
             Stay Connected with Our Community
           </h2>
-          <p className="text-background/90 text-lg mb-8 max-w-2xl mx-auto" data-testid="newsletter-description">
+          <p className="text-background/95 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed" data-testid="newsletter-description">
             Get the latest updates on events, wellness tips, and community news delivered to your inbox.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
-            <Input 
-              type="email" 
+            <Input
+              type="email"
               placeholder="Enter your email address"
-              className="bg-background text-foreground border-0 flex-1 h-12"
+              className="bg-background text-foreground border-0 flex-1 h-14 text-base shadow-lg"
               data-testid="newsletter-input"
             />
-            <Button 
-              className="bg-background text-primary hover:bg-background/90 h-12 px-8 group"
+            <Button
+              className="bg-background text-primary hover:bg-background/90 h-14 px-10 group shadow-lg font-semibold"
               data-testid="newsletter-submit"
             >
               Subscribe
@@ -57,7 +59,7 @@ export default function Footer() {
       </div>
 
       {/* Main Footer Content */}
-      <div className="bg-foreground py-16">
+      <div className="bg-gradient-to-b from-foreground to-foreground/98 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
@@ -70,31 +72,31 @@ export default function Footer() {
                   className="w-auto object-contain min-w-[160px] h-14 sm:h-16 md:h-18"
                 />
               </div>
-              <p className="text-background/90 mb-6 text-lg leading-relaxed" data-testid="footer-description">
+              <p className="text-background/95 mb-8 text-lg leading-relaxed" data-testid="footer-description">
                 Creating vibrant communities where seniors thrive. Locally owned and resident-focused since 2016.
               </p>
               
               {/* Stats */}
-              <div className="grid grid-cols-2 gap-6 mb-8">
-                <div className="text-center p-4 bg-background/5 rounded-lg">
-                  <div className="text-2xl font-bold text-primary mb-1">9+</div>
-                  <div className="text-background/70 text-sm">Years Serving</div>
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="text-center p-5 bg-gradient-to-br from-background/10 to-background/5 rounded-xl border border-background/10 hover:border-primary/30 transition-all duration-300">
+                  <div className="text-3xl font-bold text-primary mb-2">9+</div>
+                  <div className="text-background/80 text-sm font-medium">Years Serving</div>
                 </div>
-                <div className="text-center p-4 bg-background/5 rounded-lg">
-                  <div className="text-2xl font-bold text-primary mb-1">4</div>
-                  <div className="text-background/70 text-sm">Communities</div>
+                <div className="text-center p-5 bg-gradient-to-br from-background/10 to-background/5 rounded-xl border border-background/10 hover:border-primary/30 transition-all duration-300">
+                  <div className="text-3xl font-bold text-primary mb-2">4</div>
+                  <div className="text-background/80 text-sm font-medium">Communities</div>
                 </div>
               </div>
               
               {/* Social Media with enhanced styling */}
               <div className="space-y-4">
-                <h4 className="text-background font-semibold mb-3">Follow Our Journey</h4>
-                <div className="flex space-x-4">
+                <h4 className="text-background font-semibold text-lg mb-4">Follow Our Journey</h4>
+                <div className="flex space-x-3">
                   <a
                     href="https://facebook.com/stagesenior"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-background/10 hover:bg-primary text-background/60 hover:text-background p-3 rounded-lg transition-all duration-300 group"
+                    className="bg-gradient-to-br from-background/15 to-background/10 hover:from-primary hover:to-primary/90 text-background/70 hover:text-background p-3.5 rounded-xl transition-all duration-300 group border border-background/10 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/20"
                     data-testid="social-facebook"
                   >
                     <Facebook className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -103,7 +105,7 @@ export default function Footer() {
                     href="https://linkedin.com/company/stagesenior"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-background/10 hover:bg-primary text-background/60 hover:text-background p-3 rounded-lg transition-all duration-300 group"
+                    className="bg-gradient-to-br from-background/15 to-background/10 hover:from-primary hover:to-primary/90 text-background/70 hover:text-background p-3.5 rounded-xl transition-all duration-300 group border border-background/10 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/20"
                     data-testid="social-linkedin"
                   >
                     <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -112,7 +114,7 @@ export default function Footer() {
                     href="https://instagram.com/stagesenior"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-background/10 hover:bg-primary text-background/60 hover:text-background p-3 rounded-lg transition-all duration-300 group"
+                    className="bg-gradient-to-br from-background/15 to-background/10 hover:from-primary hover:to-primary/90 text-background/70 hover:text-background p-3.5 rounded-xl transition-all duration-300 group border border-background/10 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/20"
                     data-testid="social-instagram"
                   >
                     <Instagram className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -143,8 +145,8 @@ export default function Footer() {
                   </li>
                 ))}
               </ul>
-              <div className="mt-6 p-4 bg-primary/10 rounded-lg">
-                <p className="text-background/90 text-sm">
+              <div className="mt-6 p-5 bg-gradient-to-br from-primary/15 to-primary/10 rounded-xl border border-primary/20">
+                <p className="text-background/95 text-sm leading-relaxed">
                   <CheckCircle className="w-4 h-4 inline mr-2 text-primary" />
                   Schedule a tour today and see why families choose Stage Senior.
                 </p>
@@ -170,19 +172,6 @@ export default function Footer() {
                   </li>
                 ))}
               </ul>
-              
-              {/* CTA Button */}
-              <div className="mt-8">
-                <Link href="/communities">
-                  <Button 
-                    className="bg-primary hover:bg-primary/90 text-background w-full group"
-                    data-testid="footer-cta-communities"
-                  >
-                    View All Communities
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </div>
             </div>
           
             {/* Contact */}
@@ -192,46 +181,46 @@ export default function Footer() {
               </h3>
               
               <div className="space-y-4">
-                <div className="flex items-center p-3 bg-background/5 rounded-lg hover:bg-background/10 transition-colors" data-testid="footer-phone">
-                  <div className="bg-primary/20 p-2 rounded-lg mr-4">
-                    <Phone className="w-5 h-5 text-primary" />
+                <div className="flex items-start p-4 bg-gradient-to-br from-background/10 to-background/5 rounded-xl hover:from-background/15 hover:to-background/10 transition-all duration-300 border border-background/10 hover:border-primary/30" data-testid="footer-phone">
+                  <div className="bg-gradient-to-br from-primary/25 to-primary/20 p-2.5 rounded-xl mr-3 flex-shrink-0">
+                    <Phone className="w-4 h-4 text-primary" />
                   </div>
-                  <div>
-                    <div className="text-background font-medium">(303) 436-2300</div>
-                    <div className="text-background/60 text-sm">Call us today</div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center p-3 bg-background/5 rounded-lg hover:bg-background/10 transition-colors" data-testid="footer-email">
-                  <div className="bg-primary/20 p-2 rounded-lg mr-4">
-                    <Mail className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <div className="text-background font-medium">info@stagesenior.com</div>
-                    <div className="text-background/60 text-sm">Email us anytime</div>
+                  <div className="min-w-0">
+                    <div className="text-background text-sm font-medium truncate">(303) 436-2300</div>
+                    <div className="text-background/60 text-xs">Call us today</div>
                   </div>
                 </div>
-                
-                <div className="flex items-start p-3 bg-background/5 rounded-lg hover:bg-background/10 transition-colors" data-testid="footer-address">
-                  <div className="bg-primary/20 p-2 rounded-lg mr-4 mt-0">
-                    <MapPin className="w-5 h-5 text-primary" />
+
+                <div className="flex items-start p-4 bg-gradient-to-br from-background/10 to-background/5 rounded-xl hover:from-background/15 hover:to-background/10 transition-all duration-300 border border-background/10 hover:border-primary/30" data-testid="footer-email">
+                  <div className="bg-gradient-to-br from-primary/25 to-primary/20 p-2.5 rounded-xl mr-3 flex-shrink-0">
+                    <Mail className="w-4 h-4 text-primary" />
                   </div>
-                  <div>
-                    <div className="text-background font-medium">8100 E Arapahoe Road, Suite 208</div>
-                    <div className="text-background/60">Centennial, CO 80112</div>
+                  <div className="min-w-0">
+                    <div className="text-background text-sm font-medium break-all">info@stagesenior.com</div>
+                    <div className="text-background/60 text-xs">Email us anytime</div>
+                  </div>
+                </div>
+
+                <div className="flex items-start p-4 bg-gradient-to-br from-background/10 to-background/5 rounded-xl hover:from-background/15 hover:to-background/10 transition-all duration-300 border border-background/10 hover:border-primary/30" data-testid="footer-address">
+                  <div className="bg-gradient-to-br from-primary/25 to-primary/20 p-2.5 rounded-xl mr-3 flex-shrink-0">
+                    <MapPin className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-background text-sm font-medium">8100 E Arapahoe Road, Suite 208</div>
+                    <div className="text-background/60 text-xs">Centennial, CO 80112</div>
                   </div>
                 </div>
               </div>
               
               {/* Contact CTA */}
-              <div className="mt-6 p-4 bg-secondary/10 rounded-lg">
-                <p className="text-background/90 text-sm mb-3">
+              <div className="mt-6 p-5 bg-gradient-to-br from-secondary/15 to-secondary/10 rounded-xl border border-secondary/20">
+                <p className="text-background/95 text-sm mb-4 leading-relaxed">
                   Questions about our communities or services?
                 </p>
                 <Link href="/contact">
-                  <Button 
-                    variant="secondary" 
-                    className="bg-background text-foreground hover:bg-background/90 w-full"
+                  <Button
+                    variant="secondary"
+                    className="bg-background text-foreground hover:bg-background/90 w-full h-12 font-semibold shadow-md hover:shadow-lg transition-all duration-300"
                     data-testid="footer-contact-cta"
                   >
                     Contact Us Today
@@ -244,7 +233,7 @@ export default function Footer() {
       </div>
       
       {/* Bottom Bar */}
-      <div className="bg-foreground/95 border-t border-background/10">
+      <div className="bg-gradient-to-b from-foreground to-black/95 border-t border-background/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
             

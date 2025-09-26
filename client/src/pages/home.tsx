@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
+import TestimonialSection from "@/components/TestimonialSection";
 import { 
   Carousel,
   CarouselContent,
@@ -450,6 +451,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Testimonials Section */}
+      <TestimonialSection />
 
       {/* Pricing Teaser */}
       <section id="pricing" className="py-16 bg-white">

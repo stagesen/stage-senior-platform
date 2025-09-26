@@ -303,7 +303,7 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="posts">
-            <AdminDashboard type="posts" />
+            <AdminDashboard type="blog-posts" />
           </TabsContent>
 
           <TabsContent value="events">
