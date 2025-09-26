@@ -948,6 +948,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       logoImageId: "",
       contactImageId: "",
       brochureImageId: "",
+      experienceImageId: "",
       overview: "",
       description: "",
       shortDescription: "",
@@ -1739,6 +1740,24 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         value={field.value || undefined}
                         onChange={field.onChange}
                         label="Upload image for the brochure card section"
+                        maxSize={10 * 1024 * 1024}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
+                name="experienceImageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Experience Our Community Image</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload image for the Experience our Community section"
                         maxSize={10 * 1024 * 1024}
                       />
                     </FormControl>
