@@ -142,7 +142,7 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
 
   // Ensure galleries is always an array
   const items = galleries ?? [];
-  
+
   // Get galleries with images for the main grid (show first 4 galleries)
   const galleriesWithImages = items.filter(g => g.images && g.images.length > 0);
   const mainGalleries = galleriesWithImages.slice(0, 4);
@@ -156,7 +156,7 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
             const images = gallery.images || [];
             const totalImages = images.length;
             const previewImages = images.slice(0, 4);
-            
+
             return (
               <Card 
                 key={gallery.id}
@@ -185,10 +185,10 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
                       ))}
                     </div>
                   )}
-                  
+
                   {/* Overlay with fade effect */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  
+
                   {/* View Gallery Text on Hover */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="bg-white/95 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300">
@@ -198,14 +198,14 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
                       </span>
                     </div>
                   </div>
-                  
+
                   {/* Image Count Badge */}
                   <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5 shadow-lg">
                     <Image className="w-4 h-4" />
                     <span>{totalImages} {totalImages === 1 ? 'Photo' : 'Photos'}</span>
                   </div>
                 </div>
-                
+
                 {/* Gallery Info */}
                 <CardContent className="p-5 bg-white">
                   <h3 className="font-bold text-lg text-gray-900 mb-1.5 group-hover:text-primary transition-colors" data-testid={`gallery-title-${gallery.id}`}>
@@ -226,7 +226,7 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
           })}
         </div>
       )}
-      
+
       {/* Gallery Category Cards - Additional galleries or categories */}
       {items.length > 4 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -235,7 +235,7 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
             const IconComponent = config.icon;
             const coverImage = gallery.images?.[0];
             const totalImages = gallery.images?.length || 0;
-            
+
             return (
               <Card 
                 key={gallery.id} 
@@ -509,7 +509,7 @@ const ActionPanel = ({ community }: { community: any }) => {
           <Card className="shadow-lg bg-primary/5 border-primary/20 overflow-hidden">
             <div className="h-48 overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=2000"
+                src="https://images.unsplash.com/photo-1554224155-67261b3ff858f?q=80&w=2000"
                 alt="Community brochure preview"
                 className="w-full h-full object-cover"
               />
@@ -561,7 +561,7 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/70 to-black/60" />
       </div>
-      
+
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Logo */}
@@ -572,14 +572,14 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
             className="h-20 mx-auto mb-8"
           />
         )}
-        
+
         <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
           Ready to Experience {community.name}?
         </h2>
         <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto">
           Join our community of residents who are living their best life. Schedule a personalized tour today.
         </p>
-        
+
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button 
             size="lg" 
@@ -592,9 +592,9 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
           <Button 
             size="lg" 
             variant="outline"
-            className="text-lg px-8 py-6 border-2 border-white text-white hover:bg-white/10 backdrop-blur-sm"
-            data-testid="button-call-hero"
+            className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-6 text-lg"
             asChild
+            data-testid="button-call-hero"
           >
             <a href={`tel:${community.phone || '+1-303-436-2300'}`}>
               <Phone className="w-5 h-5 mr-2" />
@@ -844,28 +844,28 @@ export default function CommunityDetail() {
       const r = ((rgb >> 16) & 0xff) / 255;
       const g = ((rgb >> 8) & 0xff) / 255;
       const b = (rgb & 0xff) / 255;
-      
+
       const sRGB = [r, g, b].map(c => 
         c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
       );
-      
+
       return 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2];
     };
-    
+
     const l1 = getLuminance(color1);
     const l2 = getLuminance(color2);
     const lighter = Math.max(l1, l2);
     const darker = Math.min(l1, l2);
-    
+
     return (lighter + 0.05) / (darker + 0.05);
   };
 
   const getAccessibleTextColor = (bgColor: string) => {
     if (!bgColor || !bgColor.match(/^#[0-9a-fA-F]{6}$/)) return '#ffffff';
-    
+
     const whiteContrast = getContrastRatio(bgColor, '#ffffff');
     const blackContrast = getContrastRatio(bgColor, '#000000');
-    
+
     // Use WCAG AA standard (4.5:1 ratio)
     return whiteContrast >= blackContrast ? '#ffffff' : '#000000';
   };
@@ -874,7 +874,7 @@ export default function CommunityDetail() {
   const communityStyles = useMemo(() => {
     const mainColor = (community as any)?.mainColorHex || '#2563eb';
     const ctaColor = (community as any)?.ctaColorHex || '#f59e0b';
-    
+
     return {
       '--community-main': mainColor,
       '--community-cta': ctaColor,
@@ -955,7 +955,7 @@ export default function CommunityDetail() {
             </div>
           </div>
         )}
-        
+
         {/* Hero Content */}
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16">
           <div className="max-w-7xl mx-auto">
@@ -1495,7 +1495,7 @@ export default function CommunityDetail() {
                     <Card className="overflow-hidden">
                       <AspectRatio ratio={16 / 9}>
                         <img
-                          src="https://images.unsplash.com/photo-1559304787-945aa4341065?w=800&q=80"
+                          src="https://images.unsplash.com/photo-1559304787-b655434341065?w=800&q=80"
                           alt="24/7 Support"
                           className="w-full h-full object-cover"
                           data-testid="highlight-24-7-support"
@@ -1571,7 +1571,7 @@ export default function CommunityDetail() {
                       </div>
                     </div>
                   )}
-                  
+
                   {/* Show all amenities in compact grid */}
                   <h3 className="text-xl font-semibold mb-4">
                     {(community as any).amenities && 
@@ -1597,7 +1597,7 @@ export default function CommunityDetail() {
                            amenity.icon === 'Wifi' ? Wifi :
                            Sparkles) : 
                           getAmenityIcon(amenityName));
-                      
+
                       return (
                         <div 
                           key={`amenity-${index}`}
@@ -1750,7 +1750,7 @@ export default function CommunityDetail() {
 
       {/* Full-width sections after amenities */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 space-y-16">
-        
+
         {/* Experience the Difference - Feature Sections */}
         <section id="features" className="scroll-mt-24 space-y-20">
           <div className="text-center mb-12">
@@ -1759,7 +1759,7 @@ export default function CommunityDetail() {
               Discover a community where every detail is designed for your comfort, enjoyment, and well-being.
             </p>
           </div>
-          
+
           <FeatureSection
             eyebrow="Fine Dining"
             title="Extraordinary Dining Experience"
@@ -1769,7 +1769,7 @@ export default function CommunityDetail() {
             cta={{ label: "View Sample Menu", href: "#menu" }}
             imageLeft={false}
           />
-          
+
           <FeatureSection
             eyebrow="Active Living"
             title="Engaging Lifestyle Programs"
@@ -1779,7 +1779,7 @@ export default function CommunityDetail() {
             cta={{ label: "View Engagement Calendar", href: `/events?community=${community.slug || community.id}` }}
             imageLeft={true}
           />
-          
+
           <FeatureSection
             eyebrow="Prime Location"
             title="Ideal Location & Neighborhood"
@@ -1789,7 +1789,7 @@ export default function CommunityDetail() {
             cta={{ label: "Get Directions", href: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(community.address || `${community.city}, ${community.state} ${community.zipCode}`)}` }}
             imageLeft={false}
           />
-          
+
           <FeatureSection
             eyebrow="Personalized Care"
             title="24/7 Professional Care Team"
@@ -2122,7 +2122,7 @@ export default function CommunityDetail() {
             {/* Enhanced Bottom CTA */}
             <EnhancedBottomCTA community={community} />
           </div>
-      
+
       {/* Floor Plan Modal */}
       {selectedFloorPlan && (
         <FloorPlanModal
@@ -2147,7 +2147,7 @@ export default function CommunityDetail() {
         }}
         gallery={selectedGallery}
       />
-      
+
       {/* Scroll to Top Button */}
       <ScrollToTop />
     </div>
