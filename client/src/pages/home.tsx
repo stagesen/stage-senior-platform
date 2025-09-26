@@ -75,7 +75,7 @@ const CarouselCommunityCard = ({
           
           {/* Content overlay */}
           <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-            <h3 className="text-xl font-bold mb-2 drop-shadow-md" data-testid={`community-name-${community.id}`}>
+            <h3 className="text-lg font-bold mb-2 drop-shadow-md" data-testid={`community-name-${community.id}`}>
               {community.name}
             </h3>
             <p className="text-sm text-white mb-3 line-clamp-2 drop-shadow-sm">
@@ -278,7 +278,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Header */}
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">
               Find your Colorado community
             </h2>
             <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
@@ -407,7 +407,7 @@ export default function Home() {
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
               What makes Stage Senior different
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -421,7 +421,7 @@ export default function Home() {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <CheckCircle className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold mb-4">Transparent Care Points</h3>
+                <h3 className="text-lg font-bold mb-4">Transparent Care Points</h3>
                 <p className="text-muted-foreground">
                   Published menu of services. Changes only when care truly changes—no nickel-and-diming.
                 </p>
@@ -433,7 +433,7 @@ export default function Home() {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Heart className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold mb-4">Your Story First®</h3>
+                <h3 className="text-lg font-bold mb-4">Your Story First®</h3>
                 <p className="text-muted-foreground">
                   Care plans built around personal history and family traditions, not one-size-fits-all approaches.
                 </p>
@@ -445,7 +445,7 @@ export default function Home() {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Users className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold mb-4">Staff‑First Culture</h3>
+                <h3 className="text-lg font-bold mb-4">Staff‑First Culture</h3>
                 <p className="text-muted-foreground">
                   Exceptional resident care starts with exceptional staff care. We invest in our team.
                 </p>
@@ -457,7 +457,7 @@ export default function Home() {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Shield className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold mb-4">Whole‑Person Support</h3>
+                <h3 className="text-lg font-bold mb-4">Whole‑Person Support</h3>
                 <p className="text-muted-foreground">
                   Mind, body, and spirit care, including optional chaplaincy program and holistic wellness.
                 </p>
@@ -469,7 +469,7 @@ export default function Home() {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Award className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold mb-4">Locally Owned & Operated</h3>
+                <h3 className="text-lg font-bold mb-4">Locally Owned & Operated</h3>
                 <p className="text-muted-foreground">
                   Colorado values. Long‑tenured teams. True community feel, not corporate bureaucracy.
                 </p>
@@ -489,7 +489,7 @@ export default function Home() {
             <CardContent className="p-8 md:p-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                 <div>
-                  <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+                  <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
                     Clear pricing, no surprises
                   </h2>
                   <p className="text-xl text-muted-foreground mb-6">
@@ -543,7 +543,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
                 Talk to a real local advisor today
               </h2>
               <p className="text-xl text-muted-foreground mb-6">
