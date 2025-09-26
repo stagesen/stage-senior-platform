@@ -1,0 +1,188 @@
+
+Stage Senior
+About Us
+Communities
+Latest News
+Get Help
+Stage Senior Admin
+Manage communities, content, and user inquiries
+
+admin
+Logout
+Dashboard
+Communities
+Blog Posts
+Events
+Tour Requests
+Floor Plans
+FAQs
+Galleries
+Testimonials
+Page Heroes
+Care Types
+Amenities
+Floor Plans
+Add floor-plan
+Name	Community	Beds/Baths	Sq. Ft.	Price	Status	Actions
+Deluxe Studio	N/A	1 BR / 1.0 BA	N/A	N/A	
+Active
+
+
+Studio – Assisted Living	Golden Pond	0 BR / 1.0 BA	370 sq ft	Starting at $4,500/mo	
+Active
+
+
+Studio – Assisted Living	The Gardens on Quail	0 BR / 1.0 BA	350 sq ft	Starting at $5,770/mo	
+Active
+
+
+Studio – Assisted Living	Stonebridge Senior	0 BR / 1.0 BA	450 sq ft	$5,935	
+Active
+
+
+Studio – Assisted Living	Stonebridge Senior	0 BR / 1.0 BA	450 sq ft	Starting at $5,935/mo	
+Active
+
+
+One Bedroom – Assisted Living	The Gardens on Quail	1 BR / 1.0 BA	485 sq ft	Starting at $6,500/mo	
+Active
+
+
+One Bedroom – Assisted Living	Stonebridge Senior	1 BR / 1.0 BA	600 sq ft	$6,500	
+Active
+
+
+One Bedroom – Assisted Living	Stonebridge Senior	1 BR / 1.0 BA	600 sq ft	Starting at $6,500/mo	
+Active
+
+
+One Bedroom – Independent Living	Golden Pond	1 BR / 1.0 BA	700 sq ft	Starting at $3,855/mo	
+Active
+
+
+Studio – Memory Care	Stonebridge Senior	0 BR / 1.0 BA	400 sq ft	$8,000	
+Active
+
+
+Studio – Memory Care	Stonebridge Senior	0 BR / 1.0 BA	400 sq ft	Starting at $8,000/mo	
+Active
+
+
+Two Bedroom – Assisted Living	Golden Pond	2 BR / 2.0 BA	1,000 sq ft	Starting at $6,000/mo	
+Active
+
+
+Two Bedroom – Assisted Living	The Gardens on Quail	2 BR / 1.0 BA	705 sq ft	Starting at $7,500/mo	
+Active
+
+
+Stay Connected with Our Community
+Get the latest updates on events, wellness tips, and community news delivered to your inbox.
+
+Enter your email address
+Subscribe
+No spam, unsubscribe at any time
+
+Stage Senior
+Creating vibrant communities where seniors thrive. Locally owned and resident-focused since 2016.
+
+9+
+Years Serving
+4
+Communities
+Follow Our Journey
+Our Communities
+The Gardens at Columbine
+The Gardens on Quail
+Golden Pond
+Stonebridge Senior
+Schedule a tour today and see why families choose Stage Senior.
+
+Explore
+Services
+About Us
+Care Points
+Stage Cares
+Professional Management Services
+Long-Term Care Insurance
+Get In Touch
+(303) 436-2300
+Call us today
+info@stagesenior.com
+Email us anytime
+8100 E Arapahoe Road, Suite 208
+Centennial, CO 80112
+Questions about our communities or services?
+
+Contact Us Today
+© 2025 Stage Management, LLC. All Rights Reserved.
+Proud member of
+ASHA - Assisted Living Association
+Privacy Policy
+Terms of Service
+Accessibility
+Edit floor-plan
+Name
+Deluxe Studio
+Slug (optional)
+deluxe-studio
+Community
+Gardens at Columbine
+
+Bedrooms
+1
+Bathrooms
+1.0
+Square Feet
+e.g., 850
+Starting Price
+e.g., 2500
+Starting Rate Display
+e.g., Starting at $2,500/mo
+Floor Plan Image
+Upload floor plan image
+63494442 9db3 4ba5 8865 31841af4a0ff
+63494442 9db3 4ba5 8865 31841af4a0ff
+
+Gallery Images
+Additional images for this floor plan
+
+Upload gallery images
+Uploaded image
+Click to upload or drag and drop
+
+Upload up to 10 images
+
+Max size: 10MB
+No gallery images yet. Upload images using the uploader above.
+Description
+Describe the floor plan features...
+Availability
+Available
+
+Sort Order
+0
+
+
+Active
+Cancel
+Update
+Close
+[plugin:runtime-error-plugin] Failed to execute 'fetch' on 'Window': '/api/floor-plans/09e93224-db08-4cd4-9f5f-ec557b2adb5a/images' is not a valid HTTP method.
+/home/runner/workspace/client/src/lib/queryClient.ts:15:21
+13 |    data?: unknown | undefined,
+14 |  ): Promise<Response> {
+15 |    const res = await fetch(url, {
+   |                      ^
+16 |      method,
+17 |      headers: data ? { "Content-Type": "application/json" } : {},
+
+
+    at apiRequest /home/runner/workspace/client/src/lib/queryClient.ts:15:21
+    at onChange /home/runner/workspace/client/src/components/AdminDashboard.tsx:3807:35
+    at Object.onSuccess /home/runner/workspace/client/src/components/ImageUploader.tsx:101:9
+    at Object.onSuccess /home/runner/workspace/client/src/hooks/useImageUpload.ts:75:16
+
+    at async handleFileSelect (https://accddeac-c341-4958-aa07-9c86c0bf16e5-00-3pl15clu2j672.spock.replit.dev/src/components/ImageUploader.tsx:201:9
+Click outside, press Esc key, or fix the code to dismiss.
+You can also disable this overlay by setting server.hmr.overlay to false in vite.config.js.
