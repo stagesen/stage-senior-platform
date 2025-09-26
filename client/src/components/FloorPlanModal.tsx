@@ -3,16 +3,26 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { 
   BedDouble, 
   Bath, 
   Square, 
   Download,
   Calendar,
   Check,
-  Phone
+  Phone,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
-import type { FloorPlan } from "@shared/schema";
+import type { FloorPlan, FloorPlanImageWithDetails } from "@shared/schema";
 
 interface FloorPlanModalProps {
   floorPlan: FloorPlan;
@@ -30,7 +40,15 @@ export default function FloorPlanModal({
   onOpenChange 
 }: FloorPlanModalProps) {
   const [showLeadCapture, setShowLeadCapture] = useState(false);
-  // Create array of available images - floor plan first
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  
+  // Fetch floor plan gallery images
+  const { data: floorPlanImages = [], isLoading: loadingImages } = useQuery<FloorPlanImageWithDetails[]>({
+    queryKey: ["/api/floor-plans", floorPlan.id, "images"],
+    enabled: isOpen && !!floorPlan.id,
+  });
+  
+  // Combine main floor plan image with gallery images
   const images: { url: string; caption: string; type: 'plan' | 'photo' }[] = [];
   if (floorPlan.planImageUrl) {
     images.push({ url: floorPlan.planImageUrl, caption: "Floor Plan Layout", type: 'plan' });
@@ -38,8 +56,14 @@ export default function FloorPlanModal({
   if (floorPlan.imageUrl) {
     images.push({ url: floorPlan.imageUrl, caption: "Living Space", type: 'photo' });
   }
-  
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  // Add gallery images from the database
+  floorPlanImages.forEach((img) => {
+    images.push({ 
+      url: img.imageUrl || img.url, 
+      caption: img.caption || "Gallery Image", 
+      type: 'photo' 
+    });
+  });
   
   // Reset image index when floor plan changes
   useEffect(() => {
@@ -86,20 +110,55 @@ export default function FloorPlanModal({
           </div>
         </DialogHeader>
 
-        {/* Main Image Display */}
+        {/* Main Image Display with Carousel */}
         {images.length > 0 ? (
           <div className="space-y-4">
-            <div className="relative aspect-[4/3] sm:aspect-video bg-muted rounded-lg overflow-hidden">
-              <img
-                src={images[selectedImageIndex]?.url || ''}
-                alt={images[selectedImageIndex]?.caption || 'Floor plan image'}
-                className="w-full h-full object-contain"
-                data-testid={`modal-main-image-${selectedImageIndex}`}
-              />
-              <div className="absolute bottom-2 right-2 bg-background/80 px-2 py-1 rounded text-xs sm:text-sm">
-                {images[selectedImageIndex]?.caption}
+            {images.length > 1 ? (
+              <Carousel 
+                className="w-full"
+                opts={{
+                  startIndex: selectedImageIndex,
+                  loop: true,
+                }}
+              >
+                <CarouselContent>
+                  {images.map((image, index) => (
+                    <CarouselItem key={index}>
+                      <div className="relative aspect-[4/3] sm:aspect-video bg-muted rounded-lg overflow-hidden">
+                        <img
+                          src={image.url}
+                          alt={image.caption}
+                          className="w-full h-full object-contain"
+                          data-testid={`modal-carousel-image-${index}`}
+                        />
+                        <div className="absolute bottom-2 left-2 right-2 flex justify-between items-end">
+                          <div className="bg-background/80 px-3 py-1 rounded">
+                            <p className="text-xs sm:text-sm font-medium">{image.caption}</p>
+                          </div>
+                          <div className="bg-background/80 px-2 py-1 rounded text-xs sm:text-sm">
+                            {index + 1} / {images.length}
+                          </div>
+                        </div>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-2" />
+                <CarouselNext className="right-2" />
+              </Carousel>
+            ) : (
+              <div className="relative aspect-[4/3] sm:aspect-video bg-muted rounded-lg overflow-hidden">
+                <img
+                  src={images[0]?.url || ''}
+                  alt={images[0]?.caption || 'Floor plan image'}
+                  className="w-full h-full object-contain"
+                  data-testid={`modal-main-image-0`}
+                />
+                <div className="absolute bottom-2 left-2 bg-background/80 px-3 py-1 rounded">
+                  <p className="text-xs sm:text-sm font-medium">{images[0]?.caption}</p>
+                </div>
               </div>
-            </div>
+            )}
             
             {/* Thumbnail Gallery */}
             {images.length > 1 && (
@@ -107,7 +166,15 @@ export default function FloorPlanModal({
                 {images.map((image, index) => (
                   <button
                     key={index}
-                    onClick={() => setSelectedImageIndex(index)}
+                    onClick={() => {
+                      setSelectedImageIndex(index);
+                      // Navigate carousel to selected index
+                      const carousel = document.querySelector('[data-carousel-root]');
+                      if (carousel) {
+                        const event = new CustomEvent('carousel-goto', { detail: index });
+                        carousel.dispatchEvent(event);
+                      }
+                    }}
                     className={`relative flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden border-2 transition-all ${
                       selectedImageIndex === index 
                         ? 'border-primary ring-2 ring-primary/20' 

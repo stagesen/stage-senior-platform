@@ -572,6 +572,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Floor plan image routes
+  app.get("/api/floor-plans/:floorPlanId/images", async (req, res) => {
+    try {
+      const images = await storage.getFloorPlanImages(req.params.floorPlanId);
+      res.json(images);
+    } catch (error) {
+      console.error("Error fetching floor plan images:", error);
+      res.status(500).json({ message: "Failed to fetch floor plan images" });
+    }
+  });
+
+  app.post("/api/floor-plans/:floorPlanId/images", requireAuth, async (req, res) => {
+    try {
+      const { imageId, caption, sortOrder } = req.body;
+      if (!imageId) {
+        return res.status(400).json({ message: "Image ID is required" });
+      }
+      
+      const image = await storage.addFloorPlanImage({
+        floorPlanId: req.params.floorPlanId,
+        imageId,
+        caption,
+        sortOrder,
+      });
+      res.status(201).json(image);
+    } catch (error) {
+      console.error("Error adding floor plan image:", error);
+      res.status(400).json({ message: "Failed to add floor plan image" });
+    }
+  });
+
+  app.delete("/api/floor-plans/:floorPlanId/images/:imageId", requireAuth, async (req, res) => {
+    try {
+      await storage.removeFloorPlanImage(req.params.floorPlanId, req.params.imageId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error removing floor plan image:", error);
+      res.status(500).json({ message: "Failed to remove floor plan image" });
+    }
+  });
+
+  app.put("/api/floor-plans/:floorPlanId/images/order", requireAuth, async (req, res) => {
+    try {
+      const { updates } = req.body;
+      if (!Array.isArray(updates)) {
+        return res.status(400).json({ message: "Updates array is required" });
+      }
+      
+      await storage.updateFloorPlanImageOrder(req.params.floorPlanId, updates);
+      res.json({ message: "Sort order updated successfully" });
+    } catch (error) {
+      console.error("Error updating floor plan image order:", error);
+      res.status(400).json({ message: "Failed to update image order" });
+    }
+  });
+
   // Testimonial routes - Protected for admin review
   app.get("/api/testimonials", requireAuth, async (req, res) => {
     try {

@@ -58,6 +58,133 @@ interface AdminDashboardProps {
   type: "communities" | "posts" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans";
 }
 
+// FloorPlanImageManager Component for managing floor plan gallery images
+function FloorPlanImageManager({ floorPlanId }: { floorPlanId: string }) {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  
+  // Fetch floor plan images
+  const { data: images = [], isLoading } = useQuery<any[]>({
+    queryKey: ["/api/floor-plans", floorPlanId, "images"],
+  });
+
+  // Delete image mutation
+  const deleteImageMutation = useMutation({
+    mutationFn: async (imageId: string) => {
+      return await apiRequest("DELETE", `/api/floor-plans/${floorPlanId}/images/${imageId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/floor-plans", floorPlanId, "images"] });
+      toast({
+        title: "Image Removed",
+        description: "The image has been removed from the floor plan.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to remove the image.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Update sort order mutation
+  const updateOrderMutation = useMutation({
+    mutationFn: async ({ imageId, sortOrder }: { imageId: string; sortOrder: number }) => {
+      const updates = images.map((img) => ({
+        imageId: img.imageId,
+        sortOrder: img.imageId === imageId ? sortOrder : img.sortOrder,
+      }));
+      return await apiRequest("PUT", `/api/floor-plans/${floorPlanId}/images/order`, { updates });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/floor-plans", floorPlanId, "images"] });
+    },
+  });
+
+  const handleMoveUp = (index: number) => {
+    if (index === 0) return;
+    const image = images[index];
+    const prevImage = images[index - 1];
+    updateOrderMutation.mutate({ imageId: image.imageId, sortOrder: prevImage.sortOrder - 1 });
+  };
+
+  const handleMoveDown = (index: number) => {
+    if (index === images.length - 1) return;
+    const image = images[index];
+    const nextImage = images[index + 1];
+    updateOrderMutation.mutate({ imageId: image.imageId, sortOrder: nextImage.sortOrder + 1 });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
+  }
+
+  if (images.length === 0) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        No gallery images yet. Upload images using the uploader above.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {images.map((image: any, index: number) => (
+          <div key={image.id} className="relative group">
+            <div className="aspect-square rounded-lg overflow-hidden bg-muted">
+              <img
+                src={image.imageUrl || image.url}
+                alt={image.caption || "Floor plan gallery image"}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {index > 0 && (
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => handleMoveUp(index)}
+                  className="h-8 w-8 p-0"
+                >
+                  <ChevronUp className="h-4 w-4" />
+                </Button>
+              )}
+              {index < images.length - 1 && (
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => handleMoveDown(index)}
+                  className="h-8 w-8 p-0"
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              )}
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => deleteImageMutation.mutate(image.imageId)}
+                className="h-8 w-8 p-0"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+            {image.caption && (
+              <p className="mt-2 text-sm text-muted-foreground truncate">{image.caption}</p>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function AdminDashboard({ type }: AdminDashboardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -2231,6 +2358,46 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   </FormItem>
                 )}
               />
+              
+              {/* Floor Plan Gallery Images */}
+              {editingItem && (
+                <div className="space-y-4 border rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Gallery Images</h3>
+                    <p className="text-sm text-muted-foreground">Additional images for this floor plan</p>
+                  </div>
+                  
+                  {/* Image Uploader for multiple gallery images */}
+                  <ImageUploader
+                    multiple={true}
+                    label="Upload gallery images"
+                    maxSize={10 * 1024 * 1024}
+                    onUpload={async (images) => {
+                      // Add each uploaded image to the floor plan
+                      for (const imageData of images) {
+                        try {
+                          await apiRequest("POST", `/api/floor-plans/${editingItem.id}/images`, {
+                            imageId: imageData.id,
+                            caption: "",
+                            sortOrder: 0
+                          });
+                        } catch (error) {
+                          console.error("Failed to add image to floor plan:", error);
+                        }
+                      }
+                      // Refresh the floor plan images
+                      queryClient.invalidateQueries({ queryKey: ["/api/floor-plans", editingItem.id, "images"] });
+                      toast({
+                        title: "Images Added",
+                        description: `Successfully added ${images.length} image(s) to the floor plan.`,
+                      });
+                    }}
+                  />
+                  
+                  {/* Display existing floor plan images */}
+                  <FloorPlanImageManager floorPlanId={editingItem.id} />
+                </div>
+              )}
               
               <FormField
                 control={floorPlanForm.control}

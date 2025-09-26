@@ -1,0 +1,38 @@
+diff --git a//dev/null b/docs/admin-gap-analysis.md
+index 0000000000000000000000000000000000000000..bbb16a0aeb4bc148b7c4928f51e168798fce08c6 100644
+--- a//dev/null
++++ b/docs/admin-gap-analysis.md
+@@ -0,0 +1,33 @@
++# Admin-to-Frontend Coverage Audit
++
++This document captures how the current `/admin` experience lines up with the content that powers the public site, and outlines the remaining work required to manage every front-end surface from the admin area.
++
++## Managed data flows today
++
++- **Communities** – The public home and communities pages pull their listings from `/api/communities`, including filtering by care type and price information.【F:client/src/pages/home.tsx†L62-L77】【F:client/src/pages/communities.tsx†L33-L61】 The admin already exposes a full CRUD tab backed by `AdminDashboard` for the `communities` type.【F:client/src/pages/admin.tsx†L125-L137】【F:client/src/components/AdminDashboard.tsx†L57-L85】
++- **Events** – Events pages rely on `/api/events`, with filters for community and date windows.【F:client/src/pages/events.tsx†L33-L54】 The admin events tab uses the same API and has create/update/delete coverage.【F:client/src/pages/admin.tsx†L128-L135】【F:server/routes.ts†L240-L320】
++- **FAQs** – FAQ content is rendered from `/api/faqs` on both the site and admin dashboards, and the admin form persists through the protected FAQ routes.【F:client/src/pages/faqs.tsx†L9-L52】【F:client/src/pages/admin.tsx†L130-L133】【F:server/routes.ts†L320-L400】
++- **Galleries & Gallery Images** – Community detail pages read from `/api/galleries` and `/api/gallery-images` for image grids.【F:client/src/pages/community-detail.tsx†L652-L675】 Admin tabs exist for galleries and gallery-images CRUD (including the image uploader).【F:client/src/pages/admin.tsx†L132-L134】【F:client/src/components/AdminDashboard.tsx†L70-L205】【F:server/routes.ts†L400-L708】
++- **Floor plans** – Community detail pages call `/api/floor-plans`, and the admin includes a dedicated tab with create/update/delete support.【F:client/src/pages/community-detail.tsx†L662-L665】【F:client/src/pages/admin.tsx†L129-L131】【F:server/routes.ts†L504-L568】
++- **Page heroes** – Most marketing pages render hero sections via the shared `<PageHero />` component, which queries `/api/page-heroes/:pagePath`.【F:client/src/components/PageHero.tsx†L14-L69】【F:client/src/pages/blog.tsx†L187-L205】 The admin has a Page Heroes tab wired to the associated endpoints.【F:client/src/pages/admin.tsx†L134-L135】【F:server/routes.ts†L747-L812】
++- **Tour requests** – Public lead forms post to `/api/tour-requests`, and the admin “Tour Requests” tab lists submissions for follow-up.【F:client/src/components/LeadCaptureForm.tsx†L59-L101】【F:client/src/pages/admin.tsx†L128-L132】【F:client/src/components/AdminDashboard.tsx†L2421-L2476】
++
++## Gaps to close for full front-end management
++
++1. **Blog content is not editable from the admin.** The public blog pulls from `/api/blog-posts`, including filters for tags, category, and per-community feeds.【F:client/src/pages/blog.tsx†L32-L59】 The server exposes full CRUD routes for blog posts, but the admin only offers a “Blog Posts” tab that targets the legacy `/api/posts` resource.【F:server/routes.ts†L178-L236】【F:client/src/components/AdminDashboard.tsx†L57-L80】 We need a dedicated admin surface for the `blog-posts` collection (or to repoint the existing tab) so editors can publish and update articles that appear on `/blog` and the community detail news section.【F:client/src/pages/community-detail.tsx†L677-L685】
++2. **Approved testimonials cannot reach the public site.** Community pages request `/api/testimonials?approved=true`, but that endpoint is currently protected by `requireAuth`, returning 401s to unauthenticated visitors.【F:client/src/pages/community-detail.tsx†L667-L699】【F:server/routes.ts†L575-L640】 We either need a public read endpoint (e.g., allow reads when `approved=true`) or a separate `/api/public/testimonials` route while keeping admin-only write access.
++3. **Care types and amenities lack admin management.** The data model includes master tables (`care_types`, `amenities`) plus junction tables used when hydrating communities.【F:shared/schema.ts†L28-L107】【F:server/storage.ts†L322-L380】 Public pages (e.g., the Care Points explainer) already fetch `/api/care-types`, but there are no admin tabs or server routes to create/update these records.【F:client/src/pages/care-points.tsx†L12-L59】【F:server/routes.ts†L717-L745】 Implement CRUD endpoints and UI for both datasets so operations teams can control taxonomy, icons, and display order.
++4. **Communities cannot be linked to care types or amenities from the admin UI.** Although the form state includes `careTypes` and `amenities` arrays, the rendered form only captures location, contact, pricing, and SEO fields—there is no UI to assign relationships or highlights.【F:client/src/components/AdminDashboard.tsx†L88-L205】【F:client/src/components/AdminDashboard.tsx†L360-L520】 To keep the front-end amenity grids populated, add multi-select inputs that write through to the join tables (and optionally surface amenity imagery selection) in addition to storing the legacy JSON arrays.【F:server/storage.ts†L322-L380】
++5. **Tour request workflow is read-only.** The schema tracks a `status` field for each lead, but the admin table only allows calling, emailing, or deleting entries.【F:shared/schema.ts†L206-L214】【F:client/src/components/AdminDashboard.tsx†L2421-L2476】 Provide quick actions (e.g., status dropdown or bulk update) so sales staff can mark leads as contacted, scheduled, or closed, keeping the dashboard stats accurate.【F:client/src/pages/admin.tsx†L65-L85】
++6. **Homepage hero content is hard-coded.** The landing hero on `/` renders static copy and imagery rather than using the configurable Page Hero system, so marketing cannot update it from `/admin` today.【F:client/src/pages/home.tsx†L83-L131】 Either swap the homepage to `<PageHero pagePath="/" />` or introduce a dedicated admin-managed hero record for the home experience.
++7. **Static marketing sections still live in code.** Several long-form marketing pages (e.g., Services, Care Points detail cards) are currently authored in JSX constants.【F:client/src/pages/services.tsx†L24-L132】【F:client/src/pages/care-points.tsx†L31-L119】 Converting these to admin-managed collections (services, pricing tiers, testimonials, etc.) would complete the CMS story if content editors need ongoing control.
++
++## Recommended backlog items
++
++1. Add a `blog-posts` admin tab (form + table) or retarget the existing tab to the blog routes, including image upload support and rich text editing.
++2. Relax testimonial read access for approved items (or add a public endpoint) so community pages can display social proof while keeping moderation in `/admin`.
++3. Ship CRUD APIs and admin tabs for `care_types` and `amenities`, and update community editing to assign relationships through the junction tables.
++4. Enhance the community form with multi-selects for care types, amenity pickers (with imagery), and featured toggles tied to the normalized tables.
++5. Introduce status update actions for tour requests and expose quick filters (e.g., Pending vs. Contacted) to support sales workflows.
++6. Move the homepage hero onto the Page Hero system (or another admin-managed model) so marketing can update hero copy, CTA, and imagery without code changes.
++7. (Optional) Break out Services/Care Points content blocks into admin-managed datasets if the marketing team needs to edit those sections regularly.

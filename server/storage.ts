@@ -9,6 +9,7 @@ import {
   floorPlans,
   testimonials,
   galleryImages,
+  floorPlanImages,
   careTypes,
   communitiesCareTypes,
   amenities,
@@ -36,6 +37,9 @@ import {
   type GalleryImage,
   type InsertGalleryImage,
   type GalleryImageWithDetails,
+  type FloorPlanImage,
+  type InsertFloorPlanImage,
+  type FloorPlanImageWithDetails,
   type CareType,
   type InsertCareType,
   type Amenity,
@@ -228,6 +232,12 @@ export interface IStorage {
   deleteImage(id: string): Promise<void>;
   checkImageReferences(imageId: string): Promise<Array<{ table: string; count: number }>>;
   getGalleryImagesByGalleryId(galleryId: string): Promise<GalleryImageWithDetails[]>;
+
+  // Floor plan image operations
+  getFloorPlanImages(floorPlanId: string): Promise<FloorPlanImageWithDetails[]>;
+  addFloorPlanImage(data: { floorPlanId: string; imageId: string; caption?: string; sortOrder?: number }): Promise<FloorPlanImage>;
+  removeFloorPlanImage(floorPlanId: string, imageId: string): Promise<void>;
+  updateFloorPlanImageOrder(floorPlanId: string, updates: Array<{ imageId: string; sortOrder: number }>): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1203,6 +1213,82 @@ export class DatabaseStorage implements IStorage {
       .innerJoin(galleries, eq(galleryImages.galleryId, galleries.id))
       .where(eq(galleryImages.galleryId, galleryId))
       .orderBy(asc(galleryImages.sortOrder));
+  }
+
+  // Floor plan image operations
+  async getFloorPlanImages(floorPlanId: string): Promise<FloorPlanImageWithDetails[]> {
+    const results = await db
+      .select({
+        id: floorPlanImages.id,
+        floorPlanId: floorPlanImages.floorPlanId,
+        imageId: floorPlanImages.imageId,
+        caption: floorPlanImages.caption,
+        sortOrder: floorPlanImages.sortOrder,
+        createdAt: floorPlanImages.createdAt,
+        imageUrl: images.url,
+        url: images.url,
+        alt: images.alt,
+        width: images.width,
+        height: images.height,
+        objectKey: images.objectKey,
+        variants: images.variants,
+        uploadedAt: images.createdAt,
+      })
+      .from(floorPlanImages)
+      .innerJoin(images, eq(floorPlanImages.imageId, images.id))
+      .where(eq(floorPlanImages.floorPlanId, floorPlanId))
+      .orderBy(asc(floorPlanImages.sortOrder));
+    
+    return results;
+  }
+
+  async addFloorPlanImage(data: { 
+    floorPlanId: string; 
+    imageId: string; 
+    caption?: string; 
+    sortOrder?: number 
+  }): Promise<FloorPlanImage> {
+    const [created] = await db
+      .insert(floorPlanImages)
+      .values({
+        floorPlanId: data.floorPlanId,
+        imageId: data.imageId,
+        caption: data.caption,
+        sortOrder: data.sortOrder ?? 0,
+      })
+      .returning();
+    return created;
+  }
+
+  async removeFloorPlanImage(floorPlanId: string, imageId: string): Promise<void> {
+    await db
+      .delete(floorPlanImages)
+      .where(
+        and(
+          eq(floorPlanImages.floorPlanId, floorPlanId),
+          eq(floorPlanImages.imageId, imageId)
+        )
+      );
+  }
+
+  async updateFloorPlanImageOrder(
+    floorPlanId: string, 
+    updates: Array<{ imageId: string; sortOrder: number }>
+  ): Promise<void> {
+    // Update each image's sort order in a transaction
+    await db.transaction(async (tx) => {
+      for (const update of updates) {
+        await tx
+          .update(floorPlanImages)
+          .set({ sortOrder: update.sortOrder })
+          .where(
+            and(
+              eq(floorPlanImages.floorPlanId, floorPlanId),
+              eq(floorPlanImages.imageId, update.imageId)
+            )
+          );
+      }
+    });
   }
 }
 

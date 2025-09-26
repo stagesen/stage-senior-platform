@@ -282,6 +282,16 @@ export const galleryImages = pgTable("gallery_images", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Junction table between floor plans and images
+export const floorPlanImages = pgTable("floor_plan_images", {
+  id: varchar("id", { length: 255 }).primaryKey().default(sql`gen_random_uuid()`),
+  floorPlanId: uuid("floor_plan_id").notNull().references(() => floorPlans.id, { onDelete: "cascade" }),
+  imageId: varchar("image_id", { length: 255 }).notNull().references(() => images.id, { onDelete: "cascade" }),
+  caption: text("caption"),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const careTypesRelations = relations(careTypes, ({ many }) => ({
   communities: many(communitiesCareTypes),
@@ -381,7 +391,7 @@ export const tourRequestsRelations = relations(tourRequests, ({ one }) => ({
   }),
 }));
 
-export const floorPlansRelations = relations(floorPlans, ({ one }) => ({
+export const floorPlansRelations = relations(floorPlans, ({ one, many }) => ({
   community: one(communities, {
     fields: [floorPlans.communityId],
     references: [communities.id],
@@ -390,6 +400,7 @@ export const floorPlansRelations = relations(floorPlans, ({ one }) => ({
     fields: [floorPlans.imageId],
     references: [images.id],
   }),
+  images: many(floorPlanImages),
 }));
 
 export const testimonialsRelations = relations(testimonials, ({ one }) => ({
@@ -410,12 +421,24 @@ export const galleryImagesRelations = relations(galleryImages, ({ one }) => ({
   }),
 }));
 
+export const floorPlanImagesRelations = relations(floorPlanImages, ({ one }) => ({
+  floorPlan: one(floorPlans, {
+    fields: [floorPlanImages.floorPlanId],
+    references: [floorPlans.id],
+  }),
+  image: one(images, {
+    fields: [floorPlanImages.imageId],
+    references: [images.id],
+  }),
+}));
+
 export const imagesRelations = relations(images, ({ one, many }) => ({
   uploadedBy: one(users, {
     fields: [images.uploadedBy],
     references: [users.id],
   }),
   galleries: many(galleryImages),
+  floorPlans: many(floorPlanImages),
 }));
 
 // Insert schemas
@@ -509,6 +532,11 @@ export const insertGalleryImageSchema = createInsertSchema(galleryImages).omit({
   createdAt: true,
 });
 
+export const insertFloorPlanImageSchema = createInsertSchema(floorPlanImages).omit({
+  id: true,
+  createdAt: true,
+});
+
 export const insertImageSchema = createInsertSchema(images).omit({
   id: true,
   createdAt: true,
@@ -578,6 +606,19 @@ export type Testimonial = typeof testimonials.$inferSelect;
 export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
 export type GalleryImage = typeof galleryImages.$inferSelect;
 export type InsertGalleryImage = z.infer<typeof insertGalleryImageSchema>;
+export type FloorPlanImage = typeof floorPlanImages.$inferSelect;
+export type InsertFloorPlanImage = z.infer<typeof insertFloorPlanImageSchema>;
+
+export type FloorPlanImageWithDetails = FloorPlanImage & {
+  imageUrl: string;
+  url: string;
+  alt?: string | null;
+  width?: number | null;
+  height?: number | null;
+  objectKey: string;
+  variants?: any;
+  uploadedAt?: Date | null;
+};
 
 export type GalleryImageWithDetails = GalleryImage & {
   imageUrl: string;
