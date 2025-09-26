@@ -628,20 +628,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Testimonial routes - Protected for admin review
-  app.get("/api/testimonials", requireAuth, async (req, res) => {
+  // Testimonial routes - Public read for approved, protected for management
+  app.get("/api/testimonials", async (req, res) => {
     try {
       const { communityId, featured, approved } = req.query;
       const filters: any = {};
+      
+      // If not authenticated, only show approved testimonials
+      if (!req.user) {
+        filters.approved = true;
+      } else {
+        // Authenticated users can filter by approved status
+        if (approved !== undefined) {
+          filters.approved = approved === 'true';
+        }
+      }
       
       if (communityId) {
         filters.communityId = communityId as string;
       }
       if (featured !== undefined) {
         filters.featured = featured === 'true';
-      }
-      if (approved !== undefined) {
-        filters.approved = approved === 'true';
       }
       
       const testimonials = await storage.getTestimonials(filters);

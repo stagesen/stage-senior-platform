@@ -28,12 +28,9 @@ export default function Header() {
   }, []);
 
   const navigation = [
-    { name: "Communities", href: "/communities" },
-    { name: "Care Points", href: "/care-points" },
-    { name: "Services", href: "/services" },
-    { name: "Events", href: "/events" },
-    { name: "Blog", href: "/blog" },
     { name: "About Us", href: "/about-us" },
+    { name: "Communities", href: "/communities" },
+    { name: "Latest News", href: "/blog" },
   ];
 
   return (
@@ -96,11 +93,11 @@ export default function Header() {
             <Button
               asChild
               className="bg-primary text-primary-foreground hover:bg-primary/90"
-              data-testid="button-call"
+              data-testid="button-get-help"
             >
               <a href="tel:+1-303-436-2300">
                 <Phone className="w-4 h-4 mr-2" />
-                Call Now
+                Get Help
               </a>
             </Button>
             
