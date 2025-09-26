@@ -80,14 +80,16 @@ export default function ImageUploader({
   // Convert value to array for consistent handling
   const imageIds = Array.isArray(value) ? value : value ? [value] : [];
 
-  // Fetch existing images
-  const { data: existingImages, isLoading: isLoadingImages } = multiple
-    ? useImages(imageIds)
-    : { data: imageIds.length > 0 ? undefined : undefined, isLoading: false };
+  // Always call hooks to maintain consistent order (React Rules of Hooks)
+  const multipleImagesQuery = useImages(multiple ? imageIds : []);
+  const singleImageQuery = useImage(!multiple && imageIds[0] ? imageIds[0] : undefined);
 
-  const { data: singleImage, isLoading: isLoadingSingle } = !multiple && imageIds[0]
-    ? useImage(imageIds[0])
-    : { data: undefined, isLoading: false };
+  // Select the appropriate data based on mode
+  const existingImages = multiple ? multipleImagesQuery.data : undefined;
+  const isLoadingImages = multiple ? multipleImagesQuery.isLoading : false;
+  
+  const singleImage = !multiple ? singleImageQuery.data : undefined;
+  const isLoadingSingle = !multiple ? singleImageQuery.isLoading : false;
 
   // Upload mutation
   const uploadMutation = useImageUpload({
