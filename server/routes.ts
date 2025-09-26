@@ -1138,6 +1138,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Serve images from object storage bucket
+  app.get("/:bucketId/public/:filename", async (req, res) => {
+    try {
+      const { bucketId, filename } = req.params;
+
+      // Import Storage from Google Cloud
+      const { Storage } = await import("@google-cloud/storage");
+
+      // Initialize storage client with Replit sidecar configuration
+      const objectStorageClient = new Storage({
+        credentials: {
+          audience: "replit",
+          subject_token_type: "access_token",
+          refresh_token: process.env.REPLIT_SIDECAR_REFRESH_TOKEN || "",
+        } as any,
+        apiEndpoint: "http://127.0.0.1:1106",
+      });
+
+      // Get the file from the bucket
+      const bucket = objectStorageClient.bucket(bucketId);
+      const file = bucket.file(`public/${filename}`);
+
+      // Check if file exists
+      const [exists] = await file.exists();
+      if (!exists) {
+        return res.status(404).json({ message: "Image not found" });
+      }
+
+      // Get file metadata to set proper content type
+      const [metadata] = await file.getMetadata();
+
+      // Set appropriate headers
+      if (metadata.contentType) {
+        res.setHeader("Content-Type", metadata.contentType);
+      }
+      res.setHeader("Cache-Control", "public, max-age=31536000"); // Cache for 1 year
+
+      // Stream the file to the response
+      file.createReadStream()
+        .on("error", (error) => {
+          console.error("Error streaming image:", error);
+          res.status(500).json({ message: "Failed to load image" });
+        })
+        .pipe(res);
+    } catch (error) {
+      console.error("Error serving image from bucket:", error);
+      res.status(500).json({ message: "Failed to serve image" });
+    }
+  });
+
   // Error handler for upload middleware
   app.use(handleUploadError);
 
