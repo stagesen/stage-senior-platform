@@ -1,47 +1,44 @@
 import { useEffect } from "react";
-import { Link } from "wouter";
+import { Phone, Mail, FileText, Shield, CheckCircle, Calendar, Briefcase, ClipboardCheck } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { ArrowRight, CheckCircle, FileText, Clock, Shield, Phone, Mail, MapPin, FileCheck, ClipboardCheck, Award, Calendar } from "lucide-react";
-import { PageHero } from "@/components/PageHero";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "wouter";
+import CommunityServiceCard from "@/components/CommunityServiceCard";
+import type { Community } from "@shared/schema";
 
 export default function LongTermCare() {
   useEffect(() => {
-    document.title = "Long-Term Care Insurance Services | Stage Senior";
-
+    document.title = "Long Term Care Insurance Services | Stage Senior";
+    
+    // Add meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Expert long-term care insurance services including policy review, claims processing, and monthly management. Maximize your benefits with Stage Senior\'s dedicated insurance support team.');
+      metaDescription.setAttribute('content', 'Expert long-term care insurance services from Stage Senior. Maximize your benefits with our comprehensive claims processing, policy review, and certification support.');
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Expert long-term care insurance services including policy review, claims processing, and monthly management. Maximize your benefits with Stage Senior\'s dedicated insurance support team.';
+      meta.content = 'Expert long-term care insurance services from Stage Senior. Maximize your benefits with our comprehensive claims processing, policy review, and certification support.';
       document.head.appendChild(meta);
     }
   }, []);
 
-  const benefits = [
-    {
-      icon: <FileText className="w-6 h-6" />,
-      title: "Expert Policy Review",
-      description: "Thorough analysis of your policy to identify all available benefits"
-    },
-    {
-      icon: <Clock className="w-6 h-6" />,
-      title: "Streamlined Claims Processing",
-      description: "Efficient handling of all documentation and submissions"
-    },
-    {
-      icon: <Calendar className="w-6 h-6" />,
-      title: "Monthly Claims Management",
-      description: "Consistent processing of required monthly documentation"
-    }
+  // Fetch communities from API
+  const { data: communities, isLoading } = useQuery<Community[]>({
+    queryKey: ["/api/communities"],
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const serviceHighlights = [
+    "Expert Policy Review",
+    "Streamlined Claims Processing",
+    "Clinical Certification Support",
+    "Monthly Claims Management"
   ];
 
-  const processSteps = [
+  const serviceDetails = [
     {
-      icon: <FileCheck className="w-8 h-8" />,
+      icon: <FileText className="w-8 h-8" />,
       title: "Expert Policy Review",
       description: "We thoroughly analyze your policy to identify all available benefits and coverage options, helping you make informed decisions about your care."
     },
@@ -51,7 +48,7 @@ export default function LongTermCare() {
       description: "From initial filing through ongoing management, we handle all documentation and submissions to ensure prompt, accurate processing of your claims."
     },
     {
-      icon: <Award className="w-8 h-8" />,
+      icon: <Shield className="w-8 h-8" />,
       title: "Clinical Certification Support",
       description: "Our clinical team works directly with insurance providers to facilitate initial certification and maintain ongoing coverage eligibility."
     },
@@ -64,153 +61,149 @@ export default function LongTermCare() {
 
   return (
     <div className="min-h-screen bg-white">
-      <PageHero
-        pagePath="/services/long-term-care"
-        defaultTitle="Long-Term Care Insurance Services"
-        defaultSubtitle="Maximizing Your Insurance Benefits"
-        defaultDescription="Expert support to navigate the complexities of long-term care insurance, ensuring you receive all the benefits you're entitled to."
-        defaultBackgroundImage="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=2000&q=80"
-      />
-
-      {/* Breadcrumb Navigation */}
-      <div className="bg-gray-50 py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/">Home</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/services">Services</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Long-Term Care Insurance</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+      {/* Hero Section */}
+      <section className="relative py-32 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6" data-testid="hero-title">
+            Long Term Care Insurance Services
+          </h1>
+          <p className="text-xl md:text-2xl text-white/90" data-testid="hero-subtitle">
+            Maximizing Your Insurance Benefits
+          </p>
         </div>
-      </div>
+      </section>
 
-      {/* Key Benefits */}
-      <section className="py-12 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {benefits.map((benefit, index) => (
-              <div key={index} className="flex items-start gap-4 p-6 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                    <div className="text-primary">{benefit.icon}</div>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground mb-1">{benefit.title}</h3>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
-                    {benefit.description}
-                    <ArrowRight className="w-4 h-4 flex-shrink-0" />
-                  </p>
-                </div>
+      {/* Service Highlights Bar */}
+      <section className="py-8 bg-gray-50 border-b">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {serviceHighlights.map((highlight, index) => (
+              <div 
+                key={index}
+                className="bg-white px-4 py-3 rounded-lg shadow-sm text-center"
+                data-testid={`highlight-${index}`}
+              >
+                <p className="text-sm font-semibold text-foreground">{highlight}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Comprehensive Support Process */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-              Our Comprehensive Support Process
-            </h2>
-            <Button variant="link" className="text-primary font-semibold" asChild>
-              <Link href="/about">
-                About Us
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Link>
+      {/* Comprehensive Support Process Section */}
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8" data-testid="support-process-title">
+            Our Comprehensive Support Process
+          </h2>
+          <Link href="/about-us">
+            <Button 
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3"
+              data-testid="about-us-button"
+            >
+              ABOUT US
             </Button>
-          </div>
+          </Link>
+        </div>
+      </section>
 
+      {/* Service Details Grid */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {processSteps.map((step, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <div className="text-primary">{step.icon}</div>
-                    </div>
-                    <CardTitle className="text-xl">{step.title}</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{step.description}</p>
-                </CardContent>
-              </Card>
+            {serviceDetails.map((service, index) => (
+              <div 
+                key={index}
+                className="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                data-testid={`service-detail-${index}`}
+              >
+                <div className="text-primary mb-4">{service.icon}</div>
+                <h3 className="text-xl font-bold text-foreground mb-4">{service.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{service.description}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-2xl p-12">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Contact Our Claims Team
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Let our experienced team help you navigate your long-term care insurance benefits.
-                Contact us today to learn how we can assist you.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-              <Card className="text-center">
-                <CardContent className="pt-6">
-                  <Phone className="w-8 h-8 text-primary mx-auto mb-3" />
-                  <p className="font-semibold mb-1">Phone</p>
-                  <a href="tel:+13036473914" className="text-primary hover:underline">
+      <section className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl p-12 text-white">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center" data-testid="contact-title">
+              Contact Our Claims Team
+            </h2>
+            <p className="text-lg text-white/90 mb-8 text-center max-w-3xl mx-auto" data-testid="contact-description">
+              Let our experienced team help you navigate your long-term care insurance benefits. 
+              Contact us today to learn how we can assist you.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+              <div className="flex items-center justify-center space-x-3">
+                <Phone className="w-5 h-5 text-white/80" />
+                <div>
+                  <p className="text-sm text-white/80">Phone</p>
+                  <a href="tel:3036473914" className="text-white font-semibold hover:underline" data-testid="contact-phone">
                     (303) 647-3914
                   </a>
-                </CardContent>
-              </Card>
-
-              <Card className="text-center">
-                <CardContent className="pt-6">
-                  <FileText className="w-8 h-8 text-primary mx-auto mb-3" />
-                  <p className="font-semibold mb-1">Fax</p>
-                  <p className="text-muted-foreground">
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-center space-x-3">
+                <Briefcase className="w-5 h-5 text-white/80" />
+                <div>
+                  <p className="text-sm text-white/80">Fax</p>
+                  <span className="text-white font-semibold" data-testid="contact-fax">
                     (303) 648-6763
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="text-center">
-                <CardContent className="pt-6">
-                  <Mail className="w-8 h-8 text-primary mx-auto mb-3" />
-                  <p className="font-semibold mb-1">Email</p>
-                  <a href="mailto:ltc@stagesenior.com" className="text-primary hover:underline">
+                  </span>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-center space-x-3">
+                <Mail className="w-5 h-5 text-white/80" />
+                <div>
+                  <p className="text-sm text-white/80">Email</p>
+                  <a href="mailto:ltc@stagesenior.com" className="text-white font-semibold hover:underline" data-testid="contact-email">
                     ltc@stagesenior.com
                   </a>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="text-center mt-8">
-              <Button size="lg" asChild>
-                <Link href="/contact">
-                  <Phone className="w-5 h-5 mr-2" />
-                  Get Started Today
-                </Link>
-              </Button>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Communities Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="communities-title">
+              Our Communities and Resources
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Elevating Senior Care Across Colorado
+            </p>
+          </div>
+
+          {/* Community Cards Grid */}
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-64 w-full rounded-lg" />
+              ))}
+            </div>
+          ) : communities && communities.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {communities.slice(0, 4).map((community) => (
+                <CommunityServiceCard key={community.id} community={community} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No communities available at the moment.</p>
+            </div>
+          )}
         </div>
       </section>
     </div>
