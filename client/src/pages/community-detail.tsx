@@ -707,7 +707,9 @@ const ActionPanel = ({ community }: { community: any }) => {
               <div className="space-y-2">
                 <div className="flex items-center text-sm">
                   <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                  <span>No buy-in fees</span>
+                  <Link href="/care-points" className="text-primary hover:underline">
+                    Care Points Pricing
+                  </Link>
                 </div>
                 <div className="flex items-center text-sm">
                   <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
@@ -1883,7 +1885,9 @@ export default function CommunityDetail() {
                   <div className="space-y-2">
                     <div className="flex items-center text-sm">
                       <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                      <span>No buy-in fees</span>
+                      <Link href="/care-points" className="text-primary hover:underline">
+                        Care Points Pricing
+                      </Link>
                     </div>
                     <div className="flex items-center text-sm">
                       <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
