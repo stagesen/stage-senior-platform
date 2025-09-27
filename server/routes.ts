@@ -26,6 +26,7 @@ import {
   insertCareTypeSchema,
   insertAmenitySchema,
   insertPageHeroSchema,
+  insertTeamMemberSchema,
 } from "@shared/schema";
 
 // Middleware to protect admin routes - referenced by javascript_auth_all_persistance integration
@@ -1163,6 +1164,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting page hero:", error);
       res.status(500).json({ message: "Failed to delete page hero" });
+    }
+  });
+
+  // Team member routes
+  app.get("/api/team-members", async (req, res) => {
+    try {
+      const { includeInactive } = req.query;
+      const members = await storage.getAllTeamMembers(includeInactive === 'true');
+      res.json(members);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+      res.status(500).json({ message: "Failed to fetch team members" });
+    }
+  });
+
+  app.get("/api/team-members/:id", async (req, res) => {
+    try {
+      const member = await storage.getTeamMemberById(req.params.id);
+      if (!member) {
+        return res.status(404).json({ message: "Team member not found" });
+      }
+      res.json(member);
+    } catch (error) {
+      console.error("Error fetching team member:", error);
+      res.status(500).json({ message: "Failed to fetch team member" });
+    }
+  });
+
+  app.get("/api/team-members/slug/:slug", async (req, res) => {
+    try {
+      const member = await storage.getTeamMemberBySlug(req.params.slug);
+      if (!member) {
+        return res.status(404).json({ message: "Team member not found" });
+      }
+      res.json(member);
+    } catch (error) {
+      console.error("Error fetching team member:", error);
+      res.status(500).json({ message: "Failed to fetch team member" });
+    }
+  });
+
+  app.post("/api/team-members", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertTeamMemberSchema.parse(req.body);
+      const member = await storage.createTeamMember(validatedData);
+      res.status(201).json(member);
+    } catch (error) {
+      console.error("Error creating team member:", error);
+      res.status(400).json({ message: "Failed to create team member" });
+    }
+  });
+
+  app.patch("/api/team-members/:id", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertTeamMemberSchema.partial().parse(req.body);
+      const member = await storage.updateTeamMember(req.params.id, validatedData);
+      if (!member) {
+        return res.status(404).json({ message: "Team member not found" });
+      }
+      res.json(member);
+    } catch (error) {
+      console.error("Error updating team member:", error);
+      res.status(400).json({ message: "Failed to update team member" });
+    }
+  });
+
+  app.delete("/api/team-members/:id", requireAuth, async (req, res) => {
+    try {
+      await storage.deleteTeamMember(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting team member:", error);
+      res.status(500).json({ message: "Failed to delete team member" });
     }
   });
 

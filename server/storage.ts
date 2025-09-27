@@ -18,6 +18,7 @@ import {
   communityFeatures,
   users,
   images,
+  teamMembers,
   type Community,
   type InsertCommunity,
   type Post,
@@ -53,6 +54,8 @@ import {
   type InsertUser,
   type Image,
   type InsertImage,
+  type TeamMember,
+  type InsertTeamMember,
   pageHeroes,
   type PageHero,
   type InsertPageHero,
@@ -280,6 +283,14 @@ export interface IStorage {
   // Community-Amenity relationship operations
   getCommunityAmenities(communityId: string): Promise<string[]>;
   setCommunityAmenities(communityId: string, amenityIds: string[]): Promise<void>;
+
+  // Team member operations
+  getAllTeamMembers(includeInactive?: boolean): Promise<TeamMember[]>;
+  getTeamMemberById(id: string): Promise<TeamMember | null>;
+  getTeamMemberBySlug(slug: string): Promise<TeamMember | null>;
+  createTeamMember(data: InsertTeamMember): Promise<TeamMember>;
+  updateTeamMember(id: string, data: Partial<InsertTeamMember>): Promise<TeamMember | null>;
+  deleteTeamMember(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -562,7 +573,35 @@ export class DatabaseStorage implements IStorage {
     category?: string;
     author?: string;
   }): Promise<BlogPost[]> {
-    let query = db.select().from(blogPosts);
+    let query = db
+      .select({
+        id: blogPosts.id,
+        slug: blogPosts.slug,
+        title: blogPosts.title,
+        content: blogPosts.content,
+        summary: blogPosts.summary,
+        mainImage: blogPosts.mainImage,
+        thumbnailImage: blogPosts.thumbnailImage,
+        galleryImages: blogPosts.galleryImages,
+        featured: blogPosts.featured,
+        category: blogPosts.category,
+        author: blogPosts.author,
+        authorId: blogPosts.authorId,
+        tags: blogPosts.tags,
+        communityId: blogPosts.communityId,
+        published: blogPosts.published,
+        publishedAt: blogPosts.publishedAt,
+        createdAt: blogPosts.createdAt,
+        updatedAt: blogPosts.updatedAt,
+        authorName: teamMembers.name,
+        authorRole: teamMembers.role,
+        authorDepartment: teamMembers.department,
+        authorAvatarImageId: teamMembers.avatarImageId,
+        authorSlug: teamMembers.slug,
+        authorEmail: teamMembers.email,
+      })
+      .from(blogPosts)
+      .leftJoin(teamMembers, eq(blogPosts.authorId, teamMembers.id));
 
     const conditions = [];
     if (filters?.published !== undefined) {
@@ -584,30 +623,186 @@ export class DatabaseStorage implements IStorage {
 
     const results = await query;
 
+    // Transform results to include author details
+    const transformedResults = results.map(post => ({
+      id: post.id,
+      slug: post.slug,
+      title: post.title,
+      content: post.content,
+      summary: post.summary,
+      mainImage: post.mainImage,
+      thumbnailImage: post.thumbnailImage,
+      galleryImages: post.galleryImages,
+      featured: post.featured,
+      category: post.category,
+      author: post.author, // Legacy field
+      authorId: post.authorId,
+      tags: post.tags,
+      communityId: post.communityId,
+      published: post.published,
+      publishedAt: post.publishedAt,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      // Include author details if available
+      ...(post.authorId && post.authorName ? {
+        authorDetails: {
+          id: post.authorId,
+          name: post.authorName,
+          slug: post.authorSlug,
+          role: post.authorRole,
+          department: post.authorDepartment,
+          avatarImageId: post.authorAvatarImageId,
+          email: post.authorEmail,
+        }
+      } : {})
+    })) as BlogPost[];
+
     // Filter by tags if specified
     if (filters?.tags && filters.tags.length > 0) {
-      return results.filter(post =>
+      return transformedResults.filter(post =>
         filters.tags!.some(tag => post.tags?.includes(tag))
       );
     }
 
-    return results;
+    return transformedResults;
   }
 
   async getBlogPost(slug: string): Promise<BlogPost | undefined> {
-    const [post] = await db
-      .select()
+    const results = await db
+      .select({
+        id: blogPosts.id,
+        slug: blogPosts.slug,
+        title: blogPosts.title,
+        content: blogPosts.content,
+        summary: blogPosts.summary,
+        mainImage: blogPosts.mainImage,
+        thumbnailImage: blogPosts.thumbnailImage,
+        galleryImages: blogPosts.galleryImages,
+        featured: blogPosts.featured,
+        category: blogPosts.category,
+        author: blogPosts.author,
+        authorId: blogPosts.authorId,
+        tags: blogPosts.tags,
+        communityId: blogPosts.communityId,
+        published: blogPosts.published,
+        publishedAt: blogPosts.publishedAt,
+        createdAt: blogPosts.createdAt,
+        updatedAt: blogPosts.updatedAt,
+        authorName: teamMembers.name,
+        authorRole: teamMembers.role,
+        authorDepartment: teamMembers.department,
+        authorAvatarImageId: teamMembers.avatarImageId,
+        authorSlug: teamMembers.slug,
+        authorEmail: teamMembers.email,
+      })
       .from(blogPosts)
+      .leftJoin(teamMembers, eq(blogPosts.authorId, teamMembers.id))
       .where(eq(blogPosts.slug, slug));
-    return post;
+
+    if (results.length === 0) return undefined;
+
+    const post = results[0];
+    return {
+      id: post.id,
+      slug: post.slug,
+      title: post.title,
+      content: post.content,
+      summary: post.summary,
+      mainImage: post.mainImage,
+      thumbnailImage: post.thumbnailImage,
+      galleryImages: post.galleryImages,
+      featured: post.featured,
+      category: post.category,
+      author: post.author, // Legacy field
+      authorId: post.authorId,
+      tags: post.tags,
+      communityId: post.communityId,
+      published: post.published,
+      publishedAt: post.publishedAt,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      // Include author details if available
+      ...(post.authorId && post.authorName ? {
+        authorDetails: {
+          id: post.authorId,
+          name: post.authorName,
+          slug: post.authorSlug,
+          role: post.authorRole,
+          department: post.authorDepartment,
+          avatarImageId: post.authorAvatarImageId,
+          email: post.authorEmail,
+        }
+      } : {})
+    } as BlogPost;
   }
 
   async getBlogPostById(id: string): Promise<BlogPost | undefined> {
-    const [post] = await db
-      .select()
+    const results = await db
+      .select({
+        id: blogPosts.id,
+        slug: blogPosts.slug,
+        title: blogPosts.title,
+        content: blogPosts.content,
+        summary: blogPosts.summary,
+        mainImage: blogPosts.mainImage,
+        thumbnailImage: blogPosts.thumbnailImage,
+        galleryImages: blogPosts.galleryImages,
+        featured: blogPosts.featured,
+        category: blogPosts.category,
+        author: blogPosts.author,
+        authorId: blogPosts.authorId,
+        tags: blogPosts.tags,
+        communityId: blogPosts.communityId,
+        published: blogPosts.published,
+        publishedAt: blogPosts.publishedAt,
+        createdAt: blogPosts.createdAt,
+        updatedAt: blogPosts.updatedAt,
+        authorName: teamMembers.name,
+        authorRole: teamMembers.role,
+        authorDepartment: teamMembers.department,
+        authorAvatarImageId: teamMembers.avatarImageId,
+        authorSlug: teamMembers.slug,
+        authorEmail: teamMembers.email,
+      })
       .from(blogPosts)
+      .leftJoin(teamMembers, eq(blogPosts.authorId, teamMembers.id))
       .where(eq(blogPosts.id, id));
-    return post;
+
+    if (results.length === 0) return undefined;
+
+    const post = results[0];
+    return {
+      id: post.id,
+      slug: post.slug,
+      title: post.title,
+      content: post.content,
+      summary: post.summary,
+      mainImage: post.mainImage,
+      thumbnailImage: post.thumbnailImage,
+      galleryImages: post.galleryImages,
+      featured: post.featured,
+      category: post.category,
+      author: post.author, // Legacy field
+      authorId: post.authorId,
+      tags: post.tags,
+      communityId: post.communityId,
+      published: post.published,
+      publishedAt: post.publishedAt,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      // Include author details if available
+      ...(post.authorId && post.authorName ? {
+        authorDetails: {
+          id: post.authorId,
+          name: post.authorName,
+          slug: post.authorSlug,
+          role: post.authorRole,
+          department: post.authorDepartment,
+          avatarImageId: post.authorAvatarImageId,
+          email: post.authorEmail,
+        }
+      } : {})
+    } as BlogPost;
   }
 
   async createBlogPost(post: InsertBlogPost): Promise<BlogPost> {
@@ -1560,6 +1755,87 @@ export class DatabaseStorage implements IStorage {
         await tx.insert(communitiesAmenities).values(values);
       }
     });
+  }
+
+  // Team member operations
+  async getAllTeamMembers(includeInactive?: boolean): Promise<TeamMember[]> {
+    let query = db.select().from(teamMembers);
+    
+    if (!includeInactive) {
+      query = query.where(eq(teamMembers.active, true));
+    }
+    
+    return await query.orderBy(
+      asc(teamMembers.sortOrder),
+      asc(teamMembers.name)
+    );
+  }
+
+  async getTeamMemberById(id: string): Promise<TeamMember | null> {
+    const [member] = await db
+      .select()
+      .from(teamMembers)
+      .where(eq(teamMembers.id, id));
+    
+    return member || null;
+  }
+
+  async getTeamMemberBySlug(slug: string): Promise<TeamMember | null> {
+    const [member] = await db
+      .select()
+      .from(teamMembers)
+      .where(eq(teamMembers.slug, slug));
+    
+    return member || null;
+  }
+
+  async createTeamMember(data: InsertTeamMember): Promise<TeamMember> {
+    // Generate slug from name if not provided
+    if (!data.slug) {
+      data.slug = data.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+    }
+    
+    const [created] = await db
+      .insert(teamMembers)
+      .values(data)
+      .returning();
+    
+    return created;
+  }
+
+  async updateTeamMember(id: string, data: Partial<InsertTeamMember>): Promise<TeamMember | null> {
+    // Update slug if name is changed and slug is not explicitly provided
+    if (data.name && !data.slug) {
+      data.slug = data.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+    }
+    
+    const [updated] = await db
+      .update(teamMembers)
+      .set({
+        ...data,
+        updatedAt: new Date()
+      })
+      .where(eq(teamMembers.id, id))
+      .returning();
+    
+    return updated || null;
+  }
+
+  async deleteTeamMember(id: string): Promise<void> {
+    // First, set all blog posts with this author to null
+    await db
+      .update(blogPosts)
+      .set({ authorId: null })
+      .where(eq(blogPosts.authorId, id));
+    
+    // Then delete the team member
+    await db.delete(teamMembers).where(eq(teamMembers.id, id));
   }
 }
 
