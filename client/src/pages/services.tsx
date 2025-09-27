@@ -27,14 +27,14 @@ export default function Services() {
       title: "Expert Management Services",
       description: "Transform your senior living community with our proven management expertise. From independent living to memory care, we optimize operations while maintaining the highest standards of resident care and satisfaction.",
       buttonText: "LEARN MORE",
-      href: "/contact",
+      href: "/services/management",
       gradient: "bg-gradient-to-br from-blue-500 to-blue-600"
     },
     {
       title: "Spiritual Care & Support",
       description: "Our dedicated chaplaincy program provides essential spiritual and emotional support throughout your community. We build meaningful relationships that enhance the well-being of residents, families, and staff alike.",
       buttonText: "EXPLORE",
-      href: "/stage-cares",
+      href: "/services/chaplaincy",
       gradient: "bg-gradient-to-br from-purple-500 to-purple-600"
     },
     {
