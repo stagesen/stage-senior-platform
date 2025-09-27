@@ -1,5 +1,7 @@
 import { useEffect } from "react";
-import { Heart, Users, HandHeart, Clock, Shield, Calendar } from "lucide-react";
+import { Heart, Users, HandHeart, Clock, Shield, Calendar, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
@@ -130,6 +132,19 @@ export default function Chaplaincy() {
               <p data-testid="stage-cares-text-2">
                 This employee-funded benevolence program provides crucial support to community team members facing unexpected hardships. We also actively engage with both local and international non-profit organizations, donating time, money, and resources to create positive change beyond our walls.
               </p>
+            </div>
+            <div className="mt-8 text-center">
+              <Button
+                size="lg"
+                variant="secondary"
+                asChild
+                data-testid="button-explore-stage-cares"
+              >
+                <Link href="/stage-cares">
+                  Explore Stage Cares Foundation
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
