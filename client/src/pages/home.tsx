@@ -157,6 +157,9 @@ export default function Home() {
     ...(heroData || {}),
   };
 
+  // Resolve the background image URL if it's an image ID
+  const resolvedBackgroundImageUrl = useResolveImageUrl(hero.backgroundImageUrl);
+
   // Track selected carousel index for visual emphasis
   useEffect(() => {
     if (!carouselApi) {
@@ -191,7 +194,7 @@ export default function Home() {
       <section className="relative overflow-hidden">
         {/* Background Image */}
         <img
-          src={hero.backgroundImageUrl}
+          src={resolvedBackgroundImageUrl || hero.backgroundImageUrl}
           alt="Senior living community with beautiful gardens"
           className="absolute inset-0 h-full w-full object-cover"
         />
