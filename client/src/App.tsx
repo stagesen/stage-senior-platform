@@ -8,6 +8,7 @@ import Home from "@/pages/home";
 import Communities from "@/pages/communities";
 import CommunityDetail from "@/pages/community-detail";
 import Events from "@/pages/events";
+import Team from "@/pages/team";
 import Blog from "@/pages/blog";
 import Admin from "@/pages/admin";
 import Login from "@/pages/login";
@@ -43,6 +44,7 @@ function Router() {
           <Route path="/communities" component={Communities} />
           <Route path="/communities/:slug" component={CommunityDetail} />
           <Route path="/events" component={Events} />
+          <Route path="/team" component={Team} />
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={Blog} />
           <Route path="/faqs" component={FAQs} />
