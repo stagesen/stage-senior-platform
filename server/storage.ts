@@ -288,6 +288,7 @@ export interface IStorage {
   getAllTeamMembers(includeInactive?: boolean): Promise<TeamMember[]>;
   getTeamMemberById(id: string): Promise<TeamMember | null>;
   getTeamMemberBySlug(slug: string): Promise<TeamMember | null>;
+  getTeamMembersByCommunity(communityId: string): Promise<TeamMember[]>;
   createTeamMember(data: InsertTeamMember): Promise<TeamMember>;
   updateTeamMember(id: string, data: Partial<InsertTeamMember>): Promise<TeamMember | null>;
   deleteTeamMember(id: string): Promise<void>;
@@ -1765,10 +1766,16 @@ export class DatabaseStorage implements IStorage {
       query = query.where(eq(teamMembers.active, true));
     }
     
-    return await query.orderBy(
+    const members = await query.orderBy(
       asc(teamMembers.sortOrder),
       asc(teamMembers.name)
     );
+    
+    // Ensure tags field is always an array
+    return members.map(member => ({
+      ...member,
+      tags: member.tags || []
+    }));
   }
 
   async getTeamMemberById(id: string): Promise<TeamMember | null> {
@@ -1777,7 +1784,15 @@ export class DatabaseStorage implements IStorage {
       .from(teamMembers)
       .where(eq(teamMembers.id, id));
     
-    return member || null;
+    if (!member) {
+      return null;
+    }
+    
+    // Ensure tags is always an array
+    return {
+      ...member,
+      tags: member.tags || []
+    };
   }
 
   async getTeamMemberBySlug(slug: string): Promise<TeamMember | null> {
@@ -1786,7 +1801,49 @@ export class DatabaseStorage implements IStorage {
       .from(teamMembers)
       .where(eq(teamMembers.slug, slug));
     
-    return member || null;
+    if (!member) {
+      return null;
+    }
+    
+    // Ensure tags is always an array
+    return {
+      ...member,
+      tags: member.tags || []
+    };
+  }
+
+  async getTeamMembersByCommunity(communityId: string): Promise<TeamMember[]> {
+    // First get the community name to match against tags
+    const community = await this.getCommunityById(communityId);
+    if (!community) {
+      return [];
+    }
+    
+    // Find team members that have a tag matching the community name
+    // Check for exact match or match with "The " prefix
+    const members = await db
+      .select()
+      .from(teamMembers)
+      .where(
+        and(
+          eq(teamMembers.active, true),
+          or(
+            sql`${teamMembers.tags}::jsonb ? ${community.name}`,
+            sql`${teamMembers.tags}::jsonb ? ${'The ' + community.name}`,
+            sql`EXISTS (SELECT 1 FROM jsonb_array_elements_text(${teamMembers.tags}::jsonb) AS tag WHERE lower(tag) = lower(${community.name}))`
+          )
+        )
+      )
+      .orderBy(
+        asc(teamMembers.sortOrder),
+        asc(teamMembers.name)
+      );
+    
+    // Ensure tags field is always an array
+    return members.map(member => ({
+      ...member,
+      tags: member.tags || []
+    }));
   }
 
   async createTeamMember(data: InsertTeamMember): Promise<TeamMember> {
@@ -1798,12 +1855,22 @@ export class DatabaseStorage implements IStorage {
         .replace(/^-|-$/g, '');
     }
     
+    // Ensure tags is an array or default to empty array
+    const memberData = {
+      ...data,
+      tags: data.tags || []
+    };
+    
     const [created] = await db
       .insert(teamMembers)
-      .values(data)
+      .values(memberData)
       .returning();
     
-    return created;
+    // Ensure tags is always returned as an array
+    return {
+      ...created,
+      tags: created.tags || []
+    };
   }
 
   async updateTeamMember(id: string, data: Partial<InsertTeamMember>): Promise<TeamMember | null> {
@@ -1815,16 +1882,30 @@ export class DatabaseStorage implements IStorage {
         .replace(/^-|-$/g, '');
     }
     
+    // Ensure tags is handled properly if provided
+    const updateData: any = {
+      ...data,
+      updatedAt: new Date()
+    };
+    if (data.tags !== undefined) {
+      updateData.tags = data.tags || [];
+    }
+    
     const [updated] = await db
       .update(teamMembers)
-      .set({
-        ...data,
-        updatedAt: new Date()
-      })
+      .set(updateData)
       .where(eq(teamMembers.id, id))
       .returning();
     
-    return updated || null;
+    if (!updated) {
+      return null;
+    }
+    
+    // Ensure tags is always returned as an array
+    return {
+      ...updated,
+      tags: updated.tags || []
+    };
   }
 
   async deleteTeamMember(id: string): Promise<void> {

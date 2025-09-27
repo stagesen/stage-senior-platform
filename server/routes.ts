@@ -1205,6 +1205,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get team members by community
+  app.get("/api/communities/:communityId/team-members", async (req, res) => {
+    try {
+      const members = await storage.getTeamMembersByCommunity(req.params.communityId);
+      res.json(members);
+    } catch (error) {
+      console.error("Error fetching team members for community:", error);
+      res.status(500).json({ message: "Failed to fetch team members for community" });
+    }
+  });
+
   app.post("/api/team-members", requireAuth, async (req, res) => {
     try {
       const validatedData = insertTeamMemberSchema.parse(req.body);
