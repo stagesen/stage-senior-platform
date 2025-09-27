@@ -233,6 +233,7 @@ export const teamMembers = pgTable("team_members", {
   phone: varchar("phone", { length: 50 }),
   linkedinUrl: varchar("linkedin_url", { length: 500 }),
   twitterUrl: varchar("twitter_url", { length: 500 }),
+  tags: jsonb("tags").$type<string[]>().default([]), // Community associations and tags
   sortOrder: integer("sort_order").default(0),
   featured: boolean("featured").default(false),
   active: boolean("active").default(true),
