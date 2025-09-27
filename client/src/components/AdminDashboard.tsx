@@ -153,10 +153,129 @@ const COMMON_ICONS = [
   "MapPin"
 ];
 
+// Predefined tags for team members
+const PREDEFINED_TAGS = {
+  communities: [
+    "The Gardens at Columbine",
+    "The Gardens on Quail",
+    "Golden Pond",
+    "Stonebridge Senior"
+  ],
+  departments: [
+    "Stage Management",
+    "Medical Care",
+    "Administration",
+    "Activities",
+    "Dining",
+    "Maintenance",
+    "Housekeeping"
+  ]
+};
+
 import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Check, X } from "lucide-react";
+
+// TagInput component for managing tags with suggestions
+const TagInput = ({ value, onChange, placeholder, dataTestId }: {
+  value: string[];
+  onChange: (tags: string[]) => void;
+  placeholder?: string;
+  dataTestId?: string;
+}) => {
+  const [inputValue, setInputValue] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const allSuggestions = [
+    ...PREDEFINED_TAGS.communities,
+    ...PREDEFINED_TAGS.departments
+  ];
+  
+  const filteredSuggestions = allSuggestions.filter(suggestion => 
+    !value.includes(suggestion) &&
+    suggestion.toLowerCase().includes(inputValue.toLowerCase())
+  );
+  
+  const addTag = (tag: string) => {
+    const trimmedTag = tag.trim();
+    if (trimmedTag && !value.includes(trimmedTag)) {
+      onChange([...value, trimmedTag]);
+    }
+    setInputValue("");
+    setIsOpen(false);
+  };
+  
+  const removeTag = (tagToRemove: string) => {
+    onChange(value.filter(tag => tag !== tagToRemove));
+  };
+  
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && inputValue.trim()) {
+      e.preventDefault();
+      addTag(inputValue);
+    } else if (e.key === "Backspace" && !inputValue && value.length > 0) {
+      removeTag(value[value.length - 1]);
+    }
+  };
+  
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap gap-2 p-2 border rounded-md">
+        {value.map((tag, index) => (
+          <Badge key={index} variant="secondary" className="flex items-center gap-1 px-2 py-1">
+            {tag}
+            <button
+              type="button"
+              onClick={() => removeTag(tag)}
+              className="hover:bg-secondary-foreground/20 rounded-full p-0.5"
+              data-testid={`button-remove-tag-${index}`}
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </Badge>
+        ))}
+        <Popover open={isOpen} onOpenChange={setIsOpen}>
+          <PopoverTrigger asChild>
+            <Input
+              value={inputValue}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+                setIsOpen(true);
+              }}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholder || "Type to add tags..."}
+              className="flex-1 min-w-[200px] border-0 px-2 focus-visible:ring-0 focus-visible:ring-offset-0"
+              data-testid={dataTestId}
+            />
+          </PopoverTrigger>
+          {isOpen && filteredSuggestions.length > 0 && (
+            <PopoverContent className="p-0" align="start" side="bottom">
+              <Command>
+                <CommandGroup heading="Suggestions">
+                  {filteredSuggestions.slice(0, 8).map((suggestion, index) => (
+                    <CommandItem
+                      key={index}
+                      onSelect={() => addTag(suggestion)}
+                    >
+                      {suggestion}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </Command>
+            </PopoverContent>
+          )}
+        </Popover>
+      </div>
+      <div className="text-xs text-muted-foreground space-y-1">
+        <div>Communities: {PREDEFINED_TAGS.communities.join(", ")}</div>
+        <div>Departments: {PREDEFINED_TAGS.departments.join(", ")}</div>
+      </div>
+    </div>
+  );
+};
 
 // Sub-component for gallery images to use the image resolution hook
 const GalleryImageItem = ({ image, index, onMoveUp, onMoveDown, onDelete, showControls = true, totalImages = 0 }: {
@@ -1167,6 +1286,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       phone: "",
       linkedinUrl: "",
       twitterUrl: "",
+      tags: [],
       sortOrder: 0,
       featured: false,
       active: true,
@@ -3157,6 +3277,28 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 />
               </div>
 
+              <FormField
+                control={teamMemberForm.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tags</FormLabel>
+                    <FormControl>
+                      <TagInput
+                        value={field.value || []}
+                        onChange={field.onChange}
+                        placeholder="Type to add tags..."
+                        dataTestId="input-team-tags"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Add tags to associate this team member with communities and departments
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="flex justify-end space-x-2">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
                   Cancel
@@ -5140,7 +5282,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
               <TableHead>Name</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Department</TableHead>
-              <TableHead>Email</TableHead>
+              <TableHead>Tags</TableHead>
               <TableHead>Featured</TableHead>
               <TableHead>Active</TableHead>
               <TableHead>Actions</TableHead>
@@ -5183,6 +5325,23 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   </TableCell>
                   <TableCell>{item.role}</TableCell>
                   <TableCell>{item.department || "-"}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1 max-w-xs">
+                      {(item.tags || []).slice(0, 3).map((tag, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                      {(item.tags || []).length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{(item.tags || []).length - 3} more
+                        </Badge>
+                      )}
+                      {(!item.tags || item.tags.length === 0) && (
+                        <span className="text-muted-foreground text-sm">-</span>
+                      )}
+                    </div>
+                  </TableCell>
                   <TableCell className="text-sm">
                     {item.email ? (
                       <a href={`mailto:${item.email}`} className="text-blue-600 hover:underline">
