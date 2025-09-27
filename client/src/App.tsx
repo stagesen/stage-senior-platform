@@ -21,6 +21,7 @@ import StageCares from "@/pages/stage-cares";
 import CarePoints from "@/pages/care-points";
 import ProfessionalManagement from "@/pages/services/management";
 import LongTermCare from "@/pages/services/long-term-care";
+import Chaplaincy from "@/pages/services/chaplaincy";
 import NotFound from "@/pages/not-found";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -51,6 +52,7 @@ function Router() {
           <Route path="/care-points" component={CarePoints} />
           <Route path="/services/management" component={ProfessionalManagement} />
           <Route path="/services/long-term-care" component={LongTermCare} />
+          <Route path="/services/chaplaincy" component={Chaplaincy} />
           <Route path="/privacy" component={Privacy} />
           <Route path="/terms" component={Terms} />
           <Route path="/accessibility" component={Accessibility} />
