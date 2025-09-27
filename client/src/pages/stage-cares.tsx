@@ -7,7 +7,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Heart, Globe, Users, HandHeart, Target, DollarSign, Calendar, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { useQuery } from "@tanstack/react-query";
-import { CommunityCard } from "@/components/CommunityCard";
+import CommunityCard from "@/components/CommunityCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Community } from "@shared/schema";
 
@@ -58,7 +58,6 @@ export default function StageCares() {
         pagePath="/stage-cares"
         defaultTitle="Stage Cares Foundation"
         defaultSubtitle="Charitable Giving"
-        defaultDescription="Creating positive change through compassionate giving and community support"
         defaultBackgroundImage="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=2000&q=80"
       />
       
