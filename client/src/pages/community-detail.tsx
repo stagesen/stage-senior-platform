@@ -40,7 +40,8 @@ import {
   Square,
   Download,
   ArrowRight,
-  Trees
+  Trees,
+  User
 } from "lucide-react";
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -57,7 +58,8 @@ import type {
   GalleryImageWithDetails, 
   Post, 
   BlogPost,
-  CommunityHighlight 
+  CommunityHighlight,
+  TeamMember 
 } from "@shared/schema";
 import {
   Carousel,
@@ -695,10 +697,27 @@ const BlogPostCard = ({ post }: { post: BlogPost }) => {
 
 // Local subcomponent: Action Panel
 const ActionPanel = ({ community }: { community: any }) => {
+  // Fetch team members for this community
+  const { data: teamMembers = [], isLoading: teamMembersLoading } = useQuery<TeamMember[]>({
+    queryKey: [`/api/communities/${community.id}/team-members`],
+    enabled: !!community?.id,
+  });
+
+  // Get the primary contact (first team member)
+  const primaryContact = teamMembers[0];
+  
+  // Resolve avatar image URL
+  const avatarImageUrl = useResolveImageUrl(
+    primaryContact?.avatarImageId ? `/api/images/${primaryContact.avatarImageId}` : null
+  );
+
+  // Determine grid columns based on whether we have a team member
+  const gridCols = primaryContact ? "md:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-3";
+
   return (
     <section className="bg-gradient-to-br from-gray-50 to-white py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className={`grid grid-cols-1 ${gridCols} gap-6`}>
           {/* Pricing Card */}
           <Card className="shadow-lg border-2 border-primary/20 overflow-hidden">
             <div className="h-48 overflow-hidden">
@@ -746,6 +765,79 @@ const ActionPanel = ({ community }: { community: any }) => {
               </Button>
             </CardContent>
           </Card>
+
+          {/* Team Member Card */}
+          {primaryContact && (
+            <Card className="shadow-lg border-2 border-primary/20 overflow-hidden">
+              <div className="h-48 overflow-hidden bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
+                {avatarImageUrl ? (
+                  <img
+                    src={avatarImageUrl}
+                    alt={primaryContact.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-24 h-24 text-primary/40" />
+                )}
+              </div>
+              <CardHeader className="bg-primary/5">
+                <CardTitle className="text-xl flex items-center gap-2">
+                  <Users className="w-5 h-5 text-primary" />
+                  Your Community Contact
+                </CardTitle>
+                <CardDescription className="text-lg font-semibold text-gray-800 mt-2">
+                  {primaryContact.name}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-gray-700">{primaryContact.role}</p>
+                  {primaryContact.department && (
+                    <p className="text-xs text-gray-600">{primaryContact.department}</p>
+                  )}
+                </div>
+                {primaryContact.bio ? (
+                  <p className="text-sm text-gray-600 line-clamp-3">
+                    {primaryContact.bio}
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-600">
+                    Contact me to learn more about {community.name}.
+                  </p>
+                )}
+                <div className="space-y-3 pt-2">
+                  {primaryContact.email && (
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-4 h-4 text-primary flex-shrink-0" />
+                      <a
+                        href={`mailto:${primaryContact.email}`}
+                        className="text-sm text-primary hover:underline truncate"
+                        data-testid="team-member-email"
+                      >
+                        {primaryContact.email}
+                      </a>
+                    </div>
+                  )}
+                  {primaryContact.phone && (
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-4 h-4 text-primary flex-shrink-0" />
+                      <a
+                        href={`tel:${primaryContact.phone}`}
+                        className="text-sm text-primary hover:underline"
+                        data-testid="team-member-phone"
+                      >
+                        {primaryContact.phone}
+                      </a>
+                    </div>
+                  )}
+                </div>
+                <Button className="w-full" variant="outline" data-testid="button-contact-team-member">
+                  <Mail className="w-4 h-4 mr-2" />
+                  Send Message
+                </Button>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Contact Information */}
           <Card className="shadow-lg overflow-hidden">
