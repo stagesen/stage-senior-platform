@@ -783,7 +783,7 @@ const ActionPanel = ({ community }: { community: any }) => {
               <CardHeader className="bg-primary/5">
                 <CardTitle className="text-xl flex items-center gap-2">
                   <Users className="w-5 h-5 text-primary" />
-                  Your Community Contact
+                  A Message from Leadership
                 </CardTitle>
                 <CardDescription className="text-lg font-semibold text-gray-800 mt-2">
                   {primaryContact.name}
@@ -802,38 +802,14 @@ const ActionPanel = ({ community }: { community: any }) => {
                   </p>
                 ) : (
                   <p className="text-sm text-gray-600">
-                    Contact me to learn more about {community.name}.
+                    Welcome to {community.name}! Our team is dedicated to providing exceptional care and creating a warm, welcoming home for every resident. I invite you to meet our entire care team who makes this community so special.
                   </p>
                 )}
-                <div className="space-y-3 pt-2">
-                  {primaryContact.email && (
-                    <div className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-primary flex-shrink-0" />
-                      <a
-                        href={`mailto:${primaryContact.email}`}
-                        className="text-sm text-primary hover:underline truncate"
-                        data-testid="team-member-email"
-                      >
-                        {primaryContact.email}
-                      </a>
-                    </div>
-                  )}
-                  {primaryContact.phone && (
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-primary flex-shrink-0" />
-                      <a
-                        href={`tel:${primaryContact.phone}`}
-                        className="text-sm text-primary hover:underline"
-                        data-testid="team-member-phone"
-                      >
-                        {primaryContact.phone}
-                      </a>
-                    </div>
-                  )}
-                </div>
-                <Button className="w-full" variant="outline" data-testid="button-contact-team-member">
-                  <Mail className="w-4 h-4 mr-2" />
-                  Send Message
+                <Button asChild className="w-full" data-testid="button-meet-team">
+                  <Link href="/team">
+                    <Users className="w-4 h-4 mr-2" />
+                    Meet the Team
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
