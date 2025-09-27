@@ -81,7 +81,8 @@ The current implementation appears to use session-based authentication:
 The platform includes a comprehensive admin interface for content management:
 
 - **Community Management**: CRUD operations for community information, amenities, and care types with integrated image uploads
-- **Blog System**: Full blog management with categories, tags, featured content, and hero image uploads
+- **Blog System**: Full blog management with categories, tags, featured content, hero image uploads, and team member author integration
+- **Team Member Management**: Complete team member profiles with avatar images, roles, departments, social links, and blog post author connections
 - **Event Management**: Calendar-based event system with RSVP functionality and event image uploads
 - **FAQ System**: Categorized frequently asked questions with search capabilities and HTML answer support
 - **Gallery Management**: Image galleries with multi-image upload support (up to 20 images) and drag-and-drop functionality
