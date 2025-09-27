@@ -1909,27 +1909,16 @@ export default function CommunityDetail() {
                     Tour our community and meet our caring team
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <Input 
-                    placeholder="Your Name" 
-                    data-testid="input-tour-name"
-                  />
-                  <Input 
-                    placeholder="Phone Number" 
-                    type="tel"
-                    data-testid="input-tour-phone"
-                  />
-                  <Input 
-                    placeholder="Email Address" 
-                    type="email"
-                    data-testid="input-tour-email"
-                  />
+                <CardContent>
                   <Button 
                     className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white" 
                     data-testid="button-schedule-tour"
+                    asChild
                   >
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Schedule Your Tour
+                    <Link href="/contact">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Schedule Your Tour
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
