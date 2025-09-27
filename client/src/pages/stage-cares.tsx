@@ -7,7 +7,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Heart, Globe, Users, HandHeart, Target, DollarSign, Calendar, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { useQuery } from "@tanstack/react-query";
-import CommunityCard from "@/components/CommunityCard";
+import CommunitiesCarousel from "@/components/CommunitiesCarousel";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Community } from "@shared/schema";
 
@@ -326,48 +326,19 @@ export default function StageCares() {
 
       {/* Communities Section */}
       <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="communities-title">
-              Our Communities
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Stage Cares Foundation is supported by our network of senior living communities 
-              across Colorado, each contributing to our charitable mission.
-            </p>
-          </div>
-
-          {communitiesLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-testid="communities-loading">
-              {[...Array(6)].map((_, i) => (
-                <Card key={i} className="overflow-hidden">
-                  <Skeleton className="h-48" />
-                  <CardHeader>
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-4 w-1/2 mt-2" />
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-20" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-testid="communities-grid">
-              {communities?.slice(0, 6).map((community) => (
-                <CommunityCard key={community.id} community={community} />
-              ))}
-            </div>
-          )}
-
-          <div className="mt-12 text-center">
-            <Button size="lg" variant="outline" asChild data-testid="button-view-communities">
-              <Link href="/communities">
-                View All Communities
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Link>
-            </Button>
-          </div>
+        <CommunitiesCarousel
+          communities={communities || []}
+          isLoading={communitiesLoading}
+          title="Our Communities"
+          subtitle="Experience the Stage Cares difference at our locations"
+        />
+        <div className="mt-12 text-center">
+          <Button size="lg" variant="outline" asChild data-testid="button-view-communities">
+            <Link href="/communities">
+              View All Communities
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Link>
+          </Button>
         </div>
       </section>
 

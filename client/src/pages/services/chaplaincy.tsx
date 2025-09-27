@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Heart, Users, HandHeart, Clock, Shield, Calendar } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import CommunityServiceCard from "@/components/CommunityServiceCard";
+import CommunitiesCarousel from "@/components/CommunitiesCarousel";
 import type { Community } from "@shared/schema";
 
 export default function Chaplaincy() {
@@ -137,35 +137,12 @@ export default function Chaplaincy() {
 
       {/* Communities Section */}
       <section className="py-20 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="communities-title">
-              Our Communities and Resources
-            </h2>
-            <p className="text-lg text-muted-foreground" data-testid="communities-subtitle">
-              Elevating Senior Care Across Colorado
-            </p>
-          </div>
-
-          {/* Community Cards Grid */}
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="h-64 w-full rounded-lg" />
-              ))}
-            </div>
-          ) : communities && communities.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {communities.slice(0, 4).map((community) => (
-                <CommunityServiceCard key={community.id} community={community} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">No communities available at the moment.</p>
-            </div>
-          )}
-        </div>
+        <CommunitiesCarousel
+          communities={communities || []}
+          isLoading={isLoading}
+          title="Communities with Chaplaincy Services"
+          subtitle="Spiritual care and support at our Colorado communities"
+        />
       </section>
     </div>
   );
