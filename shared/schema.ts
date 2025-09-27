@@ -220,6 +220,26 @@ export const galleries = pgTable("galleries", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Team members table
+export const teamMembers = pgTable("team_members", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  role: varchar("role", { length: 255 }).notNull(),
+  department: varchar("department", { length: 255 }),
+  bio: text("bio"),
+  avatarImageId: varchar("avatar_image_id", { length: 255 }).references(() => images.id),
+  email: varchar("email", { length: 255 }),
+  phone: varchar("phone", { length: 50 }),
+  linkedinUrl: varchar("linkedin_url", { length: 500 }),
+  twitterUrl: varchar("twitter_url", { length: 500 }),
+  sortOrder: integer("sort_order").default(0),
+  featured: boolean("featured").default(false),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const blogPosts = pgTable("blog_posts", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
@@ -231,7 +251,8 @@ export const blogPosts = pgTable("blog_posts", {
   galleryImages: jsonb("gallery_images").$type<string[]>().default([]),
   featured: boolean("featured").default(false),
   category: varchar("category", { length: 100 }),
-  author: varchar("author", { length: 255 }),
+  author: varchar("author", { length: 255 }), // Legacy field for backward compatibility
+  authorId: uuid("author_id").references(() => teamMembers.id), // Reference to team member
   tags: jsonb("tags").$type<string[]>().default([]),
   communityId: uuid("community_id").references(() => communities.id),
   published: boolean("published").default(true),
@@ -531,6 +552,16 @@ export const insertPostSchema = createInsertSchema(posts).omit({
   updatedAt: true,
 });
 
+export const insertTeamMemberSchema = createInsertSchema(teamMembers).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  slug: z.string().min(1, "Slug is required").regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens only"),
+  name: z.string().min(1, "Name is required"),
+  role: z.string().min(1, "Role is required"),
+});
+
 export const insertBlogPostSchema = createInsertSchema(blogPosts).omit({
   id: true,
   createdAt: true,
@@ -710,6 +741,8 @@ export type GalleryImageWithDetails = GalleryImage & {
   galleryActive?: boolean | null;
 };
 
+export type TeamMember = typeof teamMembers.$inferSelect;
+export type InsertTeamMember = z.infer<typeof insertTeamMemberSchema>;
 export type Image = typeof images.$inferSelect;
 export type InsertImage = z.infer<typeof insertImageSchema>;
 export type User = typeof users.$inferSelect;
