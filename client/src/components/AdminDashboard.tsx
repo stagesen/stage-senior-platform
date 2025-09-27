@@ -3035,15 +3035,17 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   <FormItem>
                     <FormLabel>Image (Optional)</FormLabel>
                     <FormControl>
-                      <Input 
-                        {...field} 
-                        value={field.value || ""} 
-                        placeholder="Image ID from gallery (optional)" 
-                        data-testid="input-highlight-image" 
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={(value) => field.onChange(value || null)}
+                        multiple={false}
+                        label=""
+                        accept="image/*"
+                        showDelete={true}
                       />
                     </FormControl>
                     <FormDescription>
-                      Enter an image ID from the gallery, or leave blank for no image
+                      Upload an image or select from existing uploads
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
