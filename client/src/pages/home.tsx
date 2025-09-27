@@ -151,10 +151,19 @@ export default function Home() {
     textAlignment: "left",
   };
 
-  // Merge hero data with defaults
+  // Merge hero data with defaults (only use non-empty values from API)
   const hero = {
     ...defaultHero,
-    ...(heroData || {}),
+    ...(heroData ? {
+      title: heroData.title || defaultHero.title,
+      subtitle: heroData.subtitle || defaultHero.subtitle,
+      description: heroData.description || defaultHero.description,
+      backgroundImageUrl: heroData.backgroundImageUrl || defaultHero.backgroundImageUrl,
+      ctaText: heroData.ctaText || defaultHero.ctaText,
+      ctaLink: heroData.ctaLink || defaultHero.ctaLink,
+      overlayOpacity: heroData.overlayOpacity || defaultHero.overlayOpacity,
+      textAlignment: heroData.textAlignment || defaultHero.textAlignment,
+    } : {}),
   };
 
   // Resolve the background image URL if it's an image ID
