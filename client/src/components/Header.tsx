@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, Phone } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -11,21 +11,10 @@ import logoUrl from "@assets/stagesenior-logo_1758726889154.webp";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [location] = useLocation();
   const normalizedLocation = location.split("?")[0];
   const isCommunityDetailPage = /^\/communities\/[^/]+$/.test(normalizedLocation);
   const showNavigation = !isCommunityDetailPage;
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setIsScrolled(scrollTop > 10);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const navigation = [
     { name: "About Us", href: "/about-us" },
@@ -34,15 +23,9 @@ export default function Header() {
   ];
 
   return (
-    <header className={`sticky top-0 z-50 transition-all duration-300 ease-in-out ${
-        isScrolled 
-          ? 'bg-background/98 backdrop-blur-sm border-b border-border shadow-lg shadow-black/5 dark:shadow-white/5'
-          : 'bg-background border-b border-border'
-      }`} data-testid="header">
+    <header className="sticky top-0 z-50 bg-background border-b border-border shadow-lg shadow-black/5 dark:shadow-white/5" data-testid="header">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`flex justify-between items-center transition-all duration-300 ease-in-out ${
-            isScrolled ? 'h-14' : 'h-16'
-          }`}>
+        <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link
               href="/"
@@ -53,11 +36,7 @@ export default function Header() {
               <img
                 src={logoUrl}
                 alt="Stage Senior"
-                className={`w-auto object-contain min-w-[150px] transition-all duration-300 ease-in-out ${
-                  isScrolled 
-                    ? 'h-8 sm:h-9 md:h-10' 
-                    : 'h-10 sm:h-12 md:h-14'
-                }`}
+                className="w-auto object-contain min-w-[150px] h-10 sm:h-12 md:h-14"
               />
             </Link>
           </div>
