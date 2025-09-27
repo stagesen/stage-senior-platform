@@ -862,7 +862,7 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
           <Button 
             size="lg" 
             variant="outline"
-            className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-6 text-lg"
+            className="border-white text-white bg-transparent hover:bg-white hover:text-gray-900 px-8 py-6 text-lg"
             asChild
             data-testid="button-call-hero"
           >
