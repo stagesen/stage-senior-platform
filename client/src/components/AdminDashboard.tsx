@@ -1052,6 +1052,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       title: "",
       description: "",
       imageId: undefined,
+      ctaLabel: "",
+      ctaHref: "",
       communityId: selectedCommunityForHighlights || undefined,
       sortOrder: 0,
       active: true,
@@ -3042,6 +3044,48 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     </FormControl>
                     <FormDescription>
                       Enter an image ID from the gallery, or leave blank for no image
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityHighlightForm.control}
+                name="ctaLabel"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>CTA Button Text (Optional)</FormLabel>
+                    <FormControl>
+                      <Input 
+                        {...field} 
+                        value={field.value || ""} 
+                        placeholder="e.g. Learn More" 
+                        data-testid="input-highlight-cta-label" 
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Text for the call-to-action button
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityHighlightForm.control}
+                name="ctaHref"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>CTA Link (Optional)</FormLabel>
+                    <FormControl>
+                      <Input 
+                        {...field} 
+                        value={field.value || ""} 
+                        placeholder="e.g. /contact or https://example.com" 
+                        data-testid="input-highlight-cta-href" 
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Link for the call-to-action button
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

@@ -82,7 +82,7 @@ const formatPrice = (price: number | undefined | null): string => {
 };
 
 // Local subcomponent: Highlight Card
-const HighlightCard = ({ highlight }: { highlight: { title: string; description: string; imageUrl?: string; imageId?: string } }) => {
+const HighlightCard = ({ highlight }: { highlight: { title: string; description: string; imageUrl?: string; imageId?: string; ctaLabel?: string; ctaHref?: string } }) => {
   const resolvedImageUrl = useResolveImageUrl(highlight.imageId ? `/api/images/${highlight.imageId}` : highlight.imageUrl);
   
   return (
@@ -97,7 +97,27 @@ const HighlightCard = ({ highlight }: { highlight: { title: string; description:
       </AspectRatio>
       <CardContent className="p-6">
         <h3 className="text-xl font-semibold mb-2 text-primary">{highlight.title}</h3>
-        <p className="text-gray-600">{highlight.description}</p>
+        <p className="text-gray-600 mb-4">{highlight.description}</p>
+        {highlight.ctaLabel && highlight.ctaHref && (
+          <Button 
+            asChild 
+            variant="default" 
+            size="sm"
+            data-testid={`highlight-cta-${highlight.title.toLowerCase().replace(/\s+/g, '-')}`}
+          >
+            {highlight.ctaHref.startsWith('http') ? (
+              <a href={highlight.ctaHref} target="_blank" rel="noopener noreferrer">
+                {highlight.ctaLabel}
+                <ChevronRight className="ml-1 w-4 h-4" />
+              </a>
+            ) : (
+              <Link href={highlight.ctaHref}>
+                {highlight.ctaLabel}
+                <ChevronRight className="ml-1 w-4 h-4" />
+              </Link>
+            )}
+          </Button>
+        )}
       </CardContent>
     </Card>
   );

@@ -117,6 +117,8 @@ export const communityHighlights = pgTable("community_highlights", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),
   imageId: varchar("image_id", { length: 255 }).references(() => images.id),
+  ctaLabel: varchar("cta_label", { length: 100 }),
+  ctaHref: varchar("cta_href", { length: 500 }),
   sortOrder: integer("sort_order").default(0),
   active: boolean("active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
