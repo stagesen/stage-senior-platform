@@ -134,6 +134,7 @@ export default function Admin() {
             <TabsTrigger value="page-heroes" data-testid="tab-page-heroes">Page Heroes</TabsTrigger>
             <TabsTrigger value="care-types" data-testid="tab-care-types">Care Types</TabsTrigger>
             <TabsTrigger value="amenities" data-testid="tab-amenities">Amenities</TabsTrigger>
+            <TabsTrigger value="community-highlights" data-testid="tab-community-highlights">Highlights</TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-6">
@@ -342,6 +343,10 @@ export default function Admin() {
 
           <TabsContent value="amenities">
             <AdminDashboard type="amenities" />
+          </TabsContent>
+
+          <TabsContent value="community-highlights">
+            <AdminDashboard type="community-highlights" />
           </TabsContent>
         </Tabs>
       </main>
