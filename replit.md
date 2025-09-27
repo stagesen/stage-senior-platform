@@ -47,6 +47,7 @@ The client-side application is built with React 18 and TypeScript, utilizing mod
 - **Build Tool**: Vite for fast development and optimized production builds
 - **Team Page**: Comprehensive team directory organized by tags (Stage Management, Communities, Departments)
 - **Community Contact Cards**: Dynamic team member cards on community detail pages showing primary contact
+- **Team Carousel**: Dynamic carousel on About Us page showcasing leadership team with link to full team directory
 
 The frontend follows a component-based architecture with reusable UI components, page-level components, and custom hooks for shared logic. The application supports responsive design and includes accessibility features.
 
