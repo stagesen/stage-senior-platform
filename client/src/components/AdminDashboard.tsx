@@ -36,7 +36,8 @@ import {
   Filter,
   Search,
   FileText,
-  ArrowRight
+  ArrowRight,
+  User
 } from "lucide-react";
 import { format } from "date-fns";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
@@ -55,11 +56,14 @@ import {
   insertTourRequestSchema,
   insertCommunityHighlightSchema,
   insertCommunityFeatureSchema,
+  insertTeamMemberSchema,
   type Community,
   type CommunityHighlight,
   type InsertCommunityHighlight,
   type CommunityFeature,
   type InsertCommunityFeature,
+  type TeamMember,
+  type InsertTeamMember,
   type Post,
   type BlogPost,
   type Event,
@@ -86,7 +90,7 @@ import {
 } from "@shared/schema";
 
 interface AdminDashboardProps {
-  type: "communities" | "posts" | "blog-posts" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "community-highlights";
+  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "community-highlights";
 }
 
 // Helper function to generate slug from title
@@ -97,8 +101,8 @@ function generateSlug(title: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-// Predefined authors list
-const AUTHORS = [
+// Predefined authors list (fallback when no team members exist)
+const FALLBACK_AUTHORS = [
   "Stage Senior Team",
   "Community Director",
   "Healthcare Team",
@@ -890,9 +894,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Map type to API endpoint (handle tour-requests special case)
+  // Map type to API endpoint (handle special cases)
   const getApiEndpoint = (type: string) => {
     if (type === "tours") return "tour-requests";
+    if (type === "team") return "team-members";
     if (type === "community-highlights") {
       // For community highlights, we need to select a community first
       return selectedCommunityForHighlights ? `communities/${selectedCommunityForHighlights}/highlights` : "community-highlights";
@@ -921,6 +926,12 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   const { data: allAmenities = [] } = useQuery<Amenity[]>({
     queryKey: ["/api/amenities"],
     enabled: type === "communities",
+  });
+
+  // Fetch team members for author selection in blog posts
+  const { data: teamMembers = [] } = useQuery<TeamMember[]>({
+    queryKey: ["/api/team-members"],
+    enabled: type === "blog-posts" || type === "team",
   });
 
   // Forms for different types
@@ -1143,12 +1154,32 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     },
   });
 
+  const teamMemberForm = useForm<InsertTeamMember>({
+    resolver: zodResolver(insertTeamMemberSchema),
+    defaultValues: {
+      name: "",
+      slug: "",
+      role: "",
+      department: "",
+      bio: "",
+      avatarImageId: undefined,
+      email: "",
+      phone: "",
+      linkedinUrl: "",
+      twitterUrl: "",
+      sortOrder: 0,
+      featured: false,
+      active: true,
+    },
+  });
+
   // Get current form based on type
   const getCurrentForm = () => {
     switch (type) {
       case "communities": return communityForm;
       case "posts": return postForm;
       case "blog-posts": return blogPostForm;
+      case "team": return teamMemberForm;
       case "events": return eventForm;
       case "faqs": return faqForm;
       case "galleries": return galleryForm;
@@ -2207,20 +2238,54 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Author</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select 
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          // If a team member is selected, also set the authorId
+                          const teamMember = teamMembers.find(m => m.name === value);
+                          if (teamMember) {
+                            blogPostForm.setValue("authorId", teamMember.id);
+                          } else {
+                            blogPostForm.setValue("authorId", undefined);
+                          }
+                        }} 
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger data-testid="select-blog-author">
                             <SelectValue placeholder="Select an author" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {AUTHORS.map((author) => (
+                          {teamMembers.filter(m => m.active).length > 0 && (
+                            <>
+                              <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                                Team Members
+                              </div>
+                              {teamMembers
+                                .filter(m => m.active)
+                                .sort((a, b) => a.sortOrder - b.sortOrder)
+                                .map((member) => (
+                                  <SelectItem key={member.id} value={member.name}>
+                                    {member.name} - {member.role}
+                                  </SelectItem>
+                                ))}
+                              <Separator className="my-1" />
+                            </>
+                          )}
+                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                            Default Authors
+                          </div>
+                          {FALLBACK_AUTHORS.map((author) => (
                             <SelectItem key={author} value={author}>
                               {author}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
+                      <FormDescription>
+                        Select a team member or a default author
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -2815,6 +2880,289 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 </Button>
                 <Button type="submit" data-testid="button-submit">
                   {editingItem ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        );
+
+      case "team":
+        return (
+          <Form {...teamMemberForm}>
+            <form onSubmit={teamMemberForm.handleSubmit(handleSubmit)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={teamMemberForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          placeholder="Enter team member name"
+                          onChange={(e) => {
+                            field.onChange(e);
+                            // Auto-generate slug from name if slug is empty
+                            const slugField = teamMemberForm.getValues("slug");
+                            if (!slugField || slugField === generateSlug(teamMemberForm.getValues("name"))) {
+                              teamMemberForm.setValue("slug", generateSlug(e.target.value));
+                            }
+                          }}
+                          data-testid="input-team-name" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={teamMemberForm.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          placeholder="url-friendly-name" 
+                          data-testid="input-team-slug" 
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        URL-friendly identifier (auto-generated from name)
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={teamMemberForm.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          placeholder="e.g., Executive Director"
+                          data-testid="input-team-role" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={teamMemberForm.control}
+                  name="department"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Department</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          value={field.value || ""} 
+                          placeholder="e.g., Management, Healthcare"
+                          data-testid="input-team-department" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={teamMemberForm.control}
+                name="bio"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bio</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        {...field} 
+                        value={field.value || ""} 
+                        rows={4}
+                        placeholder="Brief biography of the team member"
+                        data-testid="textarea-team-bio" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={teamMemberForm.control}
+                name="avatarImageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Avatar Image</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={(value) => field.onChange(value || null)}
+                        multiple={false}
+                        label="Upload avatar image"
+                        accept="image/*"
+                        showDelete={true}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Upload a professional photo for this team member
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={teamMemberForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          value={field.value || ""} 
+                          type="email"
+                          placeholder="email@example.com"
+                          data-testid="input-team-email" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={teamMemberForm.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          value={field.value || ""} 
+                          type="tel"
+                          placeholder="(555) 123-4567"
+                          data-testid="input-team-phone" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={teamMemberForm.control}
+                  name="linkedinUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>LinkedIn URL</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          value={field.value || ""} 
+                          placeholder="https://linkedin.com/in/username"
+                          data-testid="input-team-linkedin" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={teamMemberForm.control}
+                  name="twitterUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Twitter URL</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          value={field.value || ""} 
+                          placeholder="https://twitter.com/username"
+                          data-testid="input-team-twitter" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <FormField
+                  control={teamMemberForm.control}
+                  name="sortOrder"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sort Order</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || 0} 
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          data-testid="input-team-sort" 
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Lower numbers appear first
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={teamMemberForm.control}
+                  name="featured"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2 mt-8">
+                      <FormControl>
+                        <Switch 
+                          checked={field.value} 
+                          onCheckedChange={field.onChange} 
+                          data-testid="switch-team-featured" 
+                        />
+                      </FormControl>
+                      <FormLabel>Featured</FormLabel>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={teamMemberForm.control}
+                  name="active"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2 mt-8">
+                      <FormControl>
+                        <Switch 
+                          checked={field.value} 
+                          onCheckedChange={field.onChange} 
+                          data-testid="switch-team-active" 
+                        />
+                      </FormControl>
+                      <FormLabel>Active</FormLabel>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="button-submit">
+                  {editingItem ? "Update" : "Create"} Team Member
                 </Button>
               </div>
             </form>
@@ -4782,6 +5130,113 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       );
     }
 
+    // Team Members table
+    if (type === "team") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Avatar</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Department</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Featured</TableHead>
+              <TableHead>Active</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: TeamMember) => {
+              // Component to handle avatar display with image resolution
+              const TeamAvatar = () => {
+                const avatarUrl = useResolveImageUrl(item.avatarImageId);
+                return (
+                  <div className="w-10 h-10 rounded-full bg-muted overflow-hidden">
+                    {avatarUrl ? (
+                      <img 
+                        src={avatarUrl} 
+                        alt={`${item.name} avatar`}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                        <User className="w-5 h-5" />
+                      </div>
+                    )}
+                  </div>
+                );
+              };
+
+              return (
+                <TableRow key={item.id} data-testid={`team-row-${item.id}`}>
+                  <TableCell>
+                    <TeamAvatar />
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    <div className="space-y-1">
+                      <div className="font-semibold">{item.name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {item.slug}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>{item.role}</TableCell>
+                  <TableCell>{item.department || "-"}</TableCell>
+                  <TableCell className="text-sm">
+                    {item.email ? (
+                      <a href={`mailto:${item.email}`} className="text-blue-600 hover:underline">
+                        {item.email}
+                      </a>
+                    ) : (
+                      "-"
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {item.featured && (
+                      <Badge variant="outline" className="bg-yellow-50">
+                        <Star className="w-3 h-3 mr-1" />
+                        Featured
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={item.active ? "default" : "secondary"}>
+                      {item.active ? "Active" : "Inactive"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleEdit(item)}
+                        data-testid={`button-edit-${item.id}`}
+                      >
+                        <Edit className="w-3 h-3" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={() => {
+                          if (confirm(`Are you sure you want to delete ${item.name}?`)) {
+                            deleteMutation.mutate(item.id);
+                          }
+                        }}
+                        data-testid={`button-delete-${item.id}`}
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      );
+    }
+
     // Testimonials table
     if (type === "testimonials") {
       return (
@@ -5240,6 +5695,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     switch (type) {
       case "communities": return "Communities";
       case "posts": return "Blog Posts";
+      case "team": return "Team Members";
       case "events": return "Events";
       case "tours": return "Tour Requests";
       case "faqs": return "FAQs";

@@ -121,10 +121,11 @@ export default function Admin() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-12" data-testid="admin-tabs">
+          <TabsList className="grid w-full grid-cols-13" data-testid="admin-tabs">
             <TabsTrigger value="dashboard" data-testid="tab-dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="communities" data-testid="tab-communities">Communities</TabsTrigger>
             <TabsTrigger value="posts" data-testid="tab-posts">Blog Posts</TabsTrigger>
+            <TabsTrigger value="team" data-testid="tab-team">Team</TabsTrigger>
             <TabsTrigger value="events" data-testid="tab-events">Events</TabsTrigger>
             <TabsTrigger value="tours" data-testid="tab-tours">Tour Requests</TabsTrigger>
             <TabsTrigger value="floor-plans" data-testid="tab-floor-plans">Floor Plans</TabsTrigger>
@@ -307,6 +308,10 @@ export default function Admin() {
 
           <TabsContent value="posts">
             <AdminDashboard type="blog-posts" />
+          </TabsContent>
+
+          <TabsContent value="team">
+            <AdminDashboard type="team" />
           </TabsContent>
 
           <TabsContent value="events">
