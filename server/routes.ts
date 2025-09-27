@@ -751,6 +751,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Community highlights routes
+  
+  // Get all highlights (for admin)
+  app.get("/api/community-highlights", async (req, res) => {
+    try {
+      const highlights = await storage.getAllCommunityHighlights();
+      res.json(highlights);
+    } catch (error) {
+      console.error("Error fetching all community highlights:", error);
+      res.status(500).json({ message: "Failed to fetch community highlights" });
+    }
+  });
+
   app.get("/api/communities/:communityId/highlights", async (req, res) => {
     try {
       const highlights = await storage.getCommunityHighlights(req.params.communityId);

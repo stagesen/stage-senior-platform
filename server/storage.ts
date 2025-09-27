@@ -192,6 +192,7 @@ export interface IStorage {
   deleteTestimonial(id: string): Promise<void>;
 
   // Community highlights operations
+  getAllCommunityHighlights(): Promise<CommunityHighlight[]>;
   getCommunityHighlights(communityId: string): Promise<CommunityHighlight[]>;
   getCommunityHighlight(id: string): Promise<CommunityHighlight | undefined>;
   createCommunityHighlight(highlight: InsertCommunityHighlight): Promise<CommunityHighlight>;
@@ -961,6 +962,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Community highlights operations
+  async getAllCommunityHighlights(): Promise<CommunityHighlight[]> {
+    const highlights = await db
+      .select()
+      .from(communityHighlights)
+      .orderBy(asc(communityHighlights.sortOrder), desc(communityHighlights.createdAt));
+    return highlights;
+  }
+
   async getCommunityHighlights(communityId: string): Promise<CommunityHighlight[]> {
     const highlights = await db
       .select()
