@@ -1,6 +1,10 @@
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
+import CommunityServiceCard from "@/components/CommunityServiceCard";
+import type { Community } from "@shared/schema";
 
 export default function Services() {
   useEffect(() => {
@@ -42,12 +46,11 @@ export default function Services() {
     }
   ];
 
-  const communities = [
-    { name: "The Gardens at Columbine", slug: "the-gardens-at-columbine" },
-    { name: "The Gardens on Quail", slug: "the-gardens-on-quail" },
-    { name: "Golden Pond", slug: "golden-pond" },
-    { name: "Stonebridge Senior", slug: "stonebridge-senior" }
-  ];
+  // Fetch communities from API
+  const { data: communities, isLoading } = useQuery<Community[]>({
+    queryKey: ["/api/communities"],
+    staleTime: 5 * 60 * 1000,
+  });
 
   return (
     <div className="min-h-screen bg-white">
@@ -130,26 +133,24 @@ export default function Services() {
             </p>
           </div>
 
-          {/* Community Logos Row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {communities.map((community, index) => (
-              <div 
-                key={index} 
-                className="flex items-center justify-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                data-testid={`community-logo-${index}`}
-              >
-                <div className="text-center">
-                  <div className="w-24 h-24 mx-auto mb-3 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center">
-                    {/* Placeholder for community logo */}
-                    <span className="text-gray-500 text-xs font-semibold">LOGO</span>
-                  </div>
-                  <p className="text-sm font-medium text-foreground">
-                    {community.name}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* Community Cards Grid */}
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-64 w-full rounded-lg" />
+              ))}
+            </div>
+          ) : communities && communities.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {communities.slice(0, 4).map((community) => (
+                <CommunityServiceCard key={community.id} community={community} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No communities available at the moment.</p>
+            </div>
+          )}
         </div>
       </section>
     </div>
