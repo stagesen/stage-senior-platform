@@ -288,31 +288,31 @@ export default function CommunitiesCarousel({
                 aria-label="Next community"
                 data-testid="carousel-next"
               />
-            </Carousel>
-            
-            {/* Progress indicators */}
-            <div className="flex flex-col items-center gap-4 mt-8">
-              {/* Dot indicators */}
-              <CarouselDots
-                count={communities.length}
-                current={selectedIndex}
-                className="flex items-center justify-center gap-2"
-                data-testid="carousel-dots"
-              />
               
-              {/* Progress bar */}
-              <CarouselProgressBar
-                current={selectedIndex}
-                total={communities.length}
-                className="w-64 max-w-full h-1"
-                data-testid="carousel-progress"
-              />
-              
-              {/* Position indicator */}
-              <div className="text-gray-600 text-sm font-medium" data-testid="carousel-position">
-                {selectedIndex + 1} of {communities.length} communities
+              {/* Progress indicators */}
+              <div className="flex flex-col items-center gap-4 mt-8">
+                {/* Dot indicators */}
+                <CarouselDots
+                  count={communities.length}
+                  current={selectedIndex}
+                  className="flex items-center justify-center gap-2"
+                  data-testid="carousel-dots"
+                />
+                
+                {/* Progress bar */}
+                <CarouselProgressBar
+                  current={selectedIndex}
+                  total={communities.length}
+                  className="w-64 max-w-full h-1"
+                  data-testid="carousel-progress"
+                />
+                
+                {/* Position indicator */}
+                <div className="text-gray-600 text-sm font-medium" data-testid="carousel-position">
+                  {selectedIndex + 1} of {communities.length} communities
+                </div>
               </div>
-            </div>
+            </Carousel>
           </div>
         )}
       </div>
