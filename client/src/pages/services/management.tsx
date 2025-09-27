@@ -29,44 +29,38 @@ export default function ProfessionalManagement() {
 
   const serviceAreas = [
     {
-      icon: <Building2 className="w-6 h-6" />,
-      title: "Business Operations",
-      description: "Resident Care, Financial Management"
-    },
-    {
       icon: <TrendingUp className="w-6 h-6" />,
       title: "Financial Management & Optimization",
-      description: "Budget planning, cost control, revenue optimization"
+      description: "We drive success through strategic budgeting and revenue optimization. Our transparent reporting and risk management protect your investment while maximizing operational efficiency."
+    },
+    {
+      icon: <Building2 className="w-6 h-6" />,
+      title: "Operational Excellence",
+      description: "We maintain exceptional standards through proactive quality assurance and regulatory compliance. Our integrated technology and maintenance programs ensure smooth, efficient operations."
     },
     {
       icon: <Heart className="w-6 h-6" />,
       title: "Clinical Care Management",
-      description: "Healthcare coordination, quality assurance, compliance"
+      description: "Our comprehensive care protocols adapt to each resident's evolving needs. Through healthcare partnerships and staff training, we deliver consistent, high-quality care."
     },
     {
       icon: <Users className="w-6 h-6" />,
       title: "Resident Experience Enhancement",
-      description: "Activity programs, satisfaction monitoring, family engagement"
+      description: "We create engaging activities and premium dining experiences that residents love. Our life enrichment programs and family communication systems ensure active, connected communities."
     },
     {
       icon: <BarChart3 className="w-6 h-6" />,
       title: "Marketing & Occupancy Growth",
-      description: "Strategic marketing, lead generation, conversion optimization"
+      description: "We build strong occupancy through targeted marketing and community outreach. Our sales training and referral networks help communities thrive and grow."
     },
     {
       icon: <Briefcase className="w-6 h-6" />,
       title: "Staffing & Human Resources",
-      description: "Recruitment, training, retention, performance management"
+      description: "We attract and retain exceptional teams through strategic recruitment and development. Our engagement initiatives create positive cultures where staff excel."
     }
   ];
 
-  const operationalPoints = [
-    "Comprehensive Operating Systems",
-    "Evidence-based management for quality outcomes",
-    "Transparent communication protocols",
-    "Proactive maintenance and environmental management",
-    "Integrated technology solutions for efficiency and reporting"
-  ];
+  // Operational Excellence section now uses three pillars structure
 
   return (
     <div className="min-h-screen bg-white">
@@ -77,6 +71,9 @@ export default function ProfessionalManagement() {
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6" data-testid="hero-title">
             Professional Management Services
           </h1>
+          <p className="text-xl md:text-2xl text-white/90" data-testid="hero-subtitle">
+            Local Leadership, Proven Excellence
+          </p>
         </div>
       </section>
 
@@ -91,9 +88,9 @@ export default function ProfessionalManagement() {
                   Our Management Philosophy
                 </h2>
                 <p className="text-lg text-muted-foreground leading-relaxed" data-testid="philosophy-description">
-                  At Stage Management, we believe in elevating senior living through personalized, community-focused care. 
-                  Our approach combines operational excellence with genuine compassion to create vibrant communities where 
-                  residents thrive.
+                  We believe that senior living should be a chapter of life marked by dignity, purpose, and joy. 
+                  Our management approach focuses on creating environments where residents thrive, families find 
+                  peace of mind, and staff members grow professionally.
                 </p>
               </div>
               <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl h-80 flex items-center justify-center">
@@ -106,22 +103,83 @@ export default function ProfessionalManagement() {
         {/* Operational Excellence */}
         <section className="py-12 bg-gray-50">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="lg:order-2">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="excellence-title">
-                  Operational Excellence
-                </h2>
-                <div className="space-y-4">
-                  {operationalPoints.map((point, index) => (
-                    <div key={index} className="flex items-start gap-3" data-testid={`excellence-point-${index}`}>
-                      <CheckCircle className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                      <p className="text-muted-foreground">{point}</p>
-                    </div>
-                  ))}
-                </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8 text-center" data-testid="excellence-title">
+              Operational Excellence
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Comprehensive Operating Systems */}
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-xl font-bold text-foreground mb-4" data-testid="pillar-systems">
+                  Comprehensive Operating Systems
+                </h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Sophisticated management protocols that ensure consistency and quality</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Performance tracking and transparent reporting</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Proactive maintenance and property management</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Integrated technology solutions for enhanced care delivery</span>
+                  </li>
+                </ul>
               </div>
-              <div className="lg:order-1 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-xl h-80 flex items-center justify-center">
-                <div className="text-white/20 text-6xl font-bold">2</div>
+              
+              {/* Service Excellence */}
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-xl font-bold text-foreground mb-4" data-testid="pillar-service">
+                  Service Excellence
+                </h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Premium dining experiences with chef-crafted menus</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Engaging activity programs that promote social connection</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Professional housekeeping and maintenance services</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Personalized care plans that adapt to changing needs</span>
+                  </li>
+                </ul>
+              </div>
+              
+              {/* Team Development */}
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-xl font-bold text-foreground mb-4" data-testid="pillar-team">
+                  Team Development
+                </h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Ongoing professional training and advancement opportunities</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Competitive compensation and benefits</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Supportive work environment that promotes retention</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">Regular team recognition and appreciation programs</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
@@ -136,8 +194,9 @@ export default function ProfessionalManagement() {
                   Proven Track Record
                 </h2>
                 <p className="text-lg text-muted-foreground leading-relaxed" data-testid="track-record-description">
-                  Our hands-on management approach has created a portfolio of successful senior communities throughout Colorado. 
-                  We combine industry expertise with local market knowledge to ensure each community reaches its full potential.
+                  Our hands-on management approach has created a portfolio of successful communities throughout the Denver metro area. 
+                  We maintain direct accessibility to both our on-site staff and investors, ensuring alignment with our high standards 
+                  of care and service.
                 </p>
               </div>
               <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-xl h-80 flex items-center justify-center">
