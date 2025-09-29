@@ -1,10 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { PageHero } from "@/components/PageHero";
 import {
   User,
   Mail,
@@ -188,8 +191,8 @@ const TeamSection = ({
 }) => {
   // Sort members by sortOrder, then by featured status, then by name
   const sortedMembers = [...members].sort((a, b) => {
-    if (a.sortOrder !== b.sortOrder) {
-      return a.sortOrder - b.sortOrder;
+    if ((a.sortOrder ?? 0) !== (b.sortOrder ?? 0)) {
+      return (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
     }
     if (a.featured !== b.featured) {
       return a.featured ? -1 : 1;
@@ -214,6 +217,21 @@ const TeamSection = ({
 };
 
 export default function Team() {
+  useEffect(() => {
+    document.title = "Our Team | Stage Senior";
+    
+    // Add meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Meet the dedicated professionals at Stage Senior who provide exceptional care and support across our Colorado senior living communities.');
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = 'description';
+      meta.content = 'Meet the dedicated professionals at Stage Senior who provide exceptional care and support across our Colorado senior living communities.';
+      document.head.appendChild(meta);
+    }
+  }, []);
+
   // Fetch team members
   const { data: teamMembers = [], isLoading, error } = useQuery<TeamMember[]>({
     queryKey: ["/api/team-members"],
@@ -254,14 +272,6 @@ export default function Team() {
     }));
   }, [teamMembers]);
 
-  // SEO meta tags
-  if (typeof document !== 'undefined') {
-    document.title = "Our Team | Stage Senior - Colorado Senior Living";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Meet the dedicated professionals at Stage Senior who provide exceptional care and support across our Colorado senior living communities.');
-    }
-  }
 
   if (error) {
     return (
@@ -277,21 +287,31 @@ export default function Team() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary via-primary/95 to-primary/90 text-white py-20">
+      <PageHero
+        pagePath="/team"
+        defaultTitle="Our Team"
+        defaultSubtitle="Dedicated Professionals Committed to Care"
+        defaultBackgroundImage="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=2000&q=80"
+      />
+
+      {/* Breadcrumb Navigation */}
+      <div className="bg-gray-50 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4" data-testid="team-hero-title">
-              Our Team
-            </h1>
-            <p className="text-xl text-white/90 leading-relaxed" data-testid="team-hero-subtitle">
-              Meet the dedicated professionals who make Stage Senior a special place. 
-              Our team members bring expertise, compassion, and genuine care to every interaction, 
-              creating communities where residents thrive and families find peace of mind.
-            </p>
-          </div>
+          <Breadcrumb data-testid="breadcrumb-navigation">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/" data-testid="breadcrumb-home">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage data-testid="breadcrumb-current">Our Team</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
-      </section>
+      </div>
 
       {/* Team Members Section */}
       <section className="py-12">

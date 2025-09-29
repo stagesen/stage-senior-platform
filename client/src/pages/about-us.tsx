@@ -54,7 +54,6 @@ export default function AboutUs() {
         pagePath="/about-us"
         defaultTitle="About Stage Senior"
         defaultSubtitle="Locally Owned, Resident-Focused"
-        defaultDescription="Founded in 2016, Stage Senior Management is a locally owned, Colorado-based senior living management company committed to exceptional care."
         defaultBackgroundImage="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=2000&q=80"
       />
 

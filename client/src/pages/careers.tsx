@@ -1,6 +1,10 @@
+import { useEffect } from "react";
+import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { PageHero } from "@/components/PageHero";
 import { 
   Briefcase, 
   Heart, 
@@ -16,6 +20,20 @@ import {
 } from "lucide-react";
 
 export default function Careers() {
+  useEffect(() => {
+    document.title = "Careers | Stage Senior";
+    
+    // Add meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Join Stage Senior and build a career that makes a difference. Explore opportunities at our four Colorado communities with competitive benefits and supportive culture.');
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = 'description';
+      meta.content = 'Join Stage Senior and build a career that makes a difference. Explore opportunities at our four Colorado communities with competitive benefits and supportive culture.';
+      document.head.appendChild(meta);
+    }
+  }, []);
   const openPositions = [
     {
       title: "Registered Nurse (RN)",
@@ -89,35 +107,31 @@ export default function Careers() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary/10 to-primary/5 py-16 md:py-24">
+      <PageHero
+        pagePath="/careers"
+        defaultTitle="Build a Career That Makes a Difference"
+        defaultSubtitle="Join Our Team"
+        defaultBackgroundImage="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=2000&q=80"
+      />
+
+      {/* Breadcrumb Navigation */}
+      <div className="bg-gray-50 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <Badge className="mb-4 text-lg px-4 py-1" variant="outline">
-              Join Our Team
-            </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Build a Career That Makes a Difference
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-              At Stage Senior, we believe exceptional care starts with exceptional people. 
-              Join a team that's locally owned, resident-focused, and committed to creating 
-              vibrant communities where seniors thrive.
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Button size="lg" className="px-8">
-                View Open Positions
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <a href="mailto:careers@stagesenior.com">
-                  <Mail className="w-5 h-5 mr-2" />
-                  Contact HR
-                </a>
-              </Button>
-            </div>
-          </div>
+          <Breadcrumb data-testid="breadcrumb-navigation">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/" data-testid="breadcrumb-home">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage data-testid="breadcrumb-current">Careers</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
-      </section>
+      </div>
 
       {/* Why Work Here */}
       <section className="py-16">

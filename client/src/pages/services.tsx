@@ -1,5 +1,8 @@
 import { useEffect } from "react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { PageHero } from "@/components/PageHero";
 import { ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -54,18 +57,31 @@ export default function Services() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Senior Living Management Solutions
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto">
-            At Stage Management, we deliver comprehensive solutions tailored to the unique needs of senior living communities. 
-            Our specialized services ensure operational excellence, compassionate care, and sustainable growth for your community.
-          </p>
+      <PageHero
+        pagePath="/services"
+        defaultTitle="Senior Living Management Solutions"
+        defaultSubtitle="Comprehensive Care & Support Services"
+        defaultBackgroundImage="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=2000&q=80"
+      />
+
+      {/* Breadcrumb Navigation */}
+      <div className="bg-gray-50 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Breadcrumb data-testid="breadcrumb-navigation">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/" data-testid="breadcrumb-home">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage data-testid="breadcrumb-current">Our Services</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
-      </section>
+      </div>
 
       {/* Three Service Sections with Alternating Layout */}
       <section className="py-16">

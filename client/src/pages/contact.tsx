@@ -1,6 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
+import { PageHero } from "@/components/PageHero";
+import { Link } from "wouter";
+import { useEffect } from "react";
 import { 
   Phone, 
   Mail, 
@@ -11,6 +15,21 @@ import {
 } from "lucide-react";
 
 export default function Contact() {
+  useEffect(() => {
+    document.title = "Contact Us | Stage Senior";
+    
+    // Add meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Contact Stage Senior today. Call (303) 436-2300 or visit one of our four Colorado communities. Schedule tours, get answers, and explore senior living options.');
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = 'description';
+      meta.content = 'Contact Stage Senior today. Call (303) 436-2300 or visit one of our four Colorado communities. Schedule tours, get answers, and explore senior living options.';
+      document.head.appendChild(meta);
+    }
+  }, []);
+
   const communities = [
     {
       name: "The Gardens at Columbine",
@@ -40,20 +59,31 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary/10 to-primary/5 py-16 md:py-24">
+      <PageHero
+        pagePath="/contact"
+        defaultTitle="Get in Touch"
+        defaultSubtitle="We're Here to Help"
+        defaultBackgroundImage="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=2000&q=80"
+      />
+
+      {/* Breadcrumb Navigation */}
+      <div className="bg-gray-50 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Get in Touch
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Whether you're exploring options for a loved one or have questions about our communities, 
-              we're here to help. Reach out today and let's start a conversation.
-            </p>
-          </div>
+          <Breadcrumb data-testid="breadcrumb-navigation">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/" data-testid="breadcrumb-home">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage data-testid="breadcrumb-current">Contact Us</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
-      </section>
+      </div>
 
       {/* Contact Options */}
       <section className="py-16">
