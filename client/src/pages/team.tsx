@@ -44,9 +44,7 @@ const TAG_PRIORITY = {
 // Team member card component
 const TeamMemberCard = ({ member }: { member: TeamMember }) => {
   const [expanded, setExpanded] = useState(false);
-  const avatarUrl = useResolveImageUrl(
-    member.avatarImageId ? `/api/images/${member.avatarImageId}` : null
-  );
+  const avatarUrl = useResolveImageUrl(member.avatarImageId);
 
   const bioPreview = member.bio && member.bio.length > 150 
     ? member.bio.substring(0, 150) + "..." 

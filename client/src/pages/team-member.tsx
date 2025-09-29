@@ -39,9 +39,7 @@ export default function TeamMemberProfile() {
   });
 
   // Resolve avatar image URL
-  const avatarUrl = useResolveImageUrl(
-    teamMember?.avatarImageId ? `/api/images/${teamMember.avatarImageId}` : null
-  );
+  const avatarUrl = useResolveImageUrl(teamMember?.avatarImageId);
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();

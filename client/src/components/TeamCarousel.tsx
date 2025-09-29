@@ -18,9 +18,7 @@ interface TeamCarouselProps {
 
 // Single team member card with avatar image
 const TeamMemberCard = ({ member }: { member: TeamMember }) => {
-  const avatarUrl = useResolveImageUrl(
-    member.avatarImageId ? `/api/images/${member.avatarImageId}` : null
-  );
+  const avatarUrl = useResolveImageUrl(member.avatarImageId);
   
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
