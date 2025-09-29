@@ -38,13 +38,13 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
   const getCareTypeColor = (careType: string) => {
     switch (careType) {
       case "assisted-living":
-        return "bg-primary/10 text-primary";
+        return "bg-blue-100 text-blue-700 border-blue-200";
       case "memory-care":
-        return "bg-accent/10 text-accent-foreground";
+        return "bg-purple-100 text-purple-700 border-purple-200";
       case "independent-living":
-        return "bg-secondary/10 text-secondary-foreground";
+        return "bg-green-100 text-green-700 border-green-200";
       default:
-        return "bg-muted/10 text-muted-foreground";
+        return "bg-gray-100 text-gray-700 border-gray-200";
     }
   };
 
