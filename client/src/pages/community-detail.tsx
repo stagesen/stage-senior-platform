@@ -48,6 +48,7 @@ import { cn } from "@/lib/utils";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import stageSeniorLogo from "@assets/stagesenior-logo_1758726889154.webp";
+import NewsletterCard from "@/components/NewsletterCard";
 import type { 
   Community, 
   Event, 
@@ -197,7 +198,7 @@ const FloorPlansGrid = ({ plans, onOpen }: { plans: any[], onOpen: (plan: any) =
 // Local subcomponent: Gallery Overview
 const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onGallerySelect: (gallery: any) => void }) => {
   // Map our gallery categories to icons
-  const categoryConfig = {
+  const categoryConfig: Record<string, { icon: typeof Users; displayName: string }> = {
     'life-activities': { icon: Users, displayName: 'Life & Activities' },
     'apartments-spaces': { icon: Home, displayName: 'Apartments & Spaces' },
     'care-team': { icon: Heart, displayName: 'Care & Team' },
@@ -232,7 +233,7 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
                 <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
                   {previewImages.length > 0 && (
                     <div className={`grid ${previewImages.length === 1 ? 'grid-cols-1' : previewImages.length === 2 ? 'grid-cols-2' : 'grid-cols-2'} gap-0.5 h-full`}>
-                      {previewImages.map((image, idx) => (
+                      {previewImages.map((image: { url: string; alt?: string }, idx: number) => (
                         <div 
                           key={idx}
                           className={`relative overflow-hidden ${
@@ -972,7 +973,7 @@ export default function CommunityDetail() {
   const slug = params.slug;
   const [selectedFloorPlan, setSelectedFloorPlan] = useState<FloorPlan | null>(null);
   const [isFloorPlanModalOpen, setIsFloorPlanModalOpen] = useState(false);
-  const [selectedGallery, setSelectedGallery] = useState<Gallery | null>(null);
+  const [selectedGallery, setSelectedGallery] = useState<any>(null);
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>("overview");
   const [showNav, setShowNav] = useState(false);
@@ -1490,24 +1491,35 @@ export default function CommunityDetail() {
         </div>
       </div>
 
-      {/* Main Content with Sticky Sidebar */}
+      {/* Newsletter Section - Featured Resource */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Overview Content */}
+          <div className="md:col-span-2">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6" data-testid="overview-title">
+              Welcome to {community.name}
+            </h2>
+            <p className="text-lg text-gray-600 leading-relaxed mb-6" data-testid="community-description">
+              {community.description || community.shortDescription || 
+                "Experience exceptional senior living in a warm, welcoming community designed with your comfort and well-being in mind. Our dedicated team provides personalized care and support, ensuring every resident enjoys a fulfilling lifestyle."}
+            </p>
+            <p className="text-gray-600 leading-relaxed">
+              At {community.name}, we believe in fostering a fulfilling lifestyle for our residents. Living in our community makes it easy to nurture your mind, body, and spirit—whether it's over a meal or during a group activity. With daily opportunities for creativity, learning, fitness, and social connections, you'll discover ways to ignite your passions and uncover new possibilities.
+            </p>
+          </div>
+
+          {/* Newsletter Card */}
+          <div className="md:col-span-1">
+            <NewsletterCard communityId={community.id} />
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content with Sticky Sidebar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-16">
-            {/* Overview Section */}
-            <section id="overview" className="scroll-mt-24">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6" data-testid="overview-title">
-                Welcome to {community.name}
-              </h2>
-              <p className="text-lg text-gray-600 leading-relaxed mb-6" data-testid="community-description">
-                {community.description || community.shortDescription || 
-                  "Experience exceptional senior living in a warm, welcoming community designed with your comfort and well-being in mind. Our dedicated team provides personalized care and support, ensuring every resident enjoys a fulfilling lifestyle."}
-              </p>
-              <p className="text-gray-600 leading-relaxed">
-                At {community.name}, we believe in fostering a fulfilling lifestyle for our residents. Living in our community makes it easy to nurture your mind, body, and spirit—whether it's over a meal or during a group activity. With daily opportunities for creativity, learning, fitness, and social connections, you'll discover ways to ignite your passions and uncover new possibilities.
-              </p>
-            </section>
 
             {/* Featured Testimonial */}
             {testimonials.length > 0 && (
@@ -1547,7 +1559,12 @@ export default function CommunityDetail() {
                 {highlights.length > 0 ? (
                   // Use database highlights if available
                   highlights.map((highlight) => (
-                    <HighlightCard key={highlight.id} highlight={highlight} />
+                    <HighlightCard key={highlight.id} highlight={{
+                      ...highlight,
+                      imageId: highlight.imageId ?? undefined,
+                      ctaLabel: highlight.ctaLabel ?? undefined,
+                      ctaHref: highlight.ctaHref ?? undefined
+                    }} />
                   ))
                 ) : community.slug === 'golden-pond' ? (
                   <>
@@ -2147,7 +2164,7 @@ export default function CommunityDetail() {
                 <GalleryOverview 
                   galleries={galleries}
                   onGallerySelect={(gallery) => {
-                    setSelectedGallery(gallery);
+                    setSelectedGallery(gallery as Gallery);
                     setIsGalleryModalOpen(true);
                   }}
                 />
