@@ -22,6 +22,8 @@ import StageCares from "@/pages/stage-cares";
 import CarePoints from "@/pages/care-points";
 import SafetyWithDignity from "@/pages/safety-with-dignity";
 import InHomeCare from "@/pages/in-home-care";
+import Careers from "@/pages/careers";
+import Contact from "@/pages/contact";
 import ProfessionalManagement from "@/pages/services/management";
 import LongTermCare from "@/pages/services/long-term-care";
 import Chaplaincy from "@/pages/services/chaplaincy";
@@ -53,6 +55,8 @@ function Router() {
           <Route path="/blog/:slug" component={Blog} />
           <Route path="/faqs" component={FAQs} />
           <Route path="/about-us" component={AboutUs} />
+          <Route path="/careers" component={Careers} />
+          <Route path="/contact" component={Contact} />
           <Route path="/services" component={Services} />
           <Route path="/stage-cares" component={StageCares} />
           <Route path="/care-points" component={CarePoints} />

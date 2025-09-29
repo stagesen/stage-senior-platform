@@ -1,12 +1,18 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, Phone } from "lucide-react";
+import { Menu, Phone, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import logoUrl from "@assets/stagesenior-logo_1758726889154.webp";
 
 export default function Header() {
@@ -17,10 +23,25 @@ export default function Header() {
   const showNavigation = !isCommunityDetailPage;
 
   const navigation = [
-    { name: "About Us", href: "/about-us" },
+    { 
+      name: "About Us", 
+      href: null,
+      dropdown: [
+        { name: "Leadership", href: "/about-us" },
+        { name: "Team", href: "/team" },
+        { name: "Careers", href: "/careers" },
+        { name: "Our Services", href: "/services" },
+      ]
+    },
     { name: "Communities", href: "/communities" },
-    { name: "Team", href: "/team" },
-    { name: "Latest News", href: "/blog" },
+    { 
+      name: "Resources", 
+      href: null,
+      dropdown: [
+        { name: "Latest News", href: "/blog" },
+        { name: "Contact Us", href: "/contact" },
+      ]
+    },
   ];
 
   return (
@@ -46,8 +67,40 @@ export default function Header() {
             <nav className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-8">
                 {navigation.map((item) => {
-                  // Robust route matching logic
                   const base = location.split(/[?#]/)[0];
+                  
+                  if (item.dropdown) {
+                    // Check if any dropdown item is active
+                    const isActiveDropdown = item.dropdown.some(
+                      subItem => base === subItem.href || base.startsWith(subItem.href + "/")
+                    );
+                    
+                    return (
+                      <DropdownMenu key={item.name}>
+                        <DropdownMenuTrigger className={`px-3 py-2 text-xl font-bold transition-all duration-200 ease-in-out focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none hover:scale-105 relative before:absolute before:inset-0 before:rounded-md before:transition-opacity before:duration-200 before:opacity-0 hover:before:opacity-100 before:bg-gradient-to-r before:from-primary/5 before:to-primary/10 flex items-center gap-1 ${
+                          isActiveDropdown
+                            ? "text-primary bg-primary/10 rounded-md"
+                            : "text-foreground hover:text-primary"
+                        }`}>
+                          {item.name}
+                          <ChevronDown className="w-4 h-4" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                          {item.dropdown.map((subItem) => (
+                            <DropdownMenuItem key={subItem.name} asChild>
+                              <Link
+                                href={subItem.href}
+                                className="w-full cursor-pointer"
+                              >
+                                {subItem.name}
+                              </Link>
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    );
+                  }
+                  
                   const isActive = base === item.href || base.startsWith(item.href + "/");
                   return (
                     <Link
@@ -91,8 +144,37 @@ export default function Header() {
                 <SheetContent side="right" className="w-[300px]">
                   <nav className="flex flex-col space-y-4 mt-8">
                     {navigation.map((item) => {
-                      // Robust route matching logic
                       const base = location.split(/[?#]/)[0];
+                      
+                      if (item.dropdown) {
+                        return (
+                          <div key={item.name} className="space-y-2">
+                            <div className="px-3 py-2 text-xl font-bold text-foreground">
+                              {item.name}
+                            </div>
+                            <div className="pl-4 space-y-2">
+                              {item.dropdown.map((subItem) => {
+                                const isActive = base === subItem.href || base.startsWith(subItem.href + "/");
+                                return (
+                                  <Link
+                                    key={subItem.name}
+                                    href={subItem.href}
+                                    className={`block px-3 py-2 text-lg transition-all duration-200 ${
+                                      isActive
+                                        ? "text-primary bg-primary/10 rounded-md"
+                                        : "text-foreground hover:text-primary"
+                                    }`}
+                                    onClick={() => setIsOpen(false)}
+                                  >
+                                    {subItem.name}
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      }
+                      
                       const isActive = base === item.href || base.startsWith(item.href + "/");
                       return (
                         <Link
