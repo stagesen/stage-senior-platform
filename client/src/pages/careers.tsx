@@ -200,49 +200,99 @@ export default function Careers() {
               Current Openings
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Find your next opportunity with Stage Senior
+              Explore career opportunities at our four Colorado communities
             </p>
           </div>
 
-          <div className="space-y-4">
-            {openPositions.map((position, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                    <div>
-                      <CardTitle className="text-xl mb-2">{position.title}</CardTitle>
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary">
-                          <MapPin className="w-3 h-3 mr-1" />
-                          {position.location}
-                        </Badge>
-                        <Badge variant="outline">
-                          <Clock className="w-3 h-3 mr-1" />
-                          {position.type}
-                        </Badge>
-                        <Badge>
-                          <Briefcase className="w-3 h-3 mr-1" />
-                          {position.department}
-                        </Badge>
-                      </div>
-                    </div>
-                    <Button className="mt-4 md:mt-0">Apply Now</Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{position.description}</p>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="text-xl">The Gardens on Quail</CardTitle>
+                <p className="text-sm text-muted-foreground flex items-center gap-1 mt-2">
+                  <MapPin className="w-4 h-4" />
+                  Arvada, CO
+                </p>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  Join our upscale community offering independent living, assisted living, and memory care in a beautiful setting.
+                </p>
+                <Button className="w-full" asChild>
+                  <a href="https://www.gardensonquail.com/employment" target="_blank" rel="noopener noreferrer">
+                    View Open Positions
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="text-xl">Golden Pond</CardTitle>
+                <p className="text-sm text-muted-foreground flex items-center gap-1 mt-2">
+                  <MapPin className="w-4 h-4" />
+                  Golden, CO
+                </p>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  Be part of a community with 20+ years of excellence in senior care, offering IL, AL, and memory care.
+                </p>
+                <Button className="w-full" asChild>
+                  <a href="https://www.goldenpond.com/employment" target="_blank" rel="noopener noreferrer">
+                    View Open Positions
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="text-xl">The Gardens at Columbine</CardTitle>
+                <p className="text-sm text-muted-foreground flex items-center gap-1 mt-2">
+                  <MapPin className="w-4 h-4" />
+                  Littleton, CO
+                </p>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  Work in our serene community known for expansive gardens and thoughtful memory care design.
+                </p>
+                <Button className="w-full" asChild>
+                  <a href="https://www.gardensatcolumbine.com/employment" target="_blank" rel="noopener noreferrer">
+                    View Open Positions
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="text-xl">Stonebridge Senior</CardTitle>
+                <p className="text-sm text-muted-foreground flex items-center gap-1 mt-2">
+                  <MapPin className="w-4 h-4" />
+                  Arvada, CO
+                </p>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  Join a team committed to our 'Your Story First' philosophy of personalized care.
+                </p>
+                <Button className="w-full" asChild>
+                  <a href="https://www.stonebridgesenior.com/careers" target="_blank" rel="noopener noreferrer">
+                    View Open Positions
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
           </div>
 
           <div className="text-center mt-8">
             <p className="text-muted-foreground mb-4">
-              Don't see your perfect position? We're always looking for talented people.
+              Have questions about careers at Stage Senior? We're here to help.
             </p>
             <Button variant="outline" size="lg" asChild>
               <a href="mailto:careers@stagesenior.com">
-                Send Us Your Resume
+                Contact Our HR Team
               </a>
             </Button>
           </div>
