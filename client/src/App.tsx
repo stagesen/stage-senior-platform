@@ -73,7 +73,8 @@ function Router() {
           <Route component={NotFound} />
         </Switch>
       </main>
-      <Footer />
+      {/* Don't show main footer on in-home care page */}
+      {!isInHomeCare && <Footer />}
       <ScrollToTop />
     </div>
   );
