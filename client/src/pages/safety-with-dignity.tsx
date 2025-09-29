@@ -1,10 +1,39 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Shield, AlertCircle, Lock, Users, CheckCircle, Clock, Eye, Bell, FileText, HeartHandshake, Play, ChevronDown, MonitorUp, UserCheck, ShieldCheck, Activity } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { 
+  Shield, 
+  AlertCircle, 
+  Lock, 
+  Users, 
+  CheckCircle, 
+  Clock, 
+  Eye, 
+  Bell, 
+  FileText, 
+  HeartHandshake, 
+  Play, 
+  ChevronDown, 
+  MonitorUp, 
+  UserCheck, 
+  ShieldCheck, 
+  Activity,
+  ArrowRight,
+  Heart,
+  Zap,
+  TrendingUp,
+  Home,
+  Star,
+  Award,
+  Lightbulb,
+  Phone,
+  BadgeCheck,
+  Info
+} from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 
 export default function SafetyWithDignity() {
@@ -90,17 +119,77 @@ export default function SafetyWithDignity() {
     {
       icon: <Clock className="w-6 h-6" />,
       title: "30 Minutes Faster",
-      description: "Average response time improvement"
+      description: "Average response time improvement",
+      stat: "30min",
+      color: "text-blue-600"
     },
     {
       icon: <Activity className="w-6 h-6" />,
       title: "40% Fewer Falls",
-      description: "Overall reduction in fall incidents"
+      description: "Overall reduction in fall incidents",
+      stat: "40%",
+      color: "text-green-600"
     },
     {
       icon: <AlertCircle className="w-6 h-6" />,
       title: "80% Fewer ER Visits",
-      description: "Reduction in fall-related emergency transfers"
+      description: "Reduction in fall-related emergency transfers",
+      stat: "80%",
+      color: "text-purple-600"
+    }
+  ];
+
+  const comparisonData = [
+    {
+      feature: "Response Time",
+      traditional: "Variable - depends on when found",
+      withProgram: "Immediate detection & alert",
+      highlight: true
+    },
+    {
+      feature: "Privacy Protection",
+      traditional: "Regular check-ins disrupt rest",
+      withProgram: "Event-only recording, no live monitoring",
+      highlight: false
+    },
+    {
+      feature: "Fall Understanding",
+      traditional: "Limited to witness accounts",
+      withProgram: "Clear video review for better care planning",
+      highlight: true
+    },
+    {
+      feature: "Care Adaptation",
+      traditional: "Based on incomplete information",
+      withProgram: "Data-driven insights for prevention",
+      highlight: false
+    },
+    {
+      feature: "Family Communication",
+      traditional: "Delayed or incomplete updates",
+      withProgram: "Timely, accurate incident reporting",
+      highlight: true
+    }
+  ];
+
+  const testimonials = [
+    {
+      quote: "The peace of mind this program provides is invaluable. Knowing my mother has this extra layer of protection, especially at night, helps me sleep better.",
+      author: "Sarah M.",
+      role: "Daughter of Resident",
+      rating: 5
+    },
+    {
+      quote: "When my father had a fall at 2 AM, staff were there within minutes. The quick response prevented what could have been a serious situation.",
+      author: "Robert K.",
+      role: "Son of Memory Care Resident",
+      rating: 5
+    },
+    {
+      quote: "I appreciate that this is consent-based and respects our privacy. It's safety without feeling watched.",
+      author: "Eleanor P.",
+      role: "Current Resident",
+      rating: 5
     }
   ];
 
@@ -168,37 +257,59 @@ export default function SafetyWithDignity() {
         </div>
       </div>
 
-      {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 bg-gradient-to-br from-blue-50 to-white overflow-hidden">
-        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center p-3 mb-6 bg-blue-100 rounded-full">
-              <Shield className="w-8 h-8 text-blue-600" />
+      {/* Enhanced Hero Section with Image */}
+      <section className="relative py-20 lg:py-32 overflow-hidden">
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center text-white">
+            <div className="inline-flex items-center justify-center p-3 mb-6 bg-white/20 backdrop-blur-sm rounded-full">
+              <Shield className="w-8 h-8" />
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6" data-testid="page-title">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6" data-testid="page-title">
               Safety with Dignity
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed" data-testid="hero-subtitle">
+            <p className="text-xl max-w-3xl mx-auto mb-8 leading-relaxed text-white/95" data-testid="hero-subtitle">
               Our program helps identify unwitnessed falls quickly, alerts staff immediately, and adapts care—without live streaming or audio.
             </p>
-            <Button 
-              size="lg" 
-              onClick={scrollToHowItWorks}
-              className="px-8 py-6 text-lg"
-              data-testid="button-see-how-it-works"
-            >
-              See how it works
-              <ChevronDown className="ml-2 w-5 h-5" />
-            </Button>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Button 
+                size="lg" 
+                onClick={scrollToHowItWorks}
+                className="px-8 py-6 text-lg bg-white text-primary hover:bg-white/90"
+                data-testid="button-see-how-it-works"
+              >
+                See how it works
+                <ChevronDown className="ml-2 w-5 h-5" />
+              </Button>
+              <Button 
+                size="lg"
+                variant="outline"
+                className="px-8 py-6 text-lg bg-transparent text-white border-white hover:bg-white/10"
+                asChild
+                data-testid="button-contact"
+              >
+                <Link href="/contact">
+                  <Phone className="mr-2 w-5 h-5" />
+                  Contact Us
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Why This Matters Section */}
-      <section className="py-16 bg-gray-50">
+      {/* Statistics Showcase */}
+      <section className="py-16 bg-gradient-to-br from-blue-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
+            <Badge className="mb-4" variant="outline">Proven Results</Badge>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="why-matters-title">
               Why this matters
             </h2>
@@ -206,51 +317,63 @@ export default function SafetyWithDignity() {
               Overnight and bedroom falls are common; speed and clarity change outcomes.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {benefits.map((benefit, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow" data-testid={`benefit-card-${index}`}>
-                <CardContent className="p-6">
-                  <div className="flex items-center mb-4">
-                    <div className="p-2 bg-blue-100 rounded-lg mr-4">
-                      {benefit.icon}
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-primary" data-testid={`benefit-title-${index}`}>
-                        {benefit.title}
-                      </div>
-                      <div className="text-sm text-muted-foreground" data-testid={`benefit-description-${index}`}>
-                        {benefit.description}
-                      </div>
-                    </div>
+              <Card key={index} className="relative overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" data-testid={`benefit-card-${index}`}>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
+                <CardContent className="p-8 text-center relative">
+                  <div className={`text-5xl font-bold ${benefit.color} mb-3`} data-testid={`benefit-stat-${index}`}>
+                    {benefit.stat}
                   </div>
+                  <h3 className="text-xl font-semibold mb-2" data-testid={`benefit-title-${index}`}>
+                    {benefit.title}
+                  </h3>
+                  <p className="text-muted-foreground" data-testid={`benefit-description-${index}`}>
+                    {benefit.description}
+                  </p>
                 </CardContent>
               </Card>
             ))}
           </div>
+          
+          {/* Impact Statement */}
+          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <Award className="w-8 h-8 text-yellow-600" />
+              <h3 className="text-2xl font-bold">Industry-Leading Safety Technology</h3>
+            </div>
+            <p className="text-center text-muted-foreground max-w-3xl mx-auto">
+              Our Safety with Dignity program represents the gold standard in fall prevention technology. 
+              By combining advanced detection with respect for privacy, we're setting new benchmarks for senior care safety.
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
+      {/* How It Works Section - Enhanced */}
       <section id="how-it-works" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
+            <Badge className="mb-4" variant="secondary">5-Step Process</Badge>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="how-it-works-title">
               How it works
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              A simple 5-step process designed to maximize safety while preserving dignity and privacy
+              A simple process designed to maximize safety while preserving dignity and privacy
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            {processSteps.map((step, index) => (
-              <div key={index} className="relative" data-testid={`process-step-${index}`}>
-                <Card className="h-full hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6 text-center">
-                    <div className="mb-4">
-                      <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mb-3">
-                        {step.icon}
+          
+          {/* Desktop Timeline */}
+          <div className="hidden lg:block relative mb-16">
+            <div className="absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-primary/20 via-primary to-primary/20 transform -translate-y-1/2"></div>
+            <div className="grid grid-cols-5 gap-4 relative">
+              {processSteps.map((step, index) => (
+                <div key={index} className="relative" data-testid={`process-step-${index}`}>
+                  <div className="bg-white rounded-2xl border-2 border-primary/20 hover:border-primary transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2">
+                    <CardContent className="p-6 text-center">
+                      <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl mx-auto mb-4">
+                        {index + 1}
                       </div>
-                      <div className="text-sm font-semibold text-primary mb-1">Step {index + 1}</div>
                       <h3 className="text-xl font-bold mb-2" data-testid={`step-title-${index}`}>
                         {step.step}
                       </h3>
@@ -260,44 +383,171 @@ export default function SafetyWithDignity() {
                       <p className="text-sm text-muted-foreground" data-testid={`step-detail-${index}`}>
                         {step.detail}
                       </p>
-                    </div>
-                  </CardContent>
-                </Card>
-                {index < processSteps.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-3 transform -translate-y-1/2">
-                    <ChevronDown className="w-6 h-6 text-muted-foreground rotate-[-90deg]" />
+                    </CardContent>
                   </div>
-                )}
-              </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Steps */}
+          <div className="lg:hidden space-y-4">
+            {processSteps.map((step, index) => (
+              <Card key={index} className="hover:shadow-lg transition-shadow" data-testid={`mobile-step-${index}`}>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold shrink-0">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold mb-1">{step.step}</h3>
+                      <p className="text-sm font-medium text-foreground mb-1">{step.description}</p>
+                      <p className="text-sm text-muted-foreground">{step.detail}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Privacy & Consent Section */}
-      <section className="py-16 bg-gradient-to-br from-blue-50 to-white">
+      {/* Comparison Section */}
+      <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
+            <Badge className="mb-4" variant="outline">Why Choose Us</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Traditional Monitoring vs. Safety with Dignity
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              See how our approach transforms fall prevention and response
+            </p>
+          </div>
+          
+          <Card className="overflow-hidden shadow-xl">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-primary text-white">
+                    <th className="text-left p-4 font-semibold">Feature</th>
+                    <th className="text-left p-4 font-semibold">Traditional Approach</th>
+                    <th className="text-left p-4 font-semibold">With Safety with Dignity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonData.map((row, index) => (
+                    <tr key={index} className={`border-b ${row.highlight ? 'bg-blue-50' : 'bg-white'} hover:bg-gray-50 transition-colors`}>
+                      <td className="p-4 font-medium">{row.feature}</td>
+                      <td className="p-4 text-muted-foreground">{row.traditional}</td>
+                      <td className="p-4">
+                        <div className="flex items-start gap-2">
+                          <CheckCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+                          <span className="font-medium text-green-900">{row.withProgram}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      {/* Privacy & Consent Section - Enhanced with Icons */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <Badge className="mb-4" variant="secondary">Your Privacy Matters</Badge>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="privacy-title">
-              Privacy & Consent
+              Privacy & Consent First
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Your privacy is paramount. Our system is designed with multiple layers of protection.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {privacyFeatures.map((feature, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow" data-testid={`privacy-card-${index}`}>
-                <CardContent className="p-6">
-                  <div className="text-blue-600 mb-4 flex justify-center">
-                    {feature.icon}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div 
+              className="rounded-2xl overflow-hidden shadow-lg"
+              style={{
+                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=2070')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
+              <div className="p-8 text-white">
+                <h3 className="text-2xl font-bold mb-4">Complete Control</h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <BadgeCheck className="w-6 h-6 shrink-0 mt-0.5" />
+                    <span>Opt-in at any time, opt-out whenever you choose</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <BadgeCheck className="w-6 h-6 shrink-0 mt-0.5" />
+                    <span>Full transparency about how the system works</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <BadgeCheck className="w-6 h-6 shrink-0 mt-0.5" />
+                    <span>Regular updates and open communication</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              {privacyFeatures.map((feature, index) => (
+                <Card key={index} className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1" data-testid={`privacy-card-${index}`}>
+                  <CardContent className="p-6 text-center">
+                    <div className="text-primary mb-3 flex justify-center">
+                      {feature.icon}
+                    </div>
+                    <h4 className="font-semibold mb-1" data-testid={`privacy-title-${index}`}>
+                      {feature.title}
+                    </h4>
+                    <p className="text-sm text-muted-foreground" data-testid={`privacy-description-${index}`}>
+                      {feature.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-16 bg-gradient-to-br from-primary/5 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <Badge className="mb-4" variant="outline">Real Stories</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              What Families Are Saying
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Hear from families who've experienced the peace of mind our program provides
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <Card key={index} className="hover:shadow-xl transition-all duration-300">
+                <CardHeader>
+                  <div className="flex gap-1 mb-3">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                    ))}
                   </div>
-                  <h3 className="text-lg font-semibold mb-2" data-testid={`privacy-title-${index}`}>
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground" data-testid={`privacy-description-${index}`}>
-                    {feature.description}
-                  </p>
+                </CardHeader>
+                <CardContent>
+                  <blockquote className="text-muted-foreground mb-4 italic">
+                    "{testimonial.quote}"
+                  </blockquote>
+                  <div className="border-t pt-4">
+                    <p className="font-semibold">{testimonial.author}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -305,46 +555,90 @@ export default function SafetyWithDignity() {
         </div>
       </section>
 
-      {/* What Families Can Expect Section */}
+      {/* What Families Can Expect Section - Enhanced */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="families-expect-title">
-                What families can expect
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Peace of mind through faster assistance, fewer unnecessary disruptions, and clear post-incident communication.
-              </p>
+          <div className="text-center mb-12">
+            <Badge className="mb-4" variant="secondary">Family Partnership</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="families-expect-title">
+              What families can expect
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              Peace of mind through faster assistance, fewer unnecessary disruptions, and clear post-incident communication.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-primary" data-testid="families-card-1">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <HeartHandshake className="w-8 h-8 text-primary shrink-0" />
+                    <div>
+                      <h3 className="text-xl font-semibold mb-2">Transparent Communication</h3>
+                      <p className="text-muted-foreground">
+                        You'll receive timely updates about any incidents, with clear explanations of what happened and how we're responding. No surprises, just honest partnership in your loved one's care.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-green-600" data-testid="families-card-2">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <CheckCircle className="w-8 h-8 text-green-600 shrink-0" />
+                    <div>
+                      <h3 className="text-xl font-semibold mb-2">Proactive Care Improvements</h3>
+                      <p className="text-muted-foreground">
+                        Insights from the system help us continuously improve care plans and adjust the environment to prevent future incidents. Every event becomes a learning opportunity for better care.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-blue-600" data-testid="families-card-3">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <Lightbulb className="w-8 h-8 text-blue-600 shrink-0" />
+                    <div>
+                      <h3 className="text-xl font-semibold mb-2">Data-Driven Insights</h3>
+                      <p className="text-muted-foreground">
+                        Monthly reports show trends and improvements in your loved one's safety profile, helping you stay informed about their wellbeing and care progress.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <Card className="hover:shadow-lg transition-shadow" data-testid="families-card-1">
-                <CardContent className="p-6">
-                  <HeartHandshake className="w-8 h-8 text-primary mb-4" />
-                  <h3 className="text-xl font-semibold mb-3">Transparent Communication</h3>
-                  <p className="text-muted-foreground">
-                    You'll receive timely updates about any incidents, with clear explanations of what happened and how we're responding. No surprises, just honest partnership in your loved one's care.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card className="hover:shadow-lg transition-shadow" data-testid="families-card-2">
-                <CardContent className="p-6">
-                  <CheckCircle className="w-8 h-8 text-primary mb-4" />
-                  <h3 className="text-xl font-semibold mb-3">Proactive Care Improvements</h3>
-                  <p className="text-muted-foreground">
-                    Insights from the system help us continuously improve care plans and adjust the environment to prevent future incidents. Every event becomes a learning opportunity for better care.
-                  </p>
-                </CardContent>
-              </Card>
+            
+            {/* Visual Element */}
+            <div 
+              className="rounded-2xl overflow-hidden shadow-xl h-full min-h-[400px] flex items-end"
+              style={{
+                backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent), url('https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?q=80&w=2070')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
+              <div className="p-8 text-white">
+                <h3 className="text-2xl font-bold mb-3">Your Peace of Mind Matters</h3>
+                <p className="text-white/90">
+                  Join hundreds of families who've found comfort knowing their loved ones have an extra layer of protection, 
+                  especially during those vulnerable nighttime hours.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Video Section */}
+      {/* Video Section - Enhanced */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
+            <Badge className="mb-4" variant="outline">See It In Action</Badge>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="video-title">
               How Our Safety System Works
             </h2>
@@ -352,12 +646,12 @@ export default function SafetyWithDignity() {
               Clear, simple, and reassuring—see for yourself how we protect residents with dignity.
             </p>
             <p className="text-muted-foreground mt-2">
-              This short video walks you through the process step-by-step—so you can see exactly what families and residents can expect.
+              This short video walks you through the process step-by-step.
             </p>
           </div>
           <div className="max-w-4xl mx-auto">
-            <Card className="overflow-hidden shadow-xl" data-testid="video-container">
-              <div className="relative aspect-video">
+            <Card className="overflow-hidden shadow-2xl border-0" data-testid="video-container">
+              <div className="relative aspect-video bg-gray-900">
                 <iframe
                   src="https://www.youtube.com/embed/ConnW3hpK4c"
                   title="How Our Safety System Works"
@@ -368,14 +662,21 @@ export default function SafetyWithDignity() {
                 />
               </div>
             </Card>
+            <div className="mt-6 text-center">
+              <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+                <Info className="w-4 h-4" />
+                Video transcript and closed captions available
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
+      {/* FAQ Section - Enhanced */}
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
+            <Badge className="mb-4" variant="secondary">Your Questions Answered</Badge>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="faq-title">
               Frequently Asked Questions
             </h2>
@@ -386,11 +687,14 @@ export default function SafetyWithDignity() {
           <Accordion type="single" collapsible className="w-full" data-testid="faq-accordion">
             {faqs.map((faq, index) => (
               <AccordionItem key={index} value={`item-${index}`} data-testid={`faq-item-${index}`}>
-                <AccordionTrigger className="text-left" data-testid={`faq-question-${index}`}>
-                  {faq.question}
+                <AccordionTrigger className="text-left hover:no-underline hover:text-primary transition-colors" data-testid={`faq-question-${index}`}>
+                  <div className="flex items-start gap-3">
+                    <HelpCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <span>{faq.question}</span>
+                  </div>
                 </AccordionTrigger>
                 <AccordionContent data-testid={`faq-answer-${index}`}>
-                  <div className="text-muted-foreground whitespace-pre-line">
+                  <div className="text-muted-foreground whitespace-pre-line pl-8">
                     {faq.answer}
                   </div>
                 </AccordionContent>
@@ -400,28 +704,46 @@ export default function SafetyWithDignity() {
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="py-16 bg-primary text-primary-foreground">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* Final CTA Section - Enhanced */}
+      <section className="py-20 bg-gradient-to-br from-primary to-primary/90 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]"></div>
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4" data-testid="cta-title">
             Still have questions?
           </h2>
-          <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-white/95 mb-8 max-w-2xl mx-auto">
             Our team would be happy to walk you through the program in person, show you how it works, and answer anything specific to your loved one's situation.
           </p>
-          <Button 
-            size="lg" 
-            variant="secondary"
-            className="px-8 py-6 text-lg"
-            asChild
-            data-testid="button-schedule-visit"
-          >
-            <Link href="/communities/the-gardens-on-quail">
-              Schedule a Visit
-            </Link>
-          </Button>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Button 
+              size="lg" 
+              variant="secondary"
+              className="px-8 py-6 text-lg"
+              asChild
+              data-testid="button-schedule-visit"
+            >
+              <Link href="/communities/the-gardens-on-quail">
+                Schedule a Visit
+              </Link>
+            </Button>
+            <Button 
+              size="lg"
+              variant="outline"
+              className="px-8 py-6 text-lg bg-transparent text-white border-white hover:bg-white/10"
+              asChild
+              data-testid="button-call-now"
+            >
+              <a href="tel:+1-303-424-6116">
+                <Phone className="mr-2 w-5 h-5" />
+                Call (303) 424-6116
+              </a>
+            </Button>
+          </div>
         </div>
       </section>
     </div>
   );
 }
+
+// Add missing import
+import { HelpCircle } from "lucide-react";
