@@ -157,27 +157,6 @@ export default function TestimonialSection() {
             Don't just take our word for it. Hear directly from residents and families
             who've experienced the Stage Senior difference.
           </p>
-
-          {/* Stats bar */}
-          <div className="flex flex-wrap justify-center gap-8 mt-10">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-1">4.8</div>
-              <div className="flex items-center gap-1 justify-center mb-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`w-4 h-4 ${i < 4 ? 'fill-yellow-400 text-yellow-400' : 'fill-yellow-400/50 text-yellow-400/50'}`} />
-                ))}
-              </div>
-              <div className="text-sm text-muted-foreground">Average Rating</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-1">98%</div>
-              <div className="text-sm text-muted-foreground">Would Recommend</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-1">500+</div>
-              <div className="text-sm text-muted-foreground">Happy Families</div>
-            </div>
-          </div>
         </div>
 
         {/* Testimonial Carousel */}
