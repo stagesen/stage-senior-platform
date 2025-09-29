@@ -85,7 +85,7 @@ export default function Header() {
                           {item.name}
                           <ChevronDown className="w-4 h-4" />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="min-w-[250px] p-3 bg-background/95 backdrop-blur-md border-2 shadow-xl">
+                        <DropdownMenuContent align="start" className="min-w-[250px] p-3 bg-background border-2 shadow-xl">
                           {item.dropdown.map((subItem) => {
                             const isActive = base === subItem.href || base.startsWith(subItem.href + "/");
                             return (
