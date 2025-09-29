@@ -119,6 +119,16 @@ const BLOG_CATEGORIES = [
   "community-spotlight"
 ];
 
+// Predefined blog tags
+const PREDEFINED_BLOG_TAGS = [
+  "Newsletter",
+  "Community Update",
+  "Events",
+  "Health & Wellness",
+  "Activities",
+  "Announcements"
+];
+
 // Amenity categories
 const AMENITY_CATEGORIES = [
   "wellness",
@@ -178,6 +188,125 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Check, X } from "lucide-react";
+
+// BlogPostTagInput component for managing blog post tags with predefined tags
+const BlogPostTagInput = ({ value, onChange, dataTestId }: {
+  value: string[];
+  onChange: (tags: string[]) => void;
+  dataTestId?: string;
+}) => {
+  const [inputValue, setInputValue] = useState("");
+  
+  const addTag = (tag: string) => {
+    const trimmedTag = tag.trim();
+    if (trimmedTag && !value.includes(trimmedTag)) {
+      onChange([...value, trimmedTag]);
+    }
+    setInputValue("");
+  };
+  
+  const removeTag = (tagToRemove: string) => {
+    onChange(value.filter(tag => tag !== tagToRemove));
+  };
+  
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && inputValue.trim()) {
+      e.preventDefault();
+      addTag(inputValue);
+    } else if (e.key === "Backspace" && !inputValue && value.length > 0) {
+      removeTag(value[value.length - 1]);
+    }
+  };
+  
+  return (
+    <div className="space-y-3">
+      {/* Predefined tags as clickable buttons */}
+      <div>
+        <p className="text-sm text-muted-foreground mb-2">Quick add tags:</p>
+        <div className="flex flex-wrap gap-2">
+          {PREDEFINED_BLOG_TAGS.map((tag) => (
+            <Button
+              key={tag}
+              type="button"
+              variant={value.includes(tag) ? "default" : "outline"}
+              size="sm"
+              onClick={() => {
+                if (value.includes(tag)) {
+                  removeTag(tag);
+                } else {
+                  addTag(tag);
+                }
+              }}
+              className={tag === "Newsletter" && value.includes(tag) ? "bg-destructive hover:bg-destructive/90" : ""}
+              data-testid={`button-tag-preset-${tag.toLowerCase().replace(/\s+/g, '-')}`}
+            >
+              {value.includes(tag) && <Check className="w-3 h-3 mr-1" />}
+              {tag}
+            </Button>
+          ))}
+        </div>
+      </div>
+      
+      {/* Selected tags display */}
+      <div>
+        <p className="text-sm text-muted-foreground mb-2">Selected tags:</p>
+        <div className="flex flex-wrap gap-2 min-h-[2.5rem] p-3 border rounded-md bg-muted/10">
+          {value.length === 0 ? (
+            <span className="text-sm text-muted-foreground">No tags selected</span>
+          ) : (
+            value.map((tag, index) => (
+              <Badge 
+                key={index} 
+                variant={tag === "Newsletter" ? "destructive" : "secondary"}
+                className="flex items-center gap-1 px-2 py-1"
+              >
+                {tag}
+                <button
+                  type="button"
+                  onClick={() => removeTag(tag)}
+                  className="hover:bg-secondary-foreground/20 rounded-full p-0.5 ml-1"
+                  data-testid={`button-remove-tag-${index}`}
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            ))
+          )}
+        </div>
+      </div>
+      
+      {/* Custom tag input */}
+      <div>
+        <p className="text-sm text-muted-foreground mb-2">Add custom tag:</p>
+        <div className="flex gap-2">
+          <Input
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Type a custom tag and press Enter"
+            className="flex-1"
+            data-testid={dataTestId || "input-custom-tag"}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="default"
+            onClick={() => {
+              if (inputValue.trim()) {
+                addTag(inputValue);
+              }
+            }}
+            disabled={!inputValue.trim()}
+            data-testid="button-add-custom-tag"
+          >
+            <Plus className="w-4 h-4 mr-1" />
+            Add
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // TagInput component for managing tags with suggestions
 const TagInput = ({ value, onChange, placeholder, dataTestId }: {
@@ -1436,14 +1565,15 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
         data.lng = data.longitude;
       }
     }
-    // For blog posts, generate slug if not provided and process tags
+    // For blog posts, generate slug if not provided
     if (type === "blog-posts") {
       if (!data.slug && data.title) {
         data.slug = generateSlug(data.title);
       }
-      // Convert tags string to array if needed
-      if (typeof data.tags === 'string') {
-        data.tags = data.tags.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag);
+      // Tags are already an array from the BlogPostTagInput component
+      // Ensure it's an array (defensive programming)
+      if (!Array.isArray(data.tags)) {
+        data.tags = [];
       }
     }
     // For floor plans, ensure planSlug is set to name if not provided
@@ -1484,11 +1614,11 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       setSelectedAmenities(item.amenityIds || []);
     }
     
-    // For blog posts, convert tags array to string for editing
+    // For blog posts, ensure tags remain as array
     if (type === "blog-posts") {
       const blogPostData = {
         ...item,
-        tags: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '',
+        tags: Array.isArray(item.tags) ? item.tags : [],
         publishedAt: item.publishedAt ? new Date(item.publishedAt) : new Date(),
       };
       setEditingItem(item);
@@ -2545,18 +2675,15 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   <FormItem>
                     <FormLabel>Tags</FormLabel>
                     <FormControl>
-                      <Input 
-                        {...field}
-                        value={Array.isArray(field.value) ? field.value.join(', ') : field.value || ''}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          field.onChange(value);
+                      <BlogPostTagInput
+                        value={Array.isArray(field.value) ? field.value : []}
+                        onChange={(tags) => {
+                          field.onChange(tags);
                         }}
-                        placeholder="Enter tags separated by commas (e.g., health, wellness, activities)"
-                        data-testid="input-blog-tags" 
+                        dataTestId="input-blog-tags"
                       />
                     </FormControl>
-                    <FormDescription>Comma-separated list of tags</FormDescription>
+                    <FormDescription>Add predefined or custom tags to categorize your blog post</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -5083,6 +5210,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
               <TableHead>Title</TableHead>
               <TableHead>Author</TableHead>
               <TableHead>Category</TableHead>
+              <TableHead>Tags</TableHead>
               <TableHead>Community</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Published</TableHead>
@@ -5107,6 +5235,28 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     <Badge variant="outline">
                       {item.category ? item.category.charAt(0).toUpperCase() + item.category.slice(1).replace(/-/g, ' ') : "Uncategorized"}
                     </Badge>
+                  </TableCell>
+                  <TableCell className="max-w-[200px]">
+                    <div className="flex flex-wrap gap-1">
+                      {item.tags && Array.isArray(item.tags) && item.tags.length > 0 ? (
+                        item.tags.slice(0, 3).map((tag, index) => (
+                          <Badge 
+                            key={index} 
+                            variant={tag === "Newsletter" ? "destructive" : "secondary"}
+                            className="text-xs"
+                          >
+                            {tag}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-xs text-muted-foreground">No tags</span>
+                      )}
+                      {item.tags && item.tags.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{item.tags.length - 3}
+                        </Badge>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>{community?.name || "General"}</TableCell>
                   <TableCell>
