@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, Phone, ChevronDown } from "lucide-react";
+import { Menu, Phone, ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import {
   Sheet,
@@ -85,17 +85,31 @@ export default function Header() {
                           {item.name}
                           <ChevronDown className="w-4 h-4" />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="min-w-[200px] p-2">
-                          {item.dropdown.map((subItem) => (
-                            <DropdownMenuItem key={subItem.name} asChild className="px-3 py-2.5">
-                              <Link
-                                href={subItem.href}
-                                className="w-full cursor-pointer text-lg font-medium"
+                        <DropdownMenuContent align="start" className="min-w-[250px] p-3 bg-background/95 backdrop-blur-md border-2 shadow-xl">
+                          {item.dropdown.map((subItem) => {
+                            const isActive = base === subItem.href || base.startsWith(subItem.href + "/");
+                            return (
+                              <DropdownMenuItem 
+                                key={subItem.name} 
+                                asChild 
+                                className="px-4 py-3.5 mb-1 rounded-lg transition-all duration-200 hover:scale-[1.02] focus:scale-[1.02]"
                               >
-                                {subItem.name}
-                              </Link>
-                            </DropdownMenuItem>
-                          ))}
+                                <Link
+                                  href={subItem.href}
+                                  className={`w-full cursor-pointer text-xl font-semibold flex items-center justify-between group ${
+                                    isActive 
+                                      ? "text-primary" 
+                                      : "text-foreground hover:text-primary"
+                                  }`}
+                                >
+                                  <span>{subItem.name}</span>
+                                  <ChevronRight className={`w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 ${
+                                    isActive ? "opacity-100 translate-x-0" : ""
+                                  }`} />
+                                </Link>
+                              </DropdownMenuItem>
+                            );
+                          })}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     );
