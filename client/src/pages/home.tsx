@@ -494,28 +494,22 @@ export default function Home() {
             <CardContent className="p-8 md:p-12">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-                    Clear pricing, no surprises
-                  </h2>
+                  <Link href="/care-points">
+                    <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4 hover:text-primary transition-colors cursor-pointer">
+                      Clear pricing, no surprises
+                    </h2>
+                  </Link>
                   <p className="text-xl text-muted-foreground mb-6">
                     See starting rates by community and explore our Care Points system that prevents unexpected charges. We give advance notice and partner with families on any changes.
                   </p>
                   <div className="flex flex-wrap gap-4">
-                    <Button 
-                      variant="glassmorphism-dark"
-                      size="lg" 
-                      onClick={() => setShowContactForm(true)}
-                      data-testid="button-request-pricing"
-                    >
-                      Request Pricing
-                    </Button>
                     <Button 
                       size="lg" 
                       variant="outline"
                       asChild
                       data-testid="button-learn-care-points"
                     >
-                      <Link href="/faqs">How Care Points Work</Link>
+                      <Link href="/care-points">How Care Points Work</Link>
                     </Button>
                   </div>
                 </div>
@@ -527,10 +521,6 @@ export default function Home() {
                   <div className="bg-white p-6 rounded-lg shadow-sm">
                     <div className="text-2xl font-bold text-primary mb-2">4</div>
                     <div className="text-sm text-muted-foreground">Colorado Communities</div>
-                  </div>
-                  <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <div className="text-2xl font-bold text-primary mb-2">98%</div>
-                    <div className="text-sm text-muted-foreground">Resident Satisfaction</div>
                   </div>
                   <div className="bg-white p-6 rounded-lg shadow-sm">
                     <div className="text-2xl font-bold text-primary mb-2">2016</div>
