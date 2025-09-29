@@ -141,9 +141,9 @@ export default function Home() {
 
   // Default hero content for fallback
   const defaultHero = {
-    title: "Colorado senior living that feels like home—and performs like a pro.",
+    title: "Colorado senior living that feels like home — with the professionalism families trust.",
     subtitle: "Locally Owned • Resident‑Focused",
-    description: "Four Front Range communities + in‑home support. Transparent pricing, story‑first care, and a team cared for as well as they care for you.",
+    description: "Four Front Range communities + in-home support. Clear pricing, personalized care, and a team supported as well as they support you.",
     backgroundImageUrl: "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?q=80&w=1600&auto=format&fit=crop",
     ctaText: "Find a Community",
     ctaLink: "/communities",
