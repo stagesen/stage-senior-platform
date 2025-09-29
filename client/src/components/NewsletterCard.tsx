@@ -17,18 +17,27 @@ interface NewsletterCardProps {
 }
 
 export default function NewsletterCard({ communityId }: NewsletterCardProps) {
-  const { data: newsletter, isLoading, error } = useQuery<NewsletterResponse>({
+  const { data: newsletter, isLoading: newsletterLoading, error } = useQuery<NewsletterResponse>({
     queryKey: ['/api/posts/latest-newsletter', communityId],
     retry: 1,
   });
+
+  // Also fetch community data separately for calendar downloads
+  const { data: community, isLoading: communityLoading } = useQuery<Community>({
+    queryKey: ['/api/communities', communityId],
+    retry: 1,
+  });
+
+  const isLoading = newsletterLoading || communityLoading;
 
   // Resolve image URLs
   const resolvedThumbnailImage = useResolveImageUrl(newsletter?.thumbnailImage);
   const resolvedMainImage = useResolveImageUrl(newsletter?.mainImage);
   
-  // Resolve calendar file URLs
-  const resolvedCalendarFile1 = useResolveImageUrl(newsletter?.community?.calendarFile1Id);
-  const resolvedCalendarFile2 = useResolveImageUrl(newsletter?.community?.calendarFile2Id);
+  // Resolve calendar file URLs (use community data or newsletter's community data)
+  const communityData = community || newsletter?.community;
+  const resolvedCalendarFile1 = useResolveImageUrl(communityData?.calendarFile1Id);
+  const resolvedCalendarFile2 = useResolveImageUrl(communityData?.calendarFile2Id);
 
   const formatDate = (date: Date | string | null | undefined) => {
     if (!date) return '';
@@ -73,25 +82,88 @@ export default function NewsletterCard({ communityId }: NewsletterCardProps) {
 
   // Error or no newsletter found
   if (error || !newsletter) {
+    const hasCalendarDownloads = (resolvedCalendarFile1 && communityData?.calendarFile1ButtonText) || 
+                                 (resolvedCalendarFile2 && communityData?.calendarFile2ButtonText);
+    
     return (
       <Card className="overflow-hidden" data-testid="newsletter-card-empty">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5 text-primary" />
-            Community Newsletter
+            Community Newsletter & Resources
           </CardTitle>
           <CardDescription>Stay updated with our latest news and updates</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
-            <AlertCircle className="w-12 h-12 text-muted-foreground mb-3" />
-            <p className="text-muted-foreground mb-2">
-              No newsletter available yet
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Check back soon for our latest community updates
-            </p>
-          </div>
+        <CardContent className="space-y-4">
+          {!hasCalendarDownloads ? (
+            <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+              <AlertCircle className="w-12 h-12 text-muted-foreground mb-3" />
+              <p className="text-muted-foreground mb-2">
+                No newsletter available yet
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Check back soon for our latest community updates
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="text-center py-4">
+                <p className="text-sm text-muted-foreground">
+                  Newsletter coming soon. In the meantime, download our community calendars below.
+                </p>
+              </div>
+              
+              {/* Calendar Download Buttons */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <CalendarDays className="w-3 h-3" />
+                  <span>Community Calendars</span>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-2">
+                  {resolvedCalendarFile1 && communityData?.calendarFile1ButtonText && (
+                    <Button 
+                      className="w-full" 
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      data-testid={`calendar-download-1-empty`}
+                    >
+                      <a 
+                        href={resolvedCalendarFile1} 
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Calendar className="w-3 h-3 mr-2" />
+                        {communityData.calendarFile1ButtonText}
+                      </a>
+                    </Button>
+                  )}
+                  
+                  {resolvedCalendarFile2 && communityData?.calendarFile2ButtonText && (
+                    <Button 
+                      className="w-full" 
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      data-testid={`calendar-download-2-empty`}
+                    >
+                      <a 
+                        href={resolvedCalendarFile2} 
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Calendar className="w-3 h-3 mr-2" />
+                        {communityData.calendarFile2ButtonText}
+                      </a>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     );
