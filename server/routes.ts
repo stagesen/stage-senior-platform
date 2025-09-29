@@ -1409,6 +1409,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/team-members/:id", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertTeamMemberSchema.partial().parse(req.body);
+      const member = await storage.updateTeamMember(req.params.id, validatedData);
+      if (!member) {
+        return res.status(404).json({ message: "Team member not found" });
+      }
+      res.json(member);
+    } catch (error) {
+      console.error("Error updating team member:", error);
+      res.status(400).json({ message: "Failed to update team member" });
+    }
+  });
+
   app.patch("/api/team-members/:id", requireAuth, async (req, res) => {
     try {
       const validatedData = insertTeamMemberSchema.partial().parse(req.body);
