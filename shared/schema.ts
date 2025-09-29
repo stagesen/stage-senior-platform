@@ -75,6 +75,10 @@ export const communities = pgTable("communities", {
   contactImageId: varchar("contact_image_id", { length: 255 }).references(() => images.id), // Contact Us card image reference
   brochureImageId: varchar("brochure_image_id", { length: 255 }).references(() => images.id), // Brochure card image reference
   experienceImageId: varchar("experience_image_id", { length: 255 }).references(() => images.id), // Experience our Community image reference
+  calendarFile1Id: varchar("calendar_file_1_id", { length: 255 }).references(() => images.id), // First calendar file
+  calendarFile1ButtonText: varchar("calendar_file_1_button_text", { length: 100 }), // Button text for first calendar
+  calendarFile2Id: varchar("calendar_file_2_id", { length: 255 }).references(() => images.id), // Second calendar file  
+  calendarFile2ButtonText: varchar("calendar_file_2_button_text", { length: 100 }), // Button text for second calendar
   overview: text("overview"),
   description: text("description"),
   shortDescription: text("short_description"),
