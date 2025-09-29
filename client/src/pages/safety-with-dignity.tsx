@@ -139,7 +139,7 @@ export default function SafetyWithDignity() {
     },
     {
       question: "Does this cost extra?",
-      answer: "No. This is part of our comprehensive safety and care program at The Gardens on Quail. We believe enhanced fall safety is a standard every resident deserves."
+      answer: "No. This is part of our comprehensive safety and care program. We believe enhanced fall safety is a standard every resident deserves."
     },
     {
       question: "How is this different from wearable devices?",
