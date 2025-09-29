@@ -48,6 +48,7 @@ import { cn } from "@/lib/utils";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import stageSeniorLogo from "@assets/stagesenior-logo_1758726889154.webp";
+import defaultBrochureImage from "@/assets/community-brochure-default.png";
 import NewsletterCard from "@/components/NewsletterCard";
 import type { 
   Community, 
@@ -1204,6 +1205,9 @@ export default function CommunityDetail() {
   // Resolve the logo image from logoImageId
   const resolvedLogoUrl = useResolveImageUrl(community?.logoImageId);
   
+  // Resolve the brochure image from brochureImageId  
+  const resolvedBrochureUrl = useResolveImageUrl(community?.brochureImageId);
+  
   // Hero logo overlay functionality
   const heroLogoSrc = resolvedLogoUrl || (community as any)?.logoUrl || (community as any)?.logoImageUrl || stageSeniorLogo;
   const heroLogoAlt = (community as any)?.logoAlt || `${community?.name || 'Community'} logo`;
@@ -2076,9 +2080,21 @@ export default function CommunityDetail() {
               </Card>
 
               {/* Download Brochure */}
-              <Card className="shadow-lg bg-primary/5 border-primary/20">
+              <Card className="shadow-lg bg-primary/5 border-primary/20 overflow-hidden">
+                {(resolvedBrochureUrl || defaultBrochureImage) && (
+                  <AspectRatio ratio={4 / 3}>
+                    <img
+                      src={resolvedBrochureUrl || defaultBrochureImage}
+                      alt={`${community.name} Brochure`}
+                      className="w-full h-full object-cover"
+                      data-testid="brochure-image"
+                    />
+                  </AspectRatio>
+                )}
                 <CardContent className="p-6 text-center">
-                  <Download className="w-10 h-10 text-primary mx-auto mb-4" />
+                  {!(resolvedBrochureUrl || defaultBrochureImage) && (
+                    <Download className="w-10 h-10 text-primary mx-auto mb-4" />
+                  )}
                   <h3 className="text-xl font-semibold mb-2">Community Brochure</h3>
                   <p className="text-sm text-gray-600 mb-4">
                     Get detailed information about our community, floor plans, and services
