@@ -9,6 +9,7 @@ import Communities from "@/pages/communities";
 import CommunityDetail from "@/pages/community-detail";
 import Events from "@/pages/events";
 import Team from "@/pages/team";
+import TeamMember from "@/pages/team-member";
 import Blog from "@/pages/blog";
 import Admin from "@/pages/admin";
 import Login from "@/pages/login";
@@ -51,6 +52,7 @@ function Router() {
           <Route path="/communities/:slug" component={CommunityDetail} />
           <Route path="/events" component={Events} />
           <Route path="/team" component={Team} />
+          <Route path="/team/:slug" component={TeamMember} />
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={Blog} />
           <Route path="/faqs" component={FAQs} />
