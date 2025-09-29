@@ -1,6 +1,7 @@
 import {
   communities,
   posts,
+  postAttachments,
   blogPosts,
   events,
   faqs,
@@ -23,6 +24,8 @@ import {
   type InsertCommunity,
   type Post,
   type InsertPost,
+  type PostAttachment,
+  type InsertPostAttachment,
   type BlogPost,
   type InsertBlogPost,
   type Event,
@@ -114,6 +117,12 @@ export interface IStorage {
   createPost(post: InsertPost): Promise<Post>;
   updatePost(id: string, post: Partial<InsertPost>): Promise<Post>;
   deletePost(id: string): Promise<void>;
+
+  // Post attachment operations
+  createPostAttachment(attachment: InsertPostAttachment): Promise<PostAttachment>;
+  getPostAttachment(id: string): Promise<PostAttachment | undefined>;
+  getPostAttachments(postId: string): Promise<PostAttachment[]>;
+  deletePostAttachment(id: string): Promise<void>;
 
   // Blog Post operations
   getBlogPosts(filters?: {
@@ -517,9 +526,11 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(posts.communityId, filters.communityId));
     }
     if (filters?.tags && filters.tags.length > 0) {
-      conditions.push(
-        sql`${posts.tags} && ${JSON.stringify(filters.tags)}`
+      // For text array tags, we need to check if any of the filter tags exist in the array
+      const tagConditions = filters.tags.map(tag => 
+        sql`${tag} = ANY(${posts.tags})`
       );
+      conditions.push(or(...tagConditions));
     }
     
     if (conditions.length > 0) {
@@ -564,6 +575,35 @@ export class DatabaseStorage implements IStorage {
 
   async deletePost(id: string): Promise<void> {
     await db.delete(posts).where(eq(posts.id, id));
+  }
+
+  // Post attachment operations
+  async createPostAttachment(attachment: InsertPostAttachment): Promise<PostAttachment> {
+    const [created] = await db
+      .insert(postAttachments)
+      .values(attachment)
+      .returning();
+    return created;
+  }
+
+  async getPostAttachment(id: string): Promise<PostAttachment | undefined> {
+    const [attachment] = await db
+      .select()
+      .from(postAttachments)
+      .where(eq(postAttachments.id, id));
+    return attachment;
+  }
+
+  async getPostAttachments(postId: string): Promise<PostAttachment[]> {
+    return await db
+      .select()
+      .from(postAttachments)
+      .where(eq(postAttachments.postId, postId))
+      .orderBy(asc(postAttachments.uploadedAt));
+  }
+
+  async deletePostAttachment(id: string): Promise<void> {
+    await db.delete(postAttachments).where(eq(postAttachments.id, id));
   }
 
   // Blog Post operations

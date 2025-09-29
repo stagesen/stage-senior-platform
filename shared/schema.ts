@@ -152,7 +152,8 @@ export const posts = pgTable("posts", {
   content: text("content").notNull(),
   heroImageUrl: text("hero_image_url"), // Keep for backward compatibility
   imageId: varchar("image_id", { length: 255 }).references(() => images.id), // New image reference
-  tags: jsonb("tags").$type<string[]>().default([]),
+  tags: text("tags").array().default(sql`ARRAY[]::text[]`),
+  attachmentId: varchar("attachment_id", { length: 255 }), // Reference to uploaded file
   communityId: uuid("community_id").references(() => communities.id),
   published: boolean("published").default(false),
   publishedAt: timestamp("published_at"),
@@ -160,6 +161,17 @@ export const posts = pgTable("posts", {
   seoDescription: text("seo_description"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Post attachments table for storing file attachment metadata
+export const postAttachments = pgTable("post_attachments", {
+  id: varchar("id", { length: 255 }).primaryKey().default(sql`gen_random_uuid()`),
+  postId: uuid("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  fileName: text("file_name").notNull(),
+  fileUrl: text("file_url").notNull(),
+  mimeType: text("mime_type").notNull(),
+  sizeBytes: integer("size_bytes"),
+  uploadedAt: timestamp("uploaded_at").defaultNow().notNull(),
 });
 
 export const events = pgTable("events", {
@@ -403,7 +415,7 @@ export const communitiesAmenitiesRelations = relations(communitiesAmenities, ({ 
   }),
 }));
 
-export const postsRelations = relations(posts, ({ one }) => ({
+export const postsRelations = relations(posts, ({ one, many }) => ({
   community: one(communities, {
     fields: [posts.communityId],
     references: [communities.id],
@@ -411,6 +423,14 @@ export const postsRelations = relations(posts, ({ one }) => ({
   image: one(images, {
     fields: [posts.imageId],
     references: [images.id],
+  }),
+  attachments: many(postAttachments),
+}));
+
+export const postAttachmentsRelations = relations(postAttachments, ({ one }) => ({
+  post: one(posts, {
+    fields: [postAttachments.postId],
+    references: [posts.id],
   }),
 }));
 
@@ -551,6 +571,14 @@ export const insertPostSchema = createInsertSchema(posts).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  tags: z.array(z.string()).optional().default([]),
+  attachmentId: z.string().optional(),
+});
+
+export const insertPostAttachmentSchema = createInsertSchema(postAttachments).omit({
+  id: true,
+  uploadedAt: true,
 });
 
 export const insertTeamMemberSchema = createInsertSchema(teamMembers).omit({
@@ -690,6 +718,8 @@ export type CommunityAmenity = typeof communitiesAmenities.$inferSelect;
 export type InsertCommunityAmenity = z.infer<typeof insertCommunityAmenitySchema>;
 export type Post = typeof posts.$inferSelect;
 export type InsertPost = z.infer<typeof insertPostSchema>;
+export type PostAttachment = typeof postAttachments.$inferSelect;
+export type InsertPostAttachment = z.infer<typeof insertPostAttachmentSchema>;
 export type BlogPost = typeof blogPosts.$inferSelect;
 export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
 export type Event = typeof events.$inferSelect;
