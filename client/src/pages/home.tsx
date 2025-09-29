@@ -97,21 +97,12 @@ const CarouselCommunityCard = ({
                 asChild 
                 variant="secondary"
                 size="sm"
-                className="flex-1"
+                className="w-full"
                 data-testid={`button-learn-more-${community.id}`}
               >
                 <Link href={`/communities/${community.slug}`}>
                   Learn More
                 </Link>
-              </Button>
-              <Button 
-                variant="glassmorphism"
-                size="sm"
-                className="flex-1"
-                onClick={() => setShowContactForm(true)}
-                data-testid={`button-get-pricing-${community.id}`}
-              >
-                Get Pricing
               </Button>
             </div>
           </div>
