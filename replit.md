@@ -46,8 +46,9 @@ The client-side application is built with React 18 and TypeScript, utilizing mod
 - **Form Handling**: React Hook Form with Zod validation for type-safe form management
 - **Build Tool**: Vite for fast development and optimized production builds
 - **Team Page**: Comprehensive team directory organized by tags (Stage Management, Communities, Departments)
+- **Team Member Profiles**: Individual profile pages for each team member at /team/:slug with bio, contact info, and community associations
 - **Community Contact Cards**: Dynamic team member cards on community detail pages showing primary contact
-- **Team Carousel**: Dynamic carousel on About Us page showcasing leadership team with link to full team directory
+- **Team Carousel**: Dynamic carousel on About Us page showcasing leadership team with links to individual profiles
 
 The frontend follows a component-based architecture with reusable UI components, page-level components, and custom hooks for shared logic. The application supports responsive design and includes accessibility features.
 
@@ -85,7 +86,7 @@ The platform includes a comprehensive admin interface for content management:
 
 - **Community Management**: CRUD operations for community information, amenities, and care types with integrated image uploads
 - **Blog System**: Full blog management with categories, tags, featured content, hero image uploads, and team member author integration
-- **Team Member Management**: Complete team member profiles with avatar images, roles, departments, social links, and blog post author connections
+- **Team Member Management**: Complete team member profiles with avatar images, roles, departments, bio/blurb text area, social links, and blog post author connections
 - **Event Management**: Calendar-based event system with RSVP functionality and event image uploads
 - **FAQ System**: Categorized frequently asked questions with search capabilities and HTML answer support
 - **Gallery Management**: Image galleries with multi-image upload support (up to 20 images) and drag-and-drop functionality
