@@ -299,28 +299,6 @@ export default function Careers() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 bg-primary text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Make a Difference?
-          </h2>
-          <p className="text-xl mb-8 text-white/90">
-            Join a team that's changing the way Colorado thinks about senior living. 
-            Your career in compassionate care starts here.
-          </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Button size="lg" variant="secondary" asChild>
-              <a href="mailto:careers@stagesenior.com">
-                Apply Today
-              </a>
-            </Button>
-            <Button size="lg" variant="outline" className="bg-white/10 border-white text-white hover:bg-white/20">
-              Learn More About Us
-            </Button>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
