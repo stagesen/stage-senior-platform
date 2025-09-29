@@ -595,12 +595,17 @@ export const insertBlogPostSchema = createInsertSchema(blogPosts).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  publishedAt: z.coerce.date().nullable().optional(),
 });
 
 export const insertEventSchema = createInsertSchema(events).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  startsAt: z.coerce.date(),
+  endsAt: z.coerce.date().nullable().optional(),
 });
 
 export const insertFaqSchema = createInsertSchema(faqs).omit({
@@ -627,8 +632,8 @@ export const insertTourRequestSchema = createInsertSchema(tourRequests).omit({
   message: z.string().max(1000, "Message is too long").optional(),
   status: z.enum(["new", "contacted", "scheduled", "toured", "follow-up", "converted", "not-interested"]).optional(),
   notes: z.string().optional(),
-  lastContactedAt: z.date().optional(),
-  scheduledDate: z.date().optional(),
+  lastContactedAt: z.coerce.date().optional(),
+  scheduledDate: z.coerce.date().optional(),
 });
 
 export const insertFloorPlanSchema = createInsertSchema(floorPlans).omit({

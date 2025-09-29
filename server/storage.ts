@@ -527,9 +527,9 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(posts.communityId, filters.communityId));
     }
     if (filters?.tags && filters.tags.length > 0) {
-      // For text array tags, we need to check if any of the filter tags exist in the array
+      // For jsonb array tags, we need to check if any of the filter tags exist in the array
       const tagConditions = filters.tags.map(tag => 
-        sql`${tag} = ANY(${posts.tags})`
+        sql`${posts.tags}::jsonb @> ${JSON.stringify([tag])}::jsonb`
       );
       conditions.push(or(...tagConditions));
     }
@@ -667,6 +667,15 @@ export class DatabaseStorage implements IStorage {
     if (filters?.author) {
       conditions.push(eq(blogPosts.author, filters.author));
     }
+    
+    // Add tags filtering using PostgreSQL jsonb operators
+    if (filters?.tags && filters.tags.length > 0) {
+      // Check if any of the filter tags exist in the jsonb array
+      const tagConditions = filters.tags.map(tag => 
+        sql`${blogPosts.tags}::jsonb @> ${JSON.stringify([tag])}::jsonb`
+      );
+      conditions.push(or(...tagConditions));
+    }
 
     if (conditions.length > 0) {
       query = query.where(and(...conditions)) as any;
@@ -707,13 +716,6 @@ export class DatabaseStorage implements IStorage {
         }
       } : {})
     })) as BlogPost[];
-
-    // Filter by tags if specified
-    if (filters?.tags && filters.tags.length > 0) {
-      return transformedResults.filter(post =>
-        filters.tags!.some(tag => post.tags?.includes(tag))
-      );
-    }
 
     return transformedResults;
   }
