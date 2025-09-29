@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Calendar, Phone, Star, HelpCircle, MessageCircle } from "lucide-react";
+import { MapPin, Calendar, Phone, Star, HelpCircle } from "lucide-react";
 import CommunityCard from "@/components/CommunityCard";
 import CommunityMap from "@/components/CommunityMap";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -359,16 +359,6 @@ export default function Communities() {
               <Phone className="w-5 h-5 mr-2" />
               <span className="sm:hidden">Call Now</span>
               <span className="hidden sm:inline">Call (303) 436-2300</span>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="bg-transparent text-white border-white hover:bg-white hover:text-primary text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transform hover:scale-105 transition-all duration-200"
-              onClick={() => window.open('https://wa.me/13034362300', '_blank')}
-              data-testid="button-chat-cta"
-            >
-              <MessageCircle className="w-5 h-5 mr-2" />
-              Chat With Us
             </Button>
           </div>
         </div>
