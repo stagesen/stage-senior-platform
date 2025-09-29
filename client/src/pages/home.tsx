@@ -403,19 +403,22 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Link href="/care-points">
-              <Card className="text-center hover:shadow-lg transition-shadow cursor-pointer h-full">
-                <CardContent className="p-8">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <CheckCircle className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-bold mb-4">Transparent Care Points</h3>
-                  <p className="text-muted-foreground">
-                    Published menu of services. Changes only when care truly changes—no nickel-and-diming.
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
+            <Card className="text-center hover:shadow-lg transition-shadow h-full">
+              <CardContent className="p-8 flex flex-col h-full">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <CheckCircle className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="text-lg font-bold mb-4">Transparent Care Points</h3>
+                <p className="text-muted-foreground mb-6 flex-grow">
+                  Published menu of services. Changes only when care truly changes—no nickel-and-diming.
+                </p>
+                <Link href="/care-points">
+                  <Button variant="outline" className="w-full">
+                    Learn More
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
             
             <Card className="text-center hover:shadow-lg transition-shadow">
               <CardContent className="p-8">
@@ -429,19 +432,22 @@ export default function Home() {
               </CardContent>
             </Card>
             
-            <Link href="/team">
-              <Card className="text-center hover:shadow-lg transition-shadow cursor-pointer h-full">
-                <CardContent className="p-8">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Users className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-bold mb-4">Staff‑First Culture</h3>
-                  <p className="text-muted-foreground">
-                    Exceptional resident care starts with exceptional staff care. We invest in our team.
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
+            <Card className="text-center hover:shadow-lg transition-shadow h-full">
+              <CardContent className="p-8 flex flex-col h-full">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Users className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="text-lg font-bold mb-4">Staff‑First Culture</h3>
+                <p className="text-muted-foreground mb-6 flex-grow">
+                  Exceptional resident care starts with exceptional staff care. We invest in our team.
+                </p>
+                <Link href="/team">
+                  <Button variant="outline" className="w-full">
+                    Meet Our Team
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
             
             <Card className="text-center hover:shadow-lg transition-shadow">
               <CardContent className="p-8">
@@ -467,19 +473,22 @@ export default function Home() {
               </CardContent>
             </Card>
             
-            <Link href="/safety-with-dignity">
-              <Card className="text-center hover:shadow-lg transition-shadow cursor-pointer h-full">
-                <CardContent className="p-8">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Activity className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-bold mb-4">Safety with Dignity</h3>
-                  <p className="text-muted-foreground">
-                    Advanced fall detection technology that preserves independence while ensuring quick response times.
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
+            <Card className="text-center hover:shadow-lg transition-shadow h-full">
+              <CardContent className="p-8 flex flex-col h-full">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Activity className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="text-lg font-bold mb-4">Safety with Dignity</h3>
+                <p className="text-muted-foreground mb-6 flex-grow">
+                  Advanced fall detection technology that preserves independence while ensuring quick response times.
+                </p>
+                <Link href="/safety-with-dignity">
+                  <Button variant="outline" className="w-full">
+                    Learn More
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
