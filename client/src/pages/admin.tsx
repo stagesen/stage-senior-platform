@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import AdminDashboard from "@/components/AdminDashboard";
+import PageGalleryAdmin from "@/components/PageGalleryAdmin";
 import { useAuth } from "@/lib/auth";
 import { 
   Users, 
@@ -136,6 +137,10 @@ export default function Admin() {
             <TabsTrigger value="care-types" data-testid="tab-care-types">Care Types</TabsTrigger>
             <TabsTrigger value="amenities" data-testid="tab-amenities">Amenities</TabsTrigger>
             <TabsTrigger value="community-highlights" data-testid="tab-community-highlights">Highlights</TabsTrigger>
+            <TabsTrigger value="image-gallery" data-testid="tab-image-gallery">
+              <Image className="h-4 w-4 mr-1" />
+              Image Gallery
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-6">
@@ -296,6 +301,15 @@ export default function Admin() {
                     <Camera className="w-4 h-4 mr-2" />
                     Create Gallery
                   </Button>
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline"
+                    onClick={() => setActiveTab("image-gallery")}
+                    data-testid="button-manage-images"
+                  >
+                    <Image className="w-4 h-4 mr-2" />
+                    Manage Images
+                  </Button>
                 </CardContent>
               </Card>
             </div>
@@ -352,6 +366,10 @@ export default function Admin() {
 
           <TabsContent value="community-highlights">
             <AdminDashboard type="community-highlights" />
+          </TabsContent>
+
+          <TabsContent value="image-gallery">
+            <PageGalleryAdmin />
           </TabsContent>
         </Tabs>
       </main>
