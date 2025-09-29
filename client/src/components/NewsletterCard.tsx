@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
-import { Download, FileText, Calendar, AlertCircle } from "lucide-react";
+import { Download, FileText, Calendar, AlertCircle, CalendarDays } from "lucide-react";
 import type { BlogPost, PostAttachment, Community } from "@shared/schema";
 
 interface NewsletterResponse extends BlogPost {
@@ -25,6 +25,10 @@ export default function NewsletterCard({ communityId }: NewsletterCardProps) {
   // Resolve image URLs
   const resolvedThumbnailImage = useResolveImageUrl(newsletter?.thumbnailImage);
   const resolvedMainImage = useResolveImageUrl(newsletter?.mainImage);
+  
+  // Resolve calendar file URLs
+  const resolvedCalendarFile1 = useResolveImageUrl(newsletter?.community?.calendarFile1Id);
+  const resolvedCalendarFile2 = useResolveImageUrl(newsletter?.community?.calendarFile2Id);
 
   const formatDate = (date: Date | string | null | undefined) => {
     if (!date) return '';
@@ -187,6 +191,58 @@ export default function NewsletterCard({ communityId }: NewsletterCardProps) {
                 Read Newsletter
               </a>
             </Button>
+          )}
+
+          {/* Calendar Download Buttons */}
+          {(resolvedCalendarFile1 || resolvedCalendarFile2) && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <CalendarDays className="w-3 h-3" />
+                <span>Community Calendars</span>
+              </div>
+              
+              <div className="grid grid-cols-1 gap-2">
+                {resolvedCalendarFile1 && newsletter.community.calendarFile1ButtonText && (
+                  <Button 
+                    className="w-full" 
+                    variant="outline"
+                    size="sm"
+                    asChild
+                    data-testid={`calendar-download-1-${newsletter.slug}`}
+                  >
+                    <a 
+                      href={resolvedCalendarFile1} 
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Calendar className="w-3 h-3 mr-2" />
+                      {newsletter.community.calendarFile1ButtonText}
+                    </a>
+                  </Button>
+                )}
+                
+                {resolvedCalendarFile2 && newsletter.community.calendarFile2ButtonText && (
+                  <Button 
+                    className="w-full" 
+                    variant="outline"
+                    size="sm"
+                    asChild
+                    data-testid={`calendar-download-2-${newsletter.slug}`}
+                  >
+                    <a 
+                      href={resolvedCalendarFile2} 
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Calendar className="w-3 h-3 mr-2" />
+                      {newsletter.community.calendarFile2ButtonText}
+                    </a>
+                  </Button>
+                )}
+              </div>
+            </div>
           )}
         </div>
       </CardContent>
