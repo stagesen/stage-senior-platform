@@ -34,12 +34,14 @@ import ScrollToTop from "@/components/ScrollToTop";
 function Router() {
   // Check if we're on a community detail page
   const [isCommunityDetail] = useRoute("/communities/:slug");
+  // Check if we're on the in-home care page
+  const [isInHomeCare] = useRoute("/in-home-care");
   
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <ScrollRestoration />
-      {/* Don't show main header on community detail pages */}
-      {!isCommunityDetail && <Header />}
+      {/* Don't show main header on community detail pages or in-home care page */}
+      {!isCommunityDetail && !isInHomeCare && <Header />}
       <main className="flex-1">
         <Switch>
           <Route path="/" component={Home} />
