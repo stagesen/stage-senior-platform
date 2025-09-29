@@ -253,32 +253,6 @@ export default function Home() {
                 Check Availability
               </Button>
             </div>
-            <div className="mt-8 flex items-center gap-6 text-white drop-shadow-sm">
-              <div className="flex -space-x-2">
-                <img 
-                  className="inline-block h-10 w-10 rounded-full ring-2 ring-white" 
-                  src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=96&h=96&q=80&auto=format&fit=crop"
-                  alt="Happy resident"
-                />
-                <img 
-                  className="inline-block h-10 w-10 rounded-full ring-2 ring-white" 
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=96&h=96&q=80&auto=format&fit=crop"
-                  alt="Happy family"
-                />
-                <img 
-                  className="inline-block h-10 w-10 rounded-full ring-2 ring-white" 
-                  src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=96&h=96&q=80&auto=format&fit=crop"
-                  alt="Staff member"
-                />
-              </div>
-              <div className="text-lg">
-                <div className="flex items-center gap-1">
-                  <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                  <span className="font-semibold">4.8</span>
-                </div>
-                <p className="text-sm opacity-90">98% resident satisfaction</p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
