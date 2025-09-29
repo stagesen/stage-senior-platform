@@ -356,21 +356,16 @@ export default function SafetyWithDignity() {
             </p>
           </div>
           <div className="max-w-4xl mx-auto">
-            <Card className="overflow-hidden shadow-xl" data-testid="video-placeholder">
-              <div className="relative bg-gradient-to-br from-blue-100 to-blue-50 aspect-video flex items-center justify-center">
-                <div className="absolute inset-0 bg-black/10"></div>
-                <button 
-                  className="relative z-10 bg-white/90 backdrop-blur p-6 rounded-full hover:bg-white transition-colors group"
-                  aria-label="Play video"
-                  data-testid="play-button"
-                >
-                  <Play className="w-12 h-12 text-primary group-hover:scale-110 transition-transform" />
-                </button>
-                <div className="absolute bottom-4 left-4 right-4 text-center">
-                  <p className="text-sm text-gray-600 bg-white/80 backdrop-blur px-3 py-1 rounded inline-block">
-                    Video demonstration coming soon
-                  </p>
-                </div>
+            <Card className="overflow-hidden shadow-xl" data-testid="video-container">
+              <div className="relative aspect-video">
+                <iframe
+                  src="https://www.youtube.com/embed/ConnW3hpK4c"
+                  title="How Our Safety System Works"
+                  className="absolute inset-0 w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  data-testid="youtube-video"
+                />
               </div>
             </Card>
           </div>
