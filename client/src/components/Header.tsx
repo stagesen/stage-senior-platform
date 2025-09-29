@@ -85,12 +85,12 @@ export default function Header() {
                           {item.name}
                           <ChevronDown className="w-4 h-4" />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start">
+                        <DropdownMenuContent align="start" className="min-w-[200px] p-2">
                           {item.dropdown.map((subItem) => (
-                            <DropdownMenuItem key={subItem.name} asChild>
+                            <DropdownMenuItem key={subItem.name} asChild className="px-3 py-2.5">
                               <Link
                                 href={subItem.href}
-                                className="w-full cursor-pointer"
+                                className="w-full cursor-pointer text-lg font-medium"
                               >
                                 {subItem.name}
                               </Link>
