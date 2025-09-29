@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,8 +14,10 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import ImageUploader from "@/components/ImageUploader";
+import DocumentUploader from "@/components/DocumentUploader";
 import RichTextEditor from "@/components/RichTextEditor";
 import { 
   Plus, 
@@ -1127,6 +1129,57 @@ function FloorPlanImageManager({ floorPlanId }: { floorPlanId: string }) {
   );
 }
 
+// Component to show download button for blog post attachments
+function BlogPostAttachmentButton({ postId }: { postId: string }) {
+  const [attachment, setAttachment] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  
+  // Fetch attachment data when component mounts
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/api/post-attachments?postId=${postId}`, { credentials: 'include' })
+      .then(res => res.ok ? res.json() : [])
+      .then(attachments => {
+        if (attachments && attachments.length > 0) {
+          setAttachment(attachments[0]);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [postId]);
+  
+  if (loading) {
+    return null;
+  }
+  
+  if (!attachment) {
+    return null;
+  }
+  
+  const handleDownload = () => {
+    // Create a download link
+    const link = document.createElement('a');
+    link.href = attachment.fileUrl;
+    link.download = attachment.fileName;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      onClick={handleDownload}
+      title={`Download ${attachment.fileName}`}
+      data-testid={`button-download-${postId}`}
+    >
+      <FileText className="w-4 h-4" />
+    </Button>
+  );
+}
+
 export default function AdminDashboard({ type }: AdminDashboardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -1357,8 +1410,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     },
   });
 
-  const blogPostForm = useForm<InsertBlogPost>({
-    resolver: zodResolver(insertBlogPostSchema),
+  const blogPostForm = useForm<InsertBlogPost & { attachmentId?: string }>({
+    resolver: zodResolver(insertBlogPostSchema.extend({
+      attachmentId: z.string().optional(),
+    })),
     defaultValues: {
       title: "",
       slug: "",
@@ -1374,6 +1429,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       thumbnailImage: undefined,
       galleryImages: [],
       communityId: undefined,
+      attachmentId: undefined,
     },
   });
 
@@ -1614,13 +1670,37 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       setSelectedAmenities(item.amenityIds || []);
     }
     
-    // For blog posts, ensure tags remain as array
+    // For blog posts, ensure tags remain as array and fetch attachment if exists
     if (type === "blog-posts") {
       const blogPostData = {
         ...item,
         tags: Array.isArray(item.tags) ? item.tags : [],
         publishedAt: item.publishedAt ? new Date(item.publishedAt) : new Date(),
+        attachmentId: undefined, // Will be set if attachment exists
       };
+      
+      // Fetch attachment ID if post has an attachment
+      if (item.id) {
+        fetch(`/api/post-attachments?postId=${item.id}`, {
+          credentials: 'include'
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            return [];
+          })
+          .then(attachments => {
+            if (attachments && attachments.length > 0) {
+              blogPostData.attachmentId = attachments[0].id;
+              blogPostForm.setValue('attachmentId', attachments[0].id);
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching attachments:', error);
+          });
+      }
+      
       setEditingItem(item);
       blogPostForm.reset(blogPostData);
       setIsDialogOpen(true);
@@ -2711,6 +2791,29 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                       </SelectContent>
                     </Select>
                     <FormDescription>Associate this post with a specific community</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={blogPostForm.control}
+                name="attachmentId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Document Attachment (Optional)</FormLabel>
+                    <FormControl>
+                      <DocumentUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload a document attachment (PDF, DOC, DOCX)"
+                        accept=".pdf,.doc,.docx"
+                        maxSize={25 * 1024 * 1024}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Attach a downloadable document like a newsletter or report
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -5277,6 +5380,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
+                      <BlogPostAttachmentButton postId={item.id} />
                       <Button 
                         size="sm" 
                         variant="outline" 

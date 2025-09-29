@@ -120,6 +120,7 @@ export interface IStorage {
 
   // Post attachment operations
   createPostAttachment(attachment: InsertPostAttachment): Promise<PostAttachment>;
+  updatePostAttachment(id: string, attachment: Partial<InsertPostAttachment>): Promise<PostAttachment>;
   getPostAttachment(id: string): Promise<PostAttachment | undefined>;
   getPostAttachments(postId: string): Promise<PostAttachment[]>;
   deletePostAttachment(id: string): Promise<void>;
@@ -600,6 +601,15 @@ export class DatabaseStorage implements IStorage {
       .from(postAttachments)
       .where(eq(postAttachments.postId, postId))
       .orderBy(asc(postAttachments.uploadedAt));
+  }
+
+  async updatePostAttachment(id: string, attachment: Partial<InsertPostAttachment>): Promise<PostAttachment> {
+    const [updated] = await db
+      .update(postAttachments)
+      .set({ ...attachment, updatedAt: new Date() })
+      .where(eq(postAttachments.id, id))
+      .returning();
+    return updated;
   }
 
   async deletePostAttachment(id: string): Promise<void> {

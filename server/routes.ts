@@ -5,8 +5,10 @@ import { setupAuth } from "./auth";
 import {
   uploadSingle,
   uploadMultiple,
+  uploadDocument,
   processSingleImageUpload,
   processMultipleImageUploads,
+  processDocumentUpload,
   deleteFromObjectStorage,
   handleUploadError,
 } from "./upload";
@@ -222,6 +224,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Post Attachment routes
+  app.post("/api/post-attachments/upload", requireAuth, uploadDocument, async (req: any, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file provided" });
+      }
+
+      const user = req.user as any;
+      const attachment = await processDocumentUpload(req.file, user?.id);
+      
+      res.status(201).json({
+        id: attachment.attachmentId,
+        filename: attachment.filename,
+        originalName: attachment.originalName,
+        url: attachment.url,
+        mimeType: attachment.mimeType,
+        sizeBytes: attachment.sizeBytes,
+      });
+    } catch (error) {
+      console.error("Error uploading document:", error);
+      res.status(500).json({ message: "Failed to upload document" });
+    }
+  });
+
+  app.get("/api/post-attachments/:id", requireAuth, async (req, res) => {
+    try {
+      const attachment = await storage.getPostAttachment(req.params.id);
+      if (!attachment) {
+        return res.status(404).json({ message: "Attachment not found" });
+      }
+      res.json(attachment);
+    } catch (error) {
+      console.error("Error fetching attachment:", error);
+      res.status(500).json({ message: "Failed to fetch attachment" });
+    }
+  });
+
+  app.get("/api/post-attachments", requireAuth, async (req, res) => {
+    try {
+      const { postId } = req.query;
+      if (!postId) {
+        return res.status(400).json({ message: "postId is required" });
+      }
+      const attachments = await storage.getPostAttachments(postId as string);
+      res.json(attachments);
+    } catch (error) {
+      console.error("Error fetching attachments:", error);
+      res.status(500).json({ message: "Failed to fetch attachments" });
+    }
+  });
+
+  app.delete("/api/post-attachments/:id", requireAuth, async (req, res) => {
+    try {
+      const attachment = await storage.getPostAttachment(req.params.id);
+      if (!attachment) {
+        return res.status(404).json({ message: "Attachment not found" });
+      }
+      
+      // Delete from object storage
+      if (attachment.objectKey) {
+        await deleteFromObjectStorage(attachment.objectKey);
+      }
+      
+      // Delete from database
+      await storage.deletePostAttachment(req.params.id);
+      
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting attachment:", error);
+      res.status(500).json({ message: "Failed to delete attachment" });
+    }
+  });
+
   // Blog Post routes
   app.get("/api/blog-posts", async (req, res) => {
     try {
@@ -269,6 +344,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertBlogPostSchema.parse(req.body);
       const post = await storage.createBlogPost(validatedData);
+      
+      // If there's an attachmentId, link it to the post
+      if (req.body.attachmentId) {
+        await storage.updatePostAttachment(req.body.attachmentId, { postId: post.id });
+      }
+      
       res.status(201).json(post);
     } catch (error) {
       console.error("Error creating blog post:", error);
@@ -280,6 +361,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertBlogPostSchema.partial().parse(req.body);
       const post = await storage.updateBlogPost(req.params.id, validatedData);
+      
+      // Handle attachment update
+      if (req.body.attachmentId !== undefined) {
+        // First, remove any existing attachment for this post
+        const existingAttachments = await storage.getPostAttachments(req.params.id);
+        for (const attachment of existingAttachments) {
+          if (attachment.id !== req.body.attachmentId) {
+            // Delete the old attachment from storage
+            if (attachment.objectKey) {
+              await deleteFromObjectStorage(attachment.objectKey);
+            }
+            await storage.deletePostAttachment(attachment.id);
+          }
+        }
+        
+        // Link the new attachment if provided
+        if (req.body.attachmentId) {
+          await storage.updatePostAttachment(req.body.attachmentId, { postId: req.params.id });
+        }
+      }
+      
       res.json(post);
     } catch (error) {
       console.error("Error updating blog post:", error);

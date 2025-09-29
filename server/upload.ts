@@ -45,6 +45,28 @@ const imageFileFilter = (
   }
 };
 
+// File filter for documents
+const documentFileFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
+  const allowedMimeTypes = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ];
+  
+  const allowedExtensions = [".pdf", ".doc", ".docx"];
+  const fileExtension = `.${file.originalname.split(".").pop()?.toLowerCase()}`;
+  
+  if (allowedMimeTypes.includes(file.mimetype) || allowedExtensions.includes(fileExtension)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Invalid file type. Only PDF, DOC, and DOCX are allowed."));
+  }
+};
+
 // Configure multer upload middleware
 export const uploadSingle = multer({
   storage: multerStorage,
@@ -61,6 +83,14 @@ export const uploadMultiple = multer({
     fileSize: 10 * 1024 * 1024, // 10MB limit per file
   },
 }).array("images", 20); // Max 20 images at once
+
+export const uploadDocument = multer({
+  storage: multerStorage,
+  fileFilter: documentFileFilter,
+  limits: {
+    fileSize: 25 * 1024 * 1024, // 25MB limit for documents
+  },
+}).single("document");
 
 // Generate unique filename
 function generateUniqueFilename(originalFilename: string): string {
@@ -234,6 +264,57 @@ export async function processMultipleImageUploads(
   );
   
   return await Promise.all(uploadPromises);
+}
+
+// Process document upload to object storage
+export async function processDocumentUpload(
+  file: Express.Multer.File,
+  uploadedBy?: number
+): Promise<{
+  attachmentId: string;
+  filename: string;
+  originalName: string;
+  url: string;
+  mimeType: string;
+  sizeBytes: number;
+}> {
+  const filename = generateUniqueFilename(file.originalname);
+  
+  // Upload to object storage (private directory for documents)
+  const objectKey = await uploadToObjectStorage(
+    file.buffer,
+    filename,
+    file.mimetype,
+    false // Upload to private directory
+  );
+  
+  // Generate private URL
+  const bucketId = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
+  const privateDir = process.env.PRIVATE_OBJECT_DIR?.split("/").pop() || ".private";
+  const documentUrl = `/${bucketId}/${privateDir}/${filename}`;
+  
+  // Save attachment metadata to database
+  const attachmentData = {
+    postId: null, // Will be linked when post is created/updated
+    filename,
+    originalName: file.originalname,
+    mimeType: file.mimetype,
+    sizeBytes: file.size,
+    objectKey: `${privateDir}/${filename}`,
+    url: documentUrl,
+    uploadedBy,
+  };
+  
+  const savedAttachment = await storage.createPostAttachment(attachmentData);
+  
+  return {
+    attachmentId: savedAttachment.id,
+    filename: savedAttachment.filename,
+    originalName: savedAttachment.originalName,
+    url: savedAttachment.url,
+    mimeType: savedAttachment.mimeType,
+    sizeBytes: savedAttachment.sizeBytes,
+  };
 }
 
 // Middleware to handle upload errors
