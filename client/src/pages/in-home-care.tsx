@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,10 +21,14 @@ import {
   Award,
   Sparkles,
   UserCheck,
-  HeartHandshake
+  HeartHandshake,
+  Menu,
+  X
 } from "lucide-react";
 
 export default function InHomeCare() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
   useEffect(() => {
     document.title = "Denver Metro In-Home Caregiving | Healthy at Home - Stage Senior";
     
@@ -111,15 +115,100 @@ export default function InHomeCare() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Custom Healthy at Home Header */}
+      <header className="sticky top-0 z-50 bg-white border-b border-green-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-20">
+            {/* Logo/Branding */}
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center">
+                <Heart className="w-8 h-8 text-green-600" />
+                <div className="ml-3">
+                  <h1 className="text-2xl font-bold text-green-600">Healthy at Home</h1>
+                  <p className="text-xs text-gray-600">A Stage Senior Service</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link href="/about-us" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
+                About Us
+              </Link>
+              <Link href="/blog" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
+                Resources
+              </Link>
+              <Link href="/team" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
+                Team
+              </Link>
+              <Button 
+                size="sm" 
+                className="bg-green-600 hover:bg-green-700 text-white"
+                asChild
+              >
+                <Link href="mailto:info@healthyathomeco.com">
+                  Get My 24-Hr Care Plan
+                </Link>
+              </Button>
+              <div className="flex items-center space-x-2 text-green-600 font-bold">
+                <Phone className="w-5 h-5" />
+                <a href="tel:3032909000" className="hover:underline">(303) 290-9000</a>
+              </div>
+            </nav>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              data-testid="mobile-menu-toggle"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+
+          {/* Mobile Navigation */}
+          {mobileMenuOpen && (
+            <div className="md:hidden py-4 border-t border-gray-100">
+              <nav className="flex flex-col space-y-3">
+                <Link href="/about-us" className="text-gray-700 hover:text-green-600 font-medium py-2">
+                  About Us
+                </Link>
+                <Link href="/blog" className="text-gray-700 hover:text-green-600 font-medium py-2">
+                  Resources
+                </Link>
+                <Link href="/team" className="text-gray-700 hover:text-green-600 font-medium py-2">
+                  Team
+                </Link>
+                <Button 
+                  size="sm" 
+                  className="bg-green-600 hover:bg-green-700 text-white w-full"
+                  asChild
+                >
+                  <Link href="mailto:info@healthyathomeco.com">
+                    Get My 24-Hr Care Plan
+                  </Link>
+                </Button>
+                <div className="flex items-center justify-center space-x-2 text-green-600 font-bold pt-2">
+                  <Phone className="w-5 h-5" />
+                  <a href="tel:3032909000" className="hover:underline">(303) 290-9000</a>
+                </div>
+              </nav>
+            </div>
+          )}
+        </div>
+      </header>
+
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 bg-gradient-to-br from-blue-50 via-white to-indigo-50 overflow-hidden">
-        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10"></div>
+      <section className="relative py-20 lg:py-32 bg-gradient-to-br from-green-50 via-white to-emerald-50 overflow-hidden">
+        <div className="absolute inset-0 bg-grid-emerald-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-200 rounded-full opacity-20 blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-200 rounded-full opacity-20 blur-3xl"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4" data-testid="page-title">
               Denver Metro In-Home Caregiving
             </h1>
-            <p className="text-xl md:text-2xl text-primary font-semibold mb-6" data-testid="hero-subtitle">
+            <p className="text-xl md:text-2xl text-green-600 font-semibold mb-6" data-testid="hero-subtitle">
               In-Home Care You Can Trust—Right here in Colorado
             </p>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8" data-testid="hero-description">
@@ -128,15 +217,15 @@ export default function InHomeCare() {
             
             {/* Highlight Badges */}
             <div className="flex flex-wrap justify-center gap-3 mb-8">
-              <Badge variant="secondary" className="px-4 py-2 text-sm font-medium" data-testid="badge-locally-owned">
+              <Badge className="px-4 py-2 text-sm font-medium bg-green-100 text-green-800 border-green-200" data-testid="badge-locally-owned">
                 <Shield className="w-4 h-4 mr-2" />
                 Locally Owned
               </Badge>
-              <Badge variant="secondary" className="px-4 py-2 text-sm font-medium" data-testid="badge-background-checked">
+              <Badge className="px-4 py-2 text-sm font-medium bg-green-100 text-green-800 border-green-200" data-testid="badge-background-checked">
                 <ShieldCheck className="w-4 h-4 mr-2" />
                 Background Checked
               </Badge>
-              <Badge variant="secondary" className="px-4 py-2 text-sm font-medium" data-testid="badge-rigorous-training">
+              <Badge className="px-4 py-2 text-sm font-medium bg-green-100 text-green-800 border-green-200" data-testid="badge-rigorous-training">
                 <Award className="w-4 h-4 mr-2" />
                 Rigorous Training
               </Badge>
@@ -146,7 +235,7 @@ export default function InHomeCare() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg" 
-                className="px-8 py-6 text-lg"
+                className="px-8 py-6 text-lg bg-green-600 hover:bg-green-700 text-white"
                 data-testid="button-schedule-assessment"
                 asChild
               >
@@ -158,7 +247,7 @@ export default function InHomeCare() {
               <Button 
                 size="lg" 
                 variant="outline"
-                className="px-8 py-6 text-lg"
+                className="px-8 py-6 text-lg border-green-600 text-green-600 hover:bg-green-50"
                 data-testid="button-care-plan"
                 asChild
               >
@@ -173,7 +262,7 @@ export default function InHomeCare() {
       </section>
 
       {/* Services Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-green-50/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="services-title">
@@ -186,11 +275,11 @@ export default function InHomeCare() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service, index) => (
-              <Card key={index} className="hover:shadow-lg transition-all duration-300 group" data-testid={`service-card-${index}`}>
+              <Card key={index} className="hover:shadow-lg transition-all duration-300 group border-green-200 hover:border-green-400" data-testid={`service-card-${index}`}>
                 <CardContent className="p-6">
                   <div className="flex items-start mb-4">
-                    <div className="p-3 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-                      <div className="text-primary">
+                    <div className="p-3 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors">
+                      <div className="text-green-600">
                         {service.icon}
                       </div>
                     </div>
@@ -210,6 +299,7 @@ export default function InHomeCare() {
             <Button 
               size="lg"
               variant="outline"
+              className="border-green-600 text-green-600 hover:bg-green-50"
               data-testid="button-view-all-services"
               asChild
             >
@@ -237,8 +327,8 @@ export default function InHomeCare() {
               <div className="space-y-4">
                 {features.map((feature, index) => (
                   <div key={index} className="flex items-start" data-testid={`feature-item-${index}`}>
-                    <div className="p-2 bg-primary/10 rounded-lg mr-4 mt-1">
-                      {feature.icon}
+                    <div className="p-2 bg-green-100 rounded-lg mr-4 mt-1">
+                      <div className="text-green-600">{feature.icon}</div>
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg mb-1" data-testid={`feature-title-${index}`}>
@@ -255,6 +345,7 @@ export default function InHomeCare() {
               <div className="mt-8">
                 <Button 
                   size="lg"
+                  className="bg-green-600 hover:bg-green-700 text-white"
                   data-testid="button-more-about-us"
                   asChild
                 >
@@ -267,9 +358,9 @@ export default function InHomeCare() {
             </div>
             
             <div className="relative">
-              <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl p-8 lg:p-12">
+              <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl p-8 lg:p-12">
                 <div className="text-center">
-                  <HeartHandshake className="w-16 h-16 text-primary mx-auto mb-4" />
+                  <HeartHandshake className="w-16 h-16 text-green-600 mx-auto mb-4" />
                   <h3 className="text-2xl font-bold mb-4">Trusted Care, Local Roots</h3>
                   <p className="text-muted-foreground">
                     More hours of care for you with our locally-owned, non-franchise model. 
@@ -283,7 +374,7 @@ export default function InHomeCare() {
       </section>
 
       {/* Testimonial Section */}
-      <section className="py-16 bg-gradient-to-br from-indigo-50 to-blue-50">
+      <section className="py-16 bg-gradient-to-br from-green-50 to-emerald-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="testimonial-title">
@@ -294,8 +385,8 @@ export default function InHomeCare() {
             </p>
           </div>
           
-          <Card className="shadow-xl" data-testid="testimonial-card">
-            <CardContent className="p-8 lg:p-12">
+          <Card className="shadow-xl border-green-200" data-testid="testimonial-card">
+            <CardContent className="p-8 lg:p-12 bg-white/70">
               <div className="flex justify-center mb-6">
                 <div className="flex space-x-1">
                   {[...Array(5)].map((_, i) => (
@@ -335,9 +426,9 @@ export default function InHomeCare() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {blogPosts.map((post, index) => (
-              <Card key={index} className="hover:shadow-lg transition-all duration-300 group" data-testid={`blog-card-${index}`}>
+              <Card key={index} className="hover:shadow-lg transition-all duration-300 group border-green-200 hover:border-green-400" data-testid={`blog-card-${index}`}>
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors" data-testid={`blog-title-${index}`}>
+                  <h3 className="text-xl font-semibold mb-3 group-hover:text-green-600 transition-colors" data-testid={`blog-title-${index}`}>
                     {post.title}
                   </h3>
                   <p className="text-muted-foreground mb-4" data-testid={`blog-description-${index}`}>
@@ -345,7 +436,7 @@ export default function InHomeCare() {
                   </p>
                   <Link 
                     href={post.link}
-                    className="inline-flex items-center text-primary font-medium hover:underline"
+                    className="inline-flex items-center text-green-600 font-medium hover:underline"
                     data-testid={`blog-link-${index}`}
                   >
                     Read More
@@ -360,6 +451,7 @@ export default function InHomeCare() {
             <Button 
               size="lg"
               variant="outline"
+              className="border-green-600 text-green-600 hover:bg-green-50"
               data-testid="button-view-resources"
               asChild
             >
@@ -373,7 +465,7 @@ export default function InHomeCare() {
       </section>
 
       {/* Contact Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-green-50/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="contact-title">
@@ -385,15 +477,15 @@ export default function InHomeCare() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <Card data-testid="contact-card-email">
+            <Card className="border-green-200" data-testid="contact-card-email">
               <CardContent className="p-6 text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mb-4">
-                  <Mail className="w-6 h-6 text-primary" />
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-4">
+                  <Mail className="w-6 h-6 text-green-600" />
                 </div>
                 <h3 className="font-semibold mb-2">Email Us</h3>
                 <a 
                   href="mailto:info@healthyathomeco.com"
-                  className="text-primary hover:underline"
+                  className="text-green-600 hover:underline"
                   data-testid="contact-email"
                 >
                   info@healthyathomeco.com
@@ -401,15 +493,15 @@ export default function InHomeCare() {
               </CardContent>
             </Card>
             
-            <Card data-testid="contact-card-phone">
+            <Card className="border-green-200" data-testid="contact-card-phone">
               <CardContent className="p-6 text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mb-4">
-                  <Phone className="w-6 h-6 text-primary" />
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-4">
+                  <Phone className="w-6 h-6 text-green-600" />
                 </div>
                 <h3 className="font-semibold mb-2">Call Us</h3>
                 <a 
                   href="tel:3032909000"
-                  className="text-primary hover:underline"
+                  className="text-green-600 hover:underline"
                   data-testid="contact-phone"
                 >
                   (303) 290-9000
@@ -417,10 +509,10 @@ export default function InHomeCare() {
               </CardContent>
             </Card>
             
-            <Card data-testid="contact-card-address">
+            <Card className="border-green-200" data-testid="contact-card-address">
               <CardContent className="p-6 text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mb-4">
-                  <MapPin className="w-6 h-6 text-primary" />
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-4">
+                  <MapPin className="w-6 h-6 text-green-600" />
                 </div>
                 <h3 className="font-semibold mb-2">Visit Us</h3>
                 <p className="text-sm text-muted-foreground" data-testid="contact-address">
@@ -434,22 +526,21 @@ export default function InHomeCare() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-16 bg-primary text-primary-foreground">
+      <section className="py-16 bg-gradient-to-r from-green-600 to-emerald-600 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4" data-testid="cta-title">
             Get Your Free In-Home Assessment
           </h2>
-          <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto" data-testid="cta-subtitle">
+          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto" data-testid="cta-subtitle">
             We'll build a custom care plan in 24hrs
           </p>
-          <p className="text-lg text-primary-foreground/80 mb-8 max-w-xl mx-auto">
+          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">
             Takes just 30 seconds to get started. Our care coordinators will reach out to schedule your free assessment.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
-              variant="secondary"
-              className="px-8 py-6 text-lg"
+              className="px-8 py-6 text-lg bg-white text-green-600 hover:bg-gray-100"
               data-testid="button-cta-assessment"
               asChild
             >
@@ -460,7 +551,6 @@ export default function InHomeCare() {
             </Button>
             <Button 
               size="lg" 
-              variant="secondary"
               className="px-8 py-6 text-lg bg-white/10 hover:bg-white/20 text-white border-white/20"
               data-testid="button-cta-email"
               asChild
@@ -473,6 +563,110 @@ export default function InHomeCare() {
           </div>
         </div>
       </section>
+
+      {/* Custom Footer for Healthy at Home */}
+      <footer className="bg-gray-800 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {/* Brand Column */}
+            <div className="col-span-1 md:col-span-2">
+              <div className="flex items-center mb-4">
+                <Heart className="w-8 h-8 text-green-400" />
+                <h3 className="ml-3 text-2xl font-bold">Healthy at Home</h3>
+              </div>
+              <p className="text-gray-300 mb-4">
+                Trusted in-home care services across Denver Metro. Part of the Stage Senior family, bringing compassionate care to your doorstep.
+              </p>
+              <div className="flex space-x-4">
+                <Badge className="bg-green-600 text-white border-green-500">
+                  Locally Owned
+                </Badge>
+                <Badge className="bg-green-600 text-white border-green-500">
+                  Background Checked
+                </Badge>
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-lg font-semibold mb-4 text-green-400">Quick Links</h4>
+              <ul className="space-y-2">
+                <li>
+                  <Link href="/services" className="text-gray-300 hover:text-green-400 transition-colors">
+                    Our Services
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/about-us" className="text-gray-300 hover:text-green-400 transition-colors">
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/team" className="text-gray-300 hover:text-green-400 transition-colors">
+                    Our Team
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/blog" className="text-gray-300 hover:text-green-400 transition-colors">
+                    Resources & Blog
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/faqs" className="text-gray-300 hover:text-green-400 transition-colors">
+                    FAQs
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Contact Info */}
+            <div>
+              <h4 className="text-lg font-semibold mb-4 text-green-400">Contact Us</h4>
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <Phone className="w-5 h-5 text-green-400 mr-3" />
+                  <a href="tel:3032909000" className="text-gray-300 hover:text-green-400">
+                    (303) 290-9000
+                  </a>
+                </div>
+                <div className="flex items-center">
+                  <Mail className="w-5 h-5 text-green-400 mr-3" />
+                  <a href="mailto:info@healthyathomeco.com" className="text-gray-300 hover:text-green-400">
+                    info@healthyathomeco.com
+                  </a>
+                </div>
+                <div className="flex items-start">
+                  <MapPin className="w-5 h-5 text-green-400 mr-3 mt-0.5" />
+                  <div className="text-gray-300">
+                    1270 N Ford Street<br />
+                    Golden, CO 80403
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="mt-8 pt-8 border-t border-gray-700">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <p className="text-gray-400 text-sm mb-4 md:mb-0">
+                © {new Date().getFullYear()} Healthy at Home. All rights reserved. A Stage Senior Service.
+              </p>
+              <div className="flex space-x-6">
+                <Link href="/privacy" className="text-gray-400 hover:text-green-400 text-sm">
+                  Privacy Policy
+                </Link>
+                <Link href="/terms" className="text-gray-400 hover:text-green-400 text-sm">
+                  Terms of Service
+                </Link>
+                <Link href="/accessibility" className="text-gray-400 hover:text-green-400 text-sm">
+                  Accessibility
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
