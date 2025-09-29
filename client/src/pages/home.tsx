@@ -415,105 +415,120 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Differentiators */}
-      <section className="py-16 bg-gray-50">
+      {/* Featured Differentiators */}
+      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-              What makes Stage Senior different
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              What Makes Stage Senior Different
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Colorado values, personal care, and a commitment to excellence that shows in everything we do
+              Three pillars that define our commitment to Colorado families
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="text-center hover:shadow-lg transition-shadow h-full">
-              <CardContent className="p-8 flex flex-col h-full">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <CheckCircle className="w-8 h-8 text-primary" />
+          <div className="space-y-24">
+            {/* Feature 1: Transparent Care Points - Left Aligned */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="order-2 lg:order-1">
+                <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
+                  <img
+                    src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1600&auto=format&fit=crop"
+                    alt="Transparent pricing documentation"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
                 </div>
-                <h3 className="text-lg font-bold mb-4">Transparent Care Points</h3>
-                <p className="text-muted-foreground mb-6 flex-grow">
-                  Published menu of services. Changes only when care truly changes—no nickel-and-diming.
+              </div>
+              <div className="order-1 lg:order-2">
+                <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">Featured</Badge>
+                <h3 className="text-3xl font-bold mb-6">
+                  <CheckCircle className="inline w-8 h-8 text-primary mr-3" />
+                  Transparent Care-Based Pricing
+                </h3>
+                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                  No hidden fees. No surprises. Our published Care Points menu clearly shows what services cost and when they apply. Changes only happen when care needs truly change—with advance notice and family partnership every step of the way.
                 </p>
-                <Link href="/care-points">
-                  <Button variant="outline" className="w-full">
-                    Learn More
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button size="lg" asChild data-testid="button-care-points">
+                    <Link href="/care-points">
+                      See How Care Points Work
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Link>
                   </Button>
-                </Link>
-              </CardContent>
-            </Card>
-            
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardContent className="p-8">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Heart className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-lg font-bold mb-4">Your Story First®</h3>
-                <p className="text-muted-foreground">
-                  Care plans built around personal history and family traditions, not one-size-fits-all approaches.
+              </div>
+            </div>
+
+            {/* Feature 2: Locally Owned - Right Aligned */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">Since 2016</Badge>
+                <h3 className="text-3xl font-bold mb-6">
+                  <Award className="inline w-8 h-8 text-primary mr-3" />
+                  Locally Owned & Operated
+                </h3>
+                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                  Colorado born, Colorado proud. As a locally owned company, we make decisions right here—not in some corporate boardroom. Our leadership knows residents by name, and our teams stay for years, not months. That's the difference local ownership makes.
                 </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="text-center hover:shadow-lg transition-shadow h-full">
-              <CardContent className="p-8 flex flex-col h-full">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Users className="w-8 h-8 text-primary" />
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-muted-foreground">Decision-makers you can actually meet</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-muted-foreground">Long-tenured staff who become like family</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-muted-foreground">Community partnerships that run deep</span>
+                  </div>
                 </div>
-                <h3 className="text-lg font-bold mb-4">Staff‑First Culture</h3>
-                <p className="text-muted-foreground mb-6 flex-grow">
-                  Exceptional resident care starts with exceptional staff care. We invest in our team.
+              </div>
+              <div>
+                <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
+                  <img
+                    src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1600&auto=format&fit=crop"
+                    alt="Local Colorado team and leadership"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 3: Safety with Dignity - Left Aligned */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="order-2 lg:order-1">
+                <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
+                  <img
+                    src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1600&auto=format&fit=crop"
+                    alt="Advanced safety technology"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
+                </div>
+              </div>
+              <div className="order-1 lg:order-2">
+                <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">Innovation</Badge>
+                <h3 className="text-3xl font-bold mb-6">
+                  <Activity className="inline w-8 h-8 text-primary mr-3" />
+                  Safety with Dignity
+                </h3>
+                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                  Advanced fall detection that works like a guardian angel—always watching, never intrusive. Our smart technology provides rapid response while preserving independence and privacy. It's safety that respects dignity, not a system that feels like surveillance.
                 </p>
-                <Link href="/team">
-                  <Button variant="outline" className="w-full">
-                    Meet Our Team
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button size="lg" asChild data-testid="button-safety-dignity">
+                    <Link href="/safety-with-dignity">
+                      Explore Our Technology
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Link>
                   </Button>
-                </Link>
-              </CardContent>
-            </Card>
-            
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardContent className="p-8">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Shield className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-lg font-bold mb-4">Whole‑Person Support</h3>
-                <p className="text-muted-foreground">
-                  Mind, body, and spirit care, including optional chaplaincy program and holistic wellness.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardContent className="p-8">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Award className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-lg font-bold mb-4">Locally Owned & Operated</h3>
-                <p className="text-muted-foreground">
-                  Colorado values. Long‑tenured teams. True community feel, not corporate bureaucracy.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="text-center hover:shadow-lg transition-shadow h-full">
-              <CardContent className="p-8 flex flex-col h-full">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Activity className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-lg font-bold mb-4">Safety with Dignity</h3>
-                <p className="text-muted-foreground mb-6 flex-grow">
-                  Advanced fall detection technology that preserves independence while ensuring quick response times.
-                </p>
-                <Link href="/safety-with-dignity">
-                  <Button variant="outline" className="w-full">
-                    Learn More
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </section>
