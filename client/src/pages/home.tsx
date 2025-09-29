@@ -79,6 +79,40 @@ const CarouselCommunityCard = ({
             <h3 className="text-lg font-bold mb-2 drop-shadow-md" data-testid={`community-name-${community.id}`}>
               {community.name}
             </h3>
+            
+            {/* Care Type Badges */}
+            {community.careTypes && community.careTypes.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {community.careTypes.map((careType) => {
+                  const getCareTypeStyle = () => {
+                    const lowerCareType = careType.toLowerCase();
+                    if (lowerCareType.includes('memory')) return 'bg-purple-500/80 text-white';
+                    if (lowerCareType.includes('assisted')) return 'bg-blue-500/80 text-white';
+                    if (lowerCareType.includes('independent')) return 'bg-green-500/80 text-white';
+                    return 'bg-white/20 text-white';
+                  };
+                  
+                  const formatCareType = (type: string) => {
+                    return type
+                      .split('-')
+                      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                      .join(' ');
+                  };
+                  
+                  return (
+                    <Badge 
+                      key={careType}
+                      variant="secondary" 
+                      className={`text-xs px-2 py-0.5 ${getCareTypeStyle()} border-0 backdrop-blur-sm`}
+                      data-testid={`care-type-badge-${community.id}-${careType}`}
+                    >
+                      {formatCareType(careType)}
+                    </Badge>
+                  );
+                })}
+              </div>
+            )}
+            
             <p className="text-sm text-white mb-3 line-clamp-2 drop-shadow-sm">
               {community.shortDescription || community.description}
             </p>
