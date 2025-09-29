@@ -1327,12 +1327,23 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
         description: `${type.slice(0, -1)} created successfully.`,
       });
     },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: `Failed to create ${type.slice(0, -1)}.`,
-        variant: "destructive",
-      });
+    onError: async (error: any) => {
+      // Check if the error response has a 409 status (conflict)
+      if (error.message && error.message.includes('409')) {
+        toast({
+          title: "Already Exists",
+          description: type === 'page-heroes' 
+            ? "A hero section already exists for this page. Please edit the existing hero instead."
+            : `This ${type.slice(0, -1)} already exists. Please edit the existing item instead.`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: `Failed to create ${type.slice(0, -1)}.`,
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -1351,12 +1362,23 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
         description: `${type.slice(0, -1)} updated successfully.`,
       });
     },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: `Failed to update ${type.slice(0, -1)}.`,
-        variant: "destructive",
-      });
+    onError: async (error: any) => {
+      // Check if the error response has a 409 status (conflict)
+      if (error.message && error.message.includes('409')) {
+        toast({
+          title: "Already Exists",
+          description: type === 'page-heroes'
+            ? "A hero section already exists for this page. Please choose a different page."
+            : `This ${type.slice(0, -1)} already exists with these values.`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: `Failed to update ${type.slice(0, -1)}.`,
+          variant: "destructive",
+        });
+      }
     },
   });
 

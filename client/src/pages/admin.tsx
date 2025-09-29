@@ -121,7 +121,7 @@ export default function Admin() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-13" data-testid="admin-tabs">
+          <TabsList className="flex flex-wrap gap-1 p-1" data-testid="admin-tabs">
             <TabsTrigger value="dashboard" data-testid="tab-dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="communities" data-testid="tab-communities">Communities</TabsTrigger>
             <TabsTrigger value="posts" data-testid="tab-posts">Blog Posts</TabsTrigger>
@@ -132,7 +132,7 @@ export default function Admin() {
             <TabsTrigger value="faqs" data-testid="tab-faqs">FAQs</TabsTrigger>
             <TabsTrigger value="galleries" data-testid="tab-galleries">Galleries</TabsTrigger>
             <TabsTrigger value="testimonials" data-testid="tab-testimonials">Testimonials</TabsTrigger>
-            <TabsTrigger value="page-heroes" data-testid="tab-page-heroes">Page Heroes</TabsTrigger>
+            <TabsTrigger value="page-heroes" data-testid="tab-page-heroes" className="bg-primary text-primary-foreground hover:bg-primary/90">Page Heroes</TabsTrigger>
             <TabsTrigger value="care-types" data-testid="tab-care-types">Care Types</TabsTrigger>
             <TabsTrigger value="amenities" data-testid="tab-amenities">Amenities</TabsTrigger>
             <TabsTrigger value="community-highlights" data-testid="tab-community-highlights">Highlights</TabsTrigger>

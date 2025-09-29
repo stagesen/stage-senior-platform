@@ -1138,22 +1138,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/page-heroes", requireAuth, async (req, res) => {
     try {
       const validatedData = insertPageHeroSchema.parse(req.body);
+      
+      // Check if a page hero already exists for this page path
+      const existingPageHero = await storage.getPageHero(validatedData.pagePath);
+      if (existingPageHero) {
+        return res.status(409).json({ 
+          message: `A hero section already exists for this page. Please edit the existing hero instead.`,
+          existingId: existingPageHero.id 
+        });
+      }
+      
       const pageHero = await storage.createPageHero(validatedData);
       res.status(201).json(pageHero);
     } catch (error) {
       console.error("Error creating page hero:", error);
-      res.status(400).json({ message: "Failed to create page hero" });
+      if ((error as any)?.code === '23505') { // PostgreSQL unique constraint violation
+        res.status(409).json({ message: "A hero section already exists for this page. Please edit the existing hero instead." });
+      } else {
+        res.status(400).json({ message: "Failed to create page hero" });
+      }
     }
   });
 
   app.put("/api/page-heroes/:id", requireAuth, async (req, res) => {
     try {
       const validatedData = insertPageHeroSchema.partial().parse(req.body);
+      
+      // If pagePath is being updated, check for conflicts
+      if (validatedData.pagePath) {
+        const existingPageHero = await storage.getPageHero(validatedData.pagePath);
+        if (existingPageHero && existingPageHero.id !== req.params.id) {
+          return res.status(409).json({ 
+            message: `A hero section already exists for this page. Please choose a different page.`,
+            existingId: existingPageHero.id 
+          });
+        }
+      }
+      
       const pageHero = await storage.updatePageHero(req.params.id, validatedData);
       res.json(pageHero);
     } catch (error) {
       console.error("Error updating page hero:", error);
-      res.status(400).json({ message: "Failed to update page hero" });
+      if ((error as any)?.code === '23505') { // PostgreSQL unique constraint violation
+        res.status(409).json({ message: "A hero section already exists for this page. Please choose a different page." });
+      } else {
+        res.status(400).json({ message: "Failed to update page hero" });
+      }
     }
   });
 
