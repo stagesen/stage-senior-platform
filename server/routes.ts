@@ -297,6 +297,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Newsletter routes
+  app.get("/api/posts/latest-newsletter/:communityId", async (req, res) => {
+    try {
+      const { communityId } = req.params;
+      
+      // First get the community to get its name
+      const community = await storage.getCommunityById(communityId);
+      if (!community) {
+        return res.status(404).json({ message: "Community not found" });
+      }
+      
+      // Find the latest blog post with "Newsletter" tag and matching community
+      const posts = await storage.getBlogPosts({
+        published: true,
+        communityId: communityId,
+        tags: ["Newsletter"],
+      });
+      
+      // Get the most recent newsletter post
+      const latestPost = posts
+        .sort((a, b) => {
+          const dateA = new Date(a.publishedAt || a.createdAt || 0).getTime();
+          const dateB = new Date(b.publishedAt || b.createdAt || 0).getTime();
+          return dateB - dateA;
+        })[0];
+      
+      if (!latestPost) {
+        return res.status(404).json({ message: "No newsletter found for this community" });
+      }
+      
+      // Get attachments if the post has any
+      let attachments = [];
+      if (latestPost.attachmentId) {
+        const attachment = await storage.getPostAttachment(latestPost.attachmentId);
+        if (attachment) {
+          attachments = [attachment];
+        }
+      }
+      
+      res.json({
+        ...latestPost,
+        attachments,
+        community,
+      });
+    } catch (error) {
+      console.error("Error fetching latest newsletter:", error);
+      res.status(500).json({ message: "Failed to fetch latest newsletter" });
+    }
+  });
+
   // Blog Post routes
   app.get("/api/blog-posts", async (req, res) => {
     try {
