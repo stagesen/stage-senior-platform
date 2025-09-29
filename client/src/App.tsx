@@ -20,6 +20,7 @@ import AboutUs from "@/pages/about-us";
 import Services from "@/pages/services";
 import StageCares from "@/pages/stage-cares";
 import CarePoints from "@/pages/care-points";
+import SafetyWithDignity from "@/pages/safety-with-dignity";
 import ProfessionalManagement from "@/pages/services/management";
 import LongTermCare from "@/pages/services/long-term-care";
 import Chaplaincy from "@/pages/services/chaplaincy";
@@ -52,6 +53,7 @@ function Router() {
           <Route path="/services" component={Services} />
           <Route path="/stage-cares" component={StageCares} />
           <Route path="/care-points" component={CarePoints} />
+          <Route path="/safety-with-dignity" component={SafetyWithDignity} />
           <Route path="/services/management" component={ProfessionalManagement} />
           <Route path="/services/long-term-care" component={LongTermCare} />
           <Route path="/services/chaplaincy" component={Chaplaincy} />
