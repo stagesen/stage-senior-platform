@@ -16,6 +16,7 @@ export default function Footer() {
   const quickLinks = [
     { name: "Services", href: "/services" },
     { name: "About Us", href: "/about-us" },
+    { name: "In-Home Care", href: "/in-home-care" },
     { name: "Care Points", href: "/care-points" },
     { name: "Stage Cares", href: "/stage-cares" },
     { name: "Professional Management Services", href: "/services/management" },
