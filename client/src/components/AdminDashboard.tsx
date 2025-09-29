@@ -1261,6 +1261,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       contactImageId: "",
       brochureImageId: "",
       experienceImageId: "",
+      calendarFile1Id: "",
+      calendarFile1ButtonText: "",
+      calendarFile2Id: "",
+      calendarFile2ButtonText: "",
       overview: "",
       description: "",
       shortDescription: "",
@@ -2150,6 +2154,78 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   </FormItem>
                 )}
               />
+              
+              {/* Calendar Downloads Section */}
+              <div className="space-y-4 border-t pt-4 mt-4">
+                <h3 className="text-lg font-semibold">Newsletter Calendar Downloads</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={communityForm.control}
+                    name="calendarFile1ButtonText"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Calendar 1 Button Text</FormLabel>
+                        <FormControl>
+                          <Input {...field} value={field.value || ""} placeholder="e.g. Download Activities Calendar" data-testid="input-calendar1-button-text" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={communityForm.control}
+                    name="calendarFile1Id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Calendar 1 File</FormLabel>
+                        <FormControl>
+                          <ImageUploader
+                            value={field.value || undefined}
+                            onChange={field.onChange}
+                            label="Upload first calendar file (PDF recommended)"
+                            maxSize={10 * 1024 * 1024}
+                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={communityForm.control}
+                    name="calendarFile2ButtonText"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Calendar 2 Button Text</FormLabel>
+                        <FormControl>
+                          <Input {...field} value={field.value || ""} placeholder="e.g. Download Events Calendar" data-testid="input-calendar2-button-text" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={communityForm.control}
+                    name="calendarFile2Id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Calendar 2 File</FormLabel>
+                        <FormControl>
+                          <ImageUploader
+                            value={field.value || undefined}
+                            onChange={field.onChange}
+                            label="Upload second calendar file (PDF recommended)"
+                            maxSize={10 * 1024 * 1024}
+                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={communityForm.control}
