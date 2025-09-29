@@ -27,35 +27,37 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
   };
   
   return (
-    <Card className="text-center p-6 hover:shadow-lg transition-shadow h-full" data-testid={`carousel-member-${member.id}`}>
-      <CardContent className="pt-6">
-        <Avatar className="w-20 h-20 mx-auto mb-4" data-testid={`carousel-avatar-${member.id}`} aria-label={`Portrait of ${member.name}`}>
-          {avatarUrl ? (
-            <img
-              src={avatarUrl}
-              alt={`${member.name} portrait`}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <AvatarFallback className="text-lg font-semibold bg-primary/10 text-primary">
-              {getInitials(member.name)}
-            </AvatarFallback>
-          )}
-        </Avatar>
-        <h3 className="font-semibold text-lg mb-2" data-testid={`carousel-member-name-${member.id}`}>
-          {member.name}
-        </h3>
-        <p className="text-muted-foreground text-sm mb-2" data-testid={`carousel-member-role-${member.id}`}>
-          {member.role}
-        </p>
-        {member.department && (
-          <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
-            <Building className="w-3 h-3" />
-            {member.department}
+    <Link href={`/team/${member.slug}`}>
+      <Card className="text-center p-6 hover:shadow-lg transition-shadow h-full cursor-pointer" data-testid={`carousel-member-${member.id}`}>
+        <CardContent className="pt-6">
+          <Avatar className="w-20 h-20 mx-auto mb-4" data-testid={`carousel-avatar-${member.id}`} aria-label={`Portrait of ${member.name}`}>
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={`${member.name} portrait`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <AvatarFallback className="text-lg font-semibold bg-primary/10 text-primary">
+                {getInitials(member.name)}
+              </AvatarFallback>
+            )}
+          </Avatar>
+          <h3 className="font-semibold text-lg mb-2 hover:text-primary transition-colors" data-testid={`carousel-member-name-${member.id}`}>
+            {member.name}
+          </h3>
+          <p className="text-muted-foreground text-sm mb-2" data-testid={`carousel-member-role-${member.id}`}>
+            {member.role}
           </p>
-        )}
-      </CardContent>
-    </Card>
+          {member.department && (
+            <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+              <Building className="w-3 h-3" />
+              {member.department}
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </Link>
   );
 };
 

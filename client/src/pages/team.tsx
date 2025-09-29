@@ -84,9 +84,11 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
           </div>
           
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-bold text-gray-900 truncate" data-testid={`team-member-name-${member.id}`}>
-              {member.name}
-            </h3>
+            <Link href={`/team/${member.slug}`}>
+              <h3 className="text-lg font-bold text-gray-900 truncate hover:text-primary transition-colors cursor-pointer" data-testid={`team-member-name-${member.id}`}>
+                {member.name}
+              </h3>
+            </Link>
             <p className="text-sm font-medium text-primary" data-testid={`team-member-role-${member.id}`}>
               {member.role}
             </p>
@@ -146,6 +148,14 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
               <span>{member.phone}</span>
             </a>
           )}
+        </div>
+
+        <div className="mt-4">
+          <Link href={`/team/${member.slug}`}>
+            <Button variant="outline" className="w-full" data-testid={`view-profile-${member.id}`}>
+              View Full Profile
+            </Button>
+          </Link>
         </div>
 
         {(member.linkedinUrl || member.twitterUrl) && (
