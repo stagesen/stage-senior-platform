@@ -74,12 +74,25 @@ export default function Footer() {
                   className="w-auto object-contain min-w-[160px] h-14 sm:h-16 md:h-18"
                 />
               </div>
-              <p className="text-background/95 mb-8 text-lg leading-relaxed" data-testid="footer-description">
+              <p className="text-background/95 mb-4 text-lg leading-relaxed" data-testid="footer-description">
                 Creating vibrant communities where seniors thrive. Locally owned and resident-focused since 2016.
               </p>
               
+              {/* LinkedIn */}
+              <div className="mb-8">
+                <a
+                  href="https://linkedin.com/company/stage-management-llc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex bg-gradient-to-br from-background/15 to-background/10 hover:from-primary hover:to-primary/90 text-background/70 hover:text-background p-3.5 rounded-xl transition-all duration-300 group border border-background/10 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/20"
+                  data-testid="social-linkedin"
+                >
+                  <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                </a>
+              </div>
+              
               {/* Stats */}
-              <div className="grid grid-cols-2 gap-4 mb-8">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="text-center p-5 bg-gradient-to-br from-background/10 to-background/5 rounded-xl border border-background/10 hover:border-primary/30 transition-all duration-300">
                   <div className="text-2xl font-bold text-primary mb-2">9+</div>
                   <div className="text-background/80 text-sm font-medium">Years Serving</div>
@@ -87,22 +100,6 @@ export default function Footer() {
                 <div className="text-center p-5 bg-gradient-to-br from-background/10 to-background/5 rounded-xl border border-background/10 hover:border-primary/30 transition-all duration-300">
                   <div className="text-2xl font-bold text-primary mb-2">4</div>
                   <div className="text-background/80 text-sm font-medium">Communities</div>
-                </div>
-              </div>
-              
-              {/* Social Media with enhanced styling */}
-              <div className="space-y-4">
-                <h4 className="text-background font-semibold text-lg mb-4">Follow Our Journey</h4>
-                <div className="flex space-x-3">
-                  <a
-                    href="https://linkedin.com/company/stage-management-llc"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-gradient-to-br from-background/15 to-background/10 hover:from-primary hover:to-primary/90 text-background/70 hover:text-background p-3.5 rounded-xl transition-all duration-300 group border border-background/10 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/20"
-                    data-testid="social-linkedin"
-                  >
-                    <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  </a>
                 </div>
               </div>
             </div>
