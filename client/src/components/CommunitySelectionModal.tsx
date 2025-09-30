@@ -8,8 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { getCommunityFurtherClass } from "@/lib/furtherWidgetUtils";
-import { cn } from "@/lib/utils";
 import type { Community } from "@shared/schema";
 
 interface CommunitySelectionModalProps {
@@ -80,12 +78,12 @@ export default function CommunitySelectionModal({
                 )}
                 
                 <Button
-                  className={cn(
-                    "w-full",
-                    getCommunityFurtherClass(community.slug)
-                  )}
+                  className="w-full"
                   size="default"
                   data-testid={`button-schedule-tour-${community.slug}`}
+                  onClick={() => {
+                    window.location.href = `/communities/${community.slug}/#/further/55`;
+                  }}
                 >
                   <Calendar className="w-4 h-4 mr-2" />
                   Schedule Tour
