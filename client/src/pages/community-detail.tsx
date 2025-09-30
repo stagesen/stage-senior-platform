@@ -714,6 +714,9 @@ const ActionPanel = ({ community }: { community: any }) => {
     primaryContact?.avatarImageId ? `/api/images/${primaryContact.avatarImageId}` : null
   );
 
+  // Resolve brochure image URL
+  const resolvedBrochureUrl = useResolveImageUrl(community?.brochureImageId);
+
   // Determine grid columns based on whether we have a team member
   const gridCols = primaryContact ? "md:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-3";
 
@@ -870,7 +873,7 @@ const ActionPanel = ({ community }: { community: any }) => {
           <Card className="shadow-lg bg-primary/5 border-primary/20 overflow-hidden">
             <div className="h-48 overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1554224155-67261b3ff858f?q=80&w=2000"
+                src={resolvedBrochureUrl || defaultBrochureImage}
                 alt="Community brochure preview"
                 className="w-full h-full object-cover"
               />
