@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Facebook, Linkedin, Instagram, Phone, Mail, MapPin, ArrowRight, Heart, Users, CheckCircle } from "lucide-react";
+import { Linkedin, Phone, Mail, MapPin, ArrowRight, Heart, Users, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import logoWhiteUrl from "@assets/stagesenior-logo-wht_1758726884711.webp";
@@ -95,31 +95,13 @@ export default function Footer() {
                 <h4 className="text-background font-semibold text-lg mb-4">Follow Our Journey</h4>
                 <div className="flex space-x-3">
                   <a
-                    href="https://facebook.com/stagesenior"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-gradient-to-br from-background/15 to-background/10 hover:from-primary hover:to-primary/90 text-background/70 hover:text-background p-3.5 rounded-xl transition-all duration-300 group border border-background/10 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/20"
-                    data-testid="social-facebook"
-                  >
-                    <Facebook className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  </a>
-                  <a
-                    href="https://linkedin.com/company/stagesenior"
+                    href="https://linkedin.com/company/stage-management-llc"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-gradient-to-br from-background/15 to-background/10 hover:from-primary hover:to-primary/90 text-background/70 hover:text-background p-3.5 rounded-xl transition-all duration-300 group border border-background/10 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/20"
                     data-testid="social-linkedin"
                   >
                     <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  </a>
-                  <a
-                    href="https://instagram.com/stagesenior"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-gradient-to-br from-background/15 to-background/10 hover:from-primary hover:to-primary/90 text-background/70 hover:text-background p-3.5 rounded-xl transition-all duration-300 group border border-background/10 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/20"
-                    data-testid="social-instagram"
-                  >
-                    <Instagram className="w-5 h-5 group-hover:scale-110 transition-transform" />
                   </a>
                 </div>
               </div>
