@@ -147,12 +147,6 @@ export default function Footer() {
                   </li>
                 ))}
               </ul>
-              <div className="mt-6 p-5 bg-gradient-to-br from-primary/15 to-primary/10 rounded-xl border border-primary/20">
-                <p className="text-background/95 text-sm leading-relaxed">
-                  <CheckCircle className="w-4 h-4 inline mr-2 text-primary" />
-                  Schedule a tour today and see why families choose Stage Senior.
-                </p>
-              </div>
             </div>
           
             {/* Quick Links */}
