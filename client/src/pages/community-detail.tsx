@@ -45,6 +45,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
+import { getCommunityFurtherClass } from "@/lib/furtherWidgetUtils";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import stageSeniorLogo from "@assets/stagesenior-logo_1758726889154.webp";
@@ -945,7 +946,7 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button 
             size="lg" 
-            className="text-lg px-8 py-6 shadow-2xl bg-white text-primary hover:bg-gray-100"
+            className={cn("text-lg px-8 py-6 shadow-2xl bg-white text-primary hover:bg-gray-100", getCommunityFurtherClass(community.slug || ''))}
             data-testid="button-schedule-tour-hero"
           >
             <Calendar className="w-5 h-5 mr-2" />
@@ -1436,7 +1437,7 @@ export default function CommunityDetail() {
               )}
               <Button 
                 size="sm"
-                className="shadow-sm"
+                className={cn("shadow-sm", getCommunityFurtherClass(community.slug || ''))}
                 style={{ 
                   backgroundColor: (community as any)?.ctaColorHex || '#f59e0b',
                   color: (community as any)?.ctaColorHex ? getAccessibleTextColor((community as any).ctaColorHex) : '#ffffff'
@@ -2020,7 +2021,7 @@ export default function CommunityDetail() {
                 </CardHeader>
                 <CardContent>
                   <Button 
-                    className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white" 
+                    className={cn("w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white", getCommunityFurtherClass(community.slug || ''))} 
                     data-testid="button-schedule-tour"
                     asChild
                   >
