@@ -765,7 +765,12 @@ const ActionPanel = ({ community }: { community: any }) => {
                   <span>All-inclusive pricing</span>
                 </div>
               </div>
-              <Button className="w-full" variant="outline" data-testid="button-view-pricing">
+              <Button 
+                className="w-full" 
+                variant="outline" 
+                data-testid="button-view-pricing"
+                onClick={() => handleNavClick('floor-plans')}
+              >
                 View Floor Plan Pricing
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
