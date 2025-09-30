@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
 import TestimonialSection from "@/components/TestimonialSection";
+import CommunitySelectionModal from "@/components/CommunitySelectionModal";
 import { 
   Carousel,
   CarouselContent,
@@ -148,6 +149,7 @@ const CarouselCommunityCard = ({
 
 export default function Home() {
   const [showContactForm, setShowContactForm] = useState(false);
+  const [showCommunityModal, setShowCommunityModal] = useState(false);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -273,10 +275,11 @@ export default function Home() {
                 size="lg" 
                 variant="glassmorphism"
                 className="font-semibold px-8 py-6 text-lg"
-                onClick={() => setShowContactForm(true)}
-                data-testid="button-check-availability"
+                onClick={() => setShowCommunityModal(true)}
+                data-testid="button-schedule-tour"
               >
-                Check Availability
+                <Calendar className="w-5 h-5 mr-2" />
+                Schedule Tour
               </Button>
             </div>
           </div>
@@ -661,6 +664,13 @@ export default function Home() {
           </div>
         </div>
       </section>
+      
+      {/* Community Selection Modal */}
+      <CommunitySelectionModal 
+        open={showCommunityModal}
+        onOpenChange={setShowCommunityModal}
+        communities={communities}
+      />
     </div>
   );
 }

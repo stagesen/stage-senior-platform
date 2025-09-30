@@ -4,7 +4,10 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import LeadCaptureForm from "@/components/LeadCaptureForm";
 import { PageHero } from "@/components/PageHero";
 import { Link } from "wouter";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import CommunitySelectionModal from "@/components/CommunitySelectionModal";
+import type { Community } from "@shared/schema";
 import { 
   Phone, 
   Mail, 
@@ -15,6 +18,13 @@ import {
 } from "lucide-react";
 
 export default function Contact() {
+  const [showCommunityModal, setShowCommunityModal] = useState(false);
+  
+  const { data: communities = [] } = useQuery<Community[]>({
+    queryKey: ["/api/communities"],
+    staleTime: 5 * 60 * 1000,
+  });
+
   useEffect(() => {
     document.title = "Contact Us | Stage Senior";
     
@@ -30,7 +40,7 @@ export default function Contact() {
     }
   }, []);
 
-  const communities = [
+  const communityLocations = [
     {
       name: "The Gardens at Columbine",
       address: "5130 W Ken Caryl Ave",
@@ -126,7 +136,12 @@ export default function Contact() {
                 <p className="text-muted-foreground mb-4">
                   Visit our communities and see the difference
                 </p>
-                <Button className="w-full" variant="secondary">
+                <Button 
+                  className="w-full" 
+                  variant="secondary"
+                  onClick={() => setShowCommunityModal(true)}
+                  data-testid="button-schedule-tour"
+                >
                   Book Your Visit
                 </Button>
               </CardContent>
@@ -226,7 +241,7 @@ export default function Contact() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {communities.map((community, index) => (
+            {communityLocations.map((community, index) => (
               <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <CardTitle>{community.name}</CardTitle>
@@ -273,6 +288,13 @@ export default function Contact() {
           </Button>
         </div>
       </section>
+      
+      {/* Community Selection Modal */}
+      <CommunitySelectionModal 
+        open={showCommunityModal}
+        onOpenChange={setShowCommunityModal}
+        communities={communities}
+      />
     </div>
   );
 }
