@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { getCommunityFurtherClass } from "@/lib/furtherWidgetUtils";
+import { cn } from "@/lib/utils";
 import type { Community } from "@shared/schema";
 
 interface CommunityCardProps {
@@ -169,7 +171,10 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
               <div className="flex flex-col sm:flex-row gap-2">
                 <Button 
                   variant="default"
-                  className="flex-1 h-11 font-semibold"
+                  className={cn(
+                    "flex-1 h-11 font-semibold",
+                    getCommunityFurtherClass(community.slug)
+                  )}
                   onClick={() => setShowLeadCapture(true)}
                   data-testid={`button-schedule-tour-${community.slug}`}
                 >
