@@ -1962,7 +1962,26 @@ export default function CommunityDetail() {
                            Sparkles) : 
                           getAmenityIcon(amenityName));
 
-                      return (
+                      // Check if this is a dining-related amenity
+                      const isDiningAmenity = amenityName && (
+                        amenityName.toLowerCase().includes('restaurant-style dining') ||
+                        amenityName.toLowerCase().includes('private family dining room')
+                      );
+
+                      return isDiningAmenity ? (
+                        <Link 
+                          key={`amenity-${index}`}
+                          href="/dining"
+                          className="flex items-center justify-between bg-white rounded-lg p-4 hover:bg-primary/5 hover:shadow-md transition-all duration-200 cursor-pointer group"
+                          data-testid={`amenity-link-dining-${index}`}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <IconComponent className="w-8 h-8 text-primary flex-shrink-0" />
+                            <span className="text-sm font-medium group-hover:text-primary transition-colors">{amenityName}</span>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                        </Link>
+                      ) : (
                         <div 
                           key={`amenity-${index}`}
                           className="flex items-center space-x-3 bg-white rounded-lg p-4"
