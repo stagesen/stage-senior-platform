@@ -1981,9 +1981,9 @@ export default function CommunityDetail() {
                         >
                           <div className="flex items-center space-x-3">
                             <IconComponent className="w-8 h-8 text-primary flex-shrink-0" />
-                            <span className="text-sm font-medium group-hover:text-primary transition-colors">{amenityName}</span>
+                            <span className="text-sm font-medium text-primary group-hover:text-primary/80 transition-colors">{amenityName}</span>
                           </div>
-                          <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                          <ChevronRight className="w-4 h-4 text-primary group-hover:translate-x-0.5 transition-all" />
                         </Link>
                       ) : (
                         <div 
