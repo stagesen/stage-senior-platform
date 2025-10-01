@@ -29,7 +29,10 @@ async function build() {
       },
       define: {
         'process.env.NODE_ENV': '"production"',
+        'import.meta.env.DEV': 'false',
+        'import.meta.env.PROD': 'true',
       },
+      jsx: 'automatic',
       alias: {
         '@': path.resolve(__dirname, 'client/src'),
         '@shared': path.resolve(__dirname, 'shared'),
