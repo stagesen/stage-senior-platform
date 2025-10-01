@@ -1,5 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
+import path from "path";
 
 const app = express();
 app.use(express.json());
@@ -45,22 +46,25 @@ app.use((req, res, next) => {
     console.error(err);
   });
   
-  // Serve a basic status page
-  app.get("/", (_req, res) => {
-    res.json({ 
-      status: "API Server Running",
-      message: "The API server is running. Frontend development requires fixing the Vite configuration.",
-      endpoints: [
-        "/api/communities",
-        "/api/posts", 
-        "/api/events",
-        "/api/galleries",
-        "/api/team-members",
-        "/api/testimonials",
-        "/api/floor-plans",
-        "/api/faqs"
-      ]
-    });
+  // Serve static files from dist/public
+  const distPath = path.resolve(__dirname, "..", "dist", "public");
+  
+  // Serve static assets
+  app.use(express.static(distPath));
+  
+  // Serve attached assets
+  const assetsPath = path.resolve(__dirname, "..", "attached_assets");
+  app.use("/attached_assets", express.static(assetsPath));
+  
+  // Catch-all route to serve index.html for client-side routing
+  app.get("*", (_req, res) => {
+    // Skip API routes
+    if (_req.path.startsWith("/api")) {
+      return res.status(404).json({ message: "API endpoint not found" });
+    }
+    
+    const indexPath = path.join(distPath, "index.html");
+    res.sendFile(indexPath);
   });
   
   const port = parseInt(process.env.PORT || '5000', 10);
@@ -69,7 +73,8 @@ app.use((req, res, next) => {
     host: "0.0.0.0",
     reusePort: true,
   }, () => {
-    console.log(`API server running on port ${port}`);
-    console.log(`Visit http://localhost:${port} to see available endpoints`);
+    console.log(`Server running on port ${port}`);
+    console.log(`Visit http://localhost:${port} to access the application`);
+    console.log(`API endpoints available at http://localhost:${port}/api/*`);
   });
 })();
