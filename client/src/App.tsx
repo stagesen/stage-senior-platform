@@ -26,6 +26,7 @@ import InHomeCare from "@/pages/in-home-care";
 import Careers from "@/pages/careers";
 import Contact from "@/pages/contact";
 import Dining from "@/pages/dining";
+import BeautySalon from "@/pages/beauty-salon";
 import ProfessionalManagement from "@/pages/services/management";
 import LongTermCare from "@/pages/services/long-term-care";
 import Chaplaincy from "@/pages/services/chaplaincy";
@@ -61,6 +62,7 @@ function Router() {
           <Route path="/careers" component={Careers} />
           <Route path="/contact" component={Contact} />
           <Route path="/dining" component={Dining} />
+          <Route path="/beauty-salon" component={BeautySalon} />
           <Route path="/services" component={Services} />
           <Route path="/stage-cares" component={StageCares} />
           <Route path="/care-points" component={CarePoints} />
