@@ -1962,22 +1962,34 @@ export default function CommunityDetail() {
                            Sparkles) : 
                           getAmenityIcon(amenityName));
 
-                      // Check if this is a dining-related amenity
-                      const isDiningAmenity = amenityName && (() => {
-                        const lowerName = amenityName.toLowerCase();
-                        // Check for "Restaurant-Style Dining" variations
+                      // Helper function to determine amenity linking
+                      const getAmenityLink = (name: string): { href: string; testIdPrefix: string } | null => {
+                        if (!name) return null;
+                        const lowerName = name.toLowerCase();
+                        
+                        // Check for dining-related amenities
                         const isRestaurantDining = lowerName.includes('restaurant') && lowerName.includes('dining');
-                        // Check for "Private Family Dining Room" variations
                         const isPrivateFamilyDining = lowerName.includes('private') && lowerName.includes('family') && lowerName.includes('dining');
-                        return isRestaurantDining || isPrivateFamilyDining;
-                      })();
+                        if (isRestaurantDining || isPrivateFamilyDining) {
+                          return { href: '/dining', testIdPrefix: 'dining' };
+                        }
+                        
+                        // Check for beauty salon/barber amenities
+                        if (lowerName.includes('beauty salon') || lowerName.includes('barber')) {
+                          return { href: '/beauty-salon', testIdPrefix: 'beauty-salon' };
+                        }
+                        
+                        return null;
+                      };
 
-                      return isDiningAmenity ? (
+                      const amenityLink = getAmenityLink(amenityName);
+
+                      return amenityLink ? (
                         <Link 
                           key={`amenity-${index}`}
-                          href="/dining"
+                          href={amenityLink.href}
                           className="flex items-center justify-between bg-white rounded-lg p-4 hover:bg-primary/5 hover:shadow-md transition-all duration-200 cursor-pointer group"
-                          data-testid={`amenity-link-dining-${index}`}
+                          data-testid={`amenity-link-${amenityLink.testIdPrefix}-${index}`}
                         >
                           <div className="flex items-center space-x-3">
                             <IconComponent className="w-8 h-8 text-primary flex-shrink-0" />
