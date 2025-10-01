@@ -111,15 +111,6 @@ The platform features a comprehensive image management system integrated with Re
 - **Community Logo Display**: Logo images display in community detail pages (hero overlay and sticky nav) with proper fallback support for legacy logo fields
 - **Carousel Image Support**: Homepage carousel properly displays community hero images with automatic resolution of stored image IDs
 
-## Known Issues and Workarounds
-
-### Vite Configuration ESM/CJS Incompatibility
-**Issue**: The vite.config.ts file contains top-level await statements that are incompatible with CommonJS module format, preventing the normal development server from starting.
-
-**Workaround**: Created an API-only server (`server/api-server.ts`) that bypasses Vite and serves all backend functionality directly on port 5000. This allows the application to run despite the Vite configuration issues.
-
-**To run the server**: `npx tsx server/api-server.ts`
-
 ## External Dependencies
 
 ### Database Services

@@ -578,7 +578,6 @@ export const insertPostSchema = createInsertSchema(posts).omit({
 }).extend({
   tags: z.array(z.string()).optional().default([]),
   attachmentId: z.string().optional(),
-  publishedAt: z.coerce.date().nullable().optional(),
 });
 
 export const insertPostAttachmentSchema = createInsertSchema(postAttachments).omit({

@@ -765,12 +765,7 @@ const ActionPanel = ({ community }: { community: any }) => {
                   <span>All-inclusive pricing</span>
                 </div>
               </div>
-              <Button 
-                className="w-full" 
-                variant="outline" 
-                data-testid="button-view-pricing"
-                onClick={() => handleNavClick('floor-plans')}
-              >
+              <Button className="w-full" variant="outline" data-testid="button-view-pricing">
                 View Floor Plan Pricing
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -956,7 +951,6 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
             size="lg" 
             className={cn("text-lg px-8 py-6 shadow-2xl bg-white text-primary hover:bg-gray-100", getCommunityFurtherClass(community.slug || ''))}
             data-testid="button-schedule-tour-hero"
-            onClick={() => window.location.hash = '/further/55'}
           >
             <Calendar className="w-5 h-5 mr-2" />
             Schedule Your Tour Today
@@ -1452,7 +1446,6 @@ export default function CommunityDetail() {
                   color: (community as any)?.ctaColorHex ? getAccessibleTextColor((community as any).ctaColorHex) : '#ffffff'
                 }}
                 data-testid="nav-schedule-tour"
-                onClick={() => window.location.hash = '/further/55'}
               >
                 <Calendar className="w-4 h-4 mr-1 md:mr-2" />
                 <span className="hidden md:inline">Schedule</span> Tour
@@ -2033,10 +2026,12 @@ export default function CommunityDetail() {
                   <Button 
                     className={cn("w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white", getCommunityFurtherClass(community.slug || ''))} 
                     data-testid="button-schedule-tour"
-                    onClick={() => window.location.hash = '/further/55'}
+                    asChild
                   >
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Schedule Your Tour
+                    <Link href="/contact">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Schedule Your Tour
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
