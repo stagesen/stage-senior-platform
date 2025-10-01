@@ -1963,10 +1963,14 @@ export default function CommunityDetail() {
                           getAmenityIcon(amenityName));
 
                       // Check if this is a dining-related amenity
-                      const isDiningAmenity = amenityName && (
-                        amenityName.toLowerCase().includes('restaurant-style dining') ||
-                        amenityName.toLowerCase().includes('private family dining room')
-                      );
+                      const isDiningAmenity = amenityName && (() => {
+                        const lowerName = amenityName.toLowerCase();
+                        // Check for "Restaurant-Style Dining" variations
+                        const isRestaurantDining = lowerName.includes('restaurant') && lowerName.includes('dining');
+                        // Check for "Private Family Dining Room" variations
+                        const isPrivateFamilyDining = lowerName.includes('private') && lowerName.includes('family') && lowerName.includes('dining');
+                        return isRestaurantDining || isPrivateFamilyDining;
+                      })();
 
                       return isDiningAmenity ? (
                         <Link 
