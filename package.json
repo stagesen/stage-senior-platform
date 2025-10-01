@@ -2,6 +2,14 @@
   "name": "workspace",
   "version": "1.0.0",
   "main": "postcss.config.js",
+  "scripts": {
+    "dev": "tsx server/api-server.ts",
+    "build": "tsc && vite build",
+    "start": "node dist/server.js",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "@google-cloud/storage": "^7.17.1",
     "@hookform/resolvers": "^5.2.2",
@@ -415,9 +423,6 @@
     "yocto-queue": "^0.1.0",
     "zod": "^3.25.76",
     "zod-validation-error": "^3.4.0"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
