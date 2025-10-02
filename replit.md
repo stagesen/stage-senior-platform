@@ -99,7 +99,13 @@ The platform includes a comprehensive admin interface for content management:
 - **Experience the Difference Features**: Customizable feature sections for each community with eyebrow text, titles, descriptions, images, CTAs, and layout options, fully manageable through admin dashboard
 - **Dining Page**: Dedicated dining services page showcasing Restaurant-Style Dining and Private Family Dining Room amenities with weekly menu samples
 - **Beauty Salon & Barber Page**: Comprehensive beauty services page featuring salon services for women, barber services for men, and on-site convenience benefits
-- **Smart Amenity Linking**: Dining and beauty amenities on community pages automatically link to their respective service pages with blue text and arrow indicators for seamless navigation
+- **Fitness & Therapy Center Page**: Comprehensive fitness and therapy services page featuring state-of-the-art fitness equipment, physical therapy, occupational therapy, and speech therapy services
+- **Courtyards & Patios Page**: Outdoor spaces and amenities page showcasing secure courtyards, walking paths, garden areas, covered patios, outdoor dining areas, and seasonal activities
+- **Smart Amenity Linking**: Amenities on community pages automatically link to their respective service pages with blue text and arrow indicators for seamless navigation:
+  - Dining amenities → /dining page
+  - Beauty/barber amenities → /beauty-salon page
+  - Fitness/therapy amenities → /fitness-therapy page
+  - Outdoor/garden/courtyard amenities → /courtyards-patios page
 
 ### Image Management System
 The platform features a comprehensive image management system integrated with Replit's object storage:
