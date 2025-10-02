@@ -27,6 +27,8 @@ import Careers from "@/pages/careers";
 import Contact from "@/pages/contact";
 import Dining from "@/pages/dining";
 import BeautySalon from "@/pages/beauty-salon";
+import FitnessTherapy from "@/pages/fitness-therapy";
+import CourtyardsPatios from "@/pages/courtyards-patios";
 import ProfessionalManagement from "@/pages/services/management";
 import LongTermCare from "@/pages/services/long-term-care";
 import Chaplaincy from "@/pages/services/chaplaincy";
@@ -63,6 +65,8 @@ function Router() {
           <Route path="/contact" component={Contact} />
           <Route path="/dining" component={Dining} />
           <Route path="/beauty-salon" component={BeautySalon} />
+          <Route path="/fitness-therapy" component={FitnessTherapy} />
+          <Route path="/courtyards-patios" component={CourtyardsPatios} />
           <Route path="/services" component={Services} />
           <Route path="/stage-cares" component={StageCares} />
           <Route path="/care-points" component={CarePoints} />
