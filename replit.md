@@ -45,10 +45,11 @@ The client-side application is built with React 18 and TypeScript, utilizing mod
 - **Styling**: Tailwind CSS with shadcn/ui component library for consistent design system
 - **Form Handling**: React Hook Form with Zod validation for type-safe form management
 - **Build Tool**: Vite for fast development and optimized production builds
-- **Team Page**: Comprehensive team directory organized by tags (Stage Management, Communities, Departments)
+- **Team Page**: Comprehensive team directory organized by tags (Stage Management, Communities, Departments) with community-specific filtering when accessed from community pages
 - **Team Member Profiles**: Individual profile pages for each team member at /team/:slug with bio, contact info, and community associations
 - **Community Contact Cards**: Dynamic team member cards on community detail pages showing primary contact
 - **Team Carousel**: Dynamic carousel on About Us page showcasing leadership team with links to individual profiles
+- **Community-Filtered Team View**: When clicking "Meet the Team" from a community page, the team directory automatically filters to show only that community's staff members
 
 The frontend follows a component-based architecture with reusable UI components, page-level components, and custom hooks for shared logic. The application supports responsive design and includes accessibility features.
 
