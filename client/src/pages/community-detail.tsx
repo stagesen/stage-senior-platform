@@ -812,7 +812,7 @@ const ActionPanel = ({ community }: { community: any }) => {
                   </p>
                 )}
                 <Button asChild className="w-full" data-testid="button-meet-team">
-                  <Link href="/team">
+                  <Link href={`/team?community=${community.slug}`}>
                     <Users className="w-4 h-4 mr-2" />
                     Meet the Team
                   </Link>

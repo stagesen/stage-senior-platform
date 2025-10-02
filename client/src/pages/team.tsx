@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useSearch } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { PageHero } from "@/components/PageHero";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   User,
   Mail,
@@ -18,9 +19,11 @@ import {
   Building,
   ChevronDown,
   ChevronUp,
+  X,
+  MapPin,
 } from "lucide-react";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
-import type { TeamMember } from "@shared/schema";
+import type { TeamMember, Community } from "@shared/schema";
 
 // Tag priority configuration
 const TAG_PRIORITY = {
@@ -224,31 +227,73 @@ const TeamSection = ({
   );
 };
 
+// Helper function to convert slug to community name
+function slugToCommunityName(slug: string): string {
+  return slug
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 export default function Team() {
+  // Get query parameters
+  const searchParams = useSearch();
+  const urlParams = new URLSearchParams(searchParams);
+  const communitySlug = urlParams.get('community');
+  const communityName = communitySlug ? slugToCommunityName(communitySlug) : null;
+
   useEffect(() => {
-    document.title = "Our Team | Stage Senior";
+    const title = communityName 
+      ? `${communityName} Team | Stage Senior` 
+      : "Our Team | Stage Senior";
+    document.title = title;
     
     // Add meta description
     const metaDescription = document.querySelector('meta[name="description"]');
+    const description = communityName
+      ? `Meet the dedicated professionals at ${communityName} who provide exceptional care and support to our residents.`
+      : 'Meet the dedicated professionals at Stage Senior who provide exceptional care and support across our Colorado senior living communities.';
+    
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Meet the dedicated professionals at Stage Senior who provide exceptional care and support across our Colorado senior living communities.');
+      metaDescription.setAttribute('content', description);
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Meet the dedicated professionals at Stage Senior who provide exceptional care and support across our Colorado senior living communities.';
+      meta.content = description;
       document.head.appendChild(meta);
     }
-  }, []);
+  }, [communityName]);
 
   // Fetch team members
   const { data: teamMembers = [], isLoading, error } = useQuery<TeamMember[]>({
     queryKey: ["/api/team-members"],
   });
 
+  // Fetch community data to get proper name
+  const { data: communityData } = useQuery<Community>({
+    queryKey: [`/api/communities/${communitySlug}`],
+    enabled: !!communitySlug,
+  });
+
+  // Use actual community name if available, otherwise use converted slug
+  const displayCommunityName = communityData?.name || communityName;
+
   // Group team members by tags and sort by priority
   const groupedMembers = useMemo(() => {
     // Filter only active team members
-    const activeMembers = teamMembers.filter(member => member.active);
+    let activeMembers = teamMembers.filter(member => member.active);
+    
+    // If community filter is active, filter members by community tag
+    if (displayCommunityName) {
+      activeMembers = activeMembers.filter(member => 
+        member.tags && member.tags.some(tag => 
+          tag.toLowerCase() === displayCommunityName.toLowerCase() ||
+          // Also check for partial matches for communities with "The" prefix
+          (displayCommunityName.toLowerCase().includes('gardens') && tag.toLowerCase().includes('gardens')) ||
+          tag.toLowerCase() === communityName?.toLowerCase()
+        )
+      );
+    }
     
     // Create a map of tag to members
     const tagMap = new Map<string, TeamMember[]>();
@@ -256,10 +301,23 @@ export default function Team() {
     activeMembers.forEach(member => {
       if (member.tags && Array.isArray(member.tags)) {
         member.tags.forEach(tag => {
-          if (!tagMap.has(tag)) {
-            tagMap.set(tag, []);
+          // If filtering by community, only show that community's tag
+          if (displayCommunityName) {
+            if (tag.toLowerCase() === displayCommunityName.toLowerCase() ||
+                (displayCommunityName.toLowerCase().includes('gardens') && tag.toLowerCase().includes('gardens')) ||
+                tag.toLowerCase() === communityName?.toLowerCase()) {
+              if (!tagMap.has(tag)) {
+                tagMap.set(tag, []);
+              }
+              tagMap.get(tag)!.push(member);
+            }
+          } else {
+            // Normal grouping when not filtered
+            if (!tagMap.has(tag)) {
+              tagMap.set(tag, []);
+            }
+            tagMap.get(tag)!.push(member);
           }
-          tagMap.get(tag)!.push(member);
         });
       }
     });
@@ -278,7 +336,7 @@ export default function Team() {
       tag,
       members: tagMap.get(tag) || []
     }));
-  }, [teamMembers]);
+  }, [teamMembers, displayCommunityName, communityName]);
 
 
   if (error) {
@@ -313,13 +371,64 @@ export default function Team() {
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage data-testid="breadcrumb-current">Our Team</BreadcrumbPage>
-              </BreadcrumbItem>
+              {displayCommunityName ? (
+                <>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink asChild>
+                      <Link href="/communities" data-testid="breadcrumb-communities">Communities</Link>
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink asChild>
+                      <Link href={`/communities/${communitySlug}`} data-testid="breadcrumb-community">
+                        {displayCommunityName}
+                      </Link>
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage data-testid="breadcrumb-current">Team</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </>
+              ) : (
+                <BreadcrumbItem>
+                  <BreadcrumbPage data-testid="breadcrumb-current">Our Team</BreadcrumbPage>
+                </BreadcrumbItem>
+              )}
             </BreadcrumbList>
           </Breadcrumb>
         </div>
       </div>
+
+      {/* Community Filter Alert */}
+      {displayCommunityName && (
+        <div className="bg-primary/5 border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <Alert className="border-primary/20 bg-white">
+              <MapPin className="h-4 w-4 text-primary" />
+              <AlertDescription className="flex items-center justify-between">
+                <div>
+                  <span className="font-medium">Showing team members from </span>
+                  <span className="font-bold text-primary">{displayCommunityName}</span>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  asChild 
+                  className="ml-4"
+                  data-testid="clear-filter-button"
+                >
+                  <Link href="/team">
+                    <X className="w-4 h-4 mr-1" />
+                    Clear Filter
+                  </Link>
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </div>
+        </div>
+      )}
 
       {/* Team Members Section */}
       <section className="py-12">
@@ -354,7 +463,23 @@ export default function Team() {
           ) : groupedMembers.length === 0 ? (
             <div className="text-center py-12">
               <User className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 text-lg">No team members found.</p>
+              <p className="text-gray-600 text-lg">
+                {displayCommunityName 
+                  ? `No team members found for ${displayCommunityName}.` 
+                  : "No team members found."}
+              </p>
+              {displayCommunityName && (
+                <Button 
+                  variant="outline" 
+                  asChild 
+                  className="mt-4"
+                  data-testid="view-all-team-button"
+                >
+                  <Link href="/team">
+                    View All Team Members
+                  </Link>
+                </Button>
+              )}
             </div>
           ) : (
             <div className="space-y-12">
