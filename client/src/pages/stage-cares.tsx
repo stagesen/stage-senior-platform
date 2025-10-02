@@ -360,9 +360,9 @@ export default function StageCares() {
               </a>
             </Button>
             <Button size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white" asChild data-testid="button-call-office">
-              <a href="tel:+1-303-436-2300">
+              <a href="tel:+1-970-444-4689">
                 <Phone className="w-5 h-5 mr-2" />
-                Call (303) 436-2300
+                Call (970) 444-4689
               </a>
             </Button>
           </div>

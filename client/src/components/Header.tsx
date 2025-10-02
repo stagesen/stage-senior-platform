@@ -142,7 +142,7 @@ export default function Header() {
               className="bg-primary text-primary-foreground hover:bg-primary/90"
               data-testid="button-get-help"
             >
-              <a href="tel:+1-303-436-2300">
+              <a href="tel:+1-970-444-4689">
                 <Phone className="w-4 h-4 mr-2" />
                 Get Help
               </a>

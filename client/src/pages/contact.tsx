@@ -31,11 +31,11 @@ export default function Contact() {
     // Add meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Contact Stage Senior today. Call (303) 436-2300 or visit one of our four Colorado communities. Schedule tours, get answers, and explore senior living options.');
+      metaDescription.setAttribute('content', 'Contact Stage Senior today. Call (970) 444-4689 or visit one of our four Colorado communities. Schedule tours, get answers, and explore senior living options.');
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Contact Stage Senior today. Call (303) 436-2300 or visit one of our four Colorado communities. Schedule tours, get answers, and explore senior living options.';
+      meta.content = 'Contact Stage Senior today. Call (970) 444-4689 or visit one of our four Colorado communities. Schedule tours, get answers, and explore senior living options.';
       document.head.appendChild(meta);
     }
   }, []);
@@ -107,8 +107,8 @@ export default function Contact() {
                   Speak directly with a senior living advisor
                 </p>
                 <Button asChild className="w-full">
-                  <a href="tel:+1-303-436-2300">
-                    (303) 436-2300
+                  <a href="tel:+1-970-444-4689">
+                    (970) 444-4689
                   </a>
                 </Button>
               </CardContent>
@@ -188,8 +188,8 @@ export default function Contact() {
                     </div>
                     <div className="flex items-center gap-3">
                       <Phone className="w-5 h-5 text-primary" />
-                      <a href="tel:+1-303-436-2300" className="text-muted-foreground hover:text-primary">
-                        (303) 436-2300
+                      <a href="tel:+1-970-444-4689" className="text-muted-foreground hover:text-primary">
+                        (970) 444-4689
                       </a>
                     </div>
                     <div className="flex items-center gap-3">
@@ -213,7 +213,7 @@ export default function Contact() {
                 <h3 className="text-xl font-bold mb-4">Quick Assistance</h3>
                 <div className="space-y-3">
                   <p className="text-muted-foreground">
-                    <strong>Urgent Placement:</strong> Call (303) 436-2300 for immediate assistance
+                    <strong>Urgent Placement:</strong> Call (970) 444-4689 for immediate assistance
                   </p>
                   <p className="text-muted-foreground">
                     <strong>Weekend Tours:</strong> Available by appointment at all communities
@@ -281,9 +281,9 @@ export default function Contact() {
             Every family's journey is unique. We're here to listen, guide, and support you through this important decision.
           </p>
           <Button size="lg" variant="secondary" asChild>
-            <a href="tel:+1-303-436-2300">
+            <a href="tel:+1-970-444-4689">
               <Phone className="w-5 h-5 mr-2" />
-              Call Now: (303) 436-2300
+              Call Now: (970) 444-4689
             </a>
           </Button>
         </div>

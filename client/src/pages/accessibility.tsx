@@ -107,8 +107,8 @@ export default function AccessibilityStatement() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Phone className="w-4 h-4 text-primary" />
-                      <a href="tel:+1-303-436-2300" className="text-primary hover:underline" data-testid="company-phone">
-                        (303) 436-2300
+                      <a href="tel:+1-970-444-4689" className="text-primary hover:underline" data-testid="company-phone">
+                        (970) 444-4689
                       </a>
                     </div>
                     <div className="flex items-center gap-2 md:col-span-2">
@@ -390,8 +390,8 @@ export default function AccessibilityStatement() {
                       </div>
                       <div className="flex items-center gap-3">
                         <Phone className="w-5 h-5 text-primary" />
-                        <a href="tel:+1-303-436-2300" className="text-primary hover:underline" data-testid="accessibility-phone">
-                          (303) 436-2300
+                        <a href="tel:+1-970-444-4689" className="text-primary hover:underline" data-testid="accessibility-phone">
+                          (970) 444-4689
                         </a>
                       </div>
                     </div>
@@ -460,8 +460,8 @@ export default function AccessibilityStatement() {
                     </div>
                     <div className="flex items-center gap-3">
                       <Phone className="w-5 h-5 text-primary" />
-                      <a href="tel:+1-303-436-2300" className="text-primary hover:underline" data-testid="contact-phone">
-                        (303) 436-2300
+                      <a href="tel:+1-970-444-4689" className="text-primary hover:underline" data-testid="contact-phone">
+                        (970) 444-4689
                       </a>
                     </div>
                     <div className="flex items-center gap-3">

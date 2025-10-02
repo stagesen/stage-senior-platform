@@ -106,9 +106,9 @@ export default function AboutUs() {
                   </Link>
                 </Button>
                 <Button variant="outline" size="lg" asChild data-testid="button-call-us">
-                  <a href="tel:+1-303-436-2300">
+                  <a href="tel:+1-970-444-4689">
                     <Phone className="w-5 h-5 mr-2" />
-                    (303) 436-2300
+                    (970) 444-4689
                   </a>
                 </Button>
               </div>
@@ -283,9 +283,9 @@ export default function AboutUs() {
               asChild
               data-testid="button-call-now"
             >
-              <a href="tel:+1-303-436-2300">
+              <a href="tel:+1-970-444-4689">
                 <Phone className="w-5 h-5 mr-2" />
-                Call (303) 436-2300
+                Call (970) 444-4689
               </a>
             </Button>
           </div>
@@ -295,7 +295,7 @@ export default function AboutUs() {
               <div data-testid="contact-phone">
                 <Phone className="w-6 h-6 mx-auto mb-2" />
                 <p className="font-semibold">Call Us</p>
-                <p className="text-primary-foreground/90">(303) 436-2300</p>
+                <p className="text-primary-foreground/90">(970) 444-4689</p>
               </div>
               <div data-testid="contact-email">
                 <Mail className="w-6 h-6 mx-auto mb-2" />

@@ -100,12 +100,12 @@ export default function Communities() {
                 size="lg"
                 variant="outline"
                 className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg bg-white/10 text-white border-white/30 hover:bg-white/20 backdrop-blur-sm"
-                onClick={() => window.open('tel:+1-303-436-2300', '_self')}
+                onClick={() => window.open('tel:+1-970-444-4689', '_self')}
                 data-testid="button-quick-call"
               >
                 <Phone className="w-5 h-5 mr-2" />
                 <span className="sm:hidden">Call Now</span>
-                <span className="hidden sm:inline">(303) 436-2300</span>
+                <span className="hidden sm:inline">(970) 444-4689</span>
               </Button>
             </div>
 
@@ -353,12 +353,12 @@ export default function Communities() {
               size="lg"
               variant="outline"
               className="bg-transparent text-white border-white hover:bg-white hover:text-primary text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transform hover:scale-105 transition-all duration-200"
-              onClick={() => window.open('tel:+1-303-436-2300', '_self')}
+              onClick={() => window.open('tel:+1-970-444-4689', '_self')}
               data-testid="button-call-cta"
             >
               <Phone className="w-5 h-5 mr-2" />
               <span className="sm:hidden">Call Now</span>
-              <span className="hidden sm:inline">Call (303) 436-2300</span>
+              <span className="hidden sm:inline">Call (970) 444-4689</span>
             </Button>
           </div>
         </div>

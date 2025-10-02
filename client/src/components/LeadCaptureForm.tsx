@@ -90,7 +90,7 @@ export default function LeadCaptureForm({
       console.error("Form submission error:", error);
       toast({
         title: "Submission Failed",
-        description: "Please try again or call us directly at (303) 436-2300",
+        description: "Please try again or call us directly at (970) 444-4689",
         variant: "destructive",
         duration: 8000,
       });

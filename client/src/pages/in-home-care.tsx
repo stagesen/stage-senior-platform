@@ -173,7 +173,7 @@ export default function InHomeCare() {
               </Button>
               <div className="flex items-center space-x-2 text-green-600 font-bold">
                 <Phone className="w-5 h-5" />
-                <a href="tel:3032909000" className="hover:underline">(303) 290-9000</a>
+                <a href="tel:9704444689" className="hover:underline">(970) 444-4689</a>
               </div>
             </nav>
 
@@ -217,7 +217,7 @@ export default function InHomeCare() {
                 </Button>
                 <div className="flex items-center justify-center space-x-2 text-green-600 font-bold pt-2">
                   <Phone className="w-5 h-5" />
-                  <a href="tel:3032909000" className="hover:underline">(303) 290-9000</a>
+                  <a href="tel:9704444689" className="hover:underline">(970) 444-4689</a>
                 </div>
               </nav>
             </div>
@@ -275,7 +275,7 @@ export default function InHomeCare() {
                   data-testid="button-schedule-assessment"
                   asChild
                 >
-                  <a href="tel:3032909000">
+                  <a href="tel:9704444689">
                     Schedule a Care Assessment
                     <Phone className="ml-2 w-5 h-5" />
                   </a>
@@ -579,11 +579,11 @@ export default function InHomeCare() {
                 </div>
                 <h3 className="font-bold text-xl mb-3">Call Us</h3>
                 <a 
-                  href="tel:3032909000"
+                  href="tel:9704444689"
                   className="text-green-600 hover:text-green-700 font-medium text-lg"
                   data-testid="contact-phone"
                 >
-                  (303) 290-9000
+                  (970) 444-4689
                 </a>
               </CardContent>
             </Card>
@@ -624,8 +624,8 @@ export default function InHomeCare() {
               data-testid="button-cta-assessment"
               asChild
             >
-              <a href="tel:3032909000">
-                Call Now: (303) 290-9000
+              <a href="tel:9704444689">
+                Call Now: (970) 444-4689
                 <Phone className="ml-3 w-6 h-6" />
               </a>
             </Button>

@@ -302,7 +302,7 @@ export default function FloorPlanModal({
                 asChild
                 data-testid={`button-call-${floorPlan.id}`}
               >
-                <a href="tel:+1-303-436-2300">
+                <a href="tel:+1-970-444-4689">
                   <Phone className="h-4 w-4 mr-2" />
                   Call Now
                 </a>

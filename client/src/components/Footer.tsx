@@ -161,7 +161,7 @@ export default function Footer() {
                     <Phone className="w-4 h-4 text-primary" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-background text-sm font-medium truncate">(303) 436-2300</div>
+                    <div className="text-background text-sm font-medium truncate">(970) 444-4689</div>
                     <div className="text-background/60 text-xs">Call us today</div>
                   </div>
                 </div>
