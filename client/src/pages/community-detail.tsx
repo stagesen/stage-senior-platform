@@ -1979,6 +1979,17 @@ export default function CommunityDetail() {
                           return { href: '/beauty-salon', testIdPrefix: 'beauty-salon' };
                         }
                         
+                        // Check for fitness/therapy amenities
+                        if (lowerName.includes('fitness') || lowerName.includes('therapy')) {
+                          return { href: '/fitness-therapy', testIdPrefix: 'fitness-therapy' };
+                        }
+                        
+                        // Check for courtyard/patio amenities
+                        if (lowerName.includes('courtyard') || lowerName.includes('patio') || 
+                            lowerName.includes('garden') || lowerName.includes('outdoor')) {
+                          return { href: '/courtyards-patios', testIdPrefix: 'courtyards-patios' };
+                        }
+                        
                         return null;
                       };
 
