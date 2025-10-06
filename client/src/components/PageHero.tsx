@@ -41,12 +41,22 @@ export function PageHero({
   const backgroundImageRaw = hero?.backgroundImageUrl || defaultBackgroundImage || "";
   const ctaText = hero?.ctaText || "";
   const ctaLink = hero?.ctaLink || "";
-  const overlayOpacity = hero?.overlayOpacity || 0.5;
+  const overlayOpacity = hero?.overlayOpacity || 0.3; // Reduced for better gradient visibility
   const textAlignment = hero?.textAlignment || "center";
   const isActive = hero?.active !== false; // Default to true if no hero or not specified
   
   // Resolve background image URL
   const backgroundImage = useResolveImageUrl(backgroundImageRaw) || backgroundImageRaw;
+  
+  // Determine gradient background based on page
+  const getGradientBackground = () => {
+    if (pagePath === "/" || pagePath.includes("home")) {
+      return "var(--gradient-copper-sage)";
+    } else if (pagePath.includes("services") || pagePath.includes("contact")) {
+      return "var(--gradient-deepblue-azure)";
+    }
+    return "var(--gradient-copper-sage)";
+  };
 
   // Don't render if hero exists but is inactive
   if (hero && !isActive) {
@@ -72,8 +82,8 @@ export function PageHero({
       )}
       data-testid={`hero-${pagePath.replace(/\//g, "-") || "home"}`}
     >
-      {/* Background Image */}
-      {backgroundImage && (
+      {/* Background - Image or Gradient */}
+      {backgroundImage ? (
         <>
           <div
             className="absolute inset-0 z-0"
@@ -87,9 +97,25 @@ export function PageHero({
           />
           {/* Overlay */}
           <div
-            className="absolute inset-0 z-10 bg-black"
+            className="absolute inset-0 z-10 bg-gradient-to-t from-black/50 to-transparent"
             style={{ opacity: overlayOpacity }}
             data-testid={`hero-overlay-${pagePath.replace(/\//g, "-") || "home"}`}
+          />
+        </>
+      ) : (
+        <>
+          {/* Gradient Background when no image */}
+          <div
+            className="absolute inset-0 z-0"
+            style={{
+              background: getGradientBackground(),
+            }}
+            data-testid={`hero-gradient-${pagePath.replace(/\//g, "-") || "home"}`}
+          />
+          {/* Subtle overlay effect for gradient */}
+          <div
+            className="absolute inset-0 z-10 bg-gradient-to-t from-black/20 to-transparent"
+            data-testid={`hero-gradient-overlay-${pagePath.replace(/\//g, "-") || "home"}`}
           />
         </>
       )}
@@ -105,7 +131,12 @@ export function PageHero({
         >
           {title && (
             <h1
-              className="text-4xl md:text-5xl font-bold text-white"
+              className="text-white font-bold"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "3rem",
+                lineHeight: "1.2",
+              }}
               data-testid={`hero-title-${pagePath.replace(/\//g, "-") || "home"}`}
             >
               {title}
@@ -114,7 +145,10 @@ export function PageHero({
           
           {subtitle && (
             <h2
-              className="text-lg md:text-xl text-white/90"
+              className="text-xl md:text-2xl text-white/95 font-medium"
+              style={{
+                fontFamily: "var(--font-body)",
+              }}
               data-testid={`hero-subtitle-${pagePath.replace(/\//g, "-") || "home"}`}
             >
               {subtitle}
@@ -123,7 +157,11 @@ export function PageHero({
           
           {description && (
             <p
-              className="text-lg md:text-xl text-white/80 max-w-2xl"
+              className="text-lg md:text-xl text-white/90 max-w-2xl"
+              style={{
+                fontFamily: "var(--font-body)",
+                lineHeight: "1.6",
+              }}
               data-testid={`hero-description-${pagePath.replace(/\//g, "-") || "home"}`}
             >
               {description}
@@ -131,11 +169,15 @@ export function PageHero({
           )}
 
           {ctaText && ctaLink && (
-            <div className="mt-4">
+            <div className="mt-6">
               <Link href={ctaLink}>
                 <Button
                   size="lg"
-                  className="gap-2"
+                  className="gap-2 px-8 py-6 text-white font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                  style={{
+                    backgroundColor: "var(--bright-blue)",
+                    borderRadius: "16px",
+                  }}
                   data-testid={`hero-cta-${pagePath.replace(/\//g, "-") || "home"}`}
                 >
                   {ctaText}

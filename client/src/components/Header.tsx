@@ -45,7 +45,16 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-background border-b border-border shadow-lg shadow-black/5 dark:shadow-white/5" data-testid="header">
+    <header 
+      className="sticky top-0 z-50 border-b shadow-lg shadow-black/5 dark:shadow-white/5" 
+      style={{
+        backgroundColor: "var(--mist-white)", 
+        borderBottomColor: "var(--soft-clay)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+      }}
+      data-testid="header"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
