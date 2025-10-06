@@ -452,12 +452,20 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="order-2 lg:order-1">
                 <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
-                  <img
-                    src={transparentSectionImageUrl || carePricingImage}
-                    alt="Senior resident reviewing care pricing with staff member"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
+                  {transparentSectionImageUrl && (
+                    <img
+                      src={transparentSectionImageUrl}
+                      alt="Senior resident reviewing care pricing with staff member"  
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                  {!transparentSectionImageUrl && transparentSectionImageUrl !== null && (
+                    <img
+                      src={carePricingImage}
+                      alt="Senior resident reviewing care pricing with staff member"
+                      className="w-full h-full object-cover"
+                    />
+                  )}
                 </div>
               </div>
               <div className="order-1 lg:order-2">
@@ -521,13 +529,21 @@ export default function Home() {
                 </div>
               </div>
               <div>
-                <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
-                  <img
-                    src={locallyOwnedSectionImageUrl || "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1600&auto=format&fit=crop"}
-                    alt="Local Colorado team and leadership"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
+                <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
+                  {locallyOwnedSectionImageUrl && (
+                    <img
+                      src={locallyOwnedSectionImageUrl}
+                      alt="Local Colorado team and leadership"
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                  {!locallyOwnedSectionImageUrl && locallyOwnedSectionImageUrl !== null && (
+                    <img
+                      src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1600&auto=format&fit=crop"
+                      alt="Local Colorado team and leadership"
+                      className="w-full h-full object-cover"
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -535,13 +551,21 @@ export default function Home() {
             {/* Feature 3: Safety with Dignity - Left Aligned */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="order-2 lg:order-1">
-                <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
-                  <img
-                    src={safetySectionImageUrl || "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1600&auto=format&fit=crop"}
-                    alt="Advanced safety technology"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
+                <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
+                  {safetySectionImageUrl && (
+                    <img
+                      src={safetySectionImageUrl}
+                      alt="Advanced safety technology"
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                  {!safetySectionImageUrl && safetySectionImageUrl !== null && (
+                    <img
+                      src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1600&auto=format&fit=crop"
+                      alt="Advanced safety technology"
+                      className="w-full h-full object-cover"
+                    />
+                  )}
                 </div>
               </div>
               <div className="order-1 lg:order-2">
