@@ -477,18 +477,24 @@ const FeatureSection = ({
 
 // Component to fetch and display community features
 const CommunityFeatures = ({ community }: { community: Community }) => {
+  // Resolve experience images
+  const experienceImage1Url = useResolveImageUrl(community.experienceImage1Id);
+  const experienceImage2Url = useResolveImageUrl(community.experienceImage2Id);
+  const experienceImage3Url = useResolveImageUrl(community.experienceImage3Id);
+  const experienceImage4Url = useResolveImageUrl(community.experienceImage4Id);
+
   // Fetch features from database
   const { data: features = [], isLoading } = useQuery<any[]>({
     queryKey: [`/api/communities/${community.id}/features`],
   });
 
-  // Default hardcoded features as fallback
+  // Default hardcoded features as fallback - use uploaded experience images if available
   const defaultFeatures = [
     {
       eyebrow: "Fine Dining",
       title: "Extraordinary Dining Experience",
       body: "There's no need to worry about cooking. You can dine on nutritious, homestyle cuisine in our beautiful dining room—complete with great conversation. Our professional chefs prepare fresh, locally-sourced meals daily, with menus designed by nutritionists to meet your dietary needs.",
-      imageUrl: "https://images.unsplash.com/photo-1577308856961-1d3371de3c2b?q=80&w=800&auto=format&fit=crop",
+      imageUrl: experienceImage1Url || "https://images.unsplash.com/photo-1577308856961-1d3371de3c2b?q=80&w=800&auto=format&fit=crop",
       imageAlt: "Extraordinary dining experience featuring seniors enjoying nutritious, homestyle cuisine in a beautiful dining room",
       ctaLabel: "View Sample Menu",
       ctaHref: "#menu",
@@ -498,7 +504,7 @@ const CommunityFeatures = ({ community }: { community: Community }) => {
       eyebrow: "Active Living",
       title: "Engaging Lifestyle Programs",
       body: "From staying active to getting creative to learning new skills, we offer a diverse variety of ways for you to pursue your hobbies and interests. Our activities director creates a monthly calendar filled with fitness classes, art workshops, educational seminars, and social events tailored to your preferences.",
-      imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop",
+      imageUrl: experienceImage2Url || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop",
       imageAlt: "Engaging lifestyle activities featuring seniors staying active, getting creative, and learning new skills",
       ctaLabel: "View Engagement Calendar",
       ctaHref: `/events?community=${community.slug || community.id}`,
@@ -508,7 +514,7 @@ const CommunityFeatures = ({ community }: { community: Community }) => {
       eyebrow: "Prime Location",
       title: "Ideal Location & Neighborhood",
       body: "You can easily enjoy the area with nearby attractions, dining options, and recreational activities perfectly suited for an active lifestyle. Our community is conveniently located near medical facilities, shopping centers, parks, and cultural destinations, keeping you connected to everything you love.",
-      imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800&auto=format&fit=crop",
+      imageUrl: experienceImage3Url || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800&auto=format&fit=crop",
       imageAlt: "Seniors enjoying ideal location lifestyle with access to golf courses, local eateries, and parks",
       ctaLabel: "Get Directions",
       ctaHref: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(community.address || `${community.city}, ${community.state} ${community.zipCode}`)}`,
@@ -518,7 +524,7 @@ const CommunityFeatures = ({ community }: { community: Community }) => {
       eyebrow: "Personalized Care",
       title: "24/7 Professional Care Team",
       body: "Rest assured knowing our dedicated team of licensed nurses and certified caregivers is available around the clock. We provide personalized care plans tailored to your unique needs, from medication management to assistance with daily activities, all while preserving your independence and dignity.",
-      imageUrl: "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=800&auto=format&fit=crop",
+      imageUrl: experienceImage4Url || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=800&auto=format&fit=crop",
       imageAlt: "Professional care team assisting seniors with compassion and expertise",
       imageLeft: true
     }
@@ -1948,89 +1954,6 @@ export default function CommunityDetail() {
               </section>
             )}
 
-            {/* Private Dining Room Section */}
-            {community.amenities && community.amenities.some((amenity: any) => {
-              const name = typeof amenity === 'string' ? amenity : amenity?.name;
-              return name?.toLowerCase().includes('private') && 
-                     name?.toLowerCase().includes('family') && 
-                     name?.toLowerCase().includes('dining');
-            }) && (
-              <section id="private-dining" className="scroll-mt-24">
-                <div className="bg-gradient-to-br from-secondary/5 to-white rounded-2xl p-8 border border-secondary/20">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                    <div>
-                      <h2 className="text-2xl md:text-3xl font-bold mb-4">Private Family Dining Room</h2>
-                      <p className="text-lg text-gray-600 mb-6">
-                        Celebrate life's special moments in our elegant private dining room. Perfect for family birthdays, 
-                        anniversaries, holidays, or intimate gatherings with loved ones.
-                      </p>
-                      <ul className="space-y-3 mb-6">
-                        <li className="flex items-start gap-3">
-                          <CheckCircle className="w-5 h-5 text-secondary mt-1 flex-shrink-0" />
-                          <div>
-                            <span className="font-semibold">Reserve for Special Occasions</span>
-                            <p className="text-sm text-gray-600">Book our private space for birthdays and celebrations</p>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <CheckCircle className="w-5 h-5 text-secondary mt-1 flex-shrink-0" />
-                          <div>
-                            <span className="font-semibold">Customized Menus</span>
-                            <p className="text-sm text-gray-600">Work with our chef to create a personalized menu</p>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <CheckCircle className="w-5 h-5 text-secondary mt-1 flex-shrink-0" />
-                          <div>
-                            <span className="font-semibold">Intimate Setting</span>
-                            <p className="text-sm text-gray-600">Seats up to 12 guests in a beautifully appointed space</p>
-                          </div>
-                        </li>
-                      </ul>
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <Button asChild size="lg" data-testid="button-explore-dining">
-                          <Link href={`/dining?from=${community.slug}`}>
-                            Explore All Dining Services
-                            <ChevronRight className="w-5 h-5 ml-2" />
-                          </Link>
-                        </Button>
-                        {community.phoneDisplay && (
-                          <Button 
-                            variant="outline" 
-                            size="lg" 
-                            asChild
-                            data-testid="button-call-reserve"
-                          >
-                            <a href={`tel:${community.phoneDial || community.phoneDisplay}`}>
-                              <Phone className="w-5 h-5 mr-2" />
-                              Call to Reserve
-                            </a>
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                    <div className="relative h-96 rounded-xl overflow-hidden shadow-xl">
-                      {privateDiningImageUrl ? (
-                        <img 
-                          src={privateDiningImageUrl}
-                          alt="Private dining room for family gatherings"
-                          className="w-full h-full object-cover"
-                          data-testid="private-dining-image"
-                        />
-                      ) : (
-                        <img 
-                          src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80"
-                          alt="Private dining room for family gatherings"
-                          className="w-full h-full object-cover"
-                          data-testid="private-dining-image-default"
-                        />
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                    </div>
-                  </div>
-                </div>
-              </section>
-            )}
           </div>
 
           {/* Sticky Sidebar - Only for Top Sections */}
