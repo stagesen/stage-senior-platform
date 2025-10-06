@@ -238,7 +238,7 @@ export default function Home() {
         {/* Enhanced Multi-layer Overlay for Better Text Legibility */}
         <div className="absolute inset-0 bg-black/20" />
         <div 
-          className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary"
+          className="absolute inset-0 bg-gradient-to-br from-[var(--deep-blue)] via-[var(--bright-blue)] to-[var(--deep-blue)]"
           style={{ opacity: parseFloat(hero.overlayOpacity || "0.85") }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
@@ -261,7 +261,7 @@ export default function Home() {
               {hero.ctaText && hero.ctaLink && (
                 <Button 
                   size="lg" 
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-lg px-8 py-6 text-lg"
+                  className="bg-[var(--stage-copper)] text-white hover:bg-gradient-to-r hover:from-[var(--stage-copper)] hover:to-[var(--foothill-sage)] font-semibold shadow-lg px-8 py-6 text-lg transition-all duration-300"
                   asChild
                   data-testid="button-hero-cta"
                 >

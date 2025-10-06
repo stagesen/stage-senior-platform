@@ -51,11 +51,13 @@ export function PageHero({
   // Determine gradient background based on page
   const getGradientBackground = () => {
     if (pagePath === "/" || pagePath.includes("home")) {
-      return "var(--gradient-copper-sage)";
+      return "var(--gradient-deepblue-azure)";
     } else if (pagePath.includes("services") || pagePath.includes("contact")) {
       return "var(--gradient-deepblue-azure)";
+    } else if (pagePath.includes("communities")) {
+      return "var(--gradient-copper-sage)";
     }
-    return "var(--gradient-copper-sage)";
+    return "var(--gradient-deepblue-azure)";
   };
 
   // Don't render if hero exists but is inactive
