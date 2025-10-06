@@ -601,6 +601,7 @@ export default function ImageUploader({
               </div>
             </Card>
           ))}
+          </div>
         </div>
       )}
 
