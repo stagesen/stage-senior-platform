@@ -3986,6 +3986,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         <SelectItem value="/communities">Communities</SelectItem>
                         <SelectItem value="/care-points">Care Points</SelectItem>
                         <SelectItem value="/events">Events</SelectItem>
+                        <SelectItem value="/dining">Dining</SelectItem>
+                        <SelectItem value="/beauty-salon">Beauty Salon & Barber</SelectItem>
+                        <SelectItem value="/fitness-therapy">Fitness & Therapy Center</SelectItem>
+                        <SelectItem value="/courtyards-patios">Courtyards & Patios</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
