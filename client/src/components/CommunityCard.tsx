@@ -79,11 +79,6 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
                 />
               </div>
             </Link>
-            {community.featured && (
-              <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground shadow-lg px-3 py-1" data-testid={`badge-featured-${community.slug}`}>
-                Featured Community
-              </Badge>
-            )}
           </div>
           
           {/* Content - More spacing */}
