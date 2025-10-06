@@ -1280,7 +1280,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       logoImageId: "",
       contactImageId: "",
       brochureImageId: "",
-      brochurePdfId: "",
+      brochureLink: "",
       experienceImageId: "",
       fitnessImageId: "",
       privateDiningImageId: "",
@@ -2165,22 +2165,20 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
               />
               <FormField
                 control={communityForm.control}
-                name="brochurePdfId"
+                name="brochureLink"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Brochure PDF Document</FormLabel>
+                    <FormLabel>Brochure Link</FormLabel>
                     <FormControl>
-                      <ImageUploader
-                        value={field.value || undefined}
-                        onChange={field.onChange}
-                        label="Upload community brochure PDF"
-                        accept=".pdf"
-                        mixedMode={true}
-                        maxSize={20 * 1024 * 1024}
+                      <Input
+                        {...field}
+                        type="url"
+                        placeholder="https://example.com/brochure.pdf"
+                        data-testid="input-brochure-link"
                       />
                     </FormControl>
                     <FormDescription>
-                      Upload a PDF brochure that users can download from the community detail page
+                      Enter the URL to your community brochure (PDF or webpage)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

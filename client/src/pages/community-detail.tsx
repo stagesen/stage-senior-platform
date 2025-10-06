@@ -663,9 +663,8 @@ const ActionPanel = ({ community }: { community: any }) => {
   // Resolve avatar image URL - pass ID directly without /api/images prefix
   const avatarImageUrl = useResolveImageUrl(primaryContact?.avatarImageId || null);
 
-  // Resolve brochure image URL and PDF URL
+  // Resolve brochure image URL
   const resolvedBrochureUrl = useResolveImageUrl(community?.brochureImageId);
-  const resolvedBrochurePdfUrl = useResolveImageUrl(community?.brochurePdfId);
 
   // Determine grid columns based on whether we have a team member
   const gridCols = primaryContact ? "md:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-3";
@@ -850,15 +849,15 @@ const ActionPanel = ({ community }: { community: any }) => {
                   <span>Care levels & support</span>
                 </li>
               </ul>
-              {resolvedBrochurePdfUrl ? (
+              {community.brochureLink ? (
                 <Button 
                   className="w-full" 
                   data-testid="button-download-brochure"
                   asChild
                 >
-                  <a href={resolvedBrochurePdfUrl} download={`${community.name}-brochure.pdf`}>
+                  <a href={community.brochureLink} target="_blank" rel="noopener noreferrer">
                     <Download className="w-4 h-4 mr-2" />
-                    Download PDF Brochure
+                    View PDF Brochure
                   </a>
                 </Button>
               ) : (
@@ -1179,9 +1178,8 @@ export default function CommunityDetail() {
   // Resolve the logo image from logoImageId
   const resolvedLogoUrl = useResolveImageUrl(community?.logoImageId);
   
-  // Resolve the brochure image and PDF from brochureImageId and brochurePdfId 
+  // Resolve the brochure image from brochureImageId 
   const resolvedBrochureUrl = useResolveImageUrl(community?.brochureImageId);
-  const resolvedBrochurePdfUrl = useResolveImageUrl(community?.brochurePdfId);
   
   // Hero logo overlay functionality
   const heroLogoSrc = resolvedLogoUrl || (community as any)?.logoUrl || (community as any)?.logoImageUrl || stageSeniorLogo;
@@ -2099,16 +2097,16 @@ export default function CommunityDetail() {
                   <p className="text-sm text-gray-600 mb-4">
                     Get detailed information about our community, floor plans, and services
                   </p>
-                  {resolvedBrochurePdfUrl ? (
+                  {community.brochureLink ? (
                     <Button 
                       variant="outline" 
                       className="w-full" 
                       data-testid="button-download-brochure"
                       asChild
                     >
-                      <a href={resolvedBrochurePdfUrl} download={`${community.name}-brochure.pdf`}>
+                      <a href={community.brochureLink} target="_blank" rel="noopener noreferrer">
                         <Download className="w-4 h-4 mr-2" />
-                        Download PDF
+                        View PDF
                       </a>
                     </Button>
                   ) : (
