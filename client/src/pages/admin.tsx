@@ -137,6 +137,7 @@ export default function Admin() {
             <TabsTrigger value="care-types" data-testid="tab-care-types">Care Types</TabsTrigger>
             <TabsTrigger value="amenities" data-testid="tab-amenities">Amenities</TabsTrigger>
             <TabsTrigger value="community-highlights" data-testid="tab-community-highlights">Highlights</TabsTrigger>
+            <TabsTrigger value="homepage" data-testid="tab-homepage">Homepage</TabsTrigger>
             <TabsTrigger value="image-gallery" data-testid="tab-image-gallery">
               <Image className="h-4 w-4 mr-1" />
               Image Gallery
@@ -366,6 +367,10 @@ export default function Admin() {
 
           <TabsContent value="community-highlights">
             <AdminDashboard type="community-highlights" />
+          </TabsContent>
+
+          <TabsContent value="homepage">
+            <AdminDashboard type="homepage" />
           </TabsContent>
 
           <TabsContent value="image-gallery">
