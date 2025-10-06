@@ -2023,6 +2023,91 @@ export default function CommunityDetail() {
                 </div>
               </section>
             )}
+
+            {/* Private Dining Room Section */}
+            {community.amenities && community.amenities.some((amenity: any) => {
+              const name = typeof amenity === 'string' ? amenity : amenity?.name;
+              return name?.toLowerCase().includes('private') && 
+                     name?.toLowerCase().includes('family') && 
+                     name?.toLowerCase().includes('dining');
+            }) && (
+              <section id="private-dining" className="scroll-mt-24">
+                <div className="bg-gradient-to-br from-secondary/5 to-white rounded-2xl p-8 border border-secondary/20">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div>
+                      <Badge className="bg-secondary/10 text-secondary mb-4">Featured Amenity</Badge>
+                      <h2 className="text-2xl md:text-3xl font-bold mb-4">Private Family Dining Room</h2>
+                      <p className="text-lg text-gray-600 mb-6">
+                        Celebrate life's special moments in our elegant private dining room. Perfect for family birthdays, 
+                        anniversaries, holidays, or intimate gatherings with loved ones.
+                      </p>
+                      <ul className="space-y-3 mb-6">
+                        <li className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 text-secondary mt-1 flex-shrink-0" />
+                          <div>
+                            <span className="font-semibold">Reserve for Special Occasions</span>
+                            <p className="text-sm text-gray-600">Book our private space for birthdays and celebrations</p>
+                          </div>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 text-secondary mt-1 flex-shrink-0" />
+                          <div>
+                            <span className="font-semibold">Customized Menus</span>
+                            <p className="text-sm text-gray-600">Work with our chef to create a personalized menu</p>
+                          </div>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 text-secondary mt-1 flex-shrink-0" />
+                          <div>
+                            <span className="font-semibold">Intimate Setting</span>
+                            <p className="text-sm text-gray-600">Seats up to 12 guests in a beautifully appointed space</p>
+                          </div>
+                        </li>
+                      </ul>
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <Button asChild size="lg" data-testid="button-explore-dining">
+                          <Link href={`/dining?from=${community.slug}`}>
+                            Explore All Dining Services
+                            <ChevronRight className="w-5 h-5 ml-2" />
+                          </Link>
+                        </Button>
+                        {community.phoneDisplay && (
+                          <Button 
+                            variant="outline" 
+                            size="lg" 
+                            asChild
+                            data-testid="button-call-reserve"
+                          >
+                            <a href={`tel:${community.phoneDial || community.phoneDisplay}`}>
+                              <Phone className="w-5 h-5 mr-2" />
+                              Call to Reserve
+                            </a>
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    <div className="relative h-96 rounded-xl overflow-hidden shadow-xl">
+                      {community.privateDiningImageId ? (
+                        <img 
+                          src={useResolveImageUrl(community.privateDiningImageId) || "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80"}
+                          alt="Private dining room for family gatherings"
+                          className="w-full h-full object-cover"
+                          data-testid="private-dining-image"
+                        />
+                      ) : (
+                        <img 
+                          src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80"
+                          alt="Private dining room for family gatherings"
+                          className="w-full h-full object-cover"
+                          data-testid="private-dining-image-default"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                    </div>
+                  </div>
+                </div>
+              </section>
+            )}
           </div>
 
           {/* Sticky Sidebar - Only for Top Sections */}

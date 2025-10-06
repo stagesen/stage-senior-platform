@@ -132,7 +132,7 @@ const CarouselCommunityCard = ({
                 asChild 
                 variant="secondary"
                 size="sm"
-                className="w-full"
+                className="w-full bg-white text-primary hover:bg-white/90 font-semibold shadow-md"
                 data-testid={`button-learn-more-${community.id}`}
               >
                 <Link href={`/communities/${community.slug}`}>
