@@ -1,10 +1,13 @@
 import { useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PageHero } from "@/components/PageHero";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { useQuery } from "@tanstack/react-query";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import type { Community } from "@shared/schema";
 import { 
   Dumbbell,
   Heart,
@@ -28,6 +31,24 @@ import {
 } from "lucide-react";
 
 export default function FitnessTherapy() {
+  const [location] = useLocation();
+  const searchParams = new URLSearchParams(window.location.search);
+  const fromCommunity = searchParams.get('from');
+  
+  // Fetch community data if we have a 'from' parameter
+  const { data: community } = useQuery({
+    queryKey: ['/api/communities', fromCommunity],
+    enabled: !!fromCommunity,
+    queryFn: async () => {
+      const response = await fetch(`/api/communities/${fromCommunity}`);
+      if (!response.ok) return null;
+      return response.json() as Promise<Community>;
+    }
+  });
+  
+  // Resolve the fitness image URL if community has one
+  const communityFitnessImage = useResolveImageUrl(community?.fitnessImageId || '');
+  const fitnessImage = communityFitnessImage || "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=800&q=80";
   useEffect(() => {
     document.title = "Fitness & Therapy Center | Senior Living Communities";
     
@@ -243,15 +264,15 @@ export default function FitnessTherapy() {
             </div>
             <div className="relative h-96 rounded-2xl overflow-hidden shadow-xl">
               <img 
-                src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=800&q=80" 
-                alt="Modern fitness center with senior-friendly exercise equipment"
+                src={fitnessImage} 
+                alt={community ? `${community.name} fitness center` : "Modern fitness center with senior-friendly exercise equipment"}
                 className="w-full h-full object-cover"
                 data-testid="fitness-center-image"
               />
               <div className="absolute top-4 right-4">
                 <Badge className="bg-blue-600 text-white px-4 py-2 text-sm font-semibold">
                   <Dumbbell className="w-4 h-4 mr-1" />
-                  Fitness Center
+                  {community ? community.name : "Fitness Center"}
                 </Badge>
               </div>
             </div>
@@ -552,19 +573,25 @@ export default function FitnessTherapy() {
               size="lg" 
               className="gap-2"
               data-testid="button-schedule-tour"
+              asChild
             >
-              <Calendar className="w-5 h-5" />
-              Schedule a Tour
-              <ArrowRight className="w-5 h-5" />
+              <Link href={community ? `/communities/${community.slug}#tour` : "#"}>
+                <Calendar className="w-5 h-5" />
+                Schedule a Tour {community && `at ${community.name}`}
+                <ArrowRight className="w-5 h-5" />
+              </Link>
             </Button>
             <Button 
               size="lg" 
               variant="outline"
               className="gap-2"
               data-testid="button-contact-us"
+              asChild
             >
-              <Phone className="w-5 h-5" />
-              Contact Us for More Information
+              <a href={`tel:${community?.phoneDial || community?.phoneDisplay || '+19704444689'}`}>
+                <Phone className="w-5 h-5" />
+                {community ? `Call ${community.name}` : 'Contact Us for More Information'}
+              </a>
             </Button>
           </div>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-muted-foreground">
