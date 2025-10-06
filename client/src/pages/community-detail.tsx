@@ -88,7 +88,8 @@ const formatPrice = (price: number | undefined | null): string => {
 
 // Local subcomponent: Highlight Card
 const HighlightCard = ({ highlight }: { highlight: { title: string; description: string; imageUrl?: string; imageId?: string; ctaLabel?: string; ctaHref?: string } }) => {
-  const resolvedImageUrl = useResolveImageUrl(highlight.imageId ? `/api/images/${highlight.imageId}` : highlight.imageUrl);
+  // Pass imageId directly - useResolveImageUrl handles the API path internally
+  const resolvedImageUrl = useResolveImageUrl(highlight.imageId || highlight.imageUrl);
   
   return (
     <Card className="overflow-hidden">
@@ -653,10 +654,8 @@ const ActionPanel = ({ community }: { community: any }) => {
   // Get the primary contact (first team member)
   const primaryContact = teamMembers[0];
   
-  // Resolve avatar image URL
-  const avatarImageUrl = useResolveImageUrl(
-    primaryContact?.avatarImageId ? `/api/images/${primaryContact.avatarImageId}` : null
-  );
+  // Resolve avatar image URL - pass ID directly without /api/images prefix
+  const avatarImageUrl = useResolveImageUrl(primaryContact?.avatarImageId || null);
 
   // Resolve brochure image URL
   const resolvedBrochureUrl = useResolveImageUrl(community?.brochureImageId);
