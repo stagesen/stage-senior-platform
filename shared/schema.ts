@@ -95,6 +95,11 @@ export const communities = pgTable("communities", {
   ctaColorHex: varchar("cta_color_hex", { length: 7 }),
   featured: boolean("featured").default(false),
   active: boolean("active").default(true),
+  rating: decimal("rating", { precision: 2, scale: 1 }).default("4.8"),
+  reviewCount: integer("review_count").default(0),
+  licenseStatus: varchar("license_status", { length: 100 }).default("Licensed & Insured"),
+  sameDayTours: boolean("same_day_tours").default(true),
+  noObligation: boolean("no_obligation").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
