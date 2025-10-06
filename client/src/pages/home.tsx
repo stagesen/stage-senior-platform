@@ -225,6 +225,16 @@ export default function Home() {
   const { data: homepageSections = [] } = useQuery<HomepageSection[]>({
     queryKey: ["/api/homepage-sections"],
   });
+  
+  // Get the sections we need
+  const transparentSection = homepageSections.find(s => s.slug === 'transparent-pricing' && s.visible);
+  const locallyOwnedSection = homepageSections.find(s => s.slug === 'locally-owned' && s.visible);
+  const safetySection = homepageSections.find(s => s.slug === 'safety-with-dignity' && s.visible);
+  
+  // Resolve image URLs at component level (hooks must be called at top level)
+  const transparentSectionImageUrl = useResolveImageUrl(transparentSection?.imageId);
+  const locallyOwnedSectionImageUrl = useResolveImageUrl(locallyOwnedSection?.imageId);
+  const safetySectionImageUrl = useResolveImageUrl(safetySection?.imageId);
 
   // Fetch homepage config for the differentiators section
   const { data: homepageConfig } = useQuery<HomepageConfig>({
@@ -439,149 +449,122 @@ export default function Home() {
           
           <div className="space-y-24">
             {/* Feature 1: Transparent Care Points - Left Aligned */}
-            {(() => {
-              const transparentSection = homepageSections.find(s => s.slug === 'transparent-pricing' && s.visible);
-              const sectionImageUrl = useResolveImageUrl(transparentSection?.imageId);
-              
-              return (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                  <div className="order-2 lg:order-1">
-                    <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
-                      <img
-                        src={sectionImageUrl || carePricingImage}
-                        alt="Senior resident reviewing care pricing with staff member"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
-                    </div>
-                  </div>
-                  <div className="order-1 lg:order-2">
-                    <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">
-                      {transparentSection?.subtitle || 'Featured'}
-                    </Badge>
-                    <h3 className="text-3xl font-bold mb-6">
-                      <CheckCircle className="inline w-8 h-8 text-primary mr-3" />
-                      {transparentSection?.title || 'Transparent Care-Based Pricing'}
-                    </h3>
-                    <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                      {transparentSection?.body || 'No hidden fees. No surprises. Our published Care Points menu clearly shows what services cost and when they apply. Changes only happen when care needs truly change—with advance notice and family partnership every step of the way.'}
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      <Button size="lg" asChild data-testid="button-care-points">
-                        <Link href={transparentSection?.ctaUrl || '/care-points'}>
-                          {transparentSection?.ctaLabel || 'See How Care Points Work'}
-                          <ArrowRight className="w-5 h-5 ml-2" />
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="order-2 lg:order-1">
+                <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
+                  <img
+                    src={transparentSectionImageUrl || carePricingImage}
+                    alt="Senior resident reviewing care pricing with staff member"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
                 </div>
-              );
-            })()}
+              </div>
+              <div className="order-1 lg:order-2">
+                <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">
+                  {transparentSection?.subtitle || 'Featured'}
+                </Badge>
+                <h3 className="text-3xl font-bold mb-6">
+                  <CheckCircle className="inline w-8 h-8 text-primary mr-3" />
+                  {transparentSection?.title || 'Transparent Care-Based Pricing'}
+                </h3>
+                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                  {transparentSection?.body || 'No hidden fees. No surprises. Our published Care Points menu clearly shows what services cost and when they apply. Changes only happen when care needs truly change—with advance notice and family partnership every step of the way.'}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button size="lg" asChild data-testid="button-care-points">
+                    <Link href={transparentSection?.ctaUrl || '/care-points'}>
+                      {transparentSection?.ctaLabel || 'See How Care Points Work'}
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
 
             {/* Feature 2: Locally Owned - Right Aligned */}
-            {(() => {
-              const locallyOwnedSection = homepageSections.find(s => s.slug === 'locally-owned' && s.visible);
-              const sectionImageUrl = useResolveImageUrl(locallyOwnedSection?.imageId);
-              
-              return (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                  <div>
-                    <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">
-                      {locallyOwnedSection?.subtitle || 'Since 2016'}
-                    </Badge>
-                    <h3 className="text-3xl font-bold mb-6">
-                      <Award className="inline w-8 h-8 text-primary mr-3" />
-                      {locallyOwnedSection?.title || 'Locally Owned & Operated'}
-                    </h3>
-                    <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                      {locallyOwnedSection?.body || 'Colorado born, Colorado proud. As a locally owned company, we make decisions right here—not in some corporate boardroom. Our leadership knows residents by name, and our teams stay for years, not months. That\'s the difference local ownership makes.'}
-                    </p>
-                    {locallyOwnedSection?.ctaLabel && locallyOwnedSection?.ctaUrl && (
-                      <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                        <Button size="lg" asChild data-testid="button-locally-owned">
-                          <Link href={locallyOwnedSection.ctaUrl}>
-                            {locallyOwnedSection.ctaLabel}
-                            <ArrowRight className="w-5 h-5 ml-2" />
-                          </Link>
-                        </Button>
-                      </div>
-                    )}
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
-                        <span className="text-muted-foreground">Decision-makers you can actually meet</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
-                        <span className="text-muted-foreground">Long-tenured staff who become like family</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
-                        <span className="text-muted-foreground">Community partnerships that run deep</span>
-                      </div>
-                    </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">
+                  {locallyOwnedSection?.subtitle || 'Since 2016'}
+                </Badge>
+                <h3 className="text-3xl font-bold mb-6">
+                  <Award className="inline w-8 h-8 text-primary mr-3" />
+                  {locallyOwnedSection?.title || 'Locally Owned & Operated'}
+                </h3>
+                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                  {locallyOwnedSection?.body || 'Colorado born, Colorado proud. As a locally owned company, we make decisions right here—not in some corporate boardroom. Our leadership knows residents by name, and our teams stay for years, not months. That\'s the difference local ownership makes.'}
+                </p>
+                {locallyOwnedSection?.ctaLabel && locallyOwnedSection?.ctaUrl && (
+                  <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                    <Button size="lg" asChild data-testid="button-locally-owned">
+                      <Link href={locallyOwnedSection.ctaUrl}>
+                        {locallyOwnedSection.ctaLabel}
+                        <ArrowRight className="w-5 h-5 ml-2" />
+                      </Link>
+                    </Button>
                   </div>
-                  <div>
-                    <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
-                      <img
-                        src={sectionImageUrl || "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1600&auto=format&fit=crop"}
-                        alt="Local Colorado team and leadership"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
-                    </div>
+                )}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-muted-foreground">Decision-makers you can actually meet</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-muted-foreground">Long-tenured staff who become like family</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-muted-foreground">Community partnerships that run deep</span>
                   </div>
                 </div>
-              );
-            })()}
+              </div>
+              <div>
+                <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
+                  <img
+                    src={locallyOwnedSectionImageUrl || "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1600&auto=format&fit=crop"}
+                    alt="Local Colorado team and leadership"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
+                </div>
+              </div>
+            </div>
 
             {/* Feature 3: Safety with Dignity - Left Aligned */}
-            {(() => {
-              const safetySection = homepageSections.find(s => s.slug === 'safety-with-dignity' && s.visible);
-              const sectionImageUrl = useResolveImageUrl(safetySection?.imageId);
-              
-              return (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                  <div className="order-2 lg:order-1">
-                    <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
-                      <img
-                        src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1600&auto=format&fit=crop"
-                        alt="Advanced safety technology"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
-                    </div>
-                  </div>
-                  <div className="order-1 lg:order-2">
-                    <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">
-                      {safetySection?.subtitle || 'Innovation'}
-                    </Badge>
-                    <div className="mb-6">
-                      <img 
-                        src={sectionImageUrl || seniorCaregiverDocuments} 
-                        alt="Senior resident reviewing documents with caregiver"
-                        className="w-full h-48 object-cover rounded-lg mb-4"
-                      />
-                      <h3 className="text-3xl font-bold">
-                        {safetySection?.title || 'Safety with Dignity'}
-                      </h3>
-                    </div>
-                    <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                      {safetySection?.body || 'Advanced fall detection that works like a guardian angel—always watching, never intrusive. Our smart technology provides rapid response while preserving independence and privacy. It\'s safety that respects dignity, not a system that feels like surveillance.'}
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      <Button size="lg" asChild data-testid="button-safety-dignity">
-                        <Link href={safetySection?.ctaUrl || '/safety-with-dignity'}>
-                          {safetySection?.ctaLabel || 'Explore Our Technology'}
-                          <ArrowRight className="w-5 h-5 ml-2" />
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="order-2 lg:order-1">
+                <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
+                  <img
+                    src={safetySectionImageUrl || "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1600&auto=format&fit=crop"}
+                    alt="Advanced safety technology"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
                 </div>
-              );
-            })()}
+              </div>
+              <div className="order-1 lg:order-2">
+                <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">
+                  {safetySection?.subtitle || 'Innovation'}
+                </Badge>
+                <h3 className="text-3xl font-bold mb-6">
+                  <Shield className="inline w-8 h-8 text-primary mr-3" />
+                  {safetySection?.title || 'Safety with Dignity'}
+                </h3>
+                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                  {safetySection?.body || 'Advanced fall detection that works like a guardian angel—always watching, never intrusive. Our smart technology provides rapid response while preserving independence and privacy. It\'s safety that respects dignity, not a system that feels like surveillance.'}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button size="lg" asChild data-testid="button-safety-dignity">
+                    <Link href={safetySection?.ctaUrl || '/safety-with-dignity'}>
+                      {safetySection?.ctaLabel || 'Explore Our Technology'}
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
