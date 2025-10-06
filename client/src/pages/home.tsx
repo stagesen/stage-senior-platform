@@ -452,24 +452,33 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="order-2 lg:order-1">
                 <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
-                  {transparentSectionImageUrl ? (
-                    <img
-                      src={transparentSectionImageUrl}
-                      alt="Senior resident reviewing care pricing with staff member"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        console.error('Failed to load image:', transparentSectionImageUrl);
-                        (e.target as HTMLImageElement).src = carePricingImage;
-                      }}
-                    />
-                  ) : (
+                  {/* Debug: Show URL and image */}
+                  {transparentSectionImageUrl && (
+                    <>
+                      <div className="absolute top-0 left-0 bg-black text-white p-2 z-10 text-xs">
+                        URL: {transparentSectionImageUrl}
+                      </div>
+                      <img
+                        src={transparentSectionImageUrl}
+                        alt="Senior resident reviewing care pricing with staff member"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          console.error('Failed to load image:', transparentSectionImageUrl);
+                          alert(`Image failed to load: ${transparentSectionImageUrl}`);
+                        }}
+                        onLoad={() => {
+                          console.log('Image loaded successfully:', transparentSectionImageUrl);
+                        }}
+                      />
+                    </>
+                  )}
+                  {!transparentSectionImageUrl && (
                     <img
                       src={carePricingImage}
                       alt="Senior resident reviewing care pricing with staff member"
                       className="w-full h-full object-cover"
                     />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
                 </div>
               </div>
               <div className="order-1 lg:order-2">
