@@ -35,6 +35,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { Community, HomepageSection } from "@shared/schema";
 import seniorCaregiverDocuments from '@/assets/senior-caregiver-documents.webp';
+import carePricingImage from '@/assets/cp-home.webp';
 
 // Subcomponent for carousel items that handles image resolution
 const CarouselCommunityCard = ({ 
@@ -428,8 +429,8 @@ export default function Home() {
               <div className="order-2 lg:order-1">
                 <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
                   <img
-                    src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1600&auto=format&fit=crop"
-                    alt="Transparent pricing documentation"
+                    src={carePricingImage}
+                    alt="Senior resident reviewing care pricing with staff member"
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
