@@ -401,20 +401,6 @@ export default function Home() {
               </Carousel>
             </div>
           )}
-          
-          {/* Browse all communities button */}
-          <div className="text-center mt-12">
-            <Button 
-              asChild 
-              variant="secondary" 
-              size="lg" 
-              data-testid="button-browse-all-communities"
-            >
-              <Link href="/communities">
-                Browse all communities
-              </Link>
-            </Button>
-          </div>
         </div>
       </section>
 

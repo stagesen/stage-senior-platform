@@ -24,7 +24,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-[var(--pine-shadow)] text-[var(--mist-white)]" data-testid="footer">
+    <footer className="bg-[#282e34] text-[var(--mist-white)]" data-testid="footer">
       {/* Newsletter Section - Blue Background for CTA Emphasis */}
       <div className="bg-gradient-to-br from-[var(--bright-blue)] via-[var(--deep-blue)] to-[var(--deep-blue)] py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
@@ -61,7 +61,7 @@ export default function Footer() {
       </div>
 
       {/* Main Footer Content */}
-      <div className="bg-gradient-to-b from-[var(--pine-shadow)] to-[var(--pine-shadow)]/98 py-20">
+      <div className="bg-gradient-to-b from-[#282e34] to-[#282e34]/98 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
