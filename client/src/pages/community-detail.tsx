@@ -1060,6 +1060,9 @@ export default function CommunityDetail() {
   
   // Resolve experience image URL from experienceImageId field
   const experienceImageUrl = useResolveImageUrl(community?.experienceImageId);
+  
+  // Resolve private dining image URL from privateDiningImageId field
+  const privateDiningImageUrl = useResolveImageUrl(community?.privateDiningImageId);
 
   // Computed values based on query data
   const galleryCategories = Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean)));
@@ -2087,9 +2090,9 @@ export default function CommunityDetail() {
                       </div>
                     </div>
                     <div className="relative h-96 rounded-xl overflow-hidden shadow-xl">
-                      {community.privateDiningImageId ? (
+                      {privateDiningImageUrl ? (
                         <img 
-                          src={useResolveImageUrl(community.privateDiningImageId) || "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80"}
+                          src={privateDiningImageUrl}
                           alt="Private dining room for family gatherings"
                           className="w-full h-full object-cover"
                           data-testid="private-dining-image"
