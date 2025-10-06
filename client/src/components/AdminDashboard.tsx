@@ -1280,6 +1280,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       logoImageId: "",
       contactImageId: "",
       brochureImageId: "",
+      brochurePdfId: "",
       experienceImageId: "",
       fitnessImageId: "",
       privateDiningImageId: "",
@@ -2158,6 +2159,29 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         maxSize={10 * 1024 * 1024}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
+                name="brochurePdfId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Brochure PDF Document</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload community brochure PDF"
+                        accept=".pdf"
+                        mixedMode={true}
+                        maxSize={20 * 1024 * 1024}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Upload a PDF brochure that users can download from the community detail page
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
