@@ -24,36 +24,36 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-foreground text-background" data-testid="footer">
-      {/* Newsletter Section */}
-      <div className="bg-gradient-to-br from-primary via-primary/90 to-secondary py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+    <footer className="bg-[var(--pine-shadow)] text-[var(--mist-white)]" data-testid="footer">
+      {/* Newsletter Section - Blue Background for CTA Emphasis */}
+      <div className="bg-gradient-to-br from-[var(--bright-blue)] via-[var(--deep-blue)] to-[var(--deep-blue)] py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="flex justify-center mb-4">
-            <Heart className="w-8 h-8 text-background/90" />
+            <Heart className="w-8 h-8 text-white/90" />
           </div>
-          <h2 className="text-2xl font-bold text-background mb-6" data-testid="newsletter-title">
+          <h2 className="text-2xl font-bold text-white mb-6" data-testid="newsletter-title">
             Stay Connected with Our Community
           </h2>
-          <p className="text-background/95 text-lg mb-10 max-w-2xl mx-auto leading-relaxed" data-testid="newsletter-description">
+          <p className="text-white/95 text-lg mb-10 max-w-2xl mx-auto leading-relaxed" data-testid="newsletter-description">
             Get the latest updates on events, wellness tips, and community news delivered to your inbox.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
             <Input
               type="email"
               placeholder="Enter your email address"
-              className="bg-background text-foreground border-0 flex-1 h-14 text-base shadow-lg"
+              className="bg-white text-[var(--midnight-slate)] border-0 flex-1 h-14 text-base shadow-lg"
               data-testid="newsletter-input"
             />
             <Button
-              className="bg-background text-primary hover:bg-background/90 h-14 px-10 group shadow-lg font-semibold"
+              className="bg-[var(--stage-copper)] text-white hover:bg-gradient-to-r hover:from-[var(--stage-copper)] hover:to-[var(--foothill-sage)] h-14 px-10 group shadow-lg font-semibold transition-all duration-300"
               data-testid="newsletter-submit"
             >
               Subscribe
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
-          <p className="text-background/70 text-sm mt-4">
+          <p className="text-white/70 text-sm mt-4">
             <CheckCircle className="w-4 h-4 inline mr-1" />
             No spam, unsubscribe at any time
           </p>
@@ -61,7 +61,7 @@ export default function Footer() {
       </div>
 
       {/* Main Footer Content */}
-      <div className="bg-gradient-to-b from-foreground to-foreground/98 py-20">
+      <div className="bg-gradient-to-b from-[var(--pine-shadow)] to-[var(--pine-shadow)]/98 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
@@ -74,7 +74,7 @@ export default function Footer() {
                   className="w-auto object-contain min-w-[160px] h-14 sm:h-16 md:h-18"
                 />
               </div>
-              <p className="text-background/95 mb-4 text-lg leading-relaxed" data-testid="footer-description">
+              <p className="text-[var(--mist-white)]/95 mb-4 text-lg leading-relaxed" data-testid="footer-description">
                 Creating vibrant communities where seniors thrive. Locally owned and resident-focused since 2016.
               </p>
               

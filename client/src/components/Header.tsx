@@ -13,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import logoUrl from "@assets/stagesenior-logo_1758726889154.webp";
+import logoUrl from "@assets/stage-horizintal_1759763679642.webp";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,7 +67,7 @@ export default function Header() {
               <img
                 src={logoUrl}
                 alt="Stage Senior"
-                className="w-auto object-contain min-w-[150px] h-10 sm:h-12 md:h-14"
+                className="w-auto object-contain min-w-[180px] h-8 sm:h-10 md:h-12"
               />
             </Link>
           </div>

@@ -585,20 +585,22 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Lead Generation Panel */}
-      <section id="lead" className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Lead Generation Panel - Blue Background for CTA Emphasis */}
+      <section id="lead" className="py-16 bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
                 Talk to a real local advisor today
               </h2>
-              <p className="text-xl text-muted-foreground mb-6">
+              <p className="text-xl text-white/90 mb-6">
                 Urgent placement? Weekend tours? We've got you. Call now or get a callback in 10 minutes.
               </p>
               <div className="flex flex-wrap gap-4 mb-8">
                 <Button 
                   size="lg" 
+                  className="bg-[var(--stage-copper)] text-white hover:bg-gradient-to-r hover:from-[var(--stage-copper)] hover:to-[var(--foothill-sage)]"
                   asChild
                   data-testid="button-call-now"
                 >
@@ -608,7 +610,7 @@ export default function Home() {
                   </a>
                 </Button>
                 <Button 
-                  variant="glassmorphism-dark"
+                  variant="glassmorphism"
                   size="lg" 
                   onClick={() => setShowContactForm(true)}
                   data-testid="button-request-callback"
@@ -616,17 +618,17 @@ export default function Home() {
                   Request Callback
                 </Button>
               </div>
-              <ul className="space-y-3 text-muted-foreground">
+              <ul className="space-y-3 text-white/90">
                 <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" />
+                  <CheckCircle className="w-5 h-5 text-white" />
                   Same‑day and next‑day tours available
                 </li>
                 <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" />
+                  <CheckCircle className="w-5 h-5 text-white" />
                   Transparent availability & pricing information
                 </li>
                 <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" />
+                  <CheckCircle className="w-5 h-5 text-white" />
                   Expert help comparing communities and care options
                 </li>
               </ul>
