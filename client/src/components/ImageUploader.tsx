@@ -91,8 +91,12 @@ export default function ImageUploader({
   const singleImage = !multiple ? singleImageQuery.data : undefined;
   const isLoadingSingle = !multiple ? singleImageQuery.isLoading : false;
 
+  // Check if PDFs are allowed (indicates mixed mode)
+  const allowsPdf = accept.toLowerCase().includes('.pdf') || accept.toLowerCase().includes('application/pdf');
+
   // Upload mutation
   const uploadMutation = useImageUpload({
+    mixedMode: allowsPdf, // Enable mixed mode if PDFs are allowed
     onSuccess: (data) => {
       if (Array.isArray(data)) {
         // Multiple upload

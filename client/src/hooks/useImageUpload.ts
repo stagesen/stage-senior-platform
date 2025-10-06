@@ -20,6 +20,7 @@ export const useImageUpload = (options?: {
   onSuccess?: (data: UploadResponse | MultipleUploadResponse[]) => void;
   onError?: (error: Error) => void;
   multiple?: boolean;
+  mixedMode?: boolean; // Allow PDFs and images
 }) => {
   const { toast } = useToast();
 
@@ -33,11 +34,20 @@ export const useImageUpload = (options?: {
           formData.append("images", file);
         });
       } else {
-        formData.append("image", files);
+        // Use different field name for mixed mode
+        formData.append(options?.mixedMode ? "file" : "image", files);
+      }
+
+      // Determine endpoint based on mode
+      let endpoint = "/api/upload";
+      if (isMultiple) {
+        endpoint = "/api/upload-multiple";
+      } else if (options?.mixedMode) {
+        endpoint = "/api/upload-mixed";
       }
 
       const response = await fetch(
-        isMultiple ? "/api/upload-multiple" : "/api/upload",
+        endpoint,
         {
           method: "POST",
           body: formData,

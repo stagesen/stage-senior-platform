@@ -6,9 +6,11 @@ import {
   uploadSingle,
   uploadMultiple,
   uploadDocument,
+  uploadMixed,
   processSingleImageUpload,
   processMultipleImageUploads,
   processDocumentUpload,
+  processMixedFileUpload,
   deleteFromObjectStorage,
   handleUploadError,
 } from "./upload";
@@ -1482,6 +1484,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error uploading images:", error);
       res.status(500).json({ message: "Failed to upload images" });
+    }
+  });
+
+  // Mixed file upload (images and PDFs) - for calendar files
+  app.post("/api/upload-mixed", requireAuth, uploadMixed, async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      // Get authenticated user ID
+      const uploadedBy = (req.user as any)?.id;
+      
+      const result = await processMixedFileUpload(req.file, uploadedBy);
+      res.json(result);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      res.status(500).json({ message: "Failed to upload file" });
     }
   });
 

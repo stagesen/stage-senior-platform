@@ -92,6 +92,37 @@ export const uploadDocument = multer({
   },
 }).single("document");
 
+// File filter for mixed content (images and PDFs) - used for calendar files
+const mixedFileFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
+  const allowedImageMimeTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  const allowedDocMimeTypes = ["application/pdf"];
+  const allowedExtensions = [".pdf", ".jpg", ".jpeg", ".png", ".webp", ".gif"];
+  const fileExtension = `.${file.originalname.split(".").pop()?.toLowerCase()}`;
+  
+  if (
+    allowedImageMimeTypes.includes(file.mimetype) ||
+    allowedDocMimeTypes.includes(file.mimetype) ||
+    allowedExtensions.includes(fileExtension)
+  ) {
+    cb(null, true);
+  } else {
+    cb(new Error("Invalid file type. Only images (JPEG, PNG, WebP, GIF) and PDF files are allowed."));
+  }
+};
+
+// Configure multer for mixed uploads (images and PDFs)
+export const uploadMixed = multer({
+  storage: multerStorage,
+  fileFilter: mixedFileFilter,
+  limits: {
+    fileSize: 25 * 1024 * 1024, // 25MB limit
+  },
+}).single("file");
+
 // Generate unique filename
 function generateUniqueFilename(originalFilename: string): string {
   const timestamp = Date.now();
@@ -264,6 +295,62 @@ export async function processMultipleImageUploads(
   );
   
   return await Promise.all(uploadPromises);
+}
+
+// Process mixed file upload (images or PDFs) - stores in images table for calendar files
+export async function processMixedFileUpload(
+  file: Express.Multer.File,
+  uploadedBy?: number
+): Promise<{
+  imageId: string;
+  url: string;
+  width?: number;
+  height?: number;
+}> {
+  const filename = generateUniqueFilename(file.originalname);
+  const isPdf = file.mimetype === "application/pdf" || file.originalname.toLowerCase().endsWith(".pdf");
+  
+  let width = 0;
+  let height = 0;
+  
+  // Get dimensions only for images, not PDFs
+  if (!isPdf) {
+    const dimensions = await getImageDimensions(file.buffer);
+    width = dimensions.width;
+    height = dimensions.height;
+  }
+  
+  // Upload to object storage
+  const objectKey = await uploadToObjectStorage(
+    file.buffer,
+    filename,
+    file.mimetype,
+    true // Upload to public directory
+  );
+  
+  // Generate public URL
+  const bucketId = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
+  const publicUrl = `/${bucketId}/public/${filename}`;
+  
+  // Save metadata to database (using images table for compatibility with calendar fields)
+  const imageData: InsertImage = {
+    objectKey: `public/${filename}`,
+    url: publicUrl,
+    alt: file.originalname.split(".")[0].replace(/[-_]/g, " "),
+    width: isPdf ? null : width,
+    height: isPdf ? null : height,
+    sizeBytes: file.size,
+    mimeType: file.mimetype,
+    uploadedBy,
+  };
+  
+  const savedImage = await storage.createImage(imageData);
+  
+  return {
+    imageId: savedImage.id,
+    url: savedImage.url,
+    ...(isPdf ? {} : { width: savedImage.width || 0, height: savedImage.height || 0 })
+  };
 }
 
 // Process document upload to object storage
