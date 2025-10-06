@@ -48,7 +48,7 @@ import { cn } from "@/lib/utils";
 import { getCommunityFurtherClass } from "@/lib/furtherWidgetUtils";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
-import stageSeniorLogo from "@assets/stagesenior-logo_1758726889154.webp";
+import stageSeniorLogo from "@assets/stage-horizintal_1759766576925.webp";
 import defaultBrochureImage from "@/assets/community-brochure-default.png";
 import NewsletterCard from "@/components/NewsletterCard";
 import type { 
