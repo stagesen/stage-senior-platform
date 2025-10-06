@@ -187,9 +187,9 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
                   asChild
                   data-testid={`button-call-${community.slug}`}
                 >
-                  <a href={`tel:${community.phone || '+1-970-444-4689'}`}>
+                  <a href={`tel:${community.phoneDial || community.phone || '+19704444689'}`}>
                     <Phone className="w-4 h-4 mr-2" />
-                    Call Now
+                    {community.phoneDisplay || community.phone || '(970) 444-4689'}
                   </a>
                 </Button>
               </div>
