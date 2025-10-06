@@ -169,6 +169,11 @@ export default function ImageUploader({
     const fileExtension = `.${file.name.split(".").pop()?.toLowerCase()}`;
     const fileMimeType = file.type;
     
+    // Special check for PDF files being uploaded to image-only fields
+    if (accept === "image/*" && (fileMimeType === "application/pdf" || fileExtension === ".pdf")) {
+      return "PDF files cannot be uploaded here. This field only accepts images (JPEG, PNG, WebP, GIF). For PDF uploads, please use the Document Attachment field in the blog post form.";
+    }
+    
     // Check if file matches any accepted type
     const isAccepted = acceptedTypes.some((type) => {
       // Handle wildcards like "image/*"
@@ -187,6 +192,9 @@ export default function ImageUploader({
     });
 
     if (!isAccepted) {
+      if (accept === "image/*") {
+        return "Only image files (JPEG, PNG, WebP, GIF) are allowed in this field.";
+      }
       return `File type not accepted. Allowed types: ${accept}`;
     }
 

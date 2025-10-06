@@ -142,9 +142,7 @@ export default function DocumentUploader({
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (attachmentId: string) => {
-      await apiRequest(`/api/post-attachments/${attachmentId}`, {
-        method: "DELETE",
-      });
+      await apiRequest(`/api/post-attachments/${attachmentId}`, "DELETE");
     },
     onSuccess: () => {
       onChange(undefined);
