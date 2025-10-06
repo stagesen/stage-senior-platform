@@ -34,7 +34,7 @@ import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { Community } from "@shared/schema";
-import seniorsArtActivity from '@/assets/seniors-art-activity.webp';
+import seniorCaregiverDocuments from '@/assets/senior-caregiver-documents.webp';
 
 // Subcomponent for carousel items that handles image resolution
 const CarouselCommunityCard = ({ 
@@ -504,8 +504,8 @@ export default function Home() {
                 <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">Innovation</Badge>
                 <div className="mb-6">
                   <img 
-                    src={seniorsArtActivity} 
-                    alt="Seniors enjoying art activities together"
+                    src={seniorCaregiverDocuments} 
+                    alt="Senior resident reviewing documents with caregiver"
                     className="w-full h-48 object-cover rounded-lg mb-4"
                   />
                   <h3 className="text-3xl font-bold">
