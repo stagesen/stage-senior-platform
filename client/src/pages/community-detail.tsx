@@ -1971,23 +1971,23 @@ export default function CommunityDetail() {
                         const isRestaurantDining = lowerName.includes('restaurant') && lowerName.includes('dining');
                         const isPrivateFamilyDining = lowerName.includes('private') && lowerName.includes('family') && lowerName.includes('dining');
                         if (isRestaurantDining || isPrivateFamilyDining) {
-                          return { href: '/dining', testIdPrefix: 'dining' };
+                          return { href: `/dining?from=${community.slug}`, testIdPrefix: 'dining' };
                         }
                         
                         // Check for beauty salon/barber amenities
                         if (lowerName.includes('beauty salon') || lowerName.includes('barber')) {
-                          return { href: '/beauty-salon', testIdPrefix: 'beauty-salon' };
+                          return { href: `/beauty-salon?from=${community.slug}`, testIdPrefix: 'beauty-salon' };
                         }
                         
                         // Check for fitness/therapy amenities
                         if (lowerName.includes('fitness') || lowerName.includes('therapy')) {
-                          return { href: '/fitness-therapy', testIdPrefix: 'fitness-therapy' };
+                          return { href: `/fitness-therapy?from=${community.slug}`, testIdPrefix: 'fitness-therapy' };
                         }
                         
                         // Check for courtyard/patio amenities
                         if (lowerName.includes('courtyard') || lowerName.includes('patio') || 
                             lowerName.includes('garden') || lowerName.includes('outdoor')) {
-                          return { href: '/courtyards-patios', testIdPrefix: 'courtyards-patios' };
+                          return { href: `/courtyards-patios?from=${community.slug}`, testIdPrefix: 'courtyards-patios' };
                         }
                         
                         return null;
