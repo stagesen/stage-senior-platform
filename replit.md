@@ -85,7 +85,7 @@ The current implementation appears to use session-based authentication:
 ### Content Management
 The platform includes a comprehensive admin interface for content management:
 
-- **Community Management**: CRUD operations for community information, amenities, and care types with integrated image uploads
+- **Community Management**: CRUD operations for community information, amenities, and care types with integrated image uploads. Includes metadata fields for rating (4.8 default), review count, license status ("Licensed & Insured"), and trust indicators (same-day tours, no obligation) - all displayed dynamically in CommunityCard components
 - **Blog System**: Full blog management with categories, tags, featured content, hero image uploads, and team member author integration
 - **Team Member Management**: Complete team member profiles with avatar images, roles, departments, bio/blurb text area, social links, and blog post author connections
 - **Event Management**: Calendar-based event system with RSVP functionality and event image uploads
