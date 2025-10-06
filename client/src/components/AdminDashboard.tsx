@@ -1512,6 +1512,23 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     },
   });
 
+  const homepageSectionForm = useForm<InsertHomepageSection>({
+    resolver: zodResolver(insertHomepageSectionSchema),
+    defaultValues: {
+      slug: "",
+      sectionType: "feature",
+      title: "",
+      subtitle: "",
+      body: "",
+      ctaLabel: "",
+      ctaUrl: "",
+      imageId: undefined,
+      metadata: {},
+      sortOrder: 0,
+      visible: true,
+    },
+  });
+
   // Get current form based on type
   const getCurrentForm = () => {
     switch (type) {
@@ -1528,6 +1545,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "care-types": return careTypeForm;
       case "amenities": return amenityForm;
       case "community-highlights": return communityHighlightForm;
+      case "homepage": return homepageSectionForm;
       default: return communityForm;
     }
   };
@@ -5230,6 +5248,206 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
           </Form>
         );
 
+      case "homepage":
+        return (
+          <Form {...homepageSectionForm}>
+            <form onSubmit={homepageSectionForm.handleSubmit(handleSubmit)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={homepageSectionForm.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug *</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="e.g., safety-with-dignity" data-testid="input-homepage-slug" />
+                      </FormControl>
+                      <FormDescription>URL-safe identifier</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={homepageSectionForm.control}
+                  name="sectionType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Section Type</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger data-testid="select-homepage-type">
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="hero">Hero</SelectItem>
+                          <SelectItem value="feature">Feature</SelectItem>
+                          <SelectItem value="cta">Call to Action</SelectItem>
+                          <SelectItem value="content">Content</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={homepageSectionForm.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter section title" data-testid="input-homepage-title" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={homepageSectionForm.control}
+                name="subtitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Subtitle</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value || ""} placeholder="Enter section subtitle (optional)" data-testid="input-homepage-subtitle" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={homepageSectionForm.control}
+                name="body"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Body Text</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        {...field} 
+                        value={field.value || ""} 
+                        rows={4}
+                        placeholder="Enter the main content for this section"
+                        data-testid="textarea-homepage-body" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={homepageSectionForm.control}
+                  name="ctaLabel"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CTA Button Text</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          value={field.value || ""} 
+                          placeholder="e.g., Learn More"
+                          data-testid="input-homepage-cta-label" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={homepageSectionForm.control}
+                  name="ctaUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CTA URL</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          value={field.value || ""} 
+                          placeholder="e.g., /safety-with-dignity"
+                          data-testid="input-homepage-cta-url" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={homepageSectionForm.control}
+                name="imageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Section Image</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={(value) => field.onChange(value || null)}
+                        multiple={false}
+                        label="Upload section image"
+                        accept="image/*"
+                        showDelete={true}
+                      />
+                    </FormControl>
+                    <FormDescription>Upload an image for this section</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={homepageSectionForm.control}
+                  name="sortOrder"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sort Order</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || 0} 
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          data-testid="input-homepage-sort" 
+                        />
+                      </FormControl>
+                      <FormDescription>Lower numbers appear first</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={homepageSectionForm.control}
+                  name="visible"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2 mt-8">
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-homepage-visible" />
+                      </FormControl>
+                      <FormLabel>Visible</FormLabel>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="button-submit">
+                  {editingItem ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        );
+
       default:
         return <div>Form not implemented for {type}</div>;
     }
@@ -6353,6 +6571,73 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
         </Table>
       );
     }
+
+    // Homepage sections table
+    if (type === "homepage") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Slug</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>Subtitle</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Sort Order</TableHead>
+              <TableHead>Visibility</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: HomepageSection) => (
+              <TableRow key={item.id} data-testid={`homepage-section-row-${item.id}`}>
+                <TableCell className="font-medium">
+                  {item.slug}
+                </TableCell>
+                <TableCell className="text-sm">
+                  {item.title}
+                </TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  {item.subtitle || "-"}
+                </TableCell>
+                <TableCell>
+                  <Badge variant="outline">
+                    {item.sectionType}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  {item.sortOrder}
+                </TableCell>
+                <TableCell>
+                  <Badge variant={item.visible ? "default" : "secondary"}>
+                    {item.visible ? "Visible" : "Hidden"}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => handleEdit(item)}
+                      data-testid={`button-edit-${item.id}`}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="destructive" 
+                      onClick={() => handleDelete(item.id)}
+                      data-testid={`button-delete-${item.id}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      );
+    }
   };
 
   const getTitle = () => {
@@ -6371,6 +6656,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "amenities": return "Amenities";
       case "blog-posts": return "Blog Posts";
       case "community-highlights": return "Community Highlights";
+      case "homepage": return "Homepage Sections";
       default: return type;
     }
   };
