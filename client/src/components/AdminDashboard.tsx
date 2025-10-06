@@ -1261,6 +1261,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       contactImageId: "",
       brochureImageId: "",
       experienceImageId: "",
+      fitnessImageId: "",
       calendarFile1Id: "",
       calendarFile1ButtonText: "",
       calendarFile2Id: "",
@@ -2147,6 +2148,25 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         value={field.value || undefined}
                         onChange={field.onChange}
                         label="Upload image for the Experience our Community section"
+                        maxSize={10 * 1024 * 1024}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={communityForm.control}
+                name="fitnessImageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Fitness Center Image</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload image for the Fitness & Therapy Center page"
                         maxSize={10 * 1024 * 1024}
                       />
                     </FormControl>
