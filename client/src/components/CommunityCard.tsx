@@ -156,13 +156,13 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
                     ))}
                   </div>
                   <span className="ml-2 text-sm text-muted-foreground" data-testid={`rating-${community.slug}`}>
-                    4.8 (Reviews)
+                    {community.rating || 4.8} ({community.reviewCount || 0} Reviews)
                   </span>
                 </div>
               </div>
               <div className="text-sm text-muted-foreground flex items-center">
                 <Shield className="w-4 h-4 mr-1 text-primary" />
-                Licensed & Insured
+                {community.licenseStatus || 'Licensed & Insured'}
               </div>
             </div>
             
@@ -209,14 +209,18 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
               
               {/* Trust indicators */}
               <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground mt-2">
-                <div className="flex items-center gap-1">
-                  <Check className="w-3 h-3 text-green-600" />
-                  <span>Same-day tours</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Check className="w-3 h-3 text-green-600" />
-                  <span>No obligation</span>
-                </div>
+                {(community.sameDayTours !== false) && (
+                  <div className="flex items-center gap-1">
+                    <Check className="w-3 h-3 text-green-600" />
+                    <span>Same-day tours</span>
+                  </div>
+                )}
+                {(community.noObligation !== false) && (
+                  <div className="flex items-center gap-1">
+                    <Check className="w-3 h-3 text-green-600" />
+                    <span>No obligation</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
