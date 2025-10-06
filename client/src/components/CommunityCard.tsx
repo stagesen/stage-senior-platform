@@ -195,8 +195,8 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
               </div>
               
               <Button 
-                variant="ghost" 
-                className="w-full h-9 text-sm"
+                variant="secondary" 
+                className="w-full h-9 text-sm bg-white hover:bg-gray-50 rounded-full shadow-sm border border-gray-200"
                 asChild
                 data-testid={`button-details-${community.slug}`}
               >
