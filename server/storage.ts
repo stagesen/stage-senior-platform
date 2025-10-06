@@ -65,6 +65,9 @@ import {
   homepageSections,
   type HomepageSection,
   type InsertHomepageSection,
+  homepageConfig,
+  type HomepageConfig,
+  type InsertHomepageConfig,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm";
@@ -312,6 +315,10 @@ export interface IStorage {
   createHomepageSection(data: InsertHomepageSection): Promise<HomepageSection>;
   updateHomepageSection(id: string, data: Partial<InsertHomepageSection>): Promise<HomepageSection | null>;
   deleteHomepageSection(id: string): Promise<void>;
+
+  // Homepage config operations
+  getHomepageConfig(sectionKey: string): Promise<HomepageConfig | null>;
+  updateHomepageConfig(sectionKey: string, data: Partial<InsertHomepageConfig>): Promise<HomepageConfig>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -2026,6 +2033,45 @@ export class DatabaseStorage implements IStorage {
 
   async deleteHomepageSection(id: string): Promise<void> {
     await db.delete(homepageSections).where(eq(homepageSections.id, id));
+  }
+
+  // Homepage config operations
+  async getHomepageConfig(sectionKey: string): Promise<HomepageConfig | null> {
+    const [config] = await db
+      .select()
+      .from(homepageConfig)
+      .where(eq(homepageConfig.sectionKey, sectionKey));
+    
+    return config || null;
+  }
+
+  async updateHomepageConfig(sectionKey: string, data: Partial<InsertHomepageConfig>): Promise<HomepageConfig> {
+    // Try to update first
+    const existing = await this.getHomepageConfig(sectionKey);
+    
+    if (existing) {
+      const [updated] = await db
+        .update(homepageConfig)
+        .set({
+          ...data,
+          updatedAt: new Date()
+        })
+        .where(eq(homepageConfig.sectionKey, sectionKey))
+        .returning();
+      
+      return updated;
+    } else {
+      // Create if doesn't exist
+      const [created] = await db
+        .insert(homepageConfig)
+        .values({
+          ...data,
+          sectionKey: sectionKey
+        })
+        .returning();
+      
+      return created;
+    }
   }
 }
 

@@ -33,7 +33,7 @@ import {
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
-import type { Community, HomepageSection } from "@shared/schema";
+import type { Community, HomepageSection, HomepageConfig } from "@shared/schema";
 import seniorCaregiverDocuments from '@/assets/senior-caregiver-documents.webp';
 import carePricingImage from '@/assets/cp-home.webp';
 
@@ -226,6 +226,20 @@ export default function Home() {
     queryKey: ["/api/homepage-sections"],
   });
 
+  // Fetch homepage config for the differentiators section
+  const { data: homepageConfig } = useQuery<HomepageConfig>({
+    queryKey: ["/api/homepage-config/stage-difference"],
+    queryFn: async () => {
+      const response = await fetch("/api/homepage-config/stage-difference");
+      if (!response.ok) {
+        // Return default if no config exists
+        if (response.status === 404) return null;
+        throw new Error("Failed to fetch homepage config");
+      }
+      return response.json();
+    },
+  });
+
   const featuredCommunities = communities; // Show all communities in carousel
 
   const handleFormSuccess = () => {
@@ -416,10 +430,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              What Makes Stage Senior Different
+              {homepageConfig?.heading || "What Makes Stage Senior Different"}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Three pillars that define our commitment to Colorado families
+              {homepageConfig?.subheading || "Three pillars that define our commitment to Colorado families"}
             </p>
           </div>
           

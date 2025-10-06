@@ -827,3 +827,24 @@ export type PageHero = typeof pageHeroes.$inferSelect;
 export type InsertPageHero = z.infer<typeof insertPageHeroSchema>;
 export type HomepageSection = typeof homepageSections.$inferSelect;
 export type InsertHomepageSection = z.infer<typeof insertHomepageSectionSchema>;
+
+// Homepage Config table
+export const homepageConfig = pgTable("homepage_config", {
+  id: varchar("id", { length: 36 }).primaryKey().default(sql`gen_random_uuid()`),
+  sectionKey: varchar("section_key", { length: 100 }).notNull().unique(),
+  heading: text("heading"),
+  subheading: text("subheading"),
+  metadata: jsonb("metadata").$type<Record<string, any>>(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+});
+
+export const insertHomepageConfigSchema = createInsertSchema(homepageConfig, {
+  sectionKey: z.string().min(1).max(100),
+  heading: z.string().optional(),
+  subheading: z.string().optional(),
+  metadata: z.record(z.any()).optional(),
+});
+
+export type HomepageConfig = typeof homepageConfig.$inferSelect;
+export type InsertHomepageConfig = z.infer<typeof insertHomepageConfigSchema>;

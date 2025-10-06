@@ -32,6 +32,7 @@ import {
   insertPageHeroSchema,
   insertTeamMemberSchema,
   insertHomepageSectionSchema,
+  insertHomepageConfigSchema,
 } from "@shared/schema";
 
 // Middleware to protect admin routes - referenced by javascript_auth_all_persistance integration
@@ -1523,6 +1524,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting homepage section:", error);
       res.status(500).json({ message: "Failed to delete homepage section" });
+    }
+  });
+
+  // Homepage config routes
+  app.get("/api/homepage-config/:sectionKey", async (req, res) => {
+    try {
+      const config = await storage.getHomepageConfig(req.params.sectionKey);
+      if (!config) {
+        // Return empty config if none exists
+        return res.json({ heading: '', subheading: '' });
+      }
+      res.json(config);
+    } catch (error) {
+      console.error("Error fetching homepage config:", error);
+      res.status(500).json({ message: "Failed to fetch homepage config" });
+    }
+  });
+
+  app.put("/api/homepage-config/:sectionKey", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertHomepageConfigSchema.partial().parse(req.body);
+      const config = await storage.updateHomepageConfig(req.params.sectionKey, validatedData);
+      res.json(config);
+    } catch (error) {
+      console.error("Error updating homepage config:", error);
+      res.status(400).json({ message: "Failed to update homepage config" });
     }
   });
 

@@ -92,6 +92,7 @@ import {
   type InsertAmenity,
   type HomepageSection,
   type InsertHomepageSection,
+  type HomepageConfig,
 } from "@shared/schema";
 
 interface AdminDashboardProps {
@@ -6572,70 +6573,79 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       );
     }
 
-    // Homepage sections table
+    // Homepage sections table with config management
     if (type === "homepage") {
       return (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Slug</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Subtitle</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Sort Order</TableHead>
-              <TableHead>Visibility</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.map((item: HomepageSection) => (
-              <TableRow key={item.id} data-testid={`homepage-section-row-${item.id}`}>
-                <TableCell className="font-medium">
-                  {item.slug}
-                </TableCell>
-                <TableCell className="text-sm">
-                  {item.title}
-                </TableCell>
-                <TableCell className="text-sm text-muted-foreground">
-                  {item.subtitle || "-"}
-                </TableCell>
-                <TableCell>
-                  <Badge variant="outline">
-                    {item.sectionType}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {item.sortOrder}
-                </TableCell>
-                <TableCell>
-                  <Badge variant={item.visible ? "default" : "secondary"}>
-                    {item.visible ? "Visible" : "Hidden"}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={() => handleEdit(item)}
-                      data-testid={`button-edit-${item.id}`}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="destructive" 
-                      onClick={() => handleDelete(item.id)}
-                      data-testid={`button-delete-${item.id}`}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <div className="space-y-6">
+          {/* Homepage Section Config (heading/subheading) */}
+          <HomepageConfigManager />
+          
+          {/* Homepage Feature Sections Table */}
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Feature Sections</h3>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Slug</TableHead>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Subtitle</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Sort Order</TableHead>
+                  <TableHead>Visibility</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {items.map((item: HomepageSection) => (
+                  <TableRow key={item.id} data-testid={`homepage-section-row-${item.id}`}>
+                    <TableCell className="font-medium">
+                      {item.slug}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {item.title}
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {item.subtitle || "-"}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">
+                        {item.sectionType}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {item.sortOrder}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={item.visible ? "default" : "secondary"}>
+                        {item.visible ? "Visible" : "Hidden"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleEdit(item)}
+                          data-testid={`button-edit-${item.id}`}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="destructive" 
+                          onClick={() => handleDelete(item.id)}
+                          data-testid={`button-delete-${item.id}`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       );
     }
   };
@@ -6715,6 +6725,161 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
         />
       )}
     </>
+  );
+}
+
+// Homepage Config Manager Component
+function HomepageConfigManager() {
+  const [isEditing, setIsEditing] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Fetch current config
+  const { data: config, isLoading } = useQuery<HomepageConfig>({
+    queryKey: ['/api/homepage-config/stage-difference'],
+  });
+
+  // Form for editing config
+  const configForm = useForm({
+    defaultValues: {
+      heading: '',
+      subheading: '',
+    },
+  });
+
+  // Update mutation
+  const updateMutation = useMutation({
+    mutationFn: async (data: { heading: string; subheading: string }) => {
+      return await apiRequest("PUT", "/api/homepage-config/stage-difference", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/homepage-config/stage-difference'] });
+      setIsEditing(false);
+      toast({
+        title: "Success",
+        description: "Homepage config updated successfully.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update homepage config",
+        variant: "destructive",
+      });
+    },
+  });
+
+  useEffect(() => {
+    if (config) {
+      configForm.reset({
+        heading: config.heading || '',
+        subheading: config.subheading || '',
+      });
+    }
+  }, [config]);
+
+  const handleSubmit = (data: { heading: string; subheading: string }) => {
+    updateMutation.mutate(data);
+  };
+
+  if (isLoading) {
+    return <div className="p-4">Loading config...</div>;
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Homepage Section Config</CardTitle>
+            <CardDescription>
+              Manage the main heading and subheading for "What Makes Stage Senior Different" section
+            </CardDescription>
+          </div>
+          {!isEditing && (
+            <Button onClick={() => setIsEditing(true)} variant="outline" data-testid="button-edit-config">
+              <Edit className="w-4 h-4 mr-2" />
+              Edit
+            </Button>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        {isEditing ? (
+          <Form {...configForm}>
+            <form onSubmit={configForm.handleSubmit(handleSubmit)} className="space-y-4">
+              <FormField
+                control={configForm.control}
+                name="heading"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Main Heading</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="What Makes Stage Senior Different?" data-testid="input-config-heading" />
+                    </FormControl>
+                    <FormDescription>The main heading for the homepage features section</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={configForm.control}
+                name="subheading"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Subheading</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        {...field} 
+                        rows={3}
+                        placeholder="At Stage Senior, we prioritize your loved one's dignity, comfort, and joy..." 
+                        data-testid="textarea-config-subheading" 
+                      />
+                    </FormControl>
+                    <FormDescription>The descriptive text that appears below the main heading</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="flex justify-end space-x-2">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => {
+                    setIsEditing(false);
+                    if (config) {
+                      configForm.reset({
+                        heading: config.heading || '',
+                        subheading: config.subheading || '',
+                      });
+                    }
+                  }}
+                  data-testid="button-cancel-config"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={updateMutation.isPending} data-testid="button-submit-config">
+                  {updateMutation.isPending ? "Saving..." : "Save"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        ) : (
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-1">Main Heading</h3>
+              <p className="text-lg">{config?.heading || "Not set"}</p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-1">Subheading</h3>
+              <p className="text-base">{config?.subheading || "Not set"}</p>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
