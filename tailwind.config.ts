@@ -22,6 +22,18 @@ export default {
         "soft-2xl": "var(--shadow-soft-2xl)",
       },
       colors: {
+        // Stage Senior Brand Colors
+        "stage-copper": "var(--stage-copper)",
+        "foothill-sage": "var(--foothill-sage)",
+        "deep-blue": "var(--deep-blue)",
+        "bright-blue": "var(--bright-blue)",
+        "aspen-cream": "var(--aspen-cream)",
+        "soft-clay": "var(--soft-clay)",
+        "midnight-slate": "var(--midnight-slate)",
+        "mist-white": "var(--mist-white)",
+        "pine-shadow": "var(--pine-shadow)",
+        
+        // Semantic Colors
         background: "var(--background)",
         foreground: "var(--foreground)",
         card: {
@@ -77,6 +89,15 @@ export default {
         sans: ["var(--font-sans)"],
         serif: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
+        display: ["var(--font-display)"],
+        body: ["var(--font-body)"],
+      },
+      backgroundImage: {
+        "gradient-copper-sage": "var(--gradient-copper-sage)",
+        "gradient-deepblue-azure": "var(--gradient-deepblue-azure)",
+      },
+      spacing: {
+        "unit": "var(--spacing-unit)",
       },
       keyframes: {
         "accordion-down": {

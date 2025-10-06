@@ -3,55 +3,86 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(213, 14%, 18%);
+  /* Stage Senior Brand Colors - Primary */
+  --stage-copper: hsl(16, 51%, 50%);      /* #C66A3D */
+  --foothill-sage: hsl(128, 14%, 68%);    /* #A2B4A6 */
+  --deep-blue: hsl(224, 27%, 24%);        /* #2B334B */
+  --bright-blue: hsl(227, 69%, 50%);      /* #2761D8 */
+  --aspen-cream: hsl(37, 49%, 93%);       /* #F5EBDD */
+  --soft-clay: hsl(30, 44%, 84%);         /* #E0C5A7 */
+  
+  /* Supporting Neutrals */
+  --midnight-slate: hsl(240, 3%, 18%);    /* #2D2D2F */
+  --mist-white: hsl(30, 27%, 98%);        /* #FAF8F6 */
+  --pine-shadow: hsl(161, 13%, 27%);      /* #3E4C47 */
+  
+  /* Gradient Tokens */
+  --gradient-copper-sage: linear-gradient(120deg, #C66A3D 0%, #A2B4A6 100%);
+  --gradient-deepblue-azure: linear-gradient(90deg, #2B334B 0%, #2761D8 100%);
+  
+  /* Semantic Color Mappings */
+  --background: var(--mist-white);
+  --foreground: var(--midnight-slate);
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(213, 14%, 18%);
+  --card-foreground: var(--midnight-slate);
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(213, 14%, 18%);
-  --primary: hsl(220, 67%, 53%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(228, 22%, 29%);
-  --secondary-foreground: hsl(0, 0%, 100%);
-  --muted: hsl(210, 40%, 96%);
-  --muted-foreground: hsl(228, 22%, 29%);
-  --accent: hsl(190, 65%, 18%);
-  --accent-foreground: hsl(0, 0%, 100%);
+  --popover-foreground: var(--midnight-slate);
+  --primary: var(--stage-copper);
+  --primary-foreground: var(--mist-white);
+  --secondary: var(--deep-blue);
+  --secondary-foreground: var(--mist-white);
+  --muted: var(--aspen-cream);
+  --muted-foreground: var(--deep-blue);
+  --accent: var(--foothill-sage);
+  --accent-foreground: var(--deep-blue);
   --destructive: hsl(0, 84.2%, 60.2%);
   --destructive-foreground: hsl(0, 0%, 100%);
-  --border: hsl(214.3, 31.8%, 91.4%);
-  --input: hsl(214.3, 31.8%, 91.4%);
-  --ring: hsl(220, 67%, 53%);
-  --chart-1: hsl(220, 67%, 53%);
-  --chart-2: hsl(190, 65%, 18%);
-  --chart-3: hsl(228, 22%, 29%);
-  --chart-4: hsl(213, 14%, 18%);
-  --chart-5: hsl(220, 67%, 63%);
+  --border: var(--soft-clay);
+  --input: var(--soft-clay);
+  --ring: var(--stage-copper);
+  --chart-1: var(--stage-copper);
+  --chart-2: var(--foothill-sage);
+  --chart-3: var(--deep-blue);
+  --chart-4: var(--bright-blue);
+  --chart-5: var(--soft-clay);
   --sidebar: hsl(0, 0%, 100%);
-  --sidebar-foreground: hsl(213, 14%, 18%);
-  --sidebar-primary: hsl(220, 67%, 53%);
-  --sidebar-primary-foreground: hsl(0, 0%, 100%);
-  --sidebar-accent: hsl(210, 40%, 96%);
-  --sidebar-accent-foreground: hsl(228, 22%, 29%);
-  --sidebar-border: hsl(214.3, 31.8%, 91.4%);
-  --sidebar-ring: hsl(220, 67%, 53%);
-  --font-sans: "Inter", system-ui, sans-serif;
-  --font-serif: Georgia, serif;
-  --font-mono: Menlo, monospace;
+  --sidebar-foreground: var(--midnight-slate);
+  --sidebar-primary: var(--stage-copper);
+  --sidebar-primary-foreground: var(--mist-white);
+  --sidebar-accent: var(--aspen-cream);
+  --sidebar-accent-foreground: var(--deep-blue);
+  --sidebar-border: var(--soft-clay);
+  --sidebar-ring: var(--stage-copper);
+  
+  /* Typography */
+  --font-display: "Sora", sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-sans: var(--font-body);
+  --font-serif: "Merriweather", Georgia, serif;
+  --font-mono: "JetBrains Mono", Menlo, monospace;
+  
+  /* UI Tokens - Updated */
   --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
-  --radius-2xl: 28px;
-  --shadow-soft-xs: 0 1px 1px -1px hsl(213 35% 20% / 0.18), 0 1px 2px hsl(213 35% 20% / 0.1);
-  --shadow-soft-sm: 0 1px 2px -1px hsl(213 35% 20% / 0.16), 0 2px 4px hsl(213 35% 20% / 0.12);
-  --shadow-soft-md: 0 2px 4px -1px hsl(213 35% 20% / 0.14), 0 6px 12px hsl(213 35% 20% / 0.12);
-  --shadow-soft-lg: 0 10px 18px -5px hsl(213 35% 20% / 0.16), 0 12px 32px hsl(213 35% 20% / 0.14);
-  --shadow-soft-xl: 0 18px 30px -8px hsl(213 35% 20% / 0.18), 0 24px 48px hsl(213 35% 20% / 0.16);
-  --shadow-soft-2xl: 0 24px 40px -12px hsl(213 35% 20% / 0.22), 0 32px 64px hsl(213 35% 20% / 0.18);
-  --tracking-normal: 0em;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-2xl: 48px;
+  
+  /* Shadow Tokens - Updated */
+  --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lift: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+  --shadow-soft-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-soft-sm: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+  --shadow-soft-md: var(--shadow-soft);
+  --shadow-soft-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-soft-xl: var(--shadow-lift);
+  --shadow-soft-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  
+  /* Spacing */
+  --spacing-unit: 8px;
   --spacing: 0.25rem;
+  --tracking-normal: 0em;
   
   /* Major Third Typography Scale (1.25x) - Professional & Readable */
   --text-xs: clamp(0.875rem, 0.84rem + 0.2vw, 0.95rem);
@@ -85,42 +116,49 @@
 }
 
 .dark {
-  --background: hsl(213, 14%, 18%);
-  --foreground: hsl(0, 0%, 100%);
-  --card: hsl(228, 22%, 29%);
-  --card-foreground: hsl(0, 0%, 100%);
-  --popover: hsl(228, 22%, 29%);
-  --popover-foreground: hsl(0, 0%, 100%);
-  --primary: hsl(220, 67%, 53%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(190, 65%, 18%);
-  --secondary-foreground: hsl(0, 0%, 100%);
-  --muted: hsl(228, 22%, 29%);
-  --muted-foreground: hsl(210, 40%, 80%);
-  --accent: hsl(190, 65%, 18%);
-  --accent-foreground: hsl(0, 0%, 100%);
+  /* Dark mode color mappings for Stage Senior Brand */
+  --background: var(--midnight-slate);
+  --foreground: var(--mist-white);
+  --card: var(--pine-shadow);
+  --card-foreground: var(--mist-white);
+  --popover: var(--pine-shadow);
+  --popover-foreground: var(--mist-white);
+  --primary: var(--stage-copper);
+  --primary-foreground: var(--mist-white);
+  --secondary: var(--bright-blue);
+  --secondary-foreground: var(--mist-white);
+  --muted: var(--pine-shadow);
+  --muted-foreground: var(--foothill-sage);
+  --accent: var(--foothill-sage);
+  --accent-foreground: var(--midnight-slate);
   --destructive: hsl(0, 62.8%, 30.6%);
   --destructive-foreground: hsl(0, 0%, 100%);
-  --border: hsl(228, 22%, 29%);
-  --input: hsl(228, 22%, 29%);
-  --ring: hsl(220, 67%, 53%);
-  --chart-1: hsl(220, 67%, 53%);
-  --chart-2: hsl(190, 65%, 18%);
-  --chart-3: hsl(228, 22%, 29%);
-  --chart-4: hsl(213, 14%, 18%);
-  --chart-5: hsl(220, 67%, 63%);
+  --border: var(--pine-shadow);
+  --input: var(--pine-shadow);
+  --ring: var(--stage-copper);
+  --chart-1: var(--stage-copper);
+  --chart-2: var(--foothill-sage);
+  --chart-3: var(--bright-blue);
+  --chart-4: var(--soft-clay);
+  --chart-5: var(--aspen-cream);
+  
+  /* UI Tokens remain consistent */
   --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
-  --radius-2xl: 28px;
-  --shadow-soft-xs: 0 1px 1px -1px hsl(213 60% 6% / 0.4), 0 1px 2px hsl(213 60% 6% / 0.28);
-  --shadow-soft-sm: 0 1px 2px -1px hsl(213 60% 6% / 0.36), 0 2px 4px hsl(213 60% 6% / 0.24);
-  --shadow-soft-md: 0 2px 4px -1px hsl(213 60% 6% / 0.34), 0 6px 12px hsl(213 60% 6% / 0.22);
-  --shadow-soft-lg: 0 10px 18px -5px hsl(213 60% 6% / 0.32), 0 12px 32px hsl(213 60% 6% / 0.28);
-  --shadow-soft-xl: 0 18px 30px -8px hsl(213 60% 6% / 0.3), 0 24px 48px hsl(213 60% 6% / 0.26);
-  --shadow-soft-2xl: 0 24px 40px -12px hsl(213 60% 6% / 0.32), 0 32px 64px hsl(213 60% 6% / 0.28);
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-2xl: 48px;
+  
+  /* Shadow Tokens for dark mode */
+  --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lift: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+  --shadow-soft-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-soft-sm: 0 2px 4px -1px rgba(0, 0, 0, 0.25), 0 1px 2px -1px rgba(0, 0, 0, 0.2);
+  --shadow-soft-md: var(--shadow-soft);
+  --shadow-soft-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+  --shadow-soft-xl: var(--shadow-lift);
+  --shadow-soft-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 @layer base {
@@ -178,31 +216,37 @@
   
   /* New Typography Utility Classes for Consistent Usage */
   .heading-1 { 
+    font-family: var(--font-display);
     font-size: var(--text-3xl); 
     font-weight: 700;
     line-height: var(--line-height-tight);
   }
   .heading-2 { 
+    font-family: var(--font-display);
     font-size: var(--text-2xl); 
     font-weight: 700;
     line-height: var(--line-height-tight);
   }
   .heading-3 { 
+    font-family: var(--font-display);
     font-size: var(--text-xl); 
     font-weight: 600;
     line-height: var(--line-height-snug);
   }
   .heading-4 { 
+    font-family: var(--font-display);
     font-size: var(--text-lg); 
     font-weight: 600;
     line-height: var(--line-height-snug);
   }
   .heading-5 { 
+    font-family: var(--font-display);
     font-size: var(--text-base); 
     font-weight: 600;
     line-height: var(--line-height-normal);
   }
   .heading-6 { 
+    font-family: var(--font-display);
     font-size: var(--text-sm); 
     font-weight: 600;
     line-height: var(--line-height-normal);
@@ -226,31 +270,37 @@
   
   /* Semantic Heading Defaults using Major Third Scale */
   h1 { 
+    font-family: var(--font-display);
     font-size: var(--text-3xl); 
     line-height: var(--line-height-tight);
     font-weight: 700;
   }
   h2 { 
+    font-family: var(--font-display);
     font-size: var(--text-2xl); 
     line-height: var(--line-height-tight);
     font-weight: 700;
   }
   h3 { 
+    font-family: var(--font-display);
     font-size: var(--text-xl); 
     line-height: var(--line-height-snug);
     font-weight: 600;
   }
   h4 { 
+    font-family: var(--font-display);
     font-size: var(--text-lg); 
     line-height: var(--line-height-snug);
     font-weight: 600;
   }
   h5 { 
+    font-family: var(--font-display);
     font-size: var(--text-base); 
     line-height: var(--line-height-normal);
     font-weight: 600;
   }
   h6 { 
+    font-family: var(--font-display);
     font-size: var(--text-sm); 
     line-height: var(--line-height-normal);
     font-weight: 600;

@@ -1,0 +1,186 @@
+Stage Senior Brand & Style Guide
+
+Version 2.0 | 2025 Developer Edition
+
+🎯 Brand Foundation
+Brand Mission
+
+"Locally Owned, Resident-Focused" — We prioritize dignity, comfort, and joy through personalized care and a team culture that values connection and compassion.
+
+Brand Values
+
+Compassionate Excellence: Every interaction reflects genuine care.
+
+Local Roots: Colorado-born and community-driven.
+
+Dignity First: Honoring each person’s story.
+
+Joy in Living: Creating moments of meaning every day.
+
+Trust Through Transparency: Open communication and honest pricing.
+
+Brand Personality
+
+Warm & Welcoming: Feels like home from the first hello.
+
+Professional Yet Personal: Operational excellence with heart.
+
+Optimistic & Uplifting: Light-filled and life-affirming.
+
+Reliable & Steady: Families can count on us.
+
+Modern & Human: Colorado crafted, future minded.
+
+Voice & Tone
+
+Clear > Clever: Plain spoken and kind.
+
+Warm > Corporate: Use personal pronouns.
+
+Respectful > Casual: Friendly but never flippant.
+
+Empowering > Pitying: Show strength and possibility.
+
+Specific > Generic: Concrete details build trust.
+
+Example:
+✅ “We help families find peace of mind and seniors feel at home.”
+❌ “Our facility provides premium geriatric solutions.”
+
+🎨 Visual Identity
+Color System
+Primary Palette
+--stage-copper: #C66A3D;   /* Warmth & humanity */
+--foothill-sage: #A2B4A6;  /* Balance & growth */
+--deep-blue: #2B334B;      /* Trust & grounding */
+--bright-blue: #2761D8;    /* Modern energy */
+--aspen-cream: #F5EBDD;    /* Light & calm foundation */
+--soft-clay: #E0C5A7;      /* Approachability & warmth */
+
+Supporting Neutrals
+--midnight-slate: #2D2D2F;
+--mist-white: #FAF8F6;
+--pine-shadow: #3E4C47;
+
+Gradient Tokens
+--gradient-copper-sage: linear-gradient(120deg, #C66A3D 0%, #A2B4A6 100%);
+--gradient-deepblue-azure: linear-gradient(90deg, #2B334B 0%, #2761D8 100%);
+
+Typography
+--font-display: 'Sora', sans-serif;   /* Headlines */
+--font-body: 'Inter', system-ui, sans-serif; /* Paragraphs */
+
+Type Scale
+Style	Font	Size / Line Height	Use
+H1	Sora Bold	3rem / 1.2	Page heroes
+H2	Sora Semibold	2rem / 1.3	Section headers
+H3	Inter Bold	1.5rem / 1.4	Card titles
+Body Large	Inter Regular	1.125rem / 1.6	Lead paragraphs
+Body Small	Inter Regular	0.875rem / 1.5	Captions, meta
+UI Tokens
+--radius-sm: 8px;       /* Buttons, inputs */
+--radius-md: 16px;      /* Cards */
+--radius-lg: 24px;      /* Hero containers */
+--shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+--shadow-lift: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+--spacing-unit: 8px;
+
+Buttons
+
+Primary: Bright Blue background / white text; hover = Copper.
+
+Secondary: Outlined Deep Blue; hover = filled Sage.
+
+Radius: 12px; padding 12–20px.
+
+Shadow: var(--shadow-soft) on hover.
+
+Cards & Sections
+
+Rounded corners (20–24px)
+
+Soft matte backgrounds (Aspen Cream or Sage tint)
+
+Shadow lift on hover
+
+Optional gradient overlays for hero imagery
+
+📸 Photography Direction
+Mood
+
+Colorado sunlight / morning warmth / real moments.
+High-key, soft-contrast tones with gentle film-style color grading.
+
+Subjects
+
+Residents and care team in relationship.
+
+Multigenerational visits and shared activity.
+
+Local nature — aspen groves, red rock, golden light.
+
+Composition
+
+Candid connection over posed.
+
+Eye-level perspective.
+
+Soft window light, warm white balance (~5500 K).
+
+💡 Developer Implementation Notes
+
+Maintain accessible contrast (AA+ minimum).
+
+Headings use Sora; body uses Inter.
+
+Apply gradient tokens for hero backgrounds and CTA buttons.
+
+Default border-radius: 12px; card hover scale: 1.02.
+
+Include transition: all 0.25s ease-out.
+
+Use Aspen Cream for base background; avoid pure white.
+
+Icons: 2px rounded line stroke in Deep Blue or Sage.
+
+🧩 Component Examples
+Hero Module
+
+Background: var(--gradient-copper-sage) + subtle overlay.
+
+H1: Sora Bold 3rem white.
+
+CTA: Bright Blue button (16px radius).
+
+Image: Colorado interior light with resident + caregiver.
+
+CTA Cards
+
+Gradient Deep Blue → Azure.
+
+Text: White centered, 20 px Inter.
+
+Hover transition to copper tint.
+
+Events Card
+
+Background: Aspen Cream.
+
+Accent border: Foothill Sage 2px.
+
+Icon: Rounded outline Deep Blue.
+
+CTA: “Events Near You” → hover underline.
+
+🪞 Color Usage Ratios
+
+Neutrals & Light backgrounds: 60 %
+
+Blues & Sage accents: 25 %
+
+Copper & Clay highlights: 15 %
+
+🎯 Brand Positioning Summary
+
+Stage Senior’s identity is a fusion of local warmth and modern professionalism — rooted in Colorado craft and human connection.
+Its visual language balances trust (Deep Blue), care (Copper & Clay), and vitality (Sage & Azure), creating a digital presence that feels home-grown, reliable, and alive.
