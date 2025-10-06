@@ -438,17 +438,28 @@ export default function ImageUploader({
 
       {/* Preview Images */}
       {previewImages.length > 0 && (
-        <div className={cn(
-          "grid gap-4",
-          multiple ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4" : "grid-cols-1"
-        )}>
-          {previewImages.map((image, index) => (
-            <Card
-              key={image.id || index}
-              className="relative overflow-hidden group"
-              data-testid={`preview-image-${image.id || index}`}
-            >
-              <div className="aspect-square relative">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="text-xs">
+              {previewImages.length} {previewImages.length === 1 ? 'Image' : 'Images'} Uploaded
+            </Badge>
+            {!multiple && previewImages.length === 1 && (
+              <span className="text-xs text-muted-foreground">
+                Click the X to remove and upload a different image
+              </span>
+            )}
+          </div>
+          <div className={cn(
+            "grid gap-4",
+            multiple ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4" : "grid-cols-1"
+          )}>
+            {previewImages.map((image, index) => (
+              <Card
+                key={image.id || index}
+                className="relative overflow-hidden group border-2 border-green-500/50"
+                data-testid={`preview-image-${image.id || index}`}
+              >
+                <div className="aspect-square relative">
                 <img
                   src={image.url}
                   alt={image.name || "Uploaded image"}
@@ -606,53 +617,63 @@ export default function ImageUploader({
 
       {/* Upload Area */}
       {showUploadArea && (
-        <Card
-          className={cn(
-            "border-2 border-dashed transition-colors cursor-pointer",
-            isDragActive ? "border-primary bg-primary/5" : "border-border hover:border-primary/50",
-            disabled && "opacity-50 cursor-not-allowed"
+        <div className="space-y-2">
+          {previewImages.length === 0 && !multiple && (
+            <Badge variant="outline" className="text-xs border-orange-500/50 text-orange-600">
+              <AlertCircle className="w-3 h-3 mr-1" />
+              No image uploaded yet - Click below to add one
+            </Badge>
           )}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          onClick={handleClick}
-          data-testid="upload-area"
-        >
-          <CardContent className="flex flex-col items-center justify-center py-8 px-4 text-center">
-            <div className="p-3 rounded-full bg-muted mb-4">
-              <Upload className="h-6 w-6 text-muted-foreground" />
-            </div>
-            
-            <p className="text-sm font-medium mb-1">
-              {isDragActive ? "Drop files here" : "Click to upload or drag and drop"}
-            </p>
-            
-            <p className="text-xs text-muted-foreground mb-4">
-              {multiple 
-                ? `Upload up to ${maxFiles} images`
-                : "Upload a single image"
-              }
-            </p>
-
-            <div className="flex flex-wrap gap-2 justify-center">
-              <Badge variant="secondary" className="text-xs">
-                Max size: {(maxSize / (1024 * 1024)).toFixed(0)}MB
-              </Badge>
-              {accept !== "image/*" && (
-                <Badge variant="secondary" className="text-xs">
-                  {accept}
-                </Badge>
-              )}
-            </div>
-
-            {multiple && imageIds.length > 0 && (
-              <p className="text-xs text-muted-foreground mt-4">
-                {imageIds.length} of {maxFiles} images uploaded
-              </p>
+          <Card
+            className={cn(
+              "border-2 border-dashed transition-colors cursor-pointer",
+              isDragActive ? "border-primary bg-primary/5" : "border-border hover:border-primary/50",
+              disabled && "opacity-50 cursor-not-allowed"
             )}
-          </CardContent>
-        </Card>
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            onClick={handleClick}
+            data-testid="upload-area"
+          >
+            <CardContent className="flex flex-col items-center justify-center py-8 px-4 text-center">
+              <div className="p-3 rounded-full bg-muted mb-4">
+                <Upload className="h-6 w-6 text-muted-foreground" />
+              </div>
+              
+              <p className="text-sm font-medium mb-1">
+                {isDragActive ? "Drop files here" : 
+                  previewImages.length === 0 ? "Click to upload or drag and drop" :
+                  "Add more images"}
+              </p>
+              
+              <p className="text-xs text-muted-foreground mb-4">
+                {multiple 
+                  ? `Upload up to ${maxFiles} images`
+                  : previewImages.length === 0 ? "Upload an image" : "Replace current image"
+                }
+              </p>
+
+              <div className="flex flex-wrap gap-2 justify-center">
+                <Badge variant="secondary" className="text-xs">
+                  Max size: {(maxSize / (1024 * 1024)).toFixed(0)}MB
+                </Badge>
+                {accept !== "image/*" && (
+                  <Badge variant="secondary" className="text-xs">
+                    {accept}
+                  </Badge>
+                )}
+              </div>
+
+              {multiple && imageIds.length > 0 && (
+                <p className="text-xs text-muted-foreground mt-4">
+                  {imageIds.length} of {maxFiles} images uploaded
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* Hidden File Input */}
