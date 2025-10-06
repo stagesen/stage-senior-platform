@@ -159,29 +159,35 @@ export default function ImageUploader({
 
   // Validate file
   const validateFile = (file: File): string | null => {
-    // Check file type
-    if (!file.type.startsWith("image/")) {
-      return "Only image files are allowed";
-    }
-
-    // Check file size
+    // Check file size first
     if (file.size > maxSize) {
       return `File size must be less than ${(maxSize / (1024 * 1024)).toFixed(0)}MB`;
     }
 
     // Check accept pattern
-    if (accept !== "image/*") {
-      const acceptedTypes = accept.split(",").map((t) => t.trim());
-      const fileExtension = `.${file.name.split(".").pop()?.toLowerCase()}`;
-      const fileMimeType = file.type;
-      
-      if (!acceptedTypes.some((type) => 
-        type === fileMimeType || 
-        type === fileExtension ||
-        (type.endsWith("*") && fileMimeType.startsWith(type.replace("*", "")))
-      )) {
-        return `File type not accepted. Allowed types: ${accept}`;
-      }
+    const acceptedTypes = accept.split(",").map((t) => t.trim());
+    const fileExtension = `.${file.name.split(".").pop()?.toLowerCase()}`;
+    const fileMimeType = file.type;
+    
+    // Check if file matches any accepted type
+    const isAccepted = acceptedTypes.some((type) => {
+      // Handle wildcards like "image/*"
+      if (type === "image/*" && fileMimeType.startsWith("image/")) return true;
+      // Handle specific MIME types
+      if (type === fileMimeType) return true;
+      // Handle file extensions
+      if (type === fileExtension) return true;
+      // Handle specific PDF and document cases
+      if (type === ".pdf" && (fileMimeType === "application/pdf" || fileExtension === ".pdf")) return true;
+      if (type === ".doc" && (fileMimeType === "application/msword" || fileExtension === ".doc")) return true;
+      if (type === ".docx" && (fileMimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || fileExtension === ".docx")) return true;
+      // Handle wildcard patterns
+      if (type.endsWith("*") && fileMimeType.startsWith(type.replace("*", ""))) return true;
+      return false;
+    });
+
+    if (!isAccepted) {
+      return `File type not accepted. Allowed types: ${accept}`;
     }
 
     return null;
