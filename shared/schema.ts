@@ -726,6 +726,30 @@ export const insertPageHeroSchema = createInsertSchema(pageHeroes).omit({
   updatedAt: true,
 });
 
+// Homepage sections for managing homepage content
+export const homepageSections = pgTable("homepage_sections", {
+  id: varchar("id", { length: 255 }).primaryKey().default(sql`gen_random_uuid()`),
+  slug: text("slug").notNull().unique(), // e.g., "safety-with-dignity", "hero", "features"
+  sectionType: text("section_type").notNull(), // "hero", "feature", "cta", "content"
+  title: text("title"),
+  subtitle: text("subtitle"),
+  body: text("body"), // Can store markdown or rich text
+  ctaLabel: text("cta_label"),
+  ctaUrl: text("cta_url"),
+  imageId: varchar("image_id", { length: 255 }).references(() => images.id, { onDelete: "set null" }),
+  sortOrder: integer("sort_order").default(0),
+  visible: boolean("visible").default(true),
+  metadata: jsonb("metadata").$type<Record<string, any>>(), // Flexible field for additional data
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const insertHomepageSectionSchema = createInsertSchema(homepageSections).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
 // Types
 export type CareType = typeof careTypes.$inferSelect;
 export type InsertCareType = z.infer<typeof insertCareTypeSchema>;
@@ -801,3 +825,5 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type PageHero = typeof pageHeroes.$inferSelect;
 export type InsertPageHero = z.infer<typeof insertPageHeroSchema>;
+export type HomepageSection = typeof homepageSections.$inferSelect;
+export type InsertHomepageSection = z.infer<typeof insertHomepageSectionSchema>;

@@ -31,6 +31,7 @@ import {
   insertAmenitySchema,
   insertPageHeroSchema,
   insertTeamMemberSchema,
+  insertHomepageSectionSchema,
 } from "@shared/schema";
 
 // Middleware to protect admin routes - referenced by javascript_auth_all_persistance integration
@@ -1446,6 +1447,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting team member:", error);
       res.status(500).json({ message: "Failed to delete team member" });
+    }
+  });
+
+  // Homepage section routes
+  app.get("/api/homepage-sections", async (req, res) => {
+    try {
+      const { includeInvisible } = req.query;
+      const sections = await storage.getHomepageSections(includeInvisible === 'true');
+      res.json(sections);
+    } catch (error) {
+      console.error("Error fetching homepage sections:", error);
+      res.status(500).json({ message: "Failed to fetch homepage sections" });
+    }
+  });
+
+  app.get("/api/homepage-sections/:slug", async (req, res) => {
+    try {
+      const section = await storage.getHomepageSectionBySlug(req.params.slug);
+      if (!section) {
+        return res.status(404).json({ message: "Homepage section not found" });
+      }
+      res.json(section);
+    } catch (error) {
+      console.error("Error fetching homepage section:", error);
+      res.status(500).json({ message: "Failed to fetch homepage section" });
+    }
+  });
+
+  app.post("/api/homepage-sections", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertHomepageSectionSchema.parse(req.body);
+      
+      // Check if slug already exists
+      const existing = await storage.getHomepageSectionBySlug(validatedData.slug);
+      if (existing) {
+        return res.status(409).json({ message: "A homepage section with this slug already exists" });
+      }
+      
+      const section = await storage.createHomepageSection(validatedData);
+      res.status(201).json(section);
+    } catch (error) {
+      console.error("Error creating homepage section:", error);
+      res.status(400).json({ message: "Failed to create homepage section" });
+    }
+  });
+
+  app.put("/api/homepage-sections/:id", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertHomepageSectionSchema.partial().parse(req.body);
+      
+      // If slug is being changed, check for conflicts
+      if (validatedData.slug) {
+        const existing = await storage.getHomepageSectionBySlug(validatedData.slug);
+        if (existing && existing.id !== req.params.id) {
+          return res.status(409).json({ message: "A homepage section with this slug already exists" });
+        }
+      }
+      
+      const section = await storage.updateHomepageSection(req.params.id, validatedData);
+      if (!section) {
+        return res.status(404).json({ message: "Homepage section not found" });
+      }
+      res.json(section);
+    } catch (error) {
+      console.error("Error updating homepage section:", error);
+      res.status(400).json({ message: "Failed to update homepage section" });
+    }
+  });
+
+  app.delete("/api/homepage-sections/:id", requireAuth, async (req, res) => {
+    try {
+      await storage.deleteHomepageSection(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting homepage section:", error);
+      res.status(500).json({ message: "Failed to delete homepage section" });
     }
   });
 

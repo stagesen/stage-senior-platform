@@ -59,6 +59,7 @@ import {
   insertCommunityHighlightSchema,
   insertCommunityFeatureSchema,
   insertTeamMemberSchema,
+  insertHomepageSectionSchema,
   type Community,
   type CommunityHighlight,
   type InsertCommunityHighlight,
@@ -89,10 +90,12 @@ import {
   type InsertFloorPlan,
   type InsertCareType,
   type InsertAmenity,
+  type HomepageSection,
+  type InsertHomepageSection,
 } from "@shared/schema";
 
 interface AdminDashboardProps {
-  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "community-highlights";
+  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "community-highlights" | "homepage";
 }
 
 // Helper function to generate slug from title

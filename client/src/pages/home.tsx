@@ -33,7 +33,7 @@ import {
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
-import type { Community } from "@shared/schema";
+import type { Community, HomepageSection } from "@shared/schema";
 import seniorCaregiverDocuments from '@/assets/senior-caregiver-documents.webp';
 
 // Subcomponent for carousel items that handles image resolution
@@ -218,6 +218,11 @@ export default function Home() {
 
   const { data: communities = [], isLoading } = useQuery<Community[]>({
     queryKey: ["/api/communities"],
+  });
+
+  // Fetch homepage sections
+  const { data: homepageSections = [] } = useQuery<HomepageSection[]>({
+    queryKey: ["/api/homepage-sections"],
   });
 
   const featuredCommunities = communities; // Show all communities in carousel
@@ -489,42 +494,51 @@ export default function Home() {
             </div>
 
             {/* Feature 3: Safety with Dignity - Left Aligned */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="order-2 lg:order-1">
-                <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
-                  <img
-                    src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1600&auto=format&fit=crop"
-                    alt="Advanced safety technology"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
+            {(() => {
+              const safetySection = homepageSections.find(s => s.slug === 'safety-with-dignity' && s.visible);
+              const sectionImageUrl = useResolveImageUrl(safetySection?.imageId);
+              
+              return (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                  <div className="order-2 lg:order-1">
+                    <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
+                      <img
+                        src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1600&auto=format&fit=crop"
+                        alt="Advanced safety technology"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
+                    </div>
+                  </div>
+                  <div className="order-1 lg:order-2">
+                    <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">
+                      {safetySection?.subtitle || 'Innovation'}
+                    </Badge>
+                    <div className="mb-6">
+                      <img 
+                        src={sectionImageUrl || seniorCaregiverDocuments} 
+                        alt="Senior resident reviewing documents with caregiver"
+                        className="w-full h-48 object-cover rounded-lg mb-4"
+                      />
+                      <h3 className="text-3xl font-bold">
+                        {safetySection?.title || 'Safety with Dignity'}
+                      </h3>
+                    </div>
+                    <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                      {safetySection?.body || 'Advanced fall detection that works like a guardian angel—always watching, never intrusive. Our smart technology provides rapid response while preserving independence and privacy. It\'s safety that respects dignity, not a system that feels like surveillance.'}
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <Button size="lg" asChild data-testid="button-safety-dignity">
+                        <Link href={safetySection?.ctaUrl || '/safety-with-dignity'}>
+                          {safetySection?.ctaLabel || 'Explore Our Technology'}
+                          <ArrowRight className="w-5 h-5 ml-2" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="order-1 lg:order-2">
-                <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">Innovation</Badge>
-                <div className="mb-6">
-                  <img 
-                    src={seniorCaregiverDocuments} 
-                    alt="Senior resident reviewing documents with caregiver"
-                    className="w-full h-48 object-cover rounded-lg mb-4"
-                  />
-                  <h3 className="text-3xl font-bold">
-                    Safety with Dignity
-                  </h3>
-                </div>
-                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                  Advanced fall detection that works like a guardian angel—always watching, never intrusive. Our smart technology provides rapid response while preserving independence and privacy. It's safety that respects dignity, not a system that feels like surveillance.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button size="lg" asChild data-testid="button-safety-dignity">
-                    <Link href="/safety-with-dignity">
-                      Explore Our Technology
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
+              );
+            })()}
           </div>
         </div>
       </section>

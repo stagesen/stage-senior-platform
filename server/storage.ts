@@ -62,6 +62,9 @@ import {
   pageHeroes,
   type PageHero,
   type InsertPageHero,
+  homepageSections,
+  type HomepageSection,
+  type InsertHomepageSection,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm";
@@ -302,6 +305,13 @@ export interface IStorage {
   createTeamMember(data: InsertTeamMember): Promise<TeamMember>;
   updateTeamMember(id: string, data: Partial<InsertTeamMember>): Promise<TeamMember | null>;
   deleteTeamMember(id: string): Promise<void>;
+
+  // Homepage section operations  
+  getHomepageSections(includeInvisible?: boolean): Promise<HomepageSection[]>;
+  getHomepageSectionBySlug(slug: string): Promise<HomepageSection | null>;
+  createHomepageSection(data: InsertHomepageSection): Promise<HomepageSection>;
+  updateHomepageSection(id: string, data: Partial<InsertHomepageSection>): Promise<HomepageSection | null>;
+  deleteHomepageSection(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1969,6 +1979,53 @@ export class DatabaseStorage implements IStorage {
     
     // Then delete the team member
     await db.delete(teamMembers).where(eq(teamMembers.id, id));
+  }
+
+  // Homepage section operations
+  async getHomepageSections(includeInvisible = false): Promise<HomepageSection[]> {
+    let query = db.select().from(homepageSections);
+    
+    if (!includeInvisible) {
+      query = query.where(eq(homepageSections.visible, true));
+    }
+    
+    const sections = await query.orderBy(asc(homepageSections.sortOrder));
+    return sections;
+  }
+
+  async getHomepageSectionBySlug(slug: string): Promise<HomepageSection | null> {
+    const [section] = await db
+      .select()
+      .from(homepageSections)
+      .where(eq(homepageSections.slug, slug));
+    
+    return section || null;
+  }
+
+  async createHomepageSection(data: InsertHomepageSection): Promise<HomepageSection> {
+    const [created] = await db
+      .insert(homepageSections)
+      .values(data)
+      .returning();
+    
+    return created;
+  }
+
+  async updateHomepageSection(id: string, data: Partial<InsertHomepageSection>): Promise<HomepageSection | null> {
+    const [updated] = await db
+      .update(homepageSections)
+      .set({
+        ...data,
+        updatedAt: new Date()
+      })
+      .where(eq(homepageSections.id, id))
+      .returning();
+    
+    return updated || null;
+  }
+
+  async deleteHomepageSection(id: string): Promise<void> {
+    await db.delete(homepageSections).where(eq(homepageSections.id, id));
   }
 }
 
