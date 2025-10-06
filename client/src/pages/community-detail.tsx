@@ -568,62 +568,6 @@ const CommunityFeatures = ({ community }: { community: Community }) => {
   );
 };
 
-// Local subcomponent: Featured Amenity Card
-const FeaturedAmenityCard = ({ amenity, index }: { amenity: any; index: number }) => {
-  const resolvedImageUrl = useResolveImageUrl(amenity.imageUrl);
-  
-  const getAmenityIcon = (name: string) => {
-    const nameLower = name.toLowerCase();
-    if (nameLower.includes('dining') || nameLower.includes('meal')) return Coffee;
-    if (nameLower.includes('transport') || nameLower.includes('shuttle')) return Car;
-    if (nameLower.includes('fitness') || nameLower.includes('exercise')) return Activity;
-    if (nameLower.includes('library') || nameLower.includes('education')) return BookOpen;
-    if (nameLower.includes('health') || nameLower.includes('medical')) return Heart;
-    if (nameLower.includes('social') || nameLower.includes('community')) return Users;
-    if (nameLower.includes('wifi') || nameLower.includes('internet')) return Wifi;
-    return Sparkles;
-  };
-  
-  const IconComponent = amenity.icon ? 
-    (amenity.icon === 'Utensils' ? Coffee : 
-     amenity.icon === 'Coffee' ? Coffee :
-     amenity.icon === 'Car' ? Car :
-     amenity.icon === 'Activity' ? Activity :
-     amenity.icon === 'BookOpen' ? BookOpen :
-     amenity.icon === 'Heart' ? Heart :
-     amenity.icon === 'Users' ? Users :
-     amenity.icon === 'Wifi' ? Wifi :
-     Sparkles) : 
-    getAmenityIcon(amenity.name);
-    
-  return (
-    <Card 
-      className="overflow-hidden hover:shadow-lg transition-shadow"
-      data-testid={`featured-amenity-${index}`}
-    >
-      {resolvedImageUrl && (
-        <div className="h-48 overflow-hidden">
-          <img 
-            src={resolvedImageUrl} 
-            alt={amenity.name}
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-          />
-        </div>
-      )}
-      <CardContent className="p-4">
-        <div className="flex items-start space-x-3">
-          <IconComponent className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-          <div>
-            <h4 className="font-semibold text-lg">{amenity.name}</h4>
-            {amenity.description && (
-              <p className="text-sm text-gray-600 mt-1">{amenity.description}</p>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
 
 // Local subcomponent: Blog Post Card
 const BlogPostCard = ({ post }: { post: BlogPost }) => {
@@ -1924,28 +1868,6 @@ export default function CommunityDetail() {
                   <p className="text-lg text-gray-600 mb-8">
                     Step into a lifestyle where every day feels like a retreat. Our community is packed with thoughtful amenities designed to make life easier and more enjoyable.
                   </p>
-                  {/* Show featured amenities with images first if available */}
-                  {(community as any).amenities && 
-                   (community as any).amenities.filter((am: any) => am.imageUrl).length > 0 && (
-                    <div className="mb-8">
-                      <h3 className="text-xl font-semibold mb-4">Featured Amenities</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {(community as any).amenities
-                          .filter((am: any) => am.imageUrl)
-                          .map((amenity: any, index: number) => (
-                            <FeaturedAmenityCard key={`featured-${index}`} amenity={amenity} index={index} />
-                          ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Show all amenities in compact grid */}
-                  <h3 className="text-xl font-semibold mb-4">
-                    {(community as any).amenities && 
-                     (community as any).amenities.filter((am: any) => am.imageUrl).length > 0 
-                      ? "All Amenities" 
-                      : ""}
-                  </h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                     {((community as any).amenities || 
                       community.amenities?.map(name => ({ name })) || []
@@ -2038,7 +1960,6 @@ export default function CommunityDetail() {
                 <div className="bg-gradient-to-br from-secondary/5 to-white rounded-2xl p-8 border border-secondary/20">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                     <div>
-                      <Badge className="bg-secondary/10 text-secondary mb-4">Featured Amenity</Badge>
                       <h2 className="text-2xl md:text-3xl font-bold mb-4">Private Family Dining Room</h2>
                       <p className="text-lg text-gray-600 mb-6">
                         Celebrate life's special moments in our elegant private dining room. Perfect for family birthdays, 
