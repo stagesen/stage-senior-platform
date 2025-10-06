@@ -1,10 +1,13 @@
 import { useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PageHero } from "@/components/PageHero";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { useQuery } from "@tanstack/react-query";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import type { Community } from "@shared/schema";
 import { 
   Utensils, 
   Coffee, 
@@ -18,23 +21,53 @@ import {
   Calendar,
   ArrowRight,
   CheckCircle,
-  Star
+  Star,
+  Phone,
+  MapPin
 } from "lucide-react";
 
 export default function Dining() {
+  const [location] = useLocation();
+  const searchParams = new URLSearchParams(window.location.search);
+  const fromCommunity = searchParams.get('from');
+  
+  // Fetch community data if we have a 'from' parameter
+  const { data: community } = useQuery({
+    queryKey: ['/api/communities', fromCommunity],
+    enabled: !!fromCommunity,
+    queryFn: async () => {
+      const response = await fetch(`/api/communities/${fromCommunity}`);
+      if (!response.ok) return null;
+      return response.json() as Promise<Community>;
+    }
+  });
+  
+  // Resolve the private dining image URL if community has one
+  const communityPrivateDiningImage = useResolveImageUrl(community?.privateDiningImageId || '');
+  const privateDiningImage = communityPrivateDiningImage || "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80";
+
   useEffect(() => {
-    document.title = "Dining & Restaurant Services | Senior Living Communities";
+    // Dynamic page title
+    const title = community 
+      ? `Private Family Dining | ${community.name}` 
+      : "Dining & Restaurant Services | Senior Living Communities";
+    document.title = title;
+    
+    // Dynamic meta description
+    const metaContent = community 
+      ? `Experience exceptional private family dining at ${community.name} in ${community.city}. Restaurant-style service, fresh daily meals, and intimate gatherings for special occasions in our private dining room.`
+      : 'Experience exceptional restaurant-style dining and private family dining rooms at our senior living communities. Fresh, nutritious meals prepared daily with dietary accommodations and social dining experiences.';
     
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Experience exceptional restaurant-style dining and private family dining rooms at our senior living communities. Fresh, nutritious meals prepared daily with dietary accommodations and social dining experiences.');
+      metaDescription.setAttribute('content', metaContent);
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Experience exceptional restaurant-style dining and private family dining rooms at our senior living communities. Fresh, nutritious meals prepared daily with dietary accommodations and social dining experiences.';
+      meta.content = metaContent;
       document.head.appendChild(meta);
     }
-  }, []);
+  }, [community]);
 
   // Sample weekly menu data
   const weeklyMenu = {
@@ -163,8 +196,8 @@ export default function Dining() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="order-2 lg:order-1 relative h-96 rounded-2xl overflow-hidden shadow-xl">
               <img 
-                src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80" 
-                alt="Private dining room for family gatherings"
+                src={privateDiningImage} 
+                alt={community ? `Private dining room at ${community.name}` : "Private dining room for family gatherings"}
                 className="w-full h-full object-cover"
                 data-testid="private-dining-image"
               />
@@ -422,11 +455,16 @@ export default function Dining() {
       <section className="py-20 bg-gradient-to-br from-primary to-primary/90 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Experience Our Culinary Excellence
+            {community 
+              ? `Experience Private Family Dining at ${community.name}`
+              : "Experience Our Culinary Excellence"
+            }
           </h2>
           <p className="text-xl mb-8 text-white/90">
-            Join us for a complimentary meal and discover why our residents look forward to every dining experience. 
-            Tour our dining facilities and meet our culinary team.
+            {community 
+              ? `Reserve our private dining room for your special family gatherings. Tour our facilities and meet our culinary team.`
+              : "Join us for a complimentary meal and discover why our residents look forward to every dining experience. Tour our dining facilities and meet our culinary team."
+            }
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -470,6 +508,81 @@ export default function Dining() {
               <span>Flexible Dining Hours</span>
             </div>
           </div>
+
+          {/* Community-specific contact information */}
+          {community && (
+            <div className="mt-12 pt-8 border-t border-white/20">
+              <h3 className="text-lg font-semibold mb-4">
+                Contact {community.name}
+              </h3>
+              <div className="flex flex-col sm:flex-row justify-center gap-6 text-white/90">
+                {community.phoneDisplay && (
+                  <a 
+                    href={`tel:${community.phoneDial || community.phoneDisplay}`} 
+                    className="flex items-center justify-center gap-2 hover:text-white transition-colors"
+                    data-testid="community-phone"
+                  >
+                    <Phone className="w-5 h-5" />
+                    <span>{community.phoneDisplay}</span>
+                  </a>
+                )}
+                {community.email && (
+                  <a 
+                    href={`mailto:${community.email}`} 
+                    className="flex items-center justify-center gap-2 hover:text-white transition-colors"
+                    data-testid="community-email"
+                  >
+                    <span>{community.email}</span>
+                  </a>
+                )}
+                {(community.street || community.city) && (
+                  <div 
+                    className="flex items-center justify-center gap-2"
+                    data-testid="community-address"
+                  >
+                    <MapPin className="w-5 h-5" />
+                    <span>
+                      {community.street && `${community.street}, `}
+                      {community.city}, {community.state || 'CO'} {community.zip || community.zipCode}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Default contact info when no community is specified */}
+          {!community && (
+            <div className="mt-12 pt-8 border-t border-white/20">
+              <h3 className="text-lg font-semibold mb-4">
+                Contact Stage Senior
+              </h3>
+              <div className="flex flex-col sm:flex-row justify-center gap-6 text-white/90">
+                <a 
+                  href="tel:303-555-0100" 
+                  className="flex items-center justify-center gap-2 hover:text-white transition-colors"
+                  data-testid="default-phone"
+                >
+                  <Phone className="w-5 h-5" />
+                  <span>(303) 555-0100</span>
+                </a>
+                <a 
+                  href="mailto:info@stagesenior.com" 
+                  className="flex items-center justify-center gap-2 hover:text-white transition-colors"
+                  data-testid="default-email"
+                >
+                  <span>info@stagesenior.com</span>
+                </a>
+                <div 
+                  className="flex items-center justify-center gap-2"
+                  data-testid="default-address"
+                >
+                  <MapPin className="w-5 h-5" />
+                  <span>Denver Metro Area, CO</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </div>
