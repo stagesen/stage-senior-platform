@@ -46,7 +46,7 @@ export default function Footer() {
               data-testid="newsletter-input"
             />
             <Button
-              className="bg-[var(--stage-copper)] text-white hover:bg-gradient-to-r hover:from-[var(--stage-copper)] hover:to-[var(--foothill-sage)] h-14 px-10 group shadow-lg font-semibold transition-all duration-300"
+              className="bg-[var(--deep-blue)] text-white hover:bg-gradient-to-r hover:from-[var(--deep-blue)] hover:to-[var(--bright-blue)] h-14 px-10 group shadow-lg font-semibold transition-all duration-300"
               data-testid="newsletter-submit"
             >
               Subscribe

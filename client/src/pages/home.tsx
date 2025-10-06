@@ -600,7 +600,7 @@ export default function Home() {
               <div className="flex flex-wrap gap-4 mb-8">
                 <Button 
                   size="lg" 
-                  className="bg-[var(--stage-copper)] text-white hover:bg-gradient-to-r hover:from-[var(--stage-copper)] hover:to-[var(--foothill-sage)]"
+                  className="bg-[var(--deep-blue)] text-white hover:bg-gradient-to-r hover:from-[var(--deep-blue)] hover:to-[var(--bright-blue)]"
                   asChild
                   data-testid="button-call-now"
                 >

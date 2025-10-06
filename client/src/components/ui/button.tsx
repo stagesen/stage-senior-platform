@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-[var(--stage-copper)] text-white hover:bg-gradient-to-r hover:from-[var(--stage-copper)] hover:to-[var(--foothill-sage)] hover:shadow-[var(--shadow-soft)] shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]",
+        default: "bg-[var(--deep-blue)] text-white hover:bg-gradient-to-r hover:from-[var(--deep-blue)] hover:to-[var(--bright-blue)] hover:shadow-[var(--shadow-soft)] shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-[var(--shadow-soft)]",
         outline:
@@ -18,6 +18,7 @@ const buttonVariants = cva(
           "border-2 border-[var(--deep-blue)] bg-transparent text-[var(--deep-blue)] hover:bg-[var(--foothill-sage)] hover:text-white hover:border-[var(--foothill-sage)] hover:shadow-[var(--shadow-soft)]",
         ghost: "hover:bg-[var(--aspen-cream)] hover:text-[var(--deep-blue)]",
         link: "text-[var(--bright-blue)] underline-offset-4 hover:underline hover:text-[var(--stage-copper)]",
+        copper: "bg-[var(--stage-copper)] text-[var(--midnight-slate)] hover:bg-gradient-to-r hover:from-[var(--stage-copper)] hover:to-[var(--sunset-blush)] hover:shadow-[var(--shadow-soft)] shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] font-semibold",
         glassmorphism: "bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-lg hover:bg-white/30 hover:shadow-[var(--shadow-lift)] hover:scale-[1.02] transition-all duration-300 ease-out",
         "glassmorphism-dark": "bg-black/50 backdrop-blur-md border border-white/20 text-white shadow-lg hover:bg-black/60 hover:shadow-[var(--shadow-lift)] hover:scale-[1.02] transition-all duration-300 ease-out",
       },
