@@ -1223,6 +1223,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   const getApiEndpoint = (type: string) => {
     if (type === "tours") return "tour-requests";
     if (type === "team") return "team-members";
+    if (type === "homepage") return "homepage-sections";
     if (type === "community-highlights") {
       // For community highlights, we need to select a community first
       return selectedCommunityForHighlights ? `communities/${selectedCommunityForHighlights}/highlights` : "community-highlights";
