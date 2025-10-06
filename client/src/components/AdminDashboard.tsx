@@ -408,6 +408,26 @@ const TagInput = ({ value, onChange, placeholder, dataTestId }: {
   );
 };
 
+// Sub-component for team member avatar to properly use the image resolution hook
+const TeamMemberAvatar = ({ avatarImageId, name }: { avatarImageId?: string; name: string }) => {
+  const avatarUrl = useResolveImageUrl(avatarImageId);
+  return (
+    <div className="w-10 h-10 rounded-full bg-muted overflow-hidden">
+      {avatarUrl ? (
+        <img 
+          src={avatarUrl} 
+          alt={`${name} avatar`}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+          <User className="w-5 h-5" />
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Sub-component for gallery images to use the image resolution hook
 const GalleryImageItem = ({ image, index, onMoveUp, onMoveDown, onDelete, showControls = true, totalImages = 0 }: {
   image: any;
@@ -5686,30 +5706,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
           </TableHeader>
           <TableBody>
             {items.map((item: TeamMember) => {
-              // Component to handle avatar display with image resolution
-              const TeamAvatar = () => {
-                const avatarUrl = useResolveImageUrl(item.avatarImageId);
-                return (
-                  <div className="w-10 h-10 rounded-full bg-muted overflow-hidden">
-                    {avatarUrl ? (
-                      <img 
-                        src={avatarUrl} 
-                        alt={`${item.name} avatar`}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                        <User className="w-5 h-5" />
-                      </div>
-                    )}
-                  </div>
-                );
-              };
-
               return (
                 <TableRow key={item.id} data-testid={`team-row-${item.id}`}>
                   <TableCell>
-                    <TeamAvatar />
+                    <TeamMemberAvatar avatarImageId={item.avatarImageId} name={item.name} />
                   </TableCell>
                   <TableCell className="font-medium">
                     <div className="space-y-1">
