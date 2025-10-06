@@ -4,13 +4,19 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const alertVariants = cva(
-  "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
+  "relative w-full rounded-[var(--radius-md)] border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground shadow-[var(--shadow-soft)]",
   {
     variants: {
       variant: {
-        default: "bg-background text-foreground",
+        default: "bg-[var(--mist-white)] border-[var(--soft-clay)] text-[var(--deep-blue)]",
         destructive:
-          "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
+          "border-destructive/50 text-destructive bg-destructive/10 dark:border-destructive [&>svg]:text-destructive",
+        success:
+          "border-[var(--foothill-sage)] bg-[var(--foothill-sage)]/10 text-[var(--deep-blue)] [&>svg]:text-[var(--foothill-sage)]",
+        warning:
+          "border-[var(--stage-copper)] bg-[var(--stage-copper)]/10 text-[var(--deep-blue)] [&>svg]:text-[var(--stage-copper)]",
+        info:
+          "border-[var(--bright-blue)] bg-[var(--bright-blue)]/10 text-[var(--deep-blue)] [&>svg]:text-[var(--bright-blue)]",
       },
     },
     defaultVariants: {
@@ -38,7 +44,7 @@ const AlertTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h5
     ref={ref}
-    className={cn("mb-1 font-medium leading-none tracking-tight", className)}
+    className={cn("mb-1 font-medium leading-none tracking-tight text-[var(--deep-blue)]", className)}
     {...props}
   />
 ))
