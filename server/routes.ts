@@ -161,37 +161,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Special one-time endpoint to create postscapes user (REMOVE AFTER USE)
-  app.post("/api/create-postscapes-user", async (req, res) => {
-    try {
-      // Check if user already exists
-      const existingUser = await storage.getUserByUsername("postscapes");
-      if (existingUser) {
-        return res.status(400).json({ message: "User postscapes already exists" });
-      }
-
-      // Create the user
-      const bcrypt = await import("bcryptjs");
-      const hashedPassword = await bcrypt.hash("Justanother1!stage", 10);
-      
-      const user = await storage.createUser({
-        username: "postscapes",
-        password: hashedPassword,
-        email: "postscapes@stagesenior.com",
-        role: "admin",
-      });
-
-      res.status(201).json({ 
-        message: "User postscapes created successfully",
-        username: user.username,
-        role: user.role 
-      });
-    } catch (error) {
-      console.error("Error creating postscapes user:", error);
-      res.status(500).json({ message: "Failed to create user" });
-    }
-  });
-
   // Post routes
   app.get("/api/posts", async (req, res) => {
     try {
