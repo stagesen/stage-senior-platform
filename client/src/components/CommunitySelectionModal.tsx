@@ -82,7 +82,7 @@ export default function CommunitySelectionModal({
                   size="default"
                   data-testid={`button-schedule-tour-${community.slug}`}
                   onClick={() => {
-                    window.location.href = `/communities/${community.slug}/#/further/55`;
+                    window.location.href = `/properties/${community.slug}/#/further/55`;
                   }}
                 >
                   <Calendar className="w-4 h-4 mr-2" />
