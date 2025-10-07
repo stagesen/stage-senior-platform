@@ -23,10 +23,42 @@ async function hashPassword(password: string) {
 }
 
 async function comparePasswords(supplied: string, stored: string) {
-  const [hashed, salt] = stored.split(".");
-  const hashedBuf = Buffer.from(hashed, "hex");
-  const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
-  return timingSafeEqual(hashedBuf, suppliedBuf);
+  // Handle edge cases
+  if (!supplied || !stored) {
+    return false;
+  }
+  
+  const parts = stored.split(".");
+  
+  // Check if the stored password has the expected format (hash.salt)
+  if (parts.length !== 2) {
+    console.error("Invalid password format in database - expected 'hash.salt' format");
+    return false;
+  }
+  
+  const [hashed, salt] = parts;
+  
+  // Validate that hashed is a valid hex string
+  if (!hashed || !/^[0-9a-f]+$/i.test(hashed)) {
+    console.error("Invalid hash format in stored password");
+    return false;
+  }
+  
+  try {
+    const hashedBuf = Buffer.from(hashed, "hex");
+    const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
+    
+    // Additional check to ensure buffers are the same length before comparison
+    if (hashedBuf.length !== suppliedBuf.length) {
+      console.error(`Buffer length mismatch: stored=${hashedBuf.length}, supplied=${suppliedBuf.length}`);
+      return false;
+    }
+    
+    return timingSafeEqual(hashedBuf, suppliedBuf);
+  } catch (error) {
+    console.error("Error comparing passwords:", error);
+    return false;
+  }
 }
 
 export function setupAuth(app: Express) {
