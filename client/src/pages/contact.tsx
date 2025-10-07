@@ -14,11 +14,13 @@ import {
   MapPin, 
   Clock,
   MessageSquare,
-  Building2
+  Building2,
+  CheckCircle
 } from "lucide-react";
 
 export default function Contact() {
   const [showCommunityModal, setShowCommunityModal] = useState(false);
+  const [showContactForm, setShowContactForm] = useState(false);
   
   const { data: communities = [] } = useQuery<Community[]>({
     queryKey: ["/api/communities"],
@@ -271,21 +273,83 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 bg-primary text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Let's Start a Conversation
-          </h2>
-          <p className="text-xl mb-8 text-white/90">
-            Every family's journey is unique. We're here to listen, guide, and support you through this important decision.
-          </p>
-          <Button size="lg" variant="secondary" asChild>
-            <a href="tel:+1-970-444-4689">
-              <Phone className="w-5 h-5 mr-2" />
-              Call Now: (970) 444-4689
-            </a>
-          </Button>
+      {/* Lead Generation Panel - Same as Homepage */}
+      <section className="py-16 bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+                Talk to a real local advisor today
+              </h2>
+              <p className="text-xl text-white/90 mb-6">
+                Get a callback today
+              </p>
+              <div className="flex flex-wrap gap-4 mb-8">
+                <Button 
+                  size="lg" 
+                  className="bg-[var(--deep-blue)] text-white hover:bg-gradient-to-r hover:from-[var(--deep-blue)] hover:to-[var(--bright-blue)]"
+                  asChild
+                  data-testid="button-call-now"
+                >
+                  <a href="tel:+1-970-444-4689">
+                    <Phone className="w-5 h-5 mr-2" />
+                    Call (970) 444‑4689
+                  </a>
+                </Button>
+                <Button 
+                  variant="glassmorphism"
+                  size="lg" 
+                  onClick={() => setShowContactForm(true)}
+                  data-testid="button-request-callback"
+                >
+                  Request Callback
+                </Button>
+              </div>
+              <ul className="space-y-3 text-white/90">
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-white" />
+                  Same‑day and next‑day tours available
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-white" />
+                  Transparent availability & pricing information
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-white" />
+                  Expert help comparing communities and care options
+                </li>
+              </ul>
+            </div>
+            
+            {showContactForm ? (
+              <LeadCaptureForm
+                variant="inline"
+                title="Get Your Free Consultation"
+                description="Talk to a local senior living advisor about your needs and timeline"
+                onSelectCommunity={() => setShowCommunityModal(true)}
+              />
+            ) : (
+              <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-2xl text-[var(--deep-blue)]">Ready to explore?</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-gray-600">
+                    Let us help you find the perfect senior living community for your loved one.
+                  </p>
+                  <Button 
+                    size="lg" 
+                    className="w-full bg-[var(--deep-blue)] text-white hover:bg-gradient-to-r hover:from-[var(--deep-blue)] hover:to-[var(--bright-blue)]"
+                    onClick={() => setShowContactForm(true)}
+                    data-testid="button-show-contact-form"
+                  >
+                    Start Your Search
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
       </section>
       
