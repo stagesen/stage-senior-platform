@@ -1838,6 +1838,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         communitiesAmenities: await storage.getAllCommunitiesAmenities(),
         communityFeatures: await storage.getAllCommunityFeatures(),
         communityHighlights: await storage.getAllCommunityHighlights(),
+        posts: await storage.getPosts(),
+        blogPosts: await storage.getBlogPosts(),
         faqs: await storage.getFaqs(),
         events: await storage.getEvents(),
         galleries: await storage.getGalleries(),
@@ -1868,10 +1870,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const importData = req.body;
       const results: any = {};
       
+      // Helper function to convert date strings to Date objects
+      const convertDates = (obj: any): any => {
+        if (!obj) return obj;
+        if (obj instanceof Date) return obj;
+        if (typeof obj === 'string') {
+          // Check if it's a date string (ISO format)
+          if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(obj)) {
+            return new Date(obj);
+          }
+          return obj;
+        }
+        if (Array.isArray(obj)) {
+          return obj.map(convertDates);
+        }
+        if (typeof obj === 'object') {
+          const converted: any = {};
+          for (const key in obj) {
+            // Convert common date field names
+            if (key === 'createdAt' || key === 'updatedAt' || key === 'created_at' || 
+                key === 'updated_at' || key === 'publishedAt' || key === 'published_at' || 
+                key === 'dateTime' || key === 'date' || key === 'startDate' || key === 'endDate') {
+              converted[key] = obj[key] ? new Date(obj[key]) : obj[key];
+            } else {
+              converted[key] = convertDates(obj[key]);
+            }
+          }
+          return converted;
+        }
+        return obj;
+      };
+      
       // STEP 1: Clear existing data (except users)
       // Delete in reverse order of dependencies to avoid foreign key conflicts
       
       // Clear dependent entities first
+      // Delete blog posts and posts that reference communities
+      const blogPosts = await storage.getBlogPosts();
+      for (const post of blogPosts) {
+        await storage.deleteBlogPost(post.id);
+      }
+      
+      const posts = await storage.getPosts();
+      for (const post of posts) {
+        await storage.deletePost(post.id);
+      }
+      
+      // Delete tour requests that reference communities
+      const tourRequests = await storage.getTourRequests();
+      for (const request of tourRequests) {
+        await storage.deleteTourRequest(request.id);
+      }
+      
       const galleries = await storage.getGalleries();
       for (const gallery of galleries) {
         await storage.deleteGallery(gallery.id);
@@ -1951,21 +2001,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // 1. First import standalone entities
       if (importData.careTypes) {
         for (const careType of importData.careTypes) {
-          await storage.createCareType(careType);
+          await storage.createCareType(convertDates(careType));
         }
         results.careTypes = importData.careTypes.length;
       }
 
       if (importData.amenities) {
         for (const amenity of importData.amenities) {
-          await storage.createAmenity(amenity);
+          await storage.createAmenity(convertDates(amenity));
         }
         results.amenities = importData.amenities.length;
       }
 
       if (importData.communities) {
         for (const community of importData.communities) {
-          await storage.createCommunity(community);
+          await storage.createCommunity(convertDates(community));
         }
         results.communities = importData.communities.length;
       }
@@ -2006,56 +2056,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // 3. Import dependent entities
       if (importData.communityFeatures) {
         for (const feature of importData.communityFeatures) {
-          await storage.createCommunityFeature(feature);
+          await storage.createCommunityFeature(convertDates(feature));
         }
         results.communityFeatures = importData.communityFeatures.length;
       }
 
       if (importData.communityHighlights) {
         for (const highlight of importData.communityHighlights) {
-          await storage.createCommunityHighlight(highlight);
+          await storage.createCommunityHighlight(convertDates(highlight));
         }
         results.communityHighlights = importData.communityHighlights.length;
       }
 
       if (importData.faqs) {
         for (const faq of importData.faqs) {
-          await storage.createFaq(faq);
+          await storage.createFaq(convertDates(faq));
         }
         results.faqs = importData.faqs.length;
       }
 
       if (importData.events) {
         for (const event of importData.events) {
-          await storage.createEvent(event);
+          await storage.createEvent(convertDates(event));
         }
         results.events = importData.events.length;
       }
 
       if (importData.galleries) {
         for (const gallery of importData.galleries) {
-          await storage.createGallery(gallery);
+          await storage.createGallery(convertDates(gallery));
         }
         results.galleries = importData.galleries.length;
       }
 
       if (importData.testimonials) {
         for (const testimonial of importData.testimonials) {
-          await storage.createTestimonial(testimonial);
+          await storage.createTestimonial(convertDates(testimonial));
         }
         results.testimonials = importData.testimonials.length;
       }
 
       if (importData.teamMembers) {
         for (const member of importData.teamMembers) {
-          await storage.createTeamMember(member);
+          await storage.createTeamMember(convertDates(member));
         }
         results.teamMembers = importData.teamMembers.length;
       }
 
       if (importData.emailRecipients) {
         for (const recipient of importData.emailRecipients) {
-          await storage.createEmailRecipient(recipient);
+          await storage.createEmailRecipient(convertDates(recipient));
         }
         results.emailRecipients = importData.emailRecipients.length;
       }
@@ -2064,7 +2114,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         for (const config of importData.homepageConfig) {
           // Homepage config uses update method with sectionKey
           if (config.sectionKey) {
-            await storage.updateHomepageConfig(config.sectionKey, config);
+            await storage.updateHomepageConfig(config.sectionKey, convertDates(config));
           }
         }
         results.homepageConfig = importData.homepageConfig?.length || 0;
@@ -2072,16 +2122,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (importData.homepageSections) {
         for (const section of importData.homepageSections) {
-          await storage.createHomepageSection(section);
+          await storage.createHomepageSection(convertDates(section));
         }
         results.homepageSections = importData.homepageSections.length;
       }
 
       if (importData.pageHeroes) {
         for (const hero of importData.pageHeroes) {
-          await storage.createPageHero(hero);
+          await storage.createPageHero(convertDates(hero));
         }
         results.pageHeroes = importData.pageHeroes.length;
+      }
+
+      if (importData.floorPlans) {
+        for (const plan of importData.floorPlans) {
+          await storage.createFloorPlan(convertDates(plan));
+        }
+        results.floorPlans = importData.floorPlans.length;
+      }
+
+      if (importData.posts) {
+        for (const post of importData.posts) {
+          await storage.createPost(convertDates(post));
+        }
+        results.posts = importData.posts.length;
+      }
+
+      if (importData.blogPosts) {
+        for (const post of importData.blogPosts) {
+          await storage.createBlogPost(convertDates(post));
+        }
+        results.blogPosts = importData.blogPosts.length;
       }
 
       res.json({ 
