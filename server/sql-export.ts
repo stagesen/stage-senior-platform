@@ -304,25 +304,31 @@ export async function generateSQLExport(): Promise<string> {
 }
 
 export async function executeSQLImport(sqlContent: string): Promise<void> {
-  // Split by statements but handle multi-line statements properly
+  // Split by statements but handle multi-line statements properly  
   const statements = sqlContent
-    .split(/;\s*\n/)
+    .split(/;\s*(?:\n|$)/)
     .map(s => s.trim())
     .filter(s => s && !s.startsWith('--'));
   
-  // Execute in a transaction
-  await db.transaction(async (tx) => {
-    for (const statement of statements) {
-      if (statement && 
-          !statement.toUpperCase().startsWith('BEGIN') && 
-          !statement.toUpperCase().startsWith('COMMIT')) {
-        try {
-          await tx.execute(statement + ';');
-        } catch (error) {
-          console.error('Failed statement:', statement);
+  // Import the sql tag from drizzle
+  const { sql } = await import("drizzle-orm");
+  
+  // Execute statements one by one (not in transaction to handle special statements)
+  for (const statement of statements) {
+    if (statement && 
+        !statement.toUpperCase().startsWith('BEGIN') && 
+        !statement.toUpperCase().startsWith('COMMIT') &&
+        !statement.toUpperCase().includes('SESSION_REPLICATION_ROLE')) {
+      try {
+        // Use sql.raw to execute raw SQL
+        await db.execute(sql.raw(statement));
+      } catch (error) {
+        // Skip errors for SET statements and continue
+        if (!statement.toUpperCase().startsWith('SET')) {
+          console.error('Failed statement:', statement.substring(0, 100));
           throw error;
         }
       }
     }
-  });
+  }
 }
