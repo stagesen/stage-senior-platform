@@ -1,4 +1,4 @@
-import { Switch, Route, useRoute } from "wouter";
+import { Switch, Route, useRoute, Redirect } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -53,6 +53,8 @@ function Router() {
       <main className="flex-1">
         <Switch>
           <Route path="/" component={Home} />
+          <Route path="/properties/">{() => <Redirect to="/communities/" />}</Route>
+          <Route path="/properties">{() => <Redirect to="/communities/" />}</Route>
           <Route path="/communities" component={Communities} />
           <Route path="/communities/:slug" component={CommunityDetail} />
           <Route path="/events" component={Events} />
