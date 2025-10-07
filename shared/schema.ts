@@ -850,3 +850,22 @@ export const insertHomepageConfigSchema = createInsertSchema(homepageConfig, {
 
 export type HomepageConfig = typeof homepageConfig.$inferSelect;
 export type InsertHomepageConfig = z.infer<typeof insertHomepageConfigSchema>;
+
+// Email Recipients table for tour request notifications
+export const emailRecipients = pgTable("email_recipients", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: varchar("email", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertEmailRecipientSchema = createInsertSchema(emailRecipients, {
+  email: z.string().email().max(255),
+  name: z.string().max(255).optional(),
+  active: z.boolean().default(true),
+}).omit({ id: true, createdAt: true, updatedAt: true });
+
+export type EmailRecipient = typeof emailRecipients.$inferSelect;
+export type InsertEmailRecipient = z.infer<typeof insertEmailRecipientSchema>;

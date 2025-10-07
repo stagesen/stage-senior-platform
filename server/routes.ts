@@ -22,6 +22,7 @@ import {
   insertFaqSchema,
   insertGallerySchema,
   insertTourRequestSchema,
+  insertEmailRecipientSchema,
   insertFloorPlanSchema,
   insertTestimonialSchema,
   insertCommunityHighlightSchema,
@@ -706,6 +707,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting tour request:", error);
       res.status(500).json({ message: "Failed to delete tour request" });
+    }
+  });
+
+  // Email recipient routes - Admin only
+  app.get("/api/email-recipients", requireAuth, async (req, res) => {
+    try {
+      const { activeOnly } = req.query;
+      const recipients = await storage.getEmailRecipients(activeOnly === 'true');
+      res.json(recipients);
+    } catch (error) {
+      console.error("Error fetching email recipients:", error);
+      res.status(500).json({ message: "Failed to fetch email recipients" });
+    }
+  });
+
+  app.get("/api/email-recipients/:id", requireAuth, async (req, res) => {
+    try {
+      const recipient = await storage.getEmailRecipient(req.params.id);
+      if (!recipient) {
+        return res.status(404).json({ message: "Email recipient not found" });
+      }
+      res.json(recipient);
+    } catch (error) {
+      console.error("Error fetching email recipient:", error);
+      res.status(500).json({ message: "Failed to fetch email recipient" });
+    }
+  });
+
+  app.post("/api/email-recipients", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertEmailRecipientSchema.parse(req.body);
+      const recipient = await storage.createEmailRecipient(validatedData);
+      res.status(201).json(recipient);
+    } catch (error) {
+      console.error("Error creating email recipient:", error);
+      res.status(400).json({ message: "Failed to create email recipient" });
+    }
+  });
+
+  app.put("/api/email-recipients/:id", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertEmailRecipientSchema.partial().parse(req.body);
+      const recipient = await storage.updateEmailRecipient(req.params.id, validatedData);
+      res.json(recipient);
+    } catch (error) {
+      console.error("Error updating email recipient:", error);
+      res.status(400).json({ message: "Failed to update email recipient" });
+    }
+  });
+
+  app.delete("/api/email-recipients/:id", requireAuth, async (req, res) => {
+    try {
+      await storage.deleteEmailRecipient(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting email recipient:", error);
+      res.status(500).json({ message: "Failed to delete email recipient" });
     }
   });
 

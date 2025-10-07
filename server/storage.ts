@@ -68,6 +68,9 @@ import {
   homepageConfig,
   type HomepageConfig,
   type InsertHomepageConfig,
+  emailRecipients,
+  type EmailRecipient,
+  type InsertEmailRecipient,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm";
@@ -319,6 +322,13 @@ export interface IStorage {
   // Homepage config operations
   getHomepageConfig(sectionKey: string): Promise<HomepageConfig | null>;
   updateHomepageConfig(sectionKey: string, data: Partial<InsertHomepageConfig>): Promise<HomepageConfig>;
+
+  // Email recipient operations
+  getEmailRecipients(activeOnly?: boolean): Promise<EmailRecipient[]>;
+  getEmailRecipient(id: string): Promise<EmailRecipient | undefined>;
+  createEmailRecipient(recipient: InsertEmailRecipient): Promise<EmailRecipient>;
+  updateEmailRecipient(id: string, recipient: Partial<InsertEmailRecipient>): Promise<EmailRecipient>;
+  deleteEmailRecipient(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -2072,6 +2082,53 @@ export class DatabaseStorage implements IStorage {
       
       return created;
     }
+  }
+
+  // Email recipient operations
+  async getEmailRecipients(activeOnly?: boolean): Promise<EmailRecipient[]> {
+    let query = db.select().from(emailRecipients);
+    
+    if (activeOnly) {
+      query = query.where(eq(emailRecipients.active, true)) as any;
+    }
+    
+    const recipients = await query.orderBy(asc(emailRecipients.email));
+    return recipients;
+  }
+
+  async getEmailRecipient(id: string): Promise<EmailRecipient | undefined> {
+    const [recipient] = await db
+      .select()
+      .from(emailRecipients)
+      .where(eq(emailRecipients.id, id));
+    
+    return recipient;
+  }
+
+  async createEmailRecipient(recipient: InsertEmailRecipient): Promise<EmailRecipient> {
+    const [created] = await db
+      .insert(emailRecipients)
+      .values(recipient)
+      .returning();
+    
+    return created;
+  }
+
+  async updateEmailRecipient(id: string, recipient: Partial<InsertEmailRecipient>): Promise<EmailRecipient> {
+    const [updated] = await db
+      .update(emailRecipients)
+      .set({
+        ...recipient,
+        updatedAt: new Date()
+      })
+      .where(eq(emailRecipients.id, id))
+      .returning();
+    
+    return updated;
+  }
+
+  async deleteEmailRecipient(id: string): Promise<void> {
+    await db.delete(emailRecipients).where(eq(emailRecipients.id, id));
   }
 }
 
