@@ -13,10 +13,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import LeadCaptureForm from "@/components/LeadCaptureForm";
 import logoUrl from "@assets/stage-horizintal_1759763679642.webp";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const [location] = useLocation();
   const normalizedLocation = location.split("?")[0];
   const isCommunityDetailPage = /^\/communities\/[^/]+$/.test(normalizedLocation);
@@ -43,6 +51,10 @@ export default function Header() {
       ]
     },
   ];
+
+  const handleFormSuccess = () => {
+    setShowHelpModal(false);
+  };
 
   return (
     <header 
@@ -147,14 +159,12 @@ export default function Header() {
           
           <div className="flex items-center space-x-4">
             <Button
-              asChild
+              onClick={() => setShowHelpModal(true)}
               className="bg-primary text-primary-foreground hover:bg-primary/90"
               data-testid="button-get-help"
             >
-              <a href="tel:+1-970-444-4689">
-                <Phone className="w-4 h-4 mr-2" />
-                Get Help
-              </a>
+              <Phone className="w-4 h-4 mr-2" />
+              Get Help
             </Button>
             
             {showNavigation && (
@@ -223,6 +233,50 @@ export default function Header() {
           </div>
         </div>
       </div>
+
+      {/* Get Help Modal */}
+      <Dialog open={showHelpModal} onOpenChange={setShowHelpModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Get Your Free Consultation</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Call button */}
+            <div className="flex justify-center">
+              <Button
+                asChild
+                size="lg"
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                data-testid="button-modal-call"
+              >
+                <a href="tel:+1-970-444-4689">
+                  <Phone className="w-5 h-5 mr-2" />
+                  Call (970) 444-4689
+                </a>
+              </Button>
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Or fill out the form below</span>
+              </div>
+            </div>
+
+            {/* Lead Capture Form */}
+            <LeadCaptureForm
+              variant="modal"
+              title="Request a Callback"
+              description="Talk to a local senior living advisor about your needs and timeline"
+              onSuccess={handleFormSuccess}
+              showSocialProof={false}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }
