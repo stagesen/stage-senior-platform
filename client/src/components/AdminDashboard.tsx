@@ -60,6 +60,7 @@ import {
   insertCommunityFeatureSchema,
   insertTeamMemberSchema,
   insertHomepageSectionSchema,
+  insertEmailRecipientSchema,
   type Community,
   type CommunityHighlight,
   type InsertCommunityHighlight,
@@ -93,10 +94,12 @@ import {
   type HomepageSection,
   type InsertHomepageSection,
   type HomepageConfig,
+  type EmailRecipient,
+  type InsertEmailRecipient,
 } from "@shared/schema";
 
 interface AdminDashboardProps {
-  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "community-highlights" | "homepage";
+  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "community-highlights" | "homepage" | "email-recipients";
 }
 
 // Helper function to generate slug from title
@@ -1224,6 +1227,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     if (type === "tours") return "tour-requests";
     if (type === "team") return "team-members";
     if (type === "homepage") return "homepage-sections";
+    if (type === "email-recipients") return "email-recipients";
     if (type === "community-highlights") {
       // For community highlights, we need to select a community first
       return selectedCommunityForHighlights ? `communities/${selectedCommunityForHighlights}/highlights` : "community-highlights";
@@ -1533,6 +1537,15 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     },
   });
 
+  const emailRecipientForm = useForm<InsertEmailRecipient>({
+    resolver: zodResolver(insertEmailRecipientSchema),
+    defaultValues: {
+      email: "",
+      name: "",
+      active: true,
+    },
+  });
+
   // Get current form based on type
   const getCurrentForm = () => {
     switch (type) {
@@ -1550,6 +1563,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "amenities": return amenityForm;
       case "community-highlights": return communityHighlightForm;
       case "homepage": return homepageSectionForm;
+      case "email-recipients": return emailRecipientForm;
       default: return communityForm;
     }
   };
@@ -5488,6 +5502,66 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
           </Form>
         );
 
+      case "email-recipients":
+        return (
+          <Form {...emailRecipientForm}>
+            <form onSubmit={emailRecipientForm.handleSubmit(handleSubmit)} className="space-y-4">
+              <FormField
+                control={emailRecipientForm.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email Address *</FormLabel>
+                    <FormControl>
+                      <Input type="email" {...field} placeholder="recipient@example.com" data-testid="input-recipient-email" />
+                    </FormControl>
+                    <FormDescription>The email address that will receive tour request notifications</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={emailRecipientForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name (Optional)</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value || ""} placeholder="John Doe" data-testid="input-recipient-name" />
+                    </FormControl>
+                    <FormDescription>Display name for this recipient (optional)</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={emailRecipientForm.control}
+                name="active"
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-2">
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-recipient-active" />
+                    </FormControl>
+                    <FormLabel>Active</FormLabel>
+                    <FormDescription className="ml-2">Only active recipients will receive tour request notifications</FormDescription>
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="button-submit">
+                  {editingItem ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        );
+
       default:
         return <div>Form not implemented for {type}</div>;
     }
@@ -6687,6 +6761,59 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
         </div>
       );
     }
+
+    // Email recipients table
+    if (type === "email-recipients") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Email</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: EmailRecipient) => (
+              <TableRow key={item.id} data-testid={`recipient-row-${item.id}`}>
+                <TableCell className="font-medium">{item.email}</TableCell>
+                <TableCell>{item.name || <span className="text-muted-foreground">N/A</span>}</TableCell>
+                <TableCell>
+                  <Badge variant={item.active ? "default" : "secondary"}>
+                    {item.active ? "Active" : "Inactive"}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "N/A"}
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => handleEdit(item)}
+                      data-testid={`button-edit-${item.id}`}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="destructive" 
+                      onClick={() => handleDelete(item.id)}
+                      data-testid={`button-delete-${item.id}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      );
+    }
   };
 
   const getTitle = () => {
@@ -6705,6 +6832,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "amenities": return "Amenities";
       case "blog-posts": return "Blog Posts";
       case "community-highlights": return "Community Highlights";
+      case "email-recipients": return "Email Recipients";
       case "homepage": return "Homepage Sections";
       default: return type;
     }

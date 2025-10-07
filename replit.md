@@ -98,6 +98,7 @@ The platform includes a comprehensive admin interface for content management:
 - **Community Highlights**: Dynamic highlight cards for each community with customizable titles, descriptions, and images, replacing hardcoded content
 - **Experience the Difference Features**: Customizable feature sections for each community with eyebrow text, titles, descriptions, images, CTAs, and layout options, fully manageable through admin dashboard
 - **Homepage Sections**: Dynamic homepage content management system for editing homepage feature sections (e.g., "Safety with Dignity") with title, subtitle, body, CTA, image support, and visibility controls through admin dashboard
+- **Email Forwarding System**: Automated email notification system for tour request submissions with admin-configurable recipient management. Tour requests are automatically forwarded to all active recipients via Resend email service.
 - **Dining Page**: Dedicated dining services page showcasing Restaurant-Style Dining and Private Family Dining Room amenities with weekly menu samples
 - **Beauty Salon & Barber Page**: Comprehensive beauty services page featuring salon services for women, barber services for men, and on-site convenience benefits
 - **Fitness & Therapy Center Page**: Comprehensive fitness and therapy services page featuring state-of-the-art fitness equipment, physical therapy, occupational therapy, and speech therapy services

@@ -2,6 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
+import { sendTourRequestNotification } from "./email";
 import {
   uploadSingle,
   uploadMultiple,
@@ -682,6 +683,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertTourRequestSchema.parse(req.body);
       const tourRequest = await storage.createTourRequest(validatedData);
+      
+      // Send email notification to all active recipients
+      try {
+        await sendTourRequestNotification(tourRequest);
+      } catch (emailError) {
+        console.error("Failed to send email notification:", emailError);
+        // Don't fail the request if email fails
+      }
+      
       res.status(201).json(tourRequest);
     } catch (error) {
       console.error("Error creating tour request:", error);
