@@ -7285,12 +7285,7 @@ function CommunityFeaturesDialog({ isOpen, onClose, communityId, communities }: 
               </CardContent>
             </Card>
           ) : (
-            <Button onClick={() => {
-              console.log('Add New Feature button clicked');
-              console.log('Current isFormOpen:', isFormOpen);
-              setIsFormOpen(true);
-              console.log('setIsFormOpen called with true');
-            }}>
+            <Button onClick={() => setIsFormOpen(true)}>
               <Plus className="w-4 h-4 mr-2" />
               Add New Feature
             </Button>
