@@ -143,6 +143,9 @@ export default function Admin() {
               <Image className="h-4 w-4 mr-1" />
               Image Gallery
             </TabsTrigger>
+            <TabsTrigger value="database-sync" data-testid="tab-database-sync" className="bg-amber-500 text-white hover:bg-amber-600">
+              Database Sync
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-6">
@@ -380,6 +383,10 @@ export default function Admin() {
 
           <TabsContent value="image-gallery">
             <PageGalleryAdmin />
+          </TabsContent>
+
+          <TabsContent value="database-sync">
+            <AdminDashboard type="database-sync" />
           </TabsContent>
         </Tabs>
       </main>

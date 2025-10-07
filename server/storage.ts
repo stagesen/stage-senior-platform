@@ -222,6 +222,7 @@ export interface IStorage {
   deleteCommunityHighlight(id: string): Promise<void>;
 
   // Community features operations
+  getAllCommunityFeatures(): Promise<CommunityFeature[]>;
   getCommunityFeatures(communityId: string): Promise<CommunityFeature[]>;
   getCommunityFeature(id: string): Promise<CommunityFeature | undefined>;
   createCommunityFeature(feature: InsertCommunityFeature): Promise<CommunityFeature>;
@@ -298,10 +299,15 @@ export interface IStorage {
   // Community-Care Type relationship operations
   getCommunityCareTypes(communityId: string): Promise<string[]>;
   setCommunityCareTypes(communityId: string, careTypeIds: string[]): Promise<void>;
+  getAllCommunitiesCareTypes(): Promise<Array<{ communityId: string; careTypeId: string }>>;
 
   // Community-Amenity relationship operations
   getCommunityAmenities(communityId: string): Promise<string[]>;
   setCommunityAmenities(communityId: string, amenityIds: string[]): Promise<void>;
+  getAllCommunitiesAmenities(): Promise<Array<{ communityId: string; amenityId: string }>>;
+
+  // Gallery image operations
+  getAllGalleryImages(): Promise<GalleryImage[]>;
 
   // Team member operations
   getAllTeamMembers(includeInactive?: boolean): Promise<TeamMember[]>;
@@ -1292,6 +1298,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Community features operations
+  async getAllCommunityFeatures(): Promise<CommunityFeature[]> {
+    const features = await db
+      .select()
+      .from(communityFeatures)
+      .orderBy(asc(communityFeatures.sortOrder));
+    return features;
+  }
+
   async getCommunityFeatures(communityId: string): Promise<CommunityFeature[]> {
     const features = await db
       .select()
@@ -1809,6 +1823,17 @@ export class DatabaseStorage implements IStorage {
     });
   }
 
+  async getAllCommunitiesCareTypes(): Promise<Array<{ communityId: string; careTypeId: string }>> {
+    const results = await db
+      .select({
+        communityId: communitiesCareTypes.communityId,
+        careTypeId: communitiesCareTypes.careTypeId
+      })
+      .from(communitiesCareTypes);
+    
+    return results;
+  }
+
   // Community-Amenity relationships
   async getCommunityAmenities(communityId: string): Promise<string[]> {
     const results = await db
@@ -1835,6 +1860,26 @@ export class DatabaseStorage implements IStorage {
         await tx.insert(communitiesAmenities).values(values);
       }
     });
+  }
+
+  async getAllCommunitiesAmenities(): Promise<Array<{ communityId: string; amenityId: string }>> {
+    const results = await db
+      .select({
+        communityId: communitiesAmenities.communityId,
+        amenityId: communitiesAmenities.amenityId
+      })
+      .from(communitiesAmenities);
+    
+    return results;
+  }
+
+  async getAllGalleryImages(): Promise<GalleryImage[]> {
+    const results = await db
+      .select()
+      .from(galleryImages)
+      .orderBy(asc(galleryImages.sortOrder));
+    
+    return results;
   }
 
   // Team member operations

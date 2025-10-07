@@ -1797,6 +1797,211 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Database sync routes (for admin use)
+  app.get("/api/database/export", requireAuth, async (req, res) => {
+    try {
+      // Export all data from the database
+      // Get all communities first to iterate through them
+      const allCommunities = await storage.getCommunities();
+      
+      // Get all community-specific data
+      let allCommunityFeatures: any[] = [];
+      let allCommunityHighlights: any[] = [];
+      let allFloorPlanImages: any[] = [];
+      
+      for (const community of allCommunities) {
+        const features = await storage.getCommunityFeatures(community.id);
+        const highlights = await storage.getCommunityHighlights(community.id);
+        allCommunityFeatures = [...allCommunityFeatures, ...features];
+        allCommunityHighlights = [...allCommunityHighlights, ...highlights];
+      }
+
+      const exportData = {
+        communities: allCommunities,
+        careTypes: await storage.getCareTypes(),
+        amenities: await storage.getAmenities(),
+        communitiesCareTypes: await storage.getAllCommunitiesCareTypes(),
+        communitiesAmenities: await storage.getAllCommunitiesAmenities(),
+        communityFeatures: await storage.getAllCommunityFeatures(),
+        communityHighlights: await storage.getAllCommunityHighlights(),
+        faqs: await storage.getFaqs(),
+        events: await storage.getEvents(),
+        galleries: await storage.getGalleries(),
+        galleryImages: await storage.getAllGalleryImages(),
+        testimonials: await storage.getTestimonials(),
+        teamMembers: await storage.getAllTeamMembers(),
+        emailRecipients: await storage.getEmailRecipients(),
+        tourRequests: await storage.getTourRequests(),
+        homepageConfig: [], // We'll handle this separately if needed
+        homepageSections: await storage.getHomepageSections(),
+        pageHeroes: await storage.getPageHeroes(),
+        floorPlans: await storage.getFloorPlans(),
+        floorPlanImages: [], // We'll handle this separately if needed  
+        images: await storage.getImages(),
+        exportedAt: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development'
+      };
+
+      res.json(exportData);
+    } catch (error) {
+      console.error("Error exporting database:", error);
+      res.status(500).json({ message: "Failed to export database" });
+    }
+  });
+
+  app.post("/api/database/import", requireAuth, async (req, res) => {
+    try {
+      const importData = req.body;
+      const results: any = {};
+      
+      // Import in order of dependencies
+      // 1. First import standalone entities
+      if (importData.careTypes) {
+        for (const careType of importData.careTypes) {
+          await storage.createCareType(careType);
+        }
+        results.careTypes = importData.careTypes.length;
+      }
+
+      if (importData.amenities) {
+        for (const amenity of importData.amenities) {
+          await storage.createAmenity(amenity);
+        }
+        results.amenities = importData.amenities.length;
+      }
+
+      if (importData.communities) {
+        for (const community of importData.communities) {
+          await storage.createCommunity(community);
+        }
+        results.communities = importData.communities.length;
+      }
+
+      // 2. Import relationship tables
+      if (importData.communitiesCareTypes) {
+        // Group by community
+        const careTypesByCommunity: Record<string, string[]> = {};
+        for (const relation of importData.communitiesCareTypes) {
+          if (!careTypesByCommunity[relation.communityId]) {
+            careTypesByCommunity[relation.communityId] = [];
+          }
+          careTypesByCommunity[relation.communityId].push(relation.careTypeId);
+        }
+        // Set care types for each community
+        for (const [communityId, careTypeIds] of Object.entries(careTypesByCommunity)) {
+          await storage.setCommunityCareTypes(communityId, careTypeIds);
+        }
+        results.communitiesCareTypes = importData.communitiesCareTypes.length;
+      }
+
+      if (importData.communitiesAmenities) {
+        // Group by community
+        const amenitiesByCommunity: Record<string, string[]> = {};
+        for (const relation of importData.communitiesAmenities) {
+          if (!amenitiesByCommunity[relation.communityId]) {
+            amenitiesByCommunity[relation.communityId] = [];
+          }
+          amenitiesByCommunity[relation.communityId].push(relation.amenityId);
+        }
+        // Set amenities for each community
+        for (const [communityId, amenityIds] of Object.entries(amenitiesByCommunity)) {
+          await storage.setCommunityAmenities(communityId, amenityIds);
+        }
+        results.communitiesAmenities = importData.communitiesAmenities.length;
+      }
+
+      // 3. Import dependent entities
+      if (importData.communityFeatures) {
+        for (const feature of importData.communityFeatures) {
+          await storage.createCommunityFeature(feature);
+        }
+        results.communityFeatures = importData.communityFeatures.length;
+      }
+
+      if (importData.communityHighlights) {
+        for (const highlight of importData.communityHighlights) {
+          await storage.createCommunityHighlight(highlight);
+        }
+        results.communityHighlights = importData.communityHighlights.length;
+      }
+
+      if (importData.faqs) {
+        for (const faq of importData.faqs) {
+          await storage.createFaq(faq);
+        }
+        results.faqs = importData.faqs.length;
+      }
+
+      if (importData.events) {
+        for (const event of importData.events) {
+          await storage.createEvent(event);
+        }
+        results.events = importData.events.length;
+      }
+
+      if (importData.galleries) {
+        for (const gallery of importData.galleries) {
+          await storage.createGallery(gallery);
+        }
+        results.galleries = importData.galleries.length;
+      }
+
+      if (importData.testimonials) {
+        for (const testimonial of importData.testimonials) {
+          await storage.createTestimonial(testimonial);
+        }
+        results.testimonials = importData.testimonials.length;
+      }
+
+      if (importData.teamMembers) {
+        for (const member of importData.teamMembers) {
+          await storage.createTeamMember(member);
+        }
+        results.teamMembers = importData.teamMembers.length;
+      }
+
+      if (importData.emailRecipients) {
+        for (const recipient of importData.emailRecipients) {
+          await storage.createEmailRecipient(recipient);
+        }
+        results.emailRecipients = importData.emailRecipients.length;
+      }
+
+      if (importData.homepageConfig) {
+        for (const config of importData.homepageConfig) {
+          // Homepage config uses update method with sectionKey
+          if (config.sectionKey) {
+            await storage.updateHomepageConfig(config.sectionKey, config);
+          }
+        }
+        results.homepageConfig = importData.homepageConfig?.length || 0;
+      }
+
+      if (importData.homepageSections) {
+        for (const section of importData.homepageSections) {
+          await storage.createHomepageSection(section);
+        }
+        results.homepageSections = importData.homepageSections.length;
+      }
+
+      if (importData.pageHeroes) {
+        for (const hero of importData.pageHeroes) {
+          await storage.createPageHero(hero);
+        }
+        results.pageHeroes = importData.pageHeroes.length;
+      }
+
+      res.json({ 
+        message: "Database import completed successfully", 
+        results,
+        importedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error importing database:", error);
+      res.status(500).json({ message: "Failed to import database", error: error instanceof Error ? error.message : String(error) });
+    }
+  });
+
   // Error handler for upload middleware
   app.use(handleUploadError);
 

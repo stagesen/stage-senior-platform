@@ -99,7 +99,7 @@ import {
 } from "@shared/schema";
 
 interface AdminDashboardProps {
-  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "community-highlights" | "homepage" | "email-recipients";
+  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "community-highlights" | "homepage" | "email-recipients" | "database-sync";
 }
 
 // Helper function to generate slug from title
@@ -6837,6 +6837,170 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       default: return type;
     }
   };
+
+  // Special case for database-sync
+  if (type === "database-sync") {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Database Sync</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+              <h3 className="font-semibold text-amber-900">Important: Production Database Sync</h3>
+              <p className="text-sm text-amber-800 mt-2">
+                This tool allows you to export data from your development database and import it into production.
+              </p>
+              <ul className="list-disc list-inside text-sm text-amber-800 mt-2 space-y-1">
+                <li>Development and production databases are separate</li>
+                <li>To sync to production, you must be on the PRODUCTION admin panel</li>
+                <li>Export creates a JSON file with all your data</li>
+                <li>Import will add data to the current database</li>
+              </ul>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Export Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Export Database</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Download all data from the current database as JSON
+                  </p>
+                  <Button 
+                    onClick={async () => {
+                      try {
+                        const response = await fetch("/api/database/export", {
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          credentials: "include"
+                        });
+                        
+                        if (!response.ok) {
+                          throw new Error("Export failed");
+                        }
+                        
+                        const data = await response.json();
+                        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = `database-export-${new Date().toISOString().split('T')[0]}.json`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                        
+                        toast({
+                          title: "Export Successful",
+                          description: "Database exported successfully. Check your downloads.",
+                        });
+                      } catch (error) {
+                        console.error("Export error:", error);
+                        toast({
+                          title: "Export Failed",
+                          description: "Failed to export database. Please try again.",
+                          variant: "destructive",
+                        });
+                      }
+                    }}
+                    className="w-full"
+                    data-testid="button-export-database"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Export Database
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Import Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Import Database</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Import data from a JSON export file
+                  </p>
+                  <Input
+                    type="file"
+                    accept=".json"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      
+                      try {
+                        const text = await file.text();
+                        const data = JSON.parse(text);
+                        
+                        // Confirm before import
+                        if (!window.confirm("Are you sure you want to import this data? This will add all data from the file to the current database.")) {
+                          return;
+                        }
+                        
+                        const response = await fetch("/api/database/import", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          credentials: "include",
+                          body: JSON.stringify(data)
+                        });
+                        
+                        if (!response.ok) {
+                          const errorData = await response.json();
+                          throw new Error(errorData.message || "Import failed");
+                        }
+                        
+                        const result = await response.json();
+                        toast({
+                          title: "Import Successful",
+                          description: `Database imported successfully. ${JSON.stringify(result.results)}`,
+                        });
+                        
+                        // Clear file input
+                        e.target.value = "";
+                        
+                        // Refresh the page to show new data
+                        setTimeout(() => {
+                          window.location.reload();
+                        }, 2000);
+                        
+                      } catch (error) {
+                        console.error("Import error:", error);
+                        toast({
+                          title: "Import Failed",
+                          description: error instanceof Error ? error.message : "Failed to import database. Please check the file format.",
+                          variant: "destructive",
+                        });
+                        e.target.value = "";
+                      }
+                    }}
+                    data-testid="input-import-file"
+                  />
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <h4 className="font-semibold text-blue-900">How to sync to production:</h4>
+              <ol className="list-decimal list-inside text-sm text-blue-800 mt-2 space-y-1">
+                <li>Click "Export Database" above to download your development data</li>
+                <li>Go to your PRODUCTION site: https://your-site.replit.app/admin</li>
+                <li>Login to the production admin panel</li>
+                <li>Navigate to the Database Sync tab</li>
+                <li>Use "Import Database" to upload the exported file</li>
+              </ol>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <>
