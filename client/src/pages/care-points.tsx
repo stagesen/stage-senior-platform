@@ -1,166 +1,208 @@
-import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { DollarSign, Shield, Clock, Users, CheckCircle, AlertCircle, Phone, Calendar, MapPin, FileText, Sparkles, Quote } from "lucide-react";
-import { PageHero } from "@/components/PageHero";
+import { 
+  Shield, 
+  CheckCircle, 
+  Phone, 
+  Calendar, 
+  FileText, 
+  Quote,
+  ArrowRight,
+  Bell,
+  TrendingDown,
+  Eye,
+  Calculator
+} from "lucide-react";
 
 export default function CarePoints() {
-  // Fetch care types from API
-  const { data: careTypes = [], isLoading: careTypesLoading } = useQuery({
-    queryKey: ["/api/care-types"],
-  });
+  const [selectedSuiteType, setSelectedSuiteType] = useState<"private" | "companion">("private");
+  
   useEffect(() => {
-    document.title = "Care Points - Transparent Pricing | Stage Senior";
+    document.title = "Care Points vs Tiered Pricing | Stage Senior";
     
-    // Add meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Discover Stage Senior\'s Care Points system - a transparent, point-based pricing model for additional services that eliminates surprise charges and ensures families are consulted before any care plan changes.');
+      metaDescription.setAttribute('content', 'Only pay for the care your loved one needs—nothing more. Our Care Points approach replaces one-size-fits-all tiers with transparent, personalized plans you can understand at a glance.');
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Discover Stage Senior\'s Care Points system - a transparent, point-based pricing model for additional services that eliminates surprise charges and ensures families are consulted before any care plan changes.';
+      meta.content = 'Only pay for the care your loved one needs—nothing more. Our Care Points approach replaces one-size-fits-all tiers with transparent, personalized plans you can understand at a glance.';
       document.head.appendChild(meta);
     }
   }, []);
 
-  const carePointsPrinciples = [
+  const baseRents = {
+    private: 5770,
+    companion: 4890
+  };
+
+  const careExamples = [
     {
-      icon: <Shield className="w-8 h-8" />,
-      title: "No Surprise Charges",
-      description: "Every additional service has a clear, published point value. You'll know exactly what costs what before any service is provided.",
-      features: [
-        "Published pricing for all services",
-        "Transparent point values",
-        "No hidden fees or charges",
-        "Clear billing statements"
+      title: "Light Support",
+      subtitle: "A little help, most days",
+      points: 33,
+      services: [
+        "Bathing / showering — standby / safety supervision (1–2×/week) (~30 pts)",
+        "Dressing — buttons, zippers, compression stockings (~3 pts)"
+      ],
+      tierComparison: 'Many communities: billed as "Level 1" / "service tier," often $1,000+/mo.'
+    },
+    {
+      title: "Moderate Support",
+      subtitle: "Hands-on help with the morning routine",
+      points: 80,
+      services: [
+        "Hands-on dressing",
+        "Bathing setup & safety",
+        "Escorts to meals/activities"
       ]
     },
     {
-      icon: <Users className="w-8 h-8" />,
-      title: "Family Consultation",
-      description: "Changes to care plans only happen when care needs genuinely change, and families are always consulted in advance.",
-      features: [
-        "Advance notice of any changes",
-        "Family involvement in decisions",
-        "Care plan review meetings",
-        "Open communication channels"
+      title: "Enhanced Support",
+      subtitle: "Daily help plus continence & transfers",
+      points: 120,
+      services: [
+        "Bathing + dressing (hands-on)",
+        "Incontinence care",
+        "Assistance with transfers"
       ]
     },
     {
-      icon: <Clock className="w-8 h-8" />,
-      title: "Needs-Based Adjustments",
-      description: "Care Points only change when actual care needs change, ensuring fair and appropriate pricing for the care level required.",
-      features: [
-        "Regular care assessments",
-        "Evidence-based adjustments",
-        "Periodic care plan reviews",
-        "Justified pricing changes only"
-      ]
-    },
-    {
-      icon: <FileText className="w-8 h-8" />,
-      title: "Clear Documentation",
-      description: "Every Care Points adjustment is thoroughly documented with clear explanations and justifications provided to families.",
-      features: [
-        "Detailed care assessments",
-        "Written justifications",
-        "Progress documentation",
-        "Regular reporting to families"
+      title: "Comprehensive Support",
+      subtitle: "Full-coverage help, day and night",
+      points: 160,
+      services: [
+        "Incontinence care + transfers",
+        "Night safety checks",
+        "Memory cues & redirection"
       ]
     }
   ];
 
-  const serviceCategories = [
+  const comparisonBenefits = [
     {
-      category: "Personal Care Assistance",
-      description: "Support with activities of daily living",
-      services: [
-        { service: "Medication reminders", points: "1-2 points", frequency: "Per reminder" },
-        { service: "Assistance with bathing", points: "3-5 points", frequency: "Per assistance" },
-        { service: "Dressing assistance", points: "2-3 points", frequency: "Per assistance" },
-        { service: "Mobility assistance", points: "2-4 points", frequency: "As needed" }
-      ]
+      benefit: "Fairness & Transparency",
+      pointsBased: "You pay only for care actually provided.",
+      tieredLevels: "You often pay for bundled services you don't need."
     },
     {
-      category: "Health & Wellness Services",
-      description: "Medical and wellness support services",
-      services: [
-        { service: "Blood pressure monitoring", points: "1 point", frequency: "Per check" },
-        { service: "Diabetes management", points: "2-3 points", frequency: "Daily support" },
-        { service: "Wound care assistance", points: "3-4 points", frequency: "Per treatment" },
-        { service: "Physical therapy coordination", points: "2 points", frequency: "Per session" }
-      ]
+      benefit: "Flexibility as Needs Change",
+      pointsBased: "Plans adjust up or down as needs change.",
+      tieredLevels: "Small changes can jump you into a higher tier with a big price hike."
     },
     {
-      category: "Specialized Memory Care",
-      description: "Additional support for memory-related needs",
-      services: [
-        { service: "Enhanced supervision", points: "4-6 points", frequency: "Daily" },
-        { service: "Behavioral management", points: "3-5 points", frequency: "As needed" },
-        { service: "Memory care activities", points: "2-3 points", frequency: "Per program" },
-        { service: "Family consultation", points: "No charge", frequency: "Always included" }
-      ]
+      benefit: "Personalized Care",
+      pointsBased: "Every plan is custom-built.",
+      tieredLevels: "Broad categories feel cookie-cutter."
     },
     {
-      category: "Lifestyle Enhancement",
-      description: "Services to enrich daily living",
-      services: [
-        { service: "Laundry assistance", points: "1-2 points", frequency: "Per load" },
-        { service: "Shopping assistance", points: "2-3 points", frequency: "Per trip" },
-        { service: "Transportation coordination", points: "2-4 points", frequency: "Per appointment" },
-        { service: "Social engagement support", points: "1-2 points", frequency: "Per activity" }
-      ]
+      benefit: "Easier Family Conversations",
+      pointsBased: "Clear menu of services and points.",
+      tieredLevels: "Feels like pressure to accept unnecessary services."
+    },
+    {
+      benefit: "Predictability",
+      pointsBased: "Any increase is tied to a specific, visible change.",
+      tieredLevels: "Minor changes can cause large, unexpected increases."
+    },
+    {
+      benefit: "Competitive Differentiator",
+      pointsBased: "Transparent, fair, resident-centered.",
+      tieredLevels: "Tiers feel less flexible and less personal."
     }
   ];
 
-  const benefitStats = [
+  const preventionPrinciples = [
     {
-      stat: "100%",
-      description: "Transparent Pricing",
-      detail: "Every service has a published point value"
+      icon: <FileText className="w-6 h-6" />,
+      title: "Published Menu",
+      description: "You'll see every service and its point value in writing."
     },
     {
-      stat: "30 Days",
-      description: "Advance Notice",
-      detail: "Minimum notice for any care plan changes"
+      icon: <Bell className="w-6 h-6" />,
+      title: "Clear Triggers",
+      description: "Changes only happen when care truly changes (e.g., new daily assistance), not one-off favors."
     },
     {
-      stat: "Zero",
-      description: "Hidden Fees",
-      detail: "No surprise charges or undisclosed costs"
+      icon: <TrendingDown className="w-6 h-6" />,
+      title: "Right-Sizing",
+      description: "We aim to round down small fluctuations to avoid back-and-forth."
     },
     {
-      stat: "24/7",
-      description: "Family Access",
-      detail: "Open communication about care and pricing"
+      icon: <Eye className="w-6 h-6" />,
+      title: "Advance Notice",
+      description: "We discuss any change before it shows up on your bill."
+    }
+  ];
+
+  const faqs = [
+    {
+      question: "How do you determine the initial care points?",
+      answer: "A nurse-led assessment measures the exact supports your loved one needs. We build the plan with you."
+    },
+    {
+      question: "How often do points change?",
+      answer: "We reassess as needs change or at regular check-ins. You'll review and approve any adjustments first."
+    },
+    {
+      question: "What if my loved one improves—or has a temporary setback?",
+      answer: "Points go down when needs decrease. For short-term changes (e.g., post-hospital), we can set temporary plans and revisit."
+    },
+    {
+      question: "Is medication management billed separately?",
+      answer: "It's included as points like any other support. We'll show the exact point value and frequency."
+    },
+    {
+      question: "Will I be surprised by increases?",
+      answer: "No. We only change pricing when the plan changes, and we discuss it with you first."
+    },
+    {
+      question: "Can we get a written menu of services and points?",
+      answer: "Yes. We publish our menu and walk you through every line."
+    },
+    {
+      question: "Do you offer both Assisted Living and Memory Care?",
+      answer: "Yes—both use Care Points so your plan is always right-sized and transparent."
+    },
+    {
+      question: "What's my next step?",
+      answer: "Use the estimator for a ballpark, then book a Pricing Consult to get your precise plan."
     }
   ];
 
   const testimonials = [
     {
-      quote: "The Care Points system gave us complete transparency about Mom's care costs. No surprises, just clear pricing that made sense with her needs.",
-      author: "Jennifer K.",
-      community: "Golden Pond",
-      relationship: "Daughter of resident"
+      quote: "My grandma is so comfortable and loves it here",
+      author: "Austin D",
+      source: "From Google Review"
     },
     {
-      quote: "When Dad needed additional assistance, they explained exactly what it would cost and why. We were involved in every decision about his care plan.",
-      author: "Robert M.",
-      community: "The Gardens at Columbine",
-      relationship: "Son of resident"
+      quote: "Every step of the way, the staff were attentive to his needs. Most all his requests were fulfilled, making it very clear his safety and wellbeing were their foremost concern.",
+      author: "Sarah C",
+      source: "From Google Review"
     },
     {
-      quote: "I appreciate how they only charge for services Mom actually uses. The point system is fair and transparent - no nickel and diming.",
-      author: "Patricia L.",
-      community: "Stonebridge Senior",
-      relationship: "Daughter of resident"
+      quote: "I'm a home health nurse with Envision and I have to say this is one of the best communities I get to visit.",
+      author: "Amanda J",
+      source: "From Google Review"
     }
   ];
+
+  const calculateTotal = (points: number) => {
+    const careAmount = points * 20;
+    const baseRent = baseRents[selectedSuiteType];
+    return {
+      careAmount,
+      baseRent,
+      total: careAmount + baseRent
+    };
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -184,234 +226,304 @@ export default function CarePoints() {
       </div>
 
       {/* Hero Section */}
-      <PageHero
-        pagePath="/care-points"
-        defaultTitle="Care Points"
-        defaultSubtitle="Our revolutionary transparent pricing system for additional services"
-        defaultBackgroundImage="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=2000&q=80"
-      />
-
-      {/* What is Care Points Section */}
-      <section className="py-16 bg-white">
+      <section className="bg-gradient-to-br from-primary/10 via-primary/5 to-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="what-is-care-points-title">
-              What is the Care Points System?
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Care Points is our transparent, point-based pricing system that eliminates surprise charges 
-              and ensures families are always informed about additional care services and their costs.
+          <div className="text-center max-w-4xl mx-auto">
+            <Badge className="mb-4" data-testid="badge-care-points">Care Points vs Tiered Pricing</Badge>
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6" data-testid="hero-title">
+              Only Pay for the Care Your Loved One Needs—Nothing More
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8" data-testid="hero-description">
+              Our Care Points approach replaces one-size-fits-all tiers with transparent, personalized plans you can understand at a glance.
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {benefitStats.map((stat, index) => (
-              <Card key={index} className="text-center p-6 hover:shadow-lg transition-shadow" data-testid={`benefit-stat-${index}`}>
-                <CardContent className="pt-6">
-                  <div className="text-4xl font-bold text-primary mb-2" data-testid={`stat-number-${index}`}>
-                    {stat.stat}
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2" data-testid={`stat-title-${index}`}>
-                    {stat.description}
-                  </h3>
-                  <p className="text-sm text-muted-foreground" data-testid={`stat-detail-${index}`}>
-                    {stat.detail}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="bg-primary/5 rounded-xl p-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              <div>
-                <h3 className="text-2xl font-bold text-foreground mb-4" data-testid="how-it-works-title">
-                  How Care Points Work
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
-                    <div>
-                      <h4 className="font-semibold text-foreground">Assessment & Planning</h4>
-                      <p className="text-muted-foreground text-sm">We assess each resident's individual care needs and create a personalized care plan.</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
-                    <div>
-                      <h4 className="font-semibold text-foreground">Transparent Pricing</h4>
-                      <p className="text-muted-foreground text-sm">Each additional service has a published point value that translates to clear pricing.</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
-                    <div>
-                      <h4 className="font-semibold text-foreground">Family Involvement</h4>
-                      <p className="text-muted-foreground text-sm">Any changes to care needs require family consultation and approval before implementation.</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">4</div>
-                    <div>
-                      <h4 className="font-semibold text-foreground">Clear Billing</h4>
-                      <p className="text-muted-foreground text-sm">Monthly statements show exactly which services were provided and their point values.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <AlertCircle className="w-12 h-12 text-amber-500 mb-4" />
-                <h4 className="text-lg font-semibold text-foreground mb-2">No Surprise Promise</h4>
-                <p className="text-muted-foreground text-sm mb-4">
-                  We guarantee that no additional charges will appear on your statement without prior family discussion and approval.
-                </p>
-                <Badge variant="secondary" className="bg-amber-100 text-amber-800">
-                  <Shield className="w-3 h-3 mr-1" />
-                  Family Protection Guarantee
-                </Badge>
-              </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" data-testid="button-use-calculator">
+                <Calculator className="w-5 h-5 mr-2" />
+                Use our Estimate Calculator
+              </Button>
+              <Button size="lg" variant="outline" data-testid="button-schedule-consult">
+                <Calendar className="w-5 h-5 mr-2" />
+                Schedule a Pricing Consult
+              </Button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Care Points Principles */}
+      {/* What Are Care Points */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-12" data-testid="what-are-care-points-title">
+            What Are Care Points?
+          </h2>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div>
+              <h3 className="text-xl font-bold text-foreground mb-4">Plain-English definition</h3>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                Care Points are a simple way to price only the services your loved one actually receives. Each service (like medication management, bathing, or mobility support) is assigned a small point value. Points add up to a daily total, which translates into your monthly care cost.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="text-xl font-bold text-foreground mb-4">Why this matters</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                You're never pushed into a broad "tier" that includes services you don't need. Your plan can move up or down with your loved one's needs—and you'll always see exactly why.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison Table */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="principles-title">
-              Care Points Core Principles
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Our Care Points system is built on four fundamental principles that ensure transparency, 
-              fairness, and family involvement in all care decisions.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {carePointsPrinciples.map((principle, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow" data-testid={`principle-card-${index}`}>
-                <CardHeader>
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="p-3 rounded-lg bg-primary/10 text-primary">
-                      {principle.icon}
-                    </div>
-                    <CardTitle className="text-xl" data-testid={`principle-title-${index}`}>
-                      {principle.title}
-                    </CardTitle>
-                  </div>
-                  <p className="text-muted-foreground" data-testid={`principle-description-${index}`}>
-                    {principle.description}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {principle.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start gap-2" data-testid={`principle-feature-${index}-${featureIndex}`}>
-                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-1" />
-                        <span className="text-sm text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse bg-white rounded-lg shadow-sm">
+              <thead>
+                <tr className="bg-primary text-primary-foreground">
+                  <th className="p-4 text-left font-semibold">Benefit</th>
+                  <th className="p-4 text-left font-semibold">Points-Based System (Us)</th>
+                  <th className="p-4 text-left font-semibold">Tiered Levels (Many Communities)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonBenefits.map((item, index) => (
+                  <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"} data-testid={`comparison-row-${index}`}>
+                    <td className="p-4 font-semibold text-foreground">{item.benefit}</td>
+                    <td className="p-4 text-muted-foreground">{item.pointsBased}</td>
+                    <td className="p-4 text-muted-foreground">{item.tieredLevels}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
 
-      {/* Service Categories & Pricing */}
+      {/* Pricing Examples */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="service-categories-title">
-              Service Categories & Point Values
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Below are examples of our service categories and their typical point values. 
-              Actual point values are determined based on individual assessments and care needs.
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-4" data-testid="pricing-examples-title">
+            What monthly care looks like—simple, real examples
+          </h2>
+          <p className="text-center text-muted-foreground mb-12">Scroll to see examples</p>
+
+          <Tabs defaultValue="assisted-living" className="mb-8">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2" data-testid="care-type-tabs">
+              <TabsTrigger value="assisted-living" data-testid="tab-assisted-living">Assisted Living</TabsTrigger>
+              <TabsTrigger value="memory-care" data-testid="tab-memory-care">Memory Care</TabsTrigger>
+            </TabsList>
+          </Tabs>
+
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Suite Type</h3>
+            <div className="flex gap-4">
+              <Button
+                variant={selectedSuiteType === "private" ? "default" : "outline"}
+                onClick={() => setSelectedSuiteType("private")}
+                data-testid="button-private-suite"
+              >
+                Private Suite
+              </Button>
+              <Button
+                variant={selectedSuiteType === "companion" ? "default" : "outline"}
+                onClick={() => setSelectedSuiteType("companion")}
+                data-testid="button-companion-suite"
+              >
+                Companion Suite
+              </Button>
+            </div>
+            <p className="text-sm text-muted-foreground mt-4">
+              Base Rent (Assisted Living, {selectedSuiteType === "private" ? "Private" : "Companion"} Suite): ${baseRents[selectedSuiteType].toLocaleString()} / month
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {serviceCategories.map((category, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow" data-testid={`service-category-${index}`}>
-                <CardHeader>
-                  <CardTitle className="text-xl text-primary" data-testid={`category-title-${index}`}>
-                    {category.category}
-                  </CardTitle>
-                  <p className="text-muted-foreground text-sm" data-testid={`category-description-${index}`}>
-                    {category.description}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {category.services.map((service, serviceIndex) => (
-                      <div key={serviceIndex} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg" data-testid={`service-item-${index}-${serviceIndex}`}>
-                        <div className="flex-1">
-                          <p className="font-medium text-foreground text-sm" data-testid={`service-name-${index}-${serviceIndex}`}>
-                            {service.service}
-                          </p>
-                          <p className="text-xs text-muted-foreground" data-testid={`service-frequency-${index}-${serviceIndex}`}>
-                            {service.frequency}
-                          </p>
-                        </div>
-                        <Badge variant="outline" className="text-xs" data-testid={`service-points-${index}-${serviceIndex}`}>
-                          {service.points}
-                        </Badge>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {careExamples.map((example, index) => {
+              const pricing = calculateTotal(example.points);
+              return (
+                <Card key={index} className="hover:shadow-lg transition-shadow" data-testid={`care-example-${index}`}>
+                  <CardHeader>
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <CardTitle className="text-xl mb-1" data-testid={`example-title-${index}`}>
+                          {example.title}
+                        </CardTitle>
+                        <p className="text-sm text-muted-foreground italic" data-testid={`example-subtitle-${index}`}>
+                          "{example.subtitle}"
+                        </p>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                      <Badge variant="secondary" className="text-lg px-3 py-1" data-testid={`example-points-${index}`}>
+                        ~{example.points} pts
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <ul className="space-y-2">
+                      {example.services.map((service, serviceIndex) => (
+                        <li key={serviceIndex} className="flex items-start gap-2" data-testid={`example-service-${index}-${serviceIndex}`}>
+                          <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-1" />
+                          <span className="text-sm text-muted-foreground">{service}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {example.tierComparison && (
+                      <p className="text-xs text-amber-700 bg-amber-50 p-2 rounded" data-testid={`example-comparison-${index}`}>
+                        {example.tierComparison}
+                      </p>
+                    )}
+
+                    <div className="pt-4 border-t space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Care (~{example.points} pts × $20)</span>
+                        <span className="font-semibold">${pricing.careAmount.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Base Rent (Assisted Living, {selectedSuiteType === "private" ? "Private" : "Companion"} Suite)</span>
+                        <span className="font-semibold">${pricing.baseRent.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                        <span>Total</span>
+                        <span className="text-primary" data-testid={`example-total-${index}`}>
+                          ${pricing.total.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
-          <div className="mt-12 p-6 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
-              <div>
-                <h3 className="text-lg font-semibold text-blue-900 mb-2">Important Note About Pricing</h3>
-                <p className="text-blue-800 text-sm leading-relaxed">
-                  These are example point values for illustration purposes. Actual care needs and point values 
-                  are determined through individual assessments with input from residents, families, and our care team. 
-                  All pricing is discussed and agreed upon before any services begin.
-                </p>
-              </div>
-            </div>
+          <div className="mt-12 bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <p className="text-sm text-blue-900">
+              <strong>Figures shown are examples.</strong> Costs may change and are general estimates when published. Your exact plan is confirmed after a professional assessment.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Family Testimonials */}
-      <section className="py-16 bg-primary text-primary-foreground">
+      {/* Why Points Beat Tiers */}
+      <section className="py-16 bg-gradient-to-br from-primary to-primary/80 text-primary-foreground">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6" data-testid="testimonials-title">
-              What Families Say About Care Points
-            </h2>
-            <p className="text-xl text-primary-foreground/90 max-w-3xl mx-auto">
-              Hear from families who appreciate the transparency and fairness of our Care Points system.
-            </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12" data-testid="why-points-beat-tiers-title">
+            Why points beat tiers
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center" data-testid="beat-tiers-0">
+              <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
+              <h3 className="text-xl font-bold mb-2">No cliff pricing</h3>
+              <p className="text-primary-foreground/90">
+                Care changes in $20 steps, not $500–$1,000 tier jumps.
+              </p>
+            </div>
+            
+            <div className="text-center" data-testid="beat-tiers-1">
+              <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
+              <h3 className="text-xl font-bold mb-2">Resident-centered</h3>
+              <p className="text-primary-foreground/90">
+                Points follow recurring needs and can adjust up or down.
+              </p>
+            </div>
+            
+            <div className="text-center" data-testid="beat-tiers-2">
+              <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
+              <h3 className="text-xl font-bold mb-2">Transparent math</h3>
+              <p className="text-primary-foreground/90">
+                Total = Base Rent + (Points × $20). That's it.
+              </p>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
+            <Button size="lg" variant="secondary" data-testid="button-schedule-visit">
+              <Calendar className="w-5 h-5 mr-2" />
+              Schedule a Visit
+            </Button>
+            <Button size="lg" variant="outline" className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary" data-testid="button-pricing-guide">
+              <FileText className="w-5 h-5 mr-2" />
+              Open Pricing Guide
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Not Nickel-and-Diming */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-4" data-testid="prevention-title">
+            Not Nickel-and-Diming—Here's How We Prevent It
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+            {preventionPrinciples.map((principle, index) => (
+              <Card key={index} className="text-center hover:shadow-lg transition-shadow" data-testid={`prevention-principle-${index}`}>
+                <CardContent className="pt-6">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 text-primary rounded-full mb-4">
+                    {principle.icon}
+                  </div>
+                  <h3 className="font-bold text-foreground mb-2" data-testid={`prevention-title-${index}`}>
+                    {principle.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground" data-testid={`prevention-description-${index}`}>
+                    {principle.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-12" data-testid="faq-title">
+            Frequently asked questions
+          </h2>
+          
+          <Accordion type="single" collapsible className="space-y-4">
+            {faqs.map((faq, index) => (
+              <AccordionItem key={index} value={`item-${index}`} className="bg-white rounded-lg border px-6" data-testid={`faq-item-${index}`}>
+                <AccordionTrigger className="text-left font-semibold hover:no-underline" data-testid={`faq-question-${index}`}>
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground" data-testid={`faq-answer-${index}`}>
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="testimonials-title">
+              Don't just take our word for it
+            </h2>
+            <p className="text-xl text-muted-foreground">Real reviews from our community members</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground" data-testid={`testimonial-${index}`}>
-                <CardContent className="p-6">
-                  <Quote className="w-6 h-6 text-primary-foreground/60 mb-4" />
-                  <blockquote className="text-sm mb-4 italic" data-testid={`testimonial-quote-${index}`}>
-                    "{testimonial.quote}"
+              <Card key={index} className="hover:shadow-lg transition-shadow" data-testid={`testimonial-${index}`}>
+                <CardContent className="pt-6">
+                  <Quote className="w-8 h-8 text-primary/40 mb-4" />
+                  <blockquote className="text-muted-foreground mb-4" data-testid={`testimonial-quote-${index}`}>
+                    {testimonial.quote}
                   </blockquote>
-                  <footer className="text-xs">
-                    <div className="font-semibold" data-testid={`testimonial-author-${index}`}>
+                  <footer className="text-sm">
+                    <div className="font-semibold text-foreground" data-testid={`testimonial-author-${index}`}>
                       {testimonial.author}
                     </div>
-                    <div className="text-primary-foreground/80" data-testid={`testimonial-relationship-${index}`}>
-                      {testimonial.relationship}
-                    </div>
-                    <div className="text-primary-foreground/60" data-testid={`testimonial-community-${index}`}>
-                      {testimonial.community}
+                    <div className="text-muted-foreground text-xs" data-testid={`testimonial-source-${index}`}>
+                      {testimonial.source}
                     </div>
                   </footer>
                 </CardContent>
@@ -421,41 +533,38 @@ export default function CarePoints() {
         </div>
       </section>
 
-      {/* Contact CTA */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="contact-cta-title">
-            Learn More About Our Care Points System
+      {/* Final CTA */}
+      <section className="py-16 bg-gradient-to-br from-primary/10 to-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="final-cta-title">
+            Schedule a Pricing Consult
           </h2>
-          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            Schedule a consultation to learn how our transparent Care Points system can provide 
-            peace of mind for your family while ensuring your loved one receives the exact care they need.
+          <p className="text-xl text-muted-foreground mb-8">
+            You have found a safe and secure place to call home. Take the next steps to make it yours.
           </p>
+          
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" asChild data-testid="button-schedule-consultation">
+            <Button size="lg" asChild data-testid="button-schedule-your-visit">
               <Link href="/communities">
-                <Calendar className="w-5 h-5 mr-2" />
-                Schedule a Consultation
+                Schedule Your Visit
+                <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
             </Button>
-            <Button variant="outline" size="lg" asChild data-testid="button-call-now">
-              <a href="tel:+1-970-444-4689">
-                <Phone className="w-5 h-5 mr-2" />
-                Call (970) 444-4689
-              </a>
+            <Button size="lg" variant="outline" asChild data-testid="button-virtual-tour">
+              <Link href="/communities">
+                Virtual Tour
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Link>
             </Button>
           </div>
           
-          <div className="mt-12 pt-8 border-t border-gray-100">
-            <p className="text-muted-foreground mb-4">
-              <strong>Have questions about Care Points pricing?</strong><br />
-              Our care coordinators can explain exactly how the system works and provide 
-              personalized information about care costs for your specific situation.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Email us at <a href="mailto:info@stagesenior.com" className="text-primary hover:underline">info@stagesenior.com</a> 
-              or visit us at 8100 E Arapahoe Road, Suite 208, Centennial, CO 80112
-            </p>
+          <div className="mt-8">
+            <Button variant="link" size="lg" asChild data-testid="button-call-now">
+              <a href="tel:+1-970-444-4689" className="text-xl">
+                <Phone className="w-5 h-5 mr-2" />
+                (970) 444-4689
+              </a>
+            </Button>
           </div>
         </div>
       </section>
