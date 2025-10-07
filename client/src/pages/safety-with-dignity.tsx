@@ -722,7 +722,7 @@ export default function SafetyWithDignity() {
               asChild
               data-testid="button-schedule-visit"
             >
-              <Link href="/communities/the-gardens-on-quail">
+              <Link href="/properties/the-gardens-on-quail">
                 Schedule a Visit
               </Link>
             </Button>

@@ -575,7 +575,7 @@ export default function FitnessTherapy() {
               data-testid="button-schedule-tour"
               asChild
             >
-              <Link href={community ? `/communities/${community.slug}#tour` : "#"}>
+              <Link href={community ? `/properties/${community.slug}#tour` : "#"}>
                 <Calendar className="w-5 h-5" />
                 Schedule a Tour {community && `at ${community.name}`}
                 <ArrowRight className="w-5 h-5" />

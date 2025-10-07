@@ -381,7 +381,7 @@ export default function Team() {
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
                     <BreadcrumbLink asChild>
-                      <Link href={`/communities/${communitySlug}`} data-testid="breadcrumb-community">
+                      <Link href={`/properties/${communitySlug}`} data-testid="breadcrumb-community">
                         {displayCommunityName}
                       </Link>
                     </BreadcrumbLink>
