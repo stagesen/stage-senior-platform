@@ -131,24 +131,7 @@ export default function LeadCaptureForm({
   };
 
   const renderSocialProof = () => {
-    if (!showSocialProof) return null;
-
-    return (
-      <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground mb-4">
-        <div className="flex items-center gap-1">
-          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-          <span className="font-medium">4.8</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <CheckCircle className="w-4 h-4 text-green-600" />
-          <span>98% Satisfaction</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Shield className="w-4 h-4 text-blue-600" />
-          <span>Licensed & Insured</span>
-        </div>
-      </div>
-    );
+    return null;
   };
 
   const renderStep1 = () => (
@@ -189,9 +172,6 @@ export default function LeadCaptureForm({
                 data-testid="input-lead-phone"
               />
             </FormControl>
-            <FormDescription className="text-xs">
-              We'll call you within 10 minutes (usually much sooner!)
-            </FormDescription>
             <FormMessage className="text-sm" />
           </FormItem>
         )}
@@ -309,14 +289,6 @@ export default function LeadCaptureForm({
             {communityName}
           </Badge>
         )}
-        {urgencyText && (
-          <div className={`flex items-center gap-2 text-sm font-medium ${
-            variant === "sidebar" ? "text-yellow-200" : "text-orange-600"
-          }`}>
-            <Clock className="w-4 h-4" />
-            {urgencyText}
-          </div>
-        )}
       </CardHeader>
 
       <CardContent className="space-y-6">
@@ -338,24 +310,6 @@ export default function LeadCaptureForm({
             {isStep2 && renderStep2()}
           </form>
         </Form>
-
-        {/* Trust indicators */}
-        <div className={`flex items-center justify-center gap-4 text-xs ${
-          variant === "sidebar" ? "text-white/70" : "text-muted-foreground"
-        }`}>
-          <div className="flex items-center gap-1">
-            <Phone className="w-3 h-3" />
-            <span>10-min response</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Shield className="w-3 h-3" />
-            <span>No pressure</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <CheckCircle className="w-3 h-3" />
-            <span>Free consultation</span>
-          </div>
-        </div>
       </CardContent>
     </Card>
   );
