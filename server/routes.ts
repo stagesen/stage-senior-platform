@@ -49,6 +49,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication - referenced by javascript_auth_all_persistance integration
   setupAuth(app);
   
+  // Diagnostic endpoint for debugging production issues
+  app.get("/api/health", async (_req, res) => {
+    try {
+      // Check database connectivity
+      const dbCheck = await storage.getUserCount().then(() => true).catch(() => false);
+      
+      // Check session secret in production
+      const sessionSecretSet = process.env.NODE_ENV !== "production" || !!process.env.SESSION_SECRET;
+      
+      res.json({ 
+        status: "ok",
+        database: dbCheck ? "connected" : "error",
+        sessionSecret: sessionSecretSet ? "configured" : "missing",
+        environment: process.env.NODE_ENV || "development"
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        status: "error",
+        message: "Health check failed"
+      });
+    }
+  });
+  
   // Community routes
   app.get("/api/communities", async (req, res) => {
     try {

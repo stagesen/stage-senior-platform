@@ -127,12 +127,24 @@ export function setupAuth(app: Express) {
 
   app.post("/api/login", (req, res, next) => {
     passport.authenticate("local", (err: any, user: SelectUser | false, info: any) => {
-      if (err) return next(err);
+      if (err) {
+        console.error("Login authentication error:", err);
+        return res.status(500).json({ 
+          message: "Authentication error occurred",
+          error: process.env.NODE_ENV === "development" ? err.message : undefined
+        });
+      }
       if (!user) {
         return res.status(401).json({ message: "Invalid username or password" });
       }
       req.login(user, (err) => {
-        if (err) return next(err);
+        if (err) {
+          console.error("Login session error:", err);
+          return res.status(500).json({ 
+            message: "Session error occurred",
+            error: process.env.NODE_ENV === "development" ? err.message : undefined
+          });
+        }
         const userWithoutPassword = { ...user, password: undefined };
         res.status(200).json(userWithoutPassword);
       });
