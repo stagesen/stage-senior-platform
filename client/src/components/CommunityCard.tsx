@@ -69,7 +69,7 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
         <div className="grid grid-cols-1 md:grid-cols-5 gap-0">
           {/* Image - Better aspect ratio */}
           <div className="md:col-span-2 relative">
-            <Link href={`/communities/${community.slug}`}>
+            <Link href={`/properties/${community.slug}`}>
               <div className="aspect-[4/3] md:aspect-auto md:h-full">
                 <img
                   src={heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600`}
@@ -85,7 +85,7 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
           <div className="md:col-span-3 p-6 md:p-8">
             <div className="flex justify-between items-start mb-3">
               <div>
-                <Link href={`/communities/${community.slug}`}>
+                <Link href={`/properties/${community.slug}`}>
                   <h3 className="text-xl font-bold text-foreground mb-1 hover:text-primary transition-colors cursor-pointer" data-testid={`name-${community.slug}`}>
                     {community.name}
                   </h3>
@@ -195,7 +195,7 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
                 asChild
                 data-testid={`button-details-${community.slug}`}
               >
-                <Link href={`/communities/${community.slug}`}>
+                <Link href={`/properties/${community.slug}`}>
                   <Info className="w-4 h-4 mr-2" />
                   View Full Details
                   <ChevronRight className="w-4 h-4 ml-2" />
