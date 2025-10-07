@@ -1854,7 +1854,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const importData = req.body;
       const results: any = {};
       
-      // Import in order of dependencies
+      // STEP 1: Clear existing data (except users)
+      // Delete in reverse order of dependencies to avoid foreign key conflicts
+      
+      // Clear dependent entities first
+      const galleries = await storage.getGalleries();
+      for (const gallery of galleries) {
+        await storage.deleteGallery(gallery.id);
+      }
+      
+      const events = await storage.getEvents();
+      for (const event of events) {
+        await storage.deleteEvent(event.id);
+      }
+      
+      const faqs = await storage.getFaqs();
+      for (const faq of faqs) {
+        await storage.deleteFaq(faq.id);
+      }
+      
+      const testimonials = await storage.getTestimonials();
+      for (const testimonial of testimonials) {
+        await storage.deleteTestimonial(testimonial.id);
+      }
+      
+      const teamMembers = await storage.getAllTeamMembers();
+      for (const member of teamMembers) {
+        await storage.deleteTeamMember(member.id);
+      }
+      
+      const emailRecipients = await storage.getEmailRecipients();
+      for (const recipient of emailRecipients) {
+        await storage.deleteEmailRecipient(recipient.id);
+      }
+      
+      const pageHeroes = await storage.getPageHeroes();
+      for (const hero of pageHeroes) {
+        await storage.deletePageHero(hero.id);
+      }
+      
+      const floorPlans = await storage.getFloorPlans();
+      for (const plan of floorPlans) {
+        await storage.deleteFloorPlan(plan.id);
+      }
+      
+      const homepageSections = await storage.getHomepageSections();
+      for (const section of homepageSections) {
+        await storage.deleteHomepageSection(section.id);
+      }
+      
+      // Clear community-dependent entities
+      const communityFeatures = await storage.getAllCommunityFeatures();
+      for (const feature of communityFeatures) {
+        await storage.deleteCommunityFeature(feature.id);
+      }
+      
+      const communityHighlights = await storage.getAllCommunityHighlights();
+      for (const highlight of communityHighlights) {
+        await storage.deleteCommunityHighlight(highlight.id);
+      }
+      
+      // Clear communities and their relationships
+      const communities = await storage.getCommunities();
+      for (const community of communities) {
+        await storage.setCommunityCareTypes(community.id, []); // Clear care type relationships
+        await storage.setCommunityAmenities(community.id, []); // Clear amenity relationships
+        await storage.deleteCommunity(community.id);
+      }
+      
+      // Clear standalone entities
+      const careTypes = await storage.getCareTypes();
+      for (const careType of careTypes) {
+        await storage.deleteCareType(careType.id);
+      }
+      
+      const amenities = await storage.getAmenities();
+      for (const amenity of amenities) {
+        await storage.deleteAmenity(amenity.id);
+      }
+      
+      // STEP 2: Import new data in order of dependencies
       // 1. First import standalone entities
       if (importData.careTypes) {
         for (const careType of importData.careTypes) {

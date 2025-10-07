@@ -6856,7 +6856,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 <li>Development and production databases are separate</li>
                 <li>To sync to production, you must be on the PRODUCTION admin panel</li>
                 <li>Export creates a JSON file with all your data</li>
-                <li>Import will add data to the current database</li>
+                <li><strong>Import will REPLACE all existing data</strong> (except user accounts)</li>
               </ul>
             </div>
 
@@ -6938,7 +6938,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         const data = JSON.parse(text);
                         
                         // Confirm before import
-                        if (!window.confirm("Are you sure you want to import this data? This will add all data from the file to the current database.")) {
+                        if (!window.confirm("⚠️ WARNING: This will REPLACE all existing data (except user accounts).\n\nAre you sure you want to continue?")) {
                           return;
                         }
                         
@@ -6959,7 +6959,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         const result = await response.json();
                         toast({
                           title: "Import Successful",
-                          description: `Database imported successfully. ${JSON.stringify(result.results)}`,
+                          description: `Database replaced successfully. All data has been updated.`,
                         });
                         
                         // Clear file input
