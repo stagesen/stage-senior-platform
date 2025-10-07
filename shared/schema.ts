@@ -339,7 +339,9 @@ export const testimonials = pgTable("testimonials", {
   authorName: varchar("author_name", { length: 255 }).notNull(),
   authorRelation: varchar("author_relation", { length: 100 }),
   content: text("content").notNull(),
+  highlight: text("highlight"), // Key quote to highlight
   rating: integer("rating"),
+  imageId: varchar("image_id", { length: 255 }).references(() => images.id), // Author image
   featured: boolean("featured").default(false),
   approved: boolean("approved").default(false),
   sortOrder: integer("sort_order").default(0),

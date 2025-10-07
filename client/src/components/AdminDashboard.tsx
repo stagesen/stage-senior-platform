@@ -1386,7 +1386,9 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       authorName: "",
       authorRelation: "",
       content: "",
+      highlight: "",
       rating: 5,
+      imageId: undefined,
       communityId: undefined,
       featured: false,
       approved: true,
@@ -3897,6 +3899,42 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     <FormControl>
                       <Textarea {...field} rows={6} data-testid="textarea-testimonial-content" />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={testimonialForm.control}
+                name="highlight"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Highlight Quote</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g., It truly feels like family" data-testid="input-testimonial-highlight" />
+                    </FormControl>
+                    <FormDescription>
+                      A short, impactful quote to highlight from the testimonial
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={testimonialForm.control}
+                name="imageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Author Image</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        imageId={field.value}
+                        onImageChange={field.onChange}
+                        placeholder="Upload author photo"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Upload a photo of the testimonial author
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

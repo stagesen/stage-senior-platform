@@ -8,92 +8,98 @@ import {
   CarouselItem,
   type CarouselApi,
 } from "@/components/ui/carousel";
+import { useQuery } from "@tanstack/react-query";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import type { Testimonial as TestimonialType, Community } from "@shared/schema";
 
-interface Testimonial {
-  id: number;
-  name: string;
-  relation: string;
-  community: string;
-  rating: number;
-  text: string;
-  imageUrl: string;
-  date: string;
-  highlight?: string;
+interface EnhancedTestimonial extends TestimonialType {
+  communityName?: string;
+  resolvedImageUrl?: string | null;
 }
 
-const testimonials: Testimonial[] = [
-  {
-    id: 1,
-    name: "Resident's Son",
-    relation: "Son of Resident",
-    community: "Stonebridge Senior",
-    rating: 5,
-    text: "The Stonebridge staff are an extremely professional care team and has the best management a family could ask for (which is almost unheard of in this industry)!!",
-    highlight: "The best management a family could ask for",
-    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&h=150&auto=format&fit=crop",
-    date: "Recent"
-  },
-  {
-    id: 2,
-    name: "Family Member",
-    relation: "Daughter of Resident",
-    community: "Stonebridge Senior",
-    rating: 5,
-    text: "My father has made some great friends, loves the meals, and raves about the activities. The seniors have structure here and a bustling social life – if they choose to. We are so blessed to have found Stonebridge for his new home.",
-    highlight: "We are so blessed to have found Stonebridge",
-    imageUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150&h=150&auto=format&fit=crop",
-    date: "Recent"
-  },
-  {
-    id: 3,
-    name: "Resident Family",
-    relation: "Family of Resident",
-    community: "Golden Pond",
-    rating: 5,
-    text: "Golden Pond has exceeded our expectations in every way. With over 98% resident satisfaction, it's clear why families trust them. The continuity of care means our loved one can stay here through all stages of aging.",
-    highlight: "Exceeded our expectations in every way",
-    imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&h=150&auto=format&fit=crop",
-    date: "Recent"
-  },
-  {
-    id: 4,
-    name: "Family Member",
-    relation: "Family of Resident",
-    community: "The Gardens at Columbine",
-    rating: 5,
-    text: "The staff here are so kind and courteous. The community and grounds are absolutely lovely. Many staff members have been here since the community opened, which shows how much they care. It truly feels like family.",
-    highlight: "It truly feels like family",
-    imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=150&h=150&auto=format&fit=crop",
-    date: "Recent"
-  },
-  {
-    id: 5,
-    name: "Resident's Family",
-    relation: "Family of Memory Care Resident",
-    community: "The Gardens at Columbine",
-    rating: 5,
-    text: "The memory care building is one of the most beautiful and thoughtfully designed memory care communities in the state. The 2 acres of gardens with water features provide such a therapeutic environment for our loved one.",
-    highlight: "The most beautiful and thoughtfully designed",
-    imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150&h=150&auto=format&fit=crop",
-    date: "Recent"
-  },
-  {
-    id: 6,
-    name: "Family Member",
-    relation: "Family of Resident",
-    community: "The Gardens on Quail",
-    rating: 5,
-    text: "The intergenerational programs and community partnerships make this place special. Residents regularly engage with local schools, churches, and businesses. It's not just a place to live – it's truly part of the Arvada community.",
-    highlight: "Truly part of the Arvada community",
-    imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&h=150&auto=format&fit=crop",
-    date: "Recent"
-  }
-];
+// Component for individual testimonial with image resolution
+function TestimonialCard({ testimonial }: { testimonial: EnhancedTestimonial }) {
+  const resolvedImageUrl = useResolveImageUrl(testimonial.imageId);
+  
+  // Fallback to a default avatar if no image
+  const imageUrl = resolvedImageUrl || 
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.authorName)}&background=random&size=150`;
+  
+  return (
+    <Card className="h-full hover:shadow-2xl transition-all duration-300 border-primary/10 bg-white/80 backdrop-blur-sm">
+      <CardContent className="p-6 flex flex-col h-full">
+        {/* Star Rating */}
+        <div className="flex gap-1 mb-4">
+          {[...Array(5)].map((_, i) => (
+            <Star
+              key={i}
+              className={`w-4 h-4 ${
+                i < (testimonial.rating || 5)
+                  ? "fill-primary text-primary"
+                  : "text-gray-300"
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Quote Icon */}
+        <Quote className="w-10 h-10 text-primary/20 mb-3" />
+
+        {/* Testimonial Text */}
+        <p className="text-foreground leading-relaxed mb-6 flex-grow">
+          {testimonial.content}
+        </p>
+
+        {/* Highlight */}
+        {testimonial.highlight && (
+          <div className="bg-primary/10 text-primary px-4 py-3 rounded-lg mb-6 font-semibold text-center">
+            "{testimonial.highlight}"
+          </div>
+        )}
+
+        {/* Author */}
+        <div className="flex items-center gap-4 pt-4 border-t">
+          <img
+            src={imageUrl}
+            alt={testimonial.authorName}
+            className="w-12 h-12 rounded-full object-cover"
+          />
+          <div className="flex-grow">
+            <div className="font-semibold text-foreground">{testimonial.authorName}</div>
+            <div className="text-sm text-muted-foreground">{testimonial.authorRelation}</div>
+            <div className="text-xs text-primary">{testimonial.communityName}</div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function TestimonialSection() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
+
+  // Fetch testimonials from API
+  const { data: testimonials = [], isLoading } = useQuery<EnhancedTestimonial[]>({
+    queryKey: ["/api/testimonials", { featured: true, approved: true }],
+    queryFn: async () => {
+      const response = await fetch("/api/testimonials?featured=true&approved=true");
+      if (!response.ok) throw new Error("Failed to fetch testimonials");
+      return response.json();
+    },
+  });
+
+  // Fetch communities to get names
+  const { data: communities = [] } = useQuery<Community[]>({
+    queryKey: ["/api/communities"],
+  });
+
+  // Enhance testimonials with community names
+  const enhancedTestimonials = testimonials.map(testimonial => ({
+    ...testimonial,
+    communityName: communities.find(c => c.id === testimonial.communityId)?.name || "Stage Senior"
+  }));
 
   useEffect(() => {
     if (!api) return;
@@ -135,6 +141,24 @@ export default function TestimonialSection() {
     setAutoPlay(false);
   };
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <section className="py-20 bg-gradient-to-br from-white via-primary/5 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-muted-foreground">Loading testimonials...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Don't show the section if no testimonials
+  if (enhancedTestimonials.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-20 bg-gradient-to-br from-primary/5 via-white to-secondary/5 relative overflow-hidden">
       {/* Decorative elements */}
@@ -170,51 +194,12 @@ export default function TestimonialSection() {
             className="w-full"
           >
             <CarouselContent className="-ml-4">
-              {testimonials.map((testimonial, index) => (
+              {enhancedTestimonials.map((testimonial, index) => (
                 <CarouselItem key={testimonial.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
                   <div className={`transition-all duration-500 ${
                     current === index ? 'scale-105' : 'scale-95 opacity-75'
                   }`}>
-                    <Card className="h-full hover:shadow-2xl transition-shadow duration-300 border-0 bg-white/80 backdrop-blur-sm">
-                      <CardContent className="p-6 flex flex-col h-full">
-                        {/* Rating */}
-                        <div className="flex items-center gap-1 mb-4">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                          ))}
-                          <span className="text-sm text-muted-foreground ml-2">{testimonial.date}</span>
-                        </div>
-
-                        {/* Quote Icon */}
-                        <Quote className="w-10 h-10 text-primary/20 mb-3" />
-
-                        {/* Testimonial Text */}
-                        <p className="text-foreground leading-relaxed mb-6 flex-grow">
-                          {testimonial.text}
-                        </p>
-
-                        {/* Highlight */}
-                        {testimonial.highlight && (
-                          <div className="bg-primary/10 text-primary px-4 py-3 rounded-lg mb-6 font-semibold text-center">
-                            "{testimonial.highlight}"
-                          </div>
-                        )}
-
-                        {/* Author */}
-                        <div className="flex items-center gap-4 pt-4 border-t">
-                          <img
-                            src={testimonial.imageUrl}
-                            alt={testimonial.name}
-                            className="w-12 h-12 rounded-full object-cover"
-                          />
-                          <div className="flex-grow">
-                            <div className="font-semibold text-foreground">{testimonial.name}</div>
-                            <div className="text-sm text-muted-foreground">{testimonial.relation}</div>
-                            <div className="text-xs text-primary">{testimonial.community}</div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <TestimonialCard testimonial={testimonial} />
                   </div>
                 </CarouselItem>
               ))}
@@ -240,7 +225,7 @@ export default function TestimonialSection() {
 
         {/* Dot Indicators */}
         <div className="flex justify-center gap-2 mt-8">
-          {testimonials.map((_, index) => (
+          {enhancedTestimonials.map((_, index) => (
             <button
               key={index}
               onClick={() => scrollTo(index)}
