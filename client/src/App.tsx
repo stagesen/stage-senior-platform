@@ -41,7 +41,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 
 function Router() {
   // Check if we're on a community detail page
-  const [isCommunityDetail] = useRoute("/communities/:slug");
+  const [isCommunityDetail] = useRoute("/properties/:slug");
   // Check if we're on the in-home care page
   const [isInHomeCare] = useRoute("/in-home-care");
   
@@ -54,7 +54,7 @@ function Router() {
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/communities" component={Communities} />
-          <Route path="/communities/:slug" component={CommunityDetail} />
+          <Route path="/properties/:slug" component={CommunityDetail} />
           <Route path="/events" component={Events} />
           <Route path="/team" component={Team} />
           <Route path="/team/:slug" component={TeamMember} />
