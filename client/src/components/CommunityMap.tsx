@@ -95,7 +95,7 @@ export default function CommunityMap({
       button.textContent = 'View Details';
       button.onclick = () => {
         // Navigate to the community detail page
-        window.location.href = `/properties/${community.slug}`;
+        window.location.href = `/communities/${community.slug}`;
       };
       popupDiv.appendChild(button);
 

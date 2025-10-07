@@ -105,7 +105,7 @@ const CarouselCommunityCard = ({
               asChild
               data-testid={`carousel-button-learn-${community.id}`}
             >
-              <Link href={`/properties/${community.slug}`}>
+              <Link href={`/communities/${community.slug}`}>
                 Learn More
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>

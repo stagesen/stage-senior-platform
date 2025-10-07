@@ -116,7 +116,7 @@ export default function Footer() {
                 {communities.map((community) => (
                   <li key={community.slug}>
                     <Link 
-                      href={`/properties/${community.slug}`} 
+                      href={`/communities/${community.slug}`} 
                       className="flex items-center text-background/80 hover:text-primary hover:translate-x-2 transition-all duration-300 group"
                       data-testid={`footer-community-${community.slug}`}
                     >

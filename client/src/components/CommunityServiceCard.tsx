@@ -11,7 +11,7 @@ export default function CommunityServiceCard({ community }: CommunityServiceCard
   const heroImageUrl = useResolveImageUrl(community.heroImageUrl || community.imageId);
   
   return (
-    <Link href={`/properties/${community.slug}`}>
+    <Link href={`/communities/${community.slug}`}>
       <div 
         className="group bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden"
         data-testid={`community-card-${community.slug}`}
