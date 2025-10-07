@@ -1811,7 +1811,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Database sync routes (for admin use)
+  // SQL-based Database Export (much simpler and reliable)
+  app.get("/api/database/sql-export", requireAuth, async (req, res) => {
+    try {
+      const { generateSQLExport } = await import("./sql-export");
+      const sqlContent = await generateSQLExport();
+      
+      // Send as SQL file
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      res.setHeader('Content-Disposition', 'attachment; filename="database-export.sql"');
+      res.send(sqlContent);
+      
+    } catch (error) {
+      console.error("Error exporting database:", error);
+      res.status(500).json({ message: "Failed to export database" });
+    }
+  });
+
+  // SQL Import endpoint
+  app.post("/api/database/sql-import", requireAuth, async (req, res) => {
+    try {
+      const { sql } = req.body;
+      if (!sql) {
+        return res.status(400).json({ message: "No SQL provided" });
+      }
+      
+      const { executeSQLImport } = await import("./sql-export");
+      await executeSQLImport(sql);
+      
+      res.json({ message: "Database imported successfully" });
+    } catch (error) {
+      console.error("Error importing database:", error);
+      res.status(500).json({ 
+        message: "Failed to import database", 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+    }
+  });
+
+  // Database sync routes (for admin use) - Keep the old JSON ones for backwards compatibility
   app.get("/api/database/export", requireAuth, async (req, res) => {
     try {
       // Export all data from the database
