@@ -6860,130 +6860,286 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
               </ul>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Export Section */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Export Database</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Download all data from the current database as JSON
-                  </p>
-                  <Button 
-                    onClick={async () => {
-                      try {
-                        const response = await fetch("/api/database/export", {
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                          credentials: "include"
-                        });
-                        
-                        if (!response.ok) {
-                          throw new Error("Export failed");
-                        }
-                        
-                        const data = await response.json();
-                        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = `database-export-${new Date().toISOString().split('T')[0]}.json`;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        window.URL.revokeObjectURL(url);
-                        
-                        toast({
-                          title: "Export Successful",
-                          description: "Database exported successfully. Check your downloads.",
-                        });
-                      } catch (error) {
-                        console.error("Export error:", error);
-                        toast({
-                          title: "Export Failed",
-                          description: "Failed to export database. Please try again.",
-                          variant: "destructive",
-                        });
-                      }
-                    }}
-                    className="w-full"
-                    data-testid="button-export-database"
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Export Database
-                  </Button>
-                </CardContent>
-              </Card>
+            <div className="space-y-4">
+              <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+                <h3 className="font-semibold text-green-900">Recommended: SQL Export/Import (Fast & Reliable)</h3>
+                <p className="text-sm text-green-800 mt-2">
+                  SQL export creates a complete database dump that's faster and more reliable than JSON.
+                </p>
+              </div>
 
-              {/* Import Section */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Import Database</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Import data from a JSON export file
-                  </p>
-                  <Input
-                    type="file"
-                    accept=".json"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      
-                      try {
-                        const text = await file.text();
-                        const data = JSON.parse(text);
-                        
-                        // Confirm before import
-                        if (!window.confirm("⚠️ WARNING: This will REPLACE all existing data (except user accounts).\n\nAre you sure you want to continue?")) {
-                          return;
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* SQL Export Section */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center">
+                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2">SQL</span>
+                      Export Database
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Download complete SQL dump (recommended)
+                    </p>
+                    <Button 
+                      onClick={async () => {
+                        try {
+                          const response = await fetch("/api/database/sql-export", {
+                            credentials: "include"
+                          });
+                          
+                          if (!response.ok) {
+                            throw new Error("Export failed");
+                          }
+                          
+                          const sqlContent = await response.text();
+                          const blob = new Blob([sqlContent], { type: "text/plain" });
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = `database-export-${new Date().toISOString().split('T')[0]}.sql`;
+                          document.body.appendChild(a);
+                          a.click();
+                          document.body.removeChild(a);
+                          window.URL.revokeObjectURL(url);
+                          
+                          toast({
+                            title: "SQL Export Successful",
+                            description: "Database exported as SQL. Check your downloads.",
+                          });
+                        } catch (error) {
+                          console.error("Export error:", error);
+                          toast({
+                            title: "Export Failed",
+                            description: "Failed to export database. Please try again.",
+                            variant: "destructive",
+                          });
                         }
+                      }}
+                      className="w-full"
+                      variant="default"
+                      data-testid="button-sql-export-database"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Export as SQL
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* SQL Import Section */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center">
+                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2">SQL</span>
+                      Import Database
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Import data from SQL export file
+                    </p>
+                    <Input
+                      type="file"
+                      accept=".sql"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
                         
-                        const response = await fetch("/api/database/import", {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                          credentials: "include",
-                          body: JSON.stringify(data)
-                        });
-                        
-                        if (!response.ok) {
-                          const errorData = await response.json();
-                          throw new Error(errorData.message || "Import failed");
+                        try {
+                          const text = await file.text();
+                          
+                          // Confirm before import
+                          if (!window.confirm("⚠️ WARNING: This will REPLACE all existing data (except user accounts).\n\nAre you sure you want to continue?")) {
+                            e.target.value = "";
+                            return;
+                          }
+                          
+                          const response = await fetch("/api/database/sql-import", {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            credentials: "include",
+                            body: JSON.stringify({ sql: text })
+                          });
+                          
+                          if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.message || "Import failed");
+                          }
+                          
+                          const result = await response.json();
+                          toast({
+                            title: "SQL Import Successful",
+                            description: `Database imported successfully. All data has been updated.`,
+                          });
+                          
+                          // Clear file input
+                          e.target.value = "";
+                          
+                          // Refresh the page to show new data
+                          setTimeout(() => {
+                            window.location.reload();
+                          }, 2000);
+                          
+                        } catch (error) {
+                          console.error("Import error:", error);
+                          toast({
+                            title: "Import Failed",
+                            description: error instanceof Error ? error.message : "Failed to import database. Please check the SQL file format.",
+                            variant: "destructive",
+                          });
+                          e.target.value = "";
                         }
+                      }}
+                      data-testid="input-sql-import-file"
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Separator />
+
+              <div className="rounded-lg border border-gray-200 p-4">
+                <h3 className="font-semibold text-gray-700">Legacy: JSON Export/Import (slower)</h3>
+                <p className="text-sm text-gray-600 mt-2">
+                  JSON export still works but is slower for large databases. Use SQL export for better performance.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* JSON Export Section */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center">
+                      <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded mr-2">JSON</span>
+                      Export Database
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Download all data as JSON (legacy)
+                    </p>
+                    <Button 
+                      onClick={async () => {
+                        try {
+                          const response = await fetch("/api/database/export", {
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            credentials: "include"
+                          });
+                          
+                          if (!response.ok) {
+                            throw new Error("Export failed");
+                          }
+                          
+                          const data = await response.json();
+                          const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = `database-export-${new Date().toISOString().split('T')[0]}.json`;
+                          document.body.appendChild(a);
+                          a.click();
+                          document.body.removeChild(a);
+                          window.URL.revokeObjectURL(url);
+                          
+                          toast({
+                            title: "JSON Export Successful",
+                            description: "Database exported as JSON. Check your downloads.",
+                          });
+                        } catch (error) {
+                          console.error("Export error:", error);
+                          toast({
+                            title: "Export Failed",
+                            description: "Failed to export database. Please try again.",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                      className="w-full"
+                      variant="outline"
+                      data-testid="button-json-export-database"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Export as JSON
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* JSON Import Section */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center">
+                      <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded mr-2">JSON</span>
+                      Import Database
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Import data from JSON file (legacy)
+                    </p>
+                    <Input
+                      type="file"
+                      accept=".json"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
                         
-                        const result = await response.json();
-                        toast({
-                          title: "Import Successful",
-                          description: `Database replaced successfully. All data has been updated.`,
-                        });
-                        
-                        // Clear file input
-                        e.target.value = "";
-                        
-                        // Refresh the page to show new data
-                        setTimeout(() => {
-                          window.location.reload();
-                        }, 2000);
-                        
-                      } catch (error) {
-                        console.error("Import error:", error);
-                        toast({
-                          title: "Import Failed",
-                          description: error instanceof Error ? error.message : "Failed to import database. Please check the file format.",
-                          variant: "destructive",
-                        });
-                        e.target.value = "";
-                      }
-                    }}
-                    data-testid="input-import-file"
-                  />
-                </CardContent>
-              </Card>
+                        try {
+                          const text = await file.text();
+                          const data = JSON.parse(text);
+                          
+                          // Confirm before import
+                          if (!window.confirm("⚠️ WARNING: This will REPLACE all existing data (except user accounts).\n\nAre you sure you want to continue?")) {
+                            e.target.value = "";
+                            return;
+                          }
+                          
+                          const response = await fetch("/api/database/import", {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            credentials: "include",
+                            body: JSON.stringify(data)
+                          });
+                          
+                          if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.message || "Import failed");
+                          }
+                          
+                          const result = await response.json();
+                          toast({
+                            title: "JSON Import Successful",
+                            description: `Database imported successfully. All data has been updated.`,
+                          });
+                          
+                          // Clear file input
+                          e.target.value = "";
+                          
+                          // Refresh the page to show new data
+                          setTimeout(() => {
+                            window.location.reload();
+                          }, 2000);
+                          
+                        } catch (error) {
+                          console.error("Import error:", error);
+                          toast({
+                            title: "Import Failed",
+                            description: error instanceof Error ? error.message : "Failed to import database. Please check the file format.",
+                            variant: "destructive",
+                          });
+                          e.target.value = "";
+                        }
+                      }}
+                      data-testid="input-json-import-file"
+                    />
+                  </CardContent>
+                </Card>
+              </div>
             </div>
 
             <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
