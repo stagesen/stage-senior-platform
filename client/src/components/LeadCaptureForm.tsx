@@ -57,6 +57,7 @@ export default function LeadCaptureForm({
   className = ""
 }: LeadCaptureFormProps) {
   const [step, setStep] = useState(1);
+  const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -69,7 +70,7 @@ export default function LeadCaptureForm({
       message: "",
       communityId: communityId || undefined,
     },
-    mode: "onBlur", // Validate on blur for better UX
+    mode: "onBlur",
   });
 
   const submitMutation = useMutation({
@@ -77,12 +78,8 @@ export default function LeadCaptureForm({
       return apiRequest("POST", "/api/tour-requests", data);
     },
     onSuccess: () => {
-      toast({
-        title: "Request Submitted Successfully!",
-        description: "We'll contact you within 10 minutes to help with your needs.",
-        duration: 6000,
-      });
       queryClient.invalidateQueries({ queryKey: ["/api/tour-requests"] });
+      setIsSuccess(true);
       form.reset();
       onSuccess?.();
     },
@@ -105,7 +102,6 @@ export default function LeadCaptureForm({
   const isStep1 = step === 1;
   const isStep2 = step === 2;
 
-  // Different layouts based on variant
   const getCardStyle = () => {
     switch (variant) {
       case "hero":
@@ -180,7 +176,6 @@ export default function LeadCaptureForm({
       <Button
         type="button"
         onClick={() => {
-          // Validate step 1 fields before proceeding
           form.trigger(["name", "phone"]).then((isValid) => {
             if (isValid) {
               setStep(2);
@@ -275,6 +270,31 @@ export default function LeadCaptureForm({
     </div>
   );
 
+  const renderSuccessMessage = () => (
+    <div className="text-center py-8 space-y-4" data-testid="success-message">
+      <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+        <CheckCircle className="w-10 h-10 text-green-600" />
+      </div>
+      <h3 className="text-2xl font-bold text-foreground">Request Submitted Successfully!</h3>
+      <p className="text-lg text-muted-foreground max-w-md mx-auto">
+        We'll contact you within 10 minutes to help with your needs.
+      </p>
+      <div className="pt-4">
+        <Button
+          onClick={() => {
+            setIsSuccess(false);
+            setStep(1);
+            form.reset();
+          }}
+          variant="outline"
+          data-testid="button-submit-another"
+        >
+          Submit Another Request
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
     <Card className={`${getCardStyle()} ${className}`} data-testid="lead-capture-form">
       <CardHeader className="pb-4">
@@ -292,24 +312,29 @@ export default function LeadCaptureForm({
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {renderSocialProof()}
-        
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Progress indicator */}
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <div className={`w-8 h-2 rounded-full transition-colors ${
-                isStep1 ? "bg-primary" : "bg-primary/30"
-              }`} />
-              <div className={`w-8 h-2 rounded-full transition-colors ${
-                isStep2 ? "bg-primary" : "bg-muted"
-              }`} />
-            </div>
+        {isSuccess ? (
+          renderSuccessMessage()
+        ) : (
+          <>
+            {renderSocialProof()}
+            
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <div className={`w-8 h-2 rounded-full transition-colors ${
+                    isStep1 ? "bg-primary" : "bg-primary/30"
+                  }`} />
+                  <div className={`w-8 h-2 rounded-full transition-colors ${
+                    isStep2 ? "bg-primary" : "bg-muted"
+                  }`} />
+                </div>
 
-            {isStep1 && renderStep1()}
-            {isStep2 && renderStep2()}
-          </form>
-        </Form>
+                {isStep1 && renderStep1()}
+                {isStep2 && renderStep2()}
+              </form>
+            </Form>
+          </>
+        )}
       </CardContent>
     </Card>
   );
