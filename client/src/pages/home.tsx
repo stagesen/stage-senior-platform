@@ -261,11 +261,20 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {/* Background Image */}
-        <img
-          src={resolvedBackgroundImageUrl || hero.backgroundImageUrl}
-          alt="Senior living community with beautiful gardens"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+        {resolvedBackgroundImageUrl && (
+          <img
+            src={resolvedBackgroundImageUrl}
+            alt="Senior living community with beautiful gardens"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
+        {!resolvedBackgroundImageUrl && resolvedBackgroundImageUrl !== null && (
+          <img
+            src={hero.backgroundImageUrl}
+            alt="Senior living community with beautiful gardens"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
         {/* Enhanced Multi-layer Overlay for Better Text Legibility */}
         <div className="absolute inset-0 bg-black/20" />
         <div 
