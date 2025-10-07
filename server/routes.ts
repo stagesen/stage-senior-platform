@@ -288,10 +288,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Attachment not found" });
       }
       
-      // Delete from object storage
-      if (attachment.objectKey) {
-        await deleteFromObjectStorage(attachment.objectKey);
-      }
+      // Delete from object storage if we have a file URL
+      // Note: postAttachments doesn't have objectKey, only fileUrl
+      // For now, we skip object storage deletion for post attachments
       
       // Delete from database
       await storage.deletePostAttachment(req.params.id);
@@ -333,18 +332,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "No newsletter found for this community" });
       }
       
-      // Get attachments if the post has any
-      let attachments = [];
-      if (latestPost.attachmentId) {
-        const attachment = await storage.getPostAttachment(latestPost.attachmentId);
-        if (attachment) {
-          attachments = [attachment];
-        }
-      }
+      // Blog posts don't have attachments through postAttachments table
+      // They use mainImage, thumbnailImage, and galleryImages fields instead
       
       res.json({
         ...latestPost,
-        attachments,
         community,
       });
     } catch (error) {
@@ -425,9 +417,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         for (const attachment of existingAttachments) {
           if (attachment.id !== req.body.attachmentId) {
             // Delete the old attachment from storage
-            if (attachment.objectKey) {
-              await deleteFromObjectStorage(attachment.objectKey);
-            }
+            // Note: postAttachments doesn't have objectKey, only fileUrl
+            // For now, we skip object storage deletion for post attachments
             await storage.deletePostAttachment(attachment.id);
           }
         }
