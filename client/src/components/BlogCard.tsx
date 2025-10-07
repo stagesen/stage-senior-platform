@@ -30,7 +30,7 @@ export default function BlogCard({ post, community }: BlogCardProps) {
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow group" data-testid={`blog-card-${post.slug}`}>
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow group bg-white" data-testid={`blog-card-${post.slug}`}>
       <CardContent className="p-0">
         <Link href={`/blog/${post.slug}`} className="block">
           {/* Featured Image */}
