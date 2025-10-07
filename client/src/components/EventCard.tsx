@@ -7,9 +7,10 @@ import type { Event } from "@shared/schema";
 
 interface EventCardProps {
   event: Event;
+  onViewDetails?: () => void;
 }
 
-export default function EventCard({ event }: EventCardProps) {
+export default function EventCard({ event, onViewDetails }: EventCardProps) {
   // Resolve image URL
   const resolvedImageUrl = useResolveImageUrl(event.imageUrl);
   
@@ -108,6 +109,7 @@ export default function EventCard({ event }: EventCardProps) {
               <Button 
                 variant="outline" 
                 size="sm"
+                onClick={onViewDetails}
                 data-testid={`button-details-${event.slug}`}
               >
                 View Details

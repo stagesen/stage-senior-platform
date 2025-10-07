@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import EventCard from "@/components/EventCard";
+import EventDetailsModal from "@/components/EventDetailsModal";
 import FloorPlanModal from "@/components/FloorPlanModal";
 import GalleryModal from "@/components/GalleryModal";
 import CommunityMap from "@/components/CommunityMap";
@@ -951,6 +952,7 @@ export default function CommunityDetail() {
   const [isFloorPlanModalOpen, setIsFloorPlanModalOpen] = useState(false);
   const [selectedGallery, setSelectedGallery] = useState<any>(null);
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [activeSection, setActiveSection] = useState<string | null>("overview");
   const [showNav, setShowNav] = useState(false);
 
@@ -2216,7 +2218,10 @@ export default function CommunityDetail() {
                 <div className="space-y-6">
                   {events.slice(0, 4).map((event) => (
                     <div key={event.id} className="w-full">
-                      <EventCard event={event} />
+                      <EventCard 
+                        event={event} 
+                        onViewDetails={() => setSelectedEvent(event)}
+                      />
                     </div>
                   ))}
                 </div>
@@ -2436,6 +2441,13 @@ export default function CommunityDetail() {
           setSelectedGallery(null);
         }}
         gallery={selectedGallery}
+      />
+
+      {/* Event Details Modal */}
+      <EventDetailsModal
+        event={selectedEvent}
+        isOpen={!!selectedEvent}
+        onClose={() => setSelectedEvent(null)}
       />
 
       {/* Scroll to Top Button */}
