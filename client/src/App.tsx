@@ -29,6 +29,7 @@ import Dining from "@/pages/dining";
 import BeautySalon from "@/pages/beauty-salon";
 import FitnessTherapy from "@/pages/fitness-therapy";
 import CourtyardsPatios from "@/pages/courtyards-patios";
+import Reviews from "@/pages/Reviews";
 import ProfessionalManagement from "@/pages/services/management";
 import LongTermCare from "@/pages/services/long-term-care";
 import Chaplaincy from "@/pages/services/chaplaincy";
@@ -59,6 +60,7 @@ function Router() {
           <Route path="/team/:slug" component={TeamMember} />
           <Route path="/blog" component={Blog} />
           <Route path="/blog/:slug" component={Blog} />
+          <Route path="/reviews" component={Reviews} />
           <Route path="/faqs" component={FAQs} />
           <Route path="/about-us" component={AboutUs} />
           <Route path="/careers" component={Careers} />

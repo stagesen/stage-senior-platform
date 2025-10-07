@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/carousel";
 import { useQuery } from "@tanstack/react-query";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { Link } from "wouter";
 import type { Testimonial as TestimonialType, Community } from "@shared/schema";
 
 interface EnhancedTestimonial extends TestimonialType {
@@ -253,9 +254,11 @@ export default function TestimonialSection() {
               Schedule a Tour
               <ChevronRight className="w-4 h-4 ml-2" />
             </Button>
-            <Button size="lg" variant="outline">
-              Read More Reviews
-            </Button>
+            <Link href="/reviews">
+              <Button size="lg" variant="outline">
+                Read More Reviews
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
