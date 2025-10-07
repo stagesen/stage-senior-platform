@@ -661,7 +661,7 @@ export default function Home() {
                 Talk to a real local advisor today
               </h2>
               <p className="text-xl text-white/90 mb-6">
-                Urgent placement? Weekend tours? We've got you. Call now or get a callback in 10 minutes.
+                Get a callback today
               </p>
               <div className="flex flex-wrap gap-4 mb-8">
                 <Button 
