@@ -710,16 +710,16 @@ export default function Home() {
                 className="max-w-lg"
               />
             ) : (
-              <Card className="bg-primary text-white">
+              <Card className="bg-white">
                 <CardContent className="p-8 text-center">
-                  <Mail className="w-16 h-16 mx-auto mb-6 opacity-80" />
+                  <Mail className="w-16 h-16 mx-auto mb-6 text-primary" />
                   <h3 className="text-2xl font-bold mb-4">Get Expert Guidance</h3>
-                  <p className="text-white/90 mb-6">
+                  <p className="text-muted-foreground mb-6">
                     Our senior living advisors are standing by to help you find the perfect community for your loved one.
                   </p>
                   <Button 
                     size="lg" 
-                    variant="secondary"
+                    variant="default"
                     onClick={() => setShowContactForm(true)}
                     className="w-full"
                     data-testid="button-show-contact-form"
