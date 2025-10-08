@@ -170,7 +170,7 @@ export const posts = pgTable("posts", {
   imageId: varchar("image_id", { length: 255 }).references(() => images.id), // New image reference
   tags: text("tags").array().default(sql`ARRAY[]::text[]`),
   attachmentId: varchar("attachment_id", { length: 255 }), // Reference to uploaded file
-  communityId: uuid("community_id").references(() => communities.id),
+  communityId: uuid("community_id").references(() => communities.id, { onDelete: "cascade" }),
   published: boolean("published").default(false),
   publishedAt: timestamp("published_at"),
   seoTitle: text("seo_title"),
@@ -203,7 +203,7 @@ export const events = pgTable("events", {
   endsAt: timestamp("ends_at"),
   locationText: text("location_text"),
   rsvpUrl: text("rsvp_url"),
-  communityId: uuid("community_id").references(() => communities.id),
+  communityId: uuid("community_id").references(() => communities.id, { onDelete: "cascade" }),
   published: boolean("published").default(false),
   maxAttendees: integer("max_attendees"),
   isPublic: boolean("is_public").default(true),
@@ -217,7 +217,7 @@ export const faqs = pgTable("faqs", {
   answer: text("answer"),
   answerHtml: text("answer_html"), // Additional field from CSV
   category: varchar("category", { length: 100 }),
-  communityId: uuid("community_id").references(() => communities.id),
+  communityId: uuid("community_id").references(() => communities.id, { onDelete: "cascade" }),
   sort: integer("sort").default(0), // Additional field from CSV
   sortOrder: integer("sort_order").default(0), // Keep for backwards compatibility
   active: boolean("active").default(true),
@@ -240,7 +240,7 @@ export const galleries = pgTable("galleries", {
     caption?: string;
   }>>().default([]),
   tags: jsonb("tags").$type<string[]>().default([]), // Additional field from CSV
-  communityId: uuid("community_id").references(() => communities.id),
+  communityId: uuid("community_id").references(() => communities.id, { onDelete: "cascade" }),
   category: varchar("category", { length: 100 }),
   thumbnailIndex: integer("thumbnail_index"), // New field for selecting thumbnail image
   active: boolean("active").default(true),
@@ -283,7 +283,7 @@ export const blogPosts = pgTable("blog_posts", {
   author: varchar("author", { length: 255 }), // Legacy field for backward compatibility
   authorId: uuid("author_id").references(() => teamMembers.id), // Reference to team member
   tags: jsonb("tags").$type<string[]>().default([]),
-  communityId: uuid("community_id").references(() => communities.id),
+  communityId: uuid("community_id").references(() => communities.id, { onDelete: "cascade" }),
   published: boolean("published").default(true),
   publishedAt: timestamp("published_at"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -295,7 +295,7 @@ export const tourRequests = pgTable("tour_requests", {
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }),
   phone: varchar("phone", { length: 20 }).notNull(),
-  communityId: uuid("community_id").references(() => communities.id),
+  communityId: uuid("community_id").references(() => communities.id, { onDelete: "cascade" }),
   preferredDate: timestamp("preferred_date"),
   message: text("message"),
   status: varchar("status", { length: 50 }).default("new"),
@@ -308,7 +308,7 @@ export const tourRequests = pgTable("tour_requests", {
 
 export const floorPlans = pgTable("floor_plans", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
-  communityId: uuid("community_id").references(() => communities.id),
+  communityId: uuid("community_id").references(() => communities.id, { onDelete: "cascade" }),
   planSlug: varchar("plan_slug", { length: 255 }), // Additional field from CSV
   name: varchar("name", { length: 255 }).notNull(),
   bedrooms: integer("bedrooms").notNull(),
@@ -335,7 +335,7 @@ export const floorPlans = pgTable("floor_plans", {
 
 export const testimonials = pgTable("testimonials", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
-  communityId: uuid("community_id").references(() => communities.id),
+  communityId: uuid("community_id").references(() => communities.id, { onDelete: "cascade" }),
   authorName: varchar("author_name", { length: 255 }).notNull(),
   authorRelation: varchar("author_relation", { length: 100 }),
   content: text("content").notNull(),
