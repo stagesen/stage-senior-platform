@@ -4,6 +4,18 @@ import type { TourRequest } from '@shared/schema';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// HTML escaping helper to prevent HTML injection attacks
+// Converts special characters to HTML entities to safely display user input in emails
+export function escapeHtml(text: string | null | undefined): string {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export async function sendTourRequestNotification(tourRequest: TourRequest) {
   try {
     const activeRecipients = await storage.getEmailRecipients(true);
@@ -19,14 +31,14 @@ export async function sendTourRequestNotification(tourRequest: TourRequest) {
       
       <h3>Contact Information</h3>
       <ul>
-        <li><strong>Name:</strong> ${tourRequest.name}</li>
-        <li><strong>Email:</strong> ${tourRequest.email || 'Not provided'}</li>
-        <li><strong>Phone:</strong> ${tourRequest.phone}</li>
+        <li><strong>Name:</strong> ${escapeHtml(tourRequest.name)}</li>
+        <li><strong>Email:</strong> ${escapeHtml(tourRequest.email) || 'Not provided'}</li>
+        <li><strong>Phone:</strong> ${escapeHtml(tourRequest.phone)}</li>
       </ul>
       
-      ${tourRequest.communityId ? `<p><strong>Community of Interest:</strong> ${tourRequest.communityId}</p>` : ''}
+      ${tourRequest.communityId ? `<p><strong>Community of Interest:</strong> ${escapeHtml(tourRequest.communityId)}</p>` : ''}
       ${tourRequest.preferredDate ? `<p><strong>Preferred Date:</strong> ${new Date(tourRequest.preferredDate).toLocaleDateString()}</p>` : ''}
-      ${tourRequest.message ? `<p><strong>Message:</strong> ${tourRequest.message}</p>` : ''}
+      ${tourRequest.message ? `<p><strong>Message:</strong> ${escapeHtml(tourRequest.message)}</p>` : ''}
       
       <p><strong>Submitted:</strong> ${new Date(tourRequest.createdAt || Date.now()).toLocaleString()}</p>
     `;
@@ -36,7 +48,7 @@ export async function sendTourRequestNotification(tourRequest: TourRequest) {
     const { data, error } = await resend.emails.send({
       from: 'Stage Senior <notifications@resend.dev>',
       to: recipients,
-      subject: `New Tour Request from ${tourRequest.name}`,
+      subject: `New Tour Request from ${escapeHtml(tourRequest.name)}`,
       html: emailContent,
     });
 
