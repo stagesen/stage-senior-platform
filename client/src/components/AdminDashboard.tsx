@@ -1240,7 +1240,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   // Fetch data based on type
   // For communities in admin, we need to see ALL communities (active and inactive)
   const queryKey = type === "communities" 
-    ? [`/api/${apiEndpoint}`, { active: 'all' }] 
+    ? [`/api/${apiEndpoint}?active=all`] 
     : [`/api/${apiEndpoint}`];
     
   const { data: items = [], isLoading } = useQuery({
