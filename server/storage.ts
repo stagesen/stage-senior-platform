@@ -367,6 +367,7 @@ export class DatabaseStorage implements IStorage {
       const careTypesData = await db
         .select({
           communityId: communitiesCareTypes.communityId,
+          careTypeId: communitiesCareTypes.careTypeId,
           careTypeSlug: careTypes.slug,
         })
         .from(communitiesCareTypes)
@@ -375,12 +376,17 @@ export class DatabaseStorage implements IStorage {
       
       // Group care types by community
       const careTypesByCommunity: Record<string, string[]> = {};
+      const careTypeIdsByCommunity: Record<string, string[]> = {};
       for (const ct of careTypesData) {
         if (!careTypesByCommunity[ct.communityId]) {
           careTypesByCommunity[ct.communityId] = [];
+          careTypeIdsByCommunity[ct.communityId] = [];
         }
         if (ct.careTypeSlug) {
           careTypesByCommunity[ct.communityId].push(ct.careTypeSlug);
+        }
+        if (ct.careTypeId) {
+          careTypeIdsByCommunity[ct.communityId].push(ct.careTypeId);
         }
       }
       
@@ -388,6 +394,7 @@ export class DatabaseStorage implements IStorage {
       const amenitiesData = await db
         .select({
           communityId: communitiesAmenities.communityId,
+          amenityId: communitiesAmenities.amenityId,
           amenityName: amenities.name,
           amenityIcon: amenities.icon,
           amenityImageUrl: amenities.imageUrl,
@@ -407,9 +414,11 @@ export class DatabaseStorage implements IStorage {
       
       // Group amenities by community
       const amenitiesByCommunity: Record<string, any[]> = {};
+      const amenityIdsByCommunity: Record<string, string[]> = {};
       for (const am of amenitiesData) {
         if (!amenitiesByCommunity[am.communityId]) {
           amenitiesByCommunity[am.communityId] = [];
+          amenityIdsByCommunity[am.communityId] = [];
         }
         if (am.amenityName) {
           amenitiesByCommunity[am.communityId].push({
@@ -421,21 +430,32 @@ export class DatabaseStorage implements IStorage {
             sortOrder: am.amenitySortOrder,
           });
         }
+        if (am.amenityId) {
+          amenityIdsByCommunity[am.communityId].push(am.amenityId);
+        }
       }
       
       // Update communities with data from junction tables
       for (const community of communitiesData) {
         const junctionCareTypes = careTypesByCommunity[community.id];
+        const junctionCareTypeIds = careTypeIdsByCommunity[community.id];
         if (junctionCareTypes && junctionCareTypes.length > 0) {
           community.careTypes = junctionCareTypes;
         }
+        if (junctionCareTypeIds && junctionCareTypeIds.length > 0) {
+          (community as any).careTypeIds = junctionCareTypeIds;
+        }
         
         const junctionAmenities = amenitiesByCommunity[community.id];
+        const junctionAmenityIds = amenityIdsByCommunity[community.id];
         if (junctionAmenities && junctionAmenities.length > 0) {
           // Use full amenity objects from junction table
           (community as any).amenitiesData = junctionAmenities;
           // Keep simple string array for backward compatibility
           community.amenities = junctionAmenities.map((a: any) => a.name);
+        }
+        if (junctionAmenityIds && junctionAmenityIds.length > 0) {
+          (community as any).amenityIds = junctionAmenityIds;
         }
         // Keep existing JSON data as fallback if no junction data exists
       }
