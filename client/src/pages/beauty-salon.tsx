@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
+import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PageHero } from "@/components/PageHero";
@@ -27,6 +28,8 @@ import {
 } from "lucide-react";
 
 export default function BeautySalon() {
+  const { openScheduleTour } = useScheduleTour();
+  
   useEffect(() => {
     document.title = "Beauty Salon & Barber Services | Senior Living Communities";
     
@@ -484,6 +487,7 @@ export default function BeautySalon() {
               size="lg" 
               variant="secondary"
               className="group"
+              onClick={() => openScheduleTour()}
               data-testid="button-schedule-tour"
             >
               <Calendar className="mr-2 h-5 w-5" />

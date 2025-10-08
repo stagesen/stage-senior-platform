@@ -1290,6 +1290,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       secondaryPhoneDial: "",
       phone: "", // Backward compatibility
       email: "",
+      talkFurtherId: "",
       heroImageUrl: "",
       logoImageId: "",
       contactImageId: "",
@@ -2026,6 +2027,22 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   )}
                 />
               </div>
+              <FormField
+                control={communityForm.control}
+                name="talkFurtherId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>TalkFurther Widget ID</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value || ""} placeholder="Enter TalkFurther widget ID (optional)" data-testid="input-community-talk-further-id" />
+                    </FormControl>
+                    <FormDescription>
+                      Optional: Add a TalkFurther widget ID to enable the scheduling widget for this community.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={communityForm.control}

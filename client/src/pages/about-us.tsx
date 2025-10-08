@@ -1,22 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "wouter";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Shield, Heart, Users, Award, Phone, Mail, MapPin, Calendar, Star } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { TeamCarousel } from "@/components/TeamCarousel";
-import CommunitySelectionModal from "@/components/CommunitySelectionModal";
-import type { Community } from "@shared/schema";
+import { useScheduleTour } from "@/hooks/useScheduleTour";
 
 export default function AboutUs() {
-  const [showCommunityModal, setShowCommunityModal] = useState(false);
-  
-  const { data: communities = [] } = useQuery<Community[]>({
-    queryKey: ["/api/communities"],
-    staleTime: 5 * 60 * 1000,
-  });
+  const { openScheduleTour } = useScheduleTour();
   useEffect(() => {
     document.title = "About Us | Stage Senior";
     
@@ -270,7 +263,7 @@ export default function AboutUs() {
               size="lg" 
               variant="secondary"
               className="px-8 py-6 text-lg"
-              onClick={() => setShowCommunityModal(true)}
+              onClick={() => openScheduleTour()}
               data-testid="button-schedule-tour"
             >
               <Calendar className="w-5 h-5 mr-2" />
@@ -314,13 +307,6 @@ export default function AboutUs() {
           </div>
         </div>
       </section>
-      
-      {/* Community Selection Modal */}
-      <CommunitySelectionModal 
-        open={showCommunityModal}
-        onOpenChange={setShowCommunityModal}
-        communities={communities}
-      />
     </div>
   );
 }

@@ -9,18 +9,22 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { Community } from "@shared/schema";
+import { useScheduleTour } from "@/hooks/useScheduleTour";
 
 interface CommunitySelectionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   communities: Community[];
+  onSelectCommunity?: (community: Community) => void;
 }
 
 export default function CommunitySelectionModal({
   open,
   onOpenChange,
   communities,
+  onSelectCommunity,
 }: CommunitySelectionModalProps) {
+  const { openScheduleTour } = useScheduleTour();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto" data-testid="community-selection-modal">
@@ -82,7 +86,15 @@ export default function CommunitySelectionModal({
                   size="default"
                   data-testid={`button-schedule-tour-${community.slug}`}
                   onClick={() => {
-                    window.location.href = `/communities/${community.slug}/#/further/55`;
+                    if (onSelectCommunity) {
+                      onSelectCommunity(community);
+                    } else {
+                      openScheduleTour({
+                        communityId: community.id,
+                        communityName: community.name,
+                      });
+                    }
+                    onOpenChange(false);
                   }}
                 >
                   <Calendar className="w-4 h-4 mr-2" />

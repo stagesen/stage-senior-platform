@@ -107,6 +107,7 @@ export const communities = pgTable("communities", {
   licenseStatus: varchar("license_status", { length: 100 }).default("Licensed & Insured"),
   sameDayTours: boolean("same_day_tours").default(true),
   noObligation: boolean("no_obligation").default(true),
+  talkFurtherId: text("talk_further_id"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

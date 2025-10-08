@@ -38,6 +38,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ScrollRestoration from "@/components/ScrollRestoration";
 import ScrollToTop from "@/components/ScrollToTop";
+import { ScheduleTourProvider } from "@/hooks/useScheduleTour";
+import ScheduleTourDialog from "@/components/ScheduleTourDialog";
 
 function Router() {
   // Check if we're on a community detail page
@@ -103,8 +105,11 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
-          <Toaster />
-          <Router />
+          <ScheduleTourProvider>
+            <Toaster />
+            <Router />
+            <ScheduleTourDialog />
+          </ScheduleTourProvider>
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
