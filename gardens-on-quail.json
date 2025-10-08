@@ -1,0 +1,490 @@
+{
+  "community": {
+    "name": "Gardens on Quail",
+    "slug": "gardens-on-quail",
+    "street": "6447 Quail Street",
+    "city": "Arvada",
+    "state": "CO",
+    "zip": "80004",
+    "latitude": 39.8108,
+    "longitude": -105.1631,
+    "phone_display": "(720) 832-9670",
+    "phone_dial": "7208329670",
+    "secondary_phone_display": "(303) 456-1500",
+    "secondary_phone_dial": "3034561500",
+    "email": "",
+    "overview": "Gardens on Quail is a safe, secure assisted living and memory care community in Arvada, Colorado. Our campus offers compassionate care, engaging amenities and homelike comforts with 24/7 assistance and a vibrant social calendar.",
+    "description": "**Our Community**\n\nGardens on Quail features 56 assisted living apartments and a dedicated memory care neighborhood with 27 private suites.  Our philosophy centers on empowering residents and focusing on abilities rather than limitations.  A secure courtyard with heated walkways, train set and water feature invites outdoor enjoyment year‑round.  Spacious common areas include lounges with fireplaces, a fully stocked library, workout facilities, high‑end salon, chapel and community dining rooms with à‑la‑carte menus and daily specials.  Raised garden beds, a greenhouse, putting green and basketball court encourage fresh air and exercise.\n\n**Dining**\n\nOur chef‑driven program uses fresh seasonal ingredients—including vegetables and herbs from our on‑site gardens—to create delicious restaurant‑style meals.  Residents enjoy scratch‑made soups, weekly chef specials, vegetarian and diabetic options, wine nights and happy hours.  Private dining rooms, including a 1950s themed space, are available for special occasions and custom menus.\n\n**Activities & Programs**\n\nA full calendar of events keeps residents engaged: Happy Hour Fridays, Family Brunches, holiday celebrations, spa days and themed parties.  Weekly clubs include women's tea, men's club, Tasty Tuesdays, book and Bible studies, art therapy, outdoor gardening, pet interaction, Wii gaming, live music and memory‑care activities like balloon volleyball and hallway bowling.  Special outings take residents to the aquarium, museum, shopping, Rockies games, car shows, mountain trips and intergenerational programs with local schools.\n\n**Memory Care Philosophy**\n\nOur dementia‑capable care model integrates person‑centered approaches, Montessori methods, validation therapy and the Eden Alternative.  We emphasise meaningful activities, independence and social connection to support cognitive health.  Neighborhoods are named after Colorado towns and feature local artwork and Friday happy hours with entertainment.  Personalized care begins with a \"My Story\" assessment to understand each resident's history and preferences.",
+    "short_description": "Compassionate assisted living and memory care in Arvada, CO with personalized support, secure courtyard and gourmet dining.",
+    "starting_rate_display": "Starting at $8,300/month",
+    "rating": 4.6,
+    "review_count": 102,
+    "license_status": "Licensed & Insured",
+    "same_day_tours": true,
+    "no_obligation": true,
+    "featured": true,
+    "active": true,
+    "seo_title": "Gardens on Quail | Assisted Living & Memory Care in Arvada, CO",
+    "seo_description": "Gardens on Quail offers compassionate assisted living and memory care in Arvada, Colorado with luxurious amenities, engaging activities and personalized support.",
+    "brochure_link": ""
+  },
+  "care_types": [
+    {
+      "slug": "assisted-living",
+      "name": "Assisted Living",
+      "description": "56 private apartments with spacious common areas, tailored assistance and homelike comforts."
+    },
+    {
+      "slug": "memory-care",
+      "name": "Memory Care",
+      "description": "27 private suites in secure neighborhoods focused on abilities, offering individualized dementia‑capable care."
+    }
+  ],
+  "amenities": [
+    {
+      "slug": "courtyard-with-train-set",
+      "name": "Secure Courtyard with Train Set",
+      "category": "outdoor",
+      "description": "Beautifully landscaped courtyard featuring heated walkways, a train set and water feature for year‑round enjoyment."
+    },
+    {
+      "slug": "garden-beds-greenhouse",
+      "name": "Garden Beds & Greenhouse",
+      "category": "outdoor",
+      "description": "Raised garden beds and a greenhouse for residents to grow flowers, vegetables and herbs."
+    },
+    {
+      "slug": "putting-green-basketball-court",
+      "name": "Putting Green & Basketball Court",
+      "category": "recreation",
+      "description": "Outdoor recreation areas including a putting green and half‑court basketball."
+    },
+    {
+      "slug": "library",
+      "name": "Library",
+      "category": "lifestyle",
+      "description": "Fully stocked library with comfortable seating and computer access."
+    },
+    {
+      "slug": "workout-facilities",
+      "name": "Workout & Fitness Facilities",
+      "category": "wellness",
+      "description": "Exercise room with equipment for strength, balance and cardio training."
+    },
+    {
+      "slug": "salon",
+      "name": "High‑End Salon",
+      "category": "wellness",
+      "description": "On‑site salon offering hair care and spa services."
+    },
+    {
+      "slug": "chapel",
+      "name": "Chapel",
+      "category": "lifestyle",
+      "description": "Peaceful chapel for worship services and reflection."
+    },
+    {
+      "slug": "restaurant-style-dining",
+      "name": "Restaurant‑Style Dining",
+      "category": "dining",
+      "description": "À‑la‑carte menus, daily specials, scratch‑made soups and chef specials using fresh, seasonal ingredients.",
+      "icon": "utensils"
+    },
+    {
+      "slug": "private-dining-rooms",
+      "name": "Private Dining Rooms",
+      "category": "dining",
+      "description": "Two private dining rooms—including a 1950s themed room—for celebrations and special events."
+    },
+    {
+      "slug": "peace-of-mind-technology",
+      "name": "Peace of Mind Technology",
+      "category": "safety",
+      "description": "Discreet fall detection and event‑based alerts for enhanced safety."
+    }
+  ],
+  "floor_plans": [
+    {
+      "name": "Private Suite (Memory Care)",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "square_feet": 350,
+      "description": "Private memory‑care suite with kitchenette, emergency pull cord and secure access.",
+      "starting_rate_display": "Starting at $8,300/month",
+      "availability": "available",
+      "accessible": true,
+      "highlights": [
+        "Kitchenette",
+        "Emergency call system",
+        "Large windows"
+      ],
+      "images": [
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/350-suite.jpg",
+          "caption": "Private suite living area",
+          "type": "photo"
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/350-suite-floorplan.png",
+          "caption": "350 sq ft floor plan",
+          "type": "floor_plan"
+        }
+      ],
+      "sort_order": 1
+    },
+    {
+      "name": "One‑Bedroom (Memory Care)",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "square_feet": 485,
+      "description": "One‑bedroom memory‑care apartment with spacious bedroom, living area and kitchenette.",
+      "starting_rate_display": "Starting at $8,950/month",
+      "availability": "limited",
+      "accessible": true,
+      "highlights": [
+        "Separate bedroom",
+        "Kitchenette",
+        "Courtyard access"
+      ],
+      "images": [
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/485-suite.jpg",
+          "caption": "One‑bedroom memory‑care suite",
+          "type": "photo"
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/485-suite-floorplan.png",
+          "caption": "485 sq ft floor plan",
+          "type": "floor_plan"
+        }
+      ],
+      "sort_order": 2
+    },
+    {
+      "name": "Two‑Bedroom (Memory Care)",
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "square_feet": 705,
+      "description": "Spacious two‑bedroom memory‑care residence ideal for couples or roommates, featuring two baths and kitchenette.",
+      "starting_rate_display": "Starting at $9,400/month",
+      "availability": "waitlist",
+      "accessible": true,
+      "highlights": [
+        "Two bathrooms",
+        "Large living area",
+        "Secure courtyard access"
+      ],
+      "images": [
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/705-suite.jpg",
+          "caption": "Two‑bedroom memory‑care apartment",
+          "type": "photo"
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/705-suite-floorplan.png",
+          "caption": "705 sq ft floor plan",
+          "type": "floor_plan"
+        }
+      ],
+      "sort_order": 3
+    },
+    {
+      "name": "Assisted Living Studio",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "square_feet": 450,
+      "description": "Assisted living studio with kitchenette and modern finishes, designed for ease of mobility.",
+      "starting_rate_display": "Starting at $5,500/month",
+      "availability": "available",
+      "accessible": true,
+      "highlights": [
+        "Kitchenette",
+        "Walk‑in shower",
+        "Emergency call system"
+      ],
+      "images": [
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/al-studio.jpg",
+          "caption": "Assisted living studio interior",
+          "type": "photo"
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/al-studio-floorplan.png",
+          "caption": "Assisted living studio floor plan",
+          "type": "floor_plan"
+        }
+      ],
+      "sort_order": 4
+    },
+    {
+      "name": "Assisted Living One‑Bedroom",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "square_feet": 600,
+      "description": "One‑bedroom assisted living apartment with separate bedroom and living area, kitchenette and walk‑in closet.",
+      "starting_rate_display": "Starting at $6,200/month",
+      "availability": "limited",
+      "accessible": true,
+      "highlights": [
+        "Spacious layout",
+        "Kitchenette",
+        "Courtyard views"
+      ],
+      "images": [
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/al-one-bedroom.jpg",
+          "caption": "Assisted living one‑bedroom apartment",
+          "type": "photo"
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/al-one-bedroom-floorplan.png",
+          "caption": "One‑bedroom assisted living floor plan",
+          "type": "floor_plan"
+        }
+      ],
+      "sort_order": 5
+    }
+  ],
+  "team_members": [],
+  "features": [
+    {
+      "eyebrow": "Philosophy",
+      "title": "Person‑Centered Memory Care",
+      "body": "Our dementia‑capable care integrates Montessori methods, validation therapy and the Eden Alternative to focus on each resident's abilities and personal history.",
+      "image_url": "https://cdn.example.com/gardens-on-quail/philosophy.jpg",
+      "image_alt": "Caregiver engaging with resident",
+      "cta_label": "Learn More",
+      "cta_href": "/memory-care",
+      "image_left": true,
+      "sort_order": 1
+    },
+    {
+      "eyebrow": "Lifestyle",
+      "title": "Engaging Activities & Social Events",
+      "body": "Weekly clubs, happy hour Fridays, family brunches, holiday celebrations and outings keep residents connected and fulfilled.",
+      "image_url": "https://cdn.example.com/gardens-on-quail/activities.jpg",
+      "image_alt": "Residents enjoying an outdoor activity",
+      "cta_label": "View Calendar",
+      "cta_href": "/activities",
+      "image_left": false,
+      "sort_order": 2
+    },
+    {
+      "eyebrow": "Dining",
+      "title": "Fresh Seasonal Dining",
+      "body": "Our chefs prepare scratch‑made soups, daily specials, vegetarian and diabetic options using herbs and vegetables from our own gardens.",
+      "image_url": "https://cdn.example.com/gardens-on-quail/dining.jpg",
+      "image_alt": "Chef plating a gourmet meal",
+      "cta_label": "Explore Dining",
+      "cta_href": "/dining",
+      "image_left": true,
+      "sort_order": 3
+    }
+  ],
+  "highlights": [
+    {
+      "title": "Secure Courtyard & Gardens",
+      "description": "Heated walkways, train set, water feature and raised garden beds offer safe outdoor enjoyment.",
+      "image_url": "https://cdn.example.com/gardens-on-quail/courtyard-icon.svg",
+      "cta_label": "Tour the Grounds",
+      "cta_href": "/gallery",
+      "sort_order": 1
+    },
+    {
+      "title": "Dementia‑Capable Care",
+      "description": "Person‑centered programs supported by Montessori and Eden Alternative philosophies.",
+      "image_url": "https://cdn.example.com/gardens-on-quail/dementia-icon.svg",
+      "sort_order": 2
+    },
+    {
+      "title": "Engaging Lifestyle",
+      "description": "A robust schedule of events, clubs and outings fosters social connection and well‑being.",
+      "image_url": "https://cdn.example.com/gardens-on-quail/lifestyle-icon.svg",
+      "cta_label": "See Activities",
+      "cta_href": "/activities",
+      "sort_order": 3
+    }
+  ],
+  "faqs": [
+    {
+      "question": "What care levels are offered?",
+      "answer": "Gardens on Quail offers assisted living and memory care with personalized support for each resident.",
+      "category": "Care Options",
+      "sort_order": 1
+    },
+    {
+      "question": "What is included in the monthly rate?",
+      "answer": "Your monthly fee includes meals, housekeeping, utilities, Wi‑Fi, activities, transportation and 24/7 care staff.",
+      "category": "Pricing",
+      "sort_order": 2
+    },
+    {
+      "question": "Are pets allowed?",
+      "answer": "Yes, small pets are welcome subject to community policy.",
+      "category": "Lifestyle",
+      "sort_order": 3
+    }
+  ],
+  "galleries": [
+    {
+      "title": "Beautiful Grounds & Courtyard",
+      "description": "See our secure courtyard, heated walkways and scenic gardens.",
+      "category": "environment",
+      "hero": true,
+      "images": [
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/courtyard.jpg",
+          "caption": "Courtyard with train set and water feature",
+          "alt": "Courtyard with train set",
+          "sort_order": 1
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/garden-beds.jpg",
+          "caption": "Raised garden beds and greenhouse",
+          "alt": "Garden beds and greenhouse",
+          "sort_order": 2
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/walkways.jpg",
+          "caption": "Heated walkways winding through the gardens",
+          "alt": "Heated walkways",
+          "sort_order": 3
+        }
+      ]
+    },
+    {
+      "title": "Community Amenities",
+      "category": "amenities",
+      "images": [
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/library.jpg",
+          "caption": "Library with comfortable seating",
+          "alt": "Library",
+          "sort_order": 1
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/salon.jpg",
+          "caption": "High‑end salon interior",
+          "alt": "Salon",
+          "sort_order": 2
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/fitness.jpg",
+          "caption": "Workout and fitness facilities",
+          "alt": "Fitness equipment",
+          "sort_order": 3
+        }
+      ]
+    },
+    {
+      "title": "Residences",
+      "category": "apartments",
+      "images": [
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/memory-suite.jpg",
+          "caption": "Memory care suite with kitchenette",
+          "alt": "Memory care suite",
+          "sort_order": 1
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/al-studio.jpg",
+          "caption": "Assisted living studio apartment",
+          "alt": "Assisted living studio",
+          "sort_order": 2
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/al-one-bedroom.jpg",
+          "caption": "Assisted living one‑bedroom apartment",
+          "alt": "Assisted living one‑bedroom",
+          "sort_order": 3
+        }
+      ]
+    },
+    {
+      "title": "Activities & Events",
+      "category": "activities",
+      "images": [
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/womens-tea.jpg",
+          "caption": "Women's tea club gathering",
+          "alt": "Women's tea club",
+          "sort_order": 1
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/men-club.jpg",
+          "caption": "Men's club enjoying a game",
+          "alt": "Men's club",
+          "sort_order": 2
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/outing.jpg",
+          "caption": "Residents on a scenic outing to the mountains",
+          "alt": "Scenic outing",
+          "sort_order": 3
+        }
+      ]
+    },
+    {
+      "title": "Dining Experience",
+      "category": "dining",
+      "images": [
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/dining-room.jpg",
+          "caption": "Restaurant‑style dining room",
+          "alt": "Dining room",
+          "sort_order": 1
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/chef.jpg",
+          "caption": "Chef preparing fresh ingredients",
+          "alt": "Chef preparing meal",
+          "sort_order": 2
+        },
+        {
+          "url": "https://cdn.example.com/gardens-on-quail/private-dining.jpg",
+          "caption": "1950s themed private dining room",
+          "alt": "Private dining room",
+          "sort_order": 3
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "title": "Family Brunch",
+      "summary": "Monthly brunch for residents and their families.",
+      "description": "Enjoy a delicious brunch with loved ones in our main dining room.  The menu features chef specialties, live music and a chance to connect with staff and other families.",
+      "starts_at": "2025-11-02T10:30:00-07:00",
+      "ends_at": "2025-11-02T12:30:00-07:00",
+      "location_text": "Gardens on Quail Main Dining Room",
+      "image_url": "https://cdn.example.com/gardens-on-quail/family-brunch.jpg",
+      "rsvp_url": "https://gardensonquail.com/events/family-brunch",
+      "max_attendees": 120,
+      "is_public": true
+    },
+    {
+      "title": "Holiday Celebration",
+      "summary": "Festive holiday event with music, decorations and special menu.",
+      "description": "Celebrate the season with residents and families at our annual holiday celebration.  Enjoy live entertainment, holiday décor and a gourmet dinner prepared by our culinary team.",
+      "starts_at": "2025-12-20T16:00:00-07:00",
+      "ends_at": "2025-12-20T19:00:00-07:00",
+      "location_text": "Gardens on Quail Courtyard & Dining Room",
+      "image_url": "https://cdn.example.com/gardens-on-quail/holiday.jpg",
+      "rsvp_url": "https://gardensonquail.com/events/holiday-celebration",
+      "max_attendees": 150,
+      "is_public": true
+    },
+    {
+      "title": "Summer Luau",
+      "summary": "Annual luau with Hawaiian food, music and dancing.",
+      "description": "Our Summer Luau brings the islands to Arvada with tropical décor, live hula dancers, a roasting pig and games.  Residents, families and staff come together for a fun‑filled evening.",
+      "starts_at": "2025-07-26T17:00:00-06:00",
+      "ends_at": "2025-07-26T20:00:00-06:00",
+      "location_text": "Gardens on Quail Courtyard",
+      "image_url": "https://cdn.example.com/gardens-on-quail/luau.jpg",
+      "rsvp_url": "https://gardensonquail.com/events/summer-luau",
+      "max_attendees": 200,
+      "is_public": true
+    }
+  ]
+}

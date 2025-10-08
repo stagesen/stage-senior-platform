@@ -1,0 +1,717 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Community Data Import Schema",
+  "description": "JSON schema for importing senior living community data",
+  "type": "object",
+  "required": ["community"],
+  "properties": {
+    "community": {
+      "type": "object",
+      "required": ["name", "slug", "city", "state"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full community name",
+          "example": "Golden Pond Retirement Community"
+        },
+        "slug": {
+          "type": "string",
+          "description": "URL-friendly identifier (lowercase, hyphens)",
+          "pattern": "^[a-z0-9-]+$",
+          "example": "golden-pond"
+        },
+        "street": {
+          "type": "string",
+          "description": "Street address",
+          "example": "1270 N. Ford Street"
+        },
+        "city": {
+          "type": "string",
+          "description": "City name",
+          "example": "Golden"
+        },
+        "state": {
+          "type": "string",
+          "description": "Two-letter state code",
+          "pattern": "^[A-Z]{2}$",
+          "example": "CO"
+        },
+        "zip": {
+          "type": "string",
+          "description": "ZIP code",
+          "example": "80403"
+        },
+        "latitude": {
+          "type": "number",
+          "description": "Latitude coordinate",
+          "example": 39.7655
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude coordinate",
+          "example": -105.2211
+        },
+        "phone_display": {
+          "type": "string",
+          "description": "Phone number formatted for display",
+          "example": "(303) 502-5554"
+        },
+        "phone_dial": {
+          "type": "string",
+          "description": "Phone number digits only (for tel: links)",
+          "example": "3035025554"
+        },
+        "secondary_phone_display": {
+          "type": "string",
+          "description": "Optional secondary phone (formatted)",
+          "example": "(303) 278-0623"
+        },
+        "secondary_phone_dial": {
+          "type": "string",
+          "description": "Optional secondary phone (digits only)",
+          "example": "3032780623"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Contact email address",
+          "example": "info@goldenpond.com"
+        },
+        "overview": {
+          "type": "string",
+          "description": "Brief overview paragraph (1-3 sentences) for hero section",
+          "example": "Golden Pond Retirement Community is a locally and independently owned senior-living campus in Golden, Colorado."
+        },
+        "description": {
+          "type": "string",
+          "description": "Full description with markdown formatting (multiple paragraphs, **bold**, lists, etc.)",
+          "example": "Golden Pond provides a vibrant home where care meets compassion...\n\n**Mission and Philosophy**\n\nOur seasoned staff..."
+        },
+        "short_description": {
+          "type": "string",
+          "description": "One-liner for cards and meta descriptions (under 160 characters)",
+          "example": "Locally owned senior living in Golden, CO offering independent living, assisted living and memory care with stunning mountain views."
+        },
+        "starting_rate_display": {
+          "type": "string",
+          "description": "Starting price text for display",
+          "example": "Starting at $5,000/month"
+        },
+        "rating": {
+          "type": "number",
+          "description": "Average rating (0-5)",
+          "minimum": 0,
+          "maximum": 5,
+          "example": 4.8
+        },
+        "review_count": {
+          "type": "integer",
+          "description": "Number of reviews",
+          "example": 127
+        },
+        "license_status": {
+          "type": "string",
+          "description": "License/certification status",
+          "example": "Licensed & Insured"
+        },
+        "same_day_tours": {
+          "type": "boolean",
+          "description": "Whether same-day tours are available",
+          "example": true
+        },
+        "no_obligation": {
+          "type": "boolean",
+          "description": "Whether tours are no-obligation",
+          "example": true
+        },
+        "featured": {
+          "type": "boolean",
+          "description": "Whether to feature this community on homepage",
+          "example": true
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Whether this community is publicly visible",
+          "default": true,
+          "example": true
+        },
+        "seo_title": {
+          "type": "string",
+          "description": "SEO page title (under 60 characters)",
+          "example": "Golden Pond Retirement Community | Senior Living in Golden, CO"
+        },
+        "seo_description": {
+          "type": "string",
+          "description": "SEO meta description (under 160 characters)",
+          "example": "Golden Pond is a locally owned retirement community in Golden, Colorado offering independent living, assisted living and memory care."
+        },
+        "brochure_link": {
+          "type": "string",
+          "format": "uri",
+          "description": "Link to downloadable brochure PDF",
+          "example": "https://cdn.example.com/brochure.pdf"
+        }
+      }
+    },
+    "care_types": {
+      "type": "array",
+      "description": "Types of care offered at this community",
+      "items": {
+        "type": "object",
+        "required": ["slug", "name"],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "Unique identifier (use existing: independent-living, assisted-living, memory-care, skilled-nursing, respite-care)",
+            "example": "assisted-living"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name",
+            "example": "Assisted Living"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of this care type",
+            "example": "Personalized support combining independence with tailored assistance for daily activities."
+          }
+        }
+      },
+      "example": [
+        {
+          "slug": "independent-living",
+          "name": "Independent Living",
+          "description": "Active lifestyle with minimal assistance"
+        },
+        {
+          "slug": "assisted-living",
+          "name": "Assisted Living",
+          "description": "Support with daily activities"
+        }
+      ]
+    },
+    "amenities": {
+      "type": "array",
+      "description": "Amenities available at this community",
+      "items": {
+        "type": "object",
+        "required": ["slug", "name"],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "Unique identifier (kebab-case)",
+            "example": "restaurant-dining"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name",
+            "example": "Restaurant-Style Dining"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category for grouping (dining, wellness, outdoor, services, recreation, safety, lifestyle)",
+            "example": "dining"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description",
+            "example": "À-la-carte menu with daily specials and fresh seasonal ingredients"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Icon identifier if using icon system",
+            "example": "utensils"
+          }
+        }
+      },
+      "example": [
+        {
+          "slug": "restaurant-dining",
+          "name": "Restaurant-Style Dining",
+          "category": "dining",
+          "description": "À-la-carte menu with daily specials"
+        },
+        {
+          "slug": "fitness-center",
+          "name": "Fitness Center",
+          "category": "wellness",
+          "description": "Modern fitness equipment and classes"
+        }
+      ]
+    },
+    "floor_plans": {
+      "type": "array",
+      "description": "Available floor plans/apartment types",
+      "items": {
+        "type": "object",
+        "required": ["name", "bedrooms", "bathrooms"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Floor plan name",
+            "example": "Standard Suite"
+          },
+          "bedrooms": {
+            "type": "integer",
+            "description": "Number of bedrooms (0 for studio)",
+            "minimum": 0,
+            "example": 1
+          },
+          "bathrooms": {
+            "type": "number",
+            "description": "Number of bathrooms (can be 1.5, 2, etc.)",
+            "example": 1
+          },
+          "square_feet": {
+            "type": "integer",
+            "description": "Square footage",
+            "example": 550
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the floor plan",
+            "example": "Spacious one-bedroom apartment with separate living area and kitchenette."
+          },
+          "starting_rate_display": {
+            "type": "string",
+            "description": "Starting price for display",
+            "example": "Starting at $5,500/month"
+          },
+          "availability": {
+            "type": "string",
+            "description": "Availability status",
+            "enum": ["available", "limited", "waitlist", "unavailable"],
+            "example": "available"
+          },
+          "accessible": {
+            "type": "boolean",
+            "description": "Whether this plan is ADA accessible",
+            "example": false
+          },
+          "highlights": {
+            "type": "array",
+            "description": "Key features/highlights",
+            "items": {
+              "type": "string"
+            },
+            "example": ["Mountain views", "Full kitchen", "Walk-in closet"]
+          },
+          "images": {
+            "type": "array",
+            "description": "Photos of this floor plan",
+            "items": {
+              "type": "object",
+              "required": ["url"],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Image URL",
+                  "example": "https://cdn.example.com/images/suite-1.jpg"
+                },
+                "caption": {
+                  "type": "string",
+                  "description": "Image caption/alt text",
+                  "example": "Spacious living area with natural light"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Type of image",
+                  "enum": ["photo", "floor_plan", "3d_tour"],
+                  "example": "photo"
+                }
+              }
+            }
+          },
+          "sort_order": {
+            "type": "integer",
+            "description": "Display order (lower numbers first)",
+            "example": 1
+          }
+        }
+      },
+      "example": [
+        {
+          "name": "One-Bedroom Suite",
+          "bedrooms": 1,
+          "bathrooms": 1,
+          "square_feet": 550,
+          "description": "Spacious apartment with kitchenette",
+          "starting_rate_display": "Starting at $5,500/month",
+          "availability": "available",
+          "images": [
+            {
+              "url": "https://cdn.example.com/suite.jpg",
+              "caption": "Living area",
+              "type": "photo"
+            }
+          ]
+        }
+      ]
+    },
+    "team_members": {
+      "type": "array",
+      "description": "Staff and leadership team",
+      "items": {
+        "type": "object",
+        "required": ["name", "role"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Full name",
+            "example": "Leigh Boney"
+          },
+          "role": {
+            "type": "string",
+            "description": "Job title",
+            "example": "Executive Director"
+          },
+          "department": {
+            "type": "string",
+            "description": "Department/team",
+            "example": "Leadership"
+          },
+          "bio": {
+            "type": "string",
+            "description": "Biography (markdown supported)",
+            "example": "Leigh has over 20 years of experience in senior living..."
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Contact email",
+            "example": "leigh@goldenpond.com"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Direct phone number",
+            "example": "(303) 555-1234"
+          },
+          "photo_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Headshot/profile photo URL",
+            "example": "https://cdn.example.com/team/leigh.jpg"
+          },
+          "linkedin_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "LinkedIn profile URL",
+            "example": "https://linkedin.com/in/leighboney"
+          },
+          "featured": {
+            "type": "boolean",
+            "description": "Whether to feature on main team page",
+            "example": true
+          },
+          "sort_order": {
+            "type": "integer",
+            "description": "Display order",
+            "example": 1
+          }
+        }
+      },
+      "example": [
+        {
+          "name": "Leigh Boney",
+          "role": "Executive Director",
+          "department": "Leadership",
+          "featured": true,
+          "sort_order": 1
+        }
+      ]
+    },
+    "features": {
+      "type": "array",
+      "description": "Community features/philosophy sections (mission, values, etc.)",
+      "items": {
+        "type": "object",
+        "required": ["title", "body"],
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small text above title (e.g., 'Mission', 'Philosophy')",
+            "example": "Mission"
+          },
+          "title": {
+            "type": "string",
+            "description": "Feature heading",
+            "example": "Personalized Care at Every Stage"
+          },
+          "body": {
+            "type": "string",
+            "description": "Feature description (markdown supported)",
+            "example": "Our seasoned, highly-trained staff offer personalized assistance..."
+          },
+          "image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional accompanying image",
+            "example": "https://cdn.example.com/mission.jpg"
+          },
+          "image_alt": {
+            "type": "string",
+            "description": "Alt text for image",
+            "example": "Staff member assisting resident"
+          },
+          "cta_label": {
+            "type": "string",
+            "description": "Optional call-to-action button text",
+            "example": "Learn More"
+          },
+          "cta_href": {
+            "type": "string",
+            "description": "CTA button link",
+            "example": "/about-us"
+          },
+          "image_left": {
+            "type": "boolean",
+            "description": "Whether image should be on left side (false = right)",
+            "default": false,
+            "example": false
+          },
+          "sort_order": {
+            "type": "integer",
+            "description": "Display order",
+            "example": 1
+          }
+        }
+      },
+      "example": [
+        {
+          "eyebrow": "Mission",
+          "title": "Personalized Care",
+          "body": "Our staff provide individualized attention...",
+          "sort_order": 1
+        }
+      ]
+    },
+    "highlights": {
+      "type": "array",
+      "description": "Key selling points/highlights (cards or badges)",
+      "items": {
+        "type": "object",
+        "required": ["title", "description"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Highlight title",
+            "example": "Stunning Mountain Views"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description",
+            "example": "Breathtaking vistas of North Table Mountain and the Colorado foothills"
+          },
+          "image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional icon or image",
+            "example": "https://cdn.example.com/mountain-icon.svg"
+          },
+          "cta_label": {
+            "type": "string",
+            "description": "Optional button text",
+            "example": "View Gallery"
+          },
+          "cta_href": {
+            "type": "string",
+            "description": "Optional button link",
+            "example": "/gallery"
+          },
+          "sort_order": {
+            "type": "integer",
+            "description": "Display order",
+            "example": 1
+          }
+        }
+      },
+      "example": [
+        {
+          "title": "Restaurant-Style Dining",
+          "description": "Chef-prepared meals with daily specials",
+          "sort_order": 1
+        }
+      ]
+    },
+    "faqs": {
+      "type": "array",
+      "description": "Frequently asked questions",
+      "items": {
+        "type": "object",
+        "required": ["question", "answer"],
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "The question",
+            "example": "What is included in the monthly rate?"
+          },
+          "answer": {
+            "type": "string",
+            "description": "The answer (markdown supported)",
+            "example": "All apartments include housekeeping, utilities, Wi-Fi, cable, meals, and transportation."
+          },
+          "category": {
+            "type": "string",
+            "description": "FAQ category for grouping",
+            "example": "Pricing"
+          },
+          "sort_order": {
+            "type": "integer",
+            "description": "Display order within category",
+            "example": 1
+          }
+        }
+      },
+      "example": [
+        {
+          "question": "Are pets allowed?",
+          "answer": "Yes! We welcome small pets.",
+          "category": "Lifestyle",
+          "sort_order": 1
+        }
+      ]
+    },
+    "galleries": {
+      "type": "array",
+      "description": "Photo galleries organized by category",
+      "items": {
+        "type": "object",
+        "required": ["title", "images"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Gallery title",
+            "example": "Beautiful Grounds & Surroundings"
+          },
+          "description": {
+            "type": "string",
+            "description": "Gallery description",
+            "example": "Explore our scenic seven-acre campus"
+          },
+          "category": {
+            "type": "string",
+            "description": "Gallery category",
+            "enum": ["environment", "amenities", "apartments", "activities", "dining", "events"],
+            "example": "environment"
+          },
+          "hero": {
+            "type": "boolean",
+            "description": "Whether this is the main/hero gallery",
+            "default": false,
+            "example": true
+          },
+          "images": {
+            "type": "array",
+            "description": "Images in this gallery",
+            "items": {
+              "type": "object",
+              "required": ["url"],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Image URL",
+                  "example": "https://cdn.example.com/patio.jpg"
+                },
+                "caption": {
+                  "type": "string",
+                  "description": "Image caption",
+                  "example": "Outdoor patio with mountain views"
+                },
+                "alt": {
+                  "type": "string",
+                  "description": "Alt text for accessibility",
+                  "example": "Patio seating area with umbrellas"
+                },
+                "sort_order": {
+                  "type": "integer",
+                  "description": "Order within gallery",
+                  "example": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "example": [
+        {
+          "title": "Community Amenities",
+          "category": "amenities",
+          "images": [
+            {
+              "url": "https://cdn.example.com/dining.jpg",
+              "caption": "Restaurant-style dining room",
+              "sort_order": 1
+            }
+          ]
+        }
+      ]
+    },
+    "events": {
+      "type": "array",
+      "description": "Upcoming or recurring community events",
+      "items": {
+        "type": "object",
+        "required": ["title", "starts_at"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Event name",
+            "example": "Annual Classic Car Show"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Brief summary",
+            "example": "Join us for our annual classic car show!"
+          },
+          "description": {
+            "type": "string",
+            "description": "Full event description (markdown supported)",
+            "example": "Celebrate vintage automobiles with live music, food, and fun for the whole family."
+          },
+          "starts_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Event start date/time (ISO 8601 format)",
+            "example": "2025-06-15T10:00:00-06:00"
+          },
+          "ends_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Event end date/time (ISO 8601 format)",
+            "example": "2025-06-15T14:00:00-06:00"
+          },
+          "location_text": {
+            "type": "string",
+            "description": "Location description",
+            "example": "Golden Pond Main Courtyard"
+          },
+          "image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Event image",
+            "example": "https://cdn.example.com/car-show.jpg"
+          },
+          "rsvp_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "RSVP link",
+            "example": "https://eventbrite.com/..."
+          },
+          "max_attendees": {
+            "type": "integer",
+            "description": "Maximum number of attendees",
+            "example": 100
+          },
+          "is_public": {
+            "type": "boolean",
+            "description": "Whether event is open to public",
+            "default": true,
+            "example": true
+          }
+        }
+      }
+    }
+  }
+}

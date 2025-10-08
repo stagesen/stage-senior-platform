@@ -5,7 +5,9 @@
       "Bash(curl:*)",
       "Bash(npx tsx:*)",
       "Read(//tmp/**)",
-      "Bash(npm run check:*)"
+      "Bash(npm run check:*)",
+      "Bash(node:*)",
+      "Bash(psql:*)"
     ],
     "deny": [],
     "ask": []

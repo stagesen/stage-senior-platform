@@ -1,0 +1,429 @@
+{
+  "community": {
+    "name": "Golden Pond Retirement Community",
+    "slug": "golden-pond",
+    "street": "1270 N Ford Street",
+    "city": "Golden",
+    "state": "CO",
+    "zip": "80403",
+    "latitude": 39.7706,
+    "longitude": -105.2204,
+    "phone_display": "(303) 502-5554",
+    "phone_dial": "3035025554",
+    "secondary_phone_display": "(303) 278-0623",
+    "secondary_phone_dial": "3032780623",
+    "email": "",
+    "overview": "Golden Pond Retirement Community is a locally owned senior‑living campus in Golden, Colorado. Nestled at the base of North Table Mountain, our vibrant community offers independent living, assisted living and memory care on a scenic seven‑acre campus.",
+    "description": "**Mission and Philosophy**\n\nGolden Pond's mission is to provide a vibrant home where care meets compassion.  Our locally owned campus fosters personalized support and independence in a beautiful mountain setting.  Residents enjoy adaptive care at every stage, from independent living to assisted living and memory care, backed by on‑site access to concierge physicians and rehabilitation partners.\n\n**Lifestyle & Activities**\n\nResidents stay engaged through a robust life‑enrichment program.  Weekly clubs range from creative writing, men's club and resident council to tech and food committees.  Outdoor recreation includes walking clubs, flower arranging, nature walks, gardening and trishaw bike rides.  Fun pursuits such as lecture series, trivia, live music, pet therapy, happy hours, dancing and intergenerational activities create a lively social calendar.  Special occasions include picnics, holiday celebrations, scenic drives and outings to museums, sports games and fishing.\n\n**Amenities & Environment**\n\nOur scenic campus features covered patios, water features, garden sculptures and pergolas.  Enjoy restaurant‑style dining with à‑la‑carte selections, daily specials and fresh seasonal ingredients, plus grab‑and‑go cafés and private family dining rooms.  The property offers a fitness center, salon, library, outdoor walking loops, Peace of Mind fall‑detection technology, pet‑friendly policies and inviting living areas with fireplaces.  Apartments are spacious—studio, one‑bedroom or two‑bedroom—and include full kitchens or kitchenettes, housekeeping, utilities, Wi‑Fi, Comcast extended package and emergency call systems.\n\n**Care Options**\n\nIndependent living features 39 one‑ and two‑bedroom residences with bi‑weekly housekeeping, linen changes, transportation and scenic mountain views.  Assisted living provides 76 apartments with weekly housekeeping, linen changes, trash service and 24‑hour staff, plus access to a modern bistro, fitness center, salon and movie theater.  Memory care offers 15 private suites with specialized support and secure outdoor access, focusing on residents' abilities rather than limitations.",
+    "short_description": "Locally owned senior living in Golden, CO offering independent, assisted and memory care with scenic mountain views.",
+    "starting_rate_display": "Starting at $5,000/month",
+    "rating": 4.8,
+    "review_count": 127,
+    "license_status": "Licensed & Insured",
+    "same_day_tours": true,
+    "no_obligation": true,
+    "featured": true,
+    "active": true,
+    "seo_title": "Golden Pond Retirement Community | Senior Living in Golden, CO",
+    "seo_description": "Golden Pond is a locally owned retirement community in Golden, Colorado offering independent living, assisted living and memory care.",
+    "brochure_link": ""
+  },
+  "care_types": [
+    {
+      "slug": "independent-living",
+      "name": "Independent Living",
+      "description": "One‑ and two‑bedroom apartments with full kitchens, housekeeping, Wi‑Fi, transportation and mountain views."
+    },
+    {
+      "slug": "assisted-living",
+      "name": "Assisted Living",
+      "description": "76 spacious apartments offering tailored support with housekeeping, linen service, meals and modern amenities."
+    },
+    {
+      "slug": "memory-care",
+      "name": "Memory Care",
+      "description": "Private suites with secure access and person‑centered support focused on each resident's abilities."
+    }
+  ],
+  "amenities": [
+    {
+      "slug": "restaurant-style-dining",
+      "name": "Restaurant‑Style Dining",
+      "category": "dining",
+      "description": "À‑la‑carte menus, daily specials and fresh seasonal ingredients served in multiple dining venues.",
+      "icon": "utensils"
+    },
+    {
+      "slug": "grab-and-go-cafe",
+      "name": "Grab‑and‑Go Cafés",
+      "category": "dining",
+      "description": "Convenient cafés for coffee, snacks and light fare."
+    },
+    {
+      "slug": "private-dining-room",
+      "name": "Private Dining Rooms",
+      "category": "dining",
+      "description": "Family dining rooms available for special occasions and celebrations."
+    },
+    {
+      "slug": "fitness-center",
+      "name": "Fitness Center",
+      "category": "wellness",
+      "description": "Modern facility for exercise classes and strength training.",
+      "icon": "dumbbell"
+    },
+    {
+      "slug": "salon",
+      "name": "Full‑Service Salon",
+      "category": "wellness",
+      "description": "On‑site salon providing hair and spa services."
+    },
+    {
+      "slug": "library",
+      "name": "Library",
+      "category": "lifestyle",
+      "description": "Quiet space with a wide selection of books and periodicals."
+    },
+    {
+      "slug": "outdoor-walking-paths",
+      "name": "Outdoor Walking Paths",
+      "category": "outdoor",
+      "description": "Beautifully landscaped walking loops with benches, patios, pergolas and water features."
+    },
+    {
+      "slug": "pet-friendly",
+      "name": "Pet Friendly",
+      "category": "lifestyle",
+      "description": "Residents are welcome to bring their small pets.",
+      "icon": "paw"
+    },
+    {
+      "slug": "peace-of-mind-technology",
+      "name": "Peace of Mind Technology",
+      "category": "safety",
+      "description": "Fall‑detection and emergency call systems for enhanced safety."
+    },
+    {
+      "slug": "movie-theater",
+      "name": "Movie Theater",
+      "category": "recreation",
+      "description": "On‑site theater offering film nights and entertainment."
+    }
+  ],
+  "floor_plans": [
+    {
+      "name": "Studio Suite",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "square_feet": 450,
+      "description": "Open‑concept studio with kitchenette, large windows and emergency call system.",
+      "starting_rate_display": "Starting at $4,800/month",
+      "availability": "limited",
+      "accessible": false,
+      "highlights": [
+        "Kitchenette",
+        "Mountain views",
+        "Emergency call system"
+      ],
+      "images": [
+        {
+          "url": "https://cdn.example.com/golden-pond/studio.jpg",
+          "caption": "Studio living area",
+          "type": "photo"
+        },
+        {
+          "url": "https://cdn.example.com/golden-pond/studio-floorplan.png",
+          "caption": "Studio floor plan",
+          "type": "floor_plan"
+        }
+      ],
+      "sort_order": 1
+    },
+    {
+      "name": "One‑Bedroom Apartment",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "square_feet": 650,
+      "description": "Spacious one‑bedroom layout with full kitchen, separate living room and balcony.",
+      "starting_rate_display": "Starting at $5,500/month",
+      "availability": "available",
+      "accessible": true,
+      "highlights": [
+        "Full kitchen",
+        "Private balcony",
+        "Washer/dryer"
+      ],
+      "images": [
+        {
+          "url": "https://cdn.example.com/golden-pond/one-bedroom.jpg",
+          "caption": "One‑bedroom living room",
+          "type": "photo"
+        },
+        {
+          "url": "https://cdn.example.com/golden-pond/one-bedroom-floorplan.png",
+          "caption": "One‑bedroom floor plan",
+          "type": "floor_plan"
+        }
+      ],
+      "sort_order": 2
+    },
+    {
+      "name": "Two‑Bedroom Apartment",
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "square_feet": 900,
+      "description": "Large two‑bedroom residence with full kitchen, two baths and scenic views.",
+      "starting_rate_display": "Starting at $6,200/month",
+      "availability": "waitlist",
+      "accessible": true,
+      "highlights": [
+        "Separate dining room",
+        "Two bathrooms",
+        "Mountain views"
+      ],
+      "images": [
+        {
+          "url": "https://cdn.example.com/golden-pond/two-bedroom.jpg",
+          "caption": "Two‑bedroom dining area",
+          "type": "photo"
+        },
+        {
+          "url": "https://cdn.example.com/golden-pond/two-bedroom-floorplan.png",
+          "caption": "Two‑bedroom floor plan",
+          "type": "floor_plan"
+        }
+      ],
+      "sort_order": 3
+    }
+  ],
+  "team_members": [],
+  "features": [
+    {
+      "eyebrow": "Mission",
+      "title": "Personalized Care at Every Stage",
+      "body": "Our seasoned, highly trained staff provide individualized attention while encouraging independence.  We tailor support for independent, assisted and memory care residents.",
+      "image_url": "https://cdn.example.com/golden-pond/mission.jpg",
+      "image_alt": "Friendly caregiver assisting a resident",
+      "cta_label": "Learn More",
+      "cta_href": "/about-us",
+      "image_left": true,
+      "sort_order": 1
+    },
+    {
+      "eyebrow": "Lifestyle",
+      "title": "Engaging Activities & Social Events",
+      "body": "From creative writing and gardening clubs to live music and intergenerational programs, our calendar offers endless opportunities for connection and fun.",
+      "image_url": "https://cdn.example.com/golden-pond/activities.jpg",
+      "image_alt": "Residents enjoying a gardening class",
+      "cta_label": "View Activities",
+      "cta_href": "/activities",
+      "image_left": false,
+      "sort_order": 2
+    },
+    {
+      "eyebrow": "Amenities",
+      "title": "Scenic Campus & Modern Amenities",
+      "body": "Experience our seven‑acre campus with outdoor walking paths, patios, pergolas and water features, plus a fitness center, salon, library and movie theater.",
+      "image_url": "https://cdn.example.com/golden-pond/amenities.jpg",
+      "image_alt": "Beautiful outdoor courtyard with pergola",
+      "cta_label": "Explore Amenities",
+      "cta_href": "/amenities",
+      "image_left": true,
+      "sort_order": 3
+    }
+  ],
+  "highlights": [
+    {
+      "title": "Stunning Mountain Views",
+      "description": "Breathtaking vistas of North Table Mountain and the Colorado foothills.",
+      "image_url": "https://cdn.example.com/golden-pond/mountain-views-icon.svg",
+      "cta_label": "See the Views",
+      "cta_href": "/gallery",
+      "sort_order": 1
+    },
+    {
+      "title": "Locally Owned & Operated",
+      "description": "A community with a personal touch—independent ownership ensures responsive leadership and a family feel.",
+      "image_url": "https://cdn.example.com/golden-pond/local-icon.svg",
+      "sort_order": 2
+    },
+    {
+      "title": "Continuum of Care",
+      "description": "Independent, assisted and memory care options allow residents to age in place.",
+      "image_url": "https://cdn.example.com/golden-pond/continuum-icon.svg",
+      "cta_label": "View Care Options",
+      "cta_href": "/living-options",
+      "sort_order": 3
+    }
+  ],
+  "faqs": [
+    {
+      "question": "What is included in the monthly rate?",
+      "answer": "Monthly rates include housekeeping, utilities, Wi‑Fi, cable, meals, transportation, activities and 24‑hour staff support.",
+      "category": "Pricing",
+      "sort_order": 1
+    },
+    {
+      "question": "Are pets allowed?",
+      "answer": "Yes!  Residents may bring small pets and enjoy our pet‑friendly outdoor spaces.",
+      "category": "Lifestyle",
+      "sort_order": 2
+    },
+    {
+      "question": "Do apartments have kitchens?",
+      "answer": "Independent and assisted living apartments feature full kitchens or kitchenettes with modern appliances.",
+      "category": "Floor Plans",
+      "sort_order": 3
+    }
+  ],
+  "galleries": [
+    {
+      "title": "Beautiful Grounds & Surroundings",
+      "description": "Explore our scenic seven‑acre campus at the base of North Table Mountain.",
+      "category": "environment",
+      "hero": true,
+      "images": [
+        {
+          "url": "https://cdn.example.com/golden-pond/courtyard.jpg",
+          "caption": "Lush courtyard with pergola and water feature",
+          "alt": "Courtyard with pergola",
+          "sort_order": 1
+        },
+        {
+          "url": "https://cdn.example.com/golden-pond/mountain-view.jpg",
+          "caption": "View of North Table Mountain from our grounds",
+          "alt": "Mountain view",
+          "sort_order": 2
+        },
+        {
+          "url": "https://cdn.example.com/golden-pond/garden-path.jpg",
+          "caption": "Walking path surrounded by gardens",
+          "alt": "Garden walking path",
+          "sort_order": 3
+        }
+      ]
+    },
+    {
+      "title": "Amenities & Spaces",
+      "category": "amenities",
+      "images": [
+        {
+          "url": "https://cdn.example.com/golden-pond/dining-room.jpg",
+          "caption": "Restaurant‑style dining room",
+          "alt": "Dining room with tables and chairs",
+          "sort_order": 1
+        },
+        {
+          "url": "https://cdn.example.com/golden-pond/fitness-center.jpg",
+          "caption": "Residents using the fitness center",
+          "alt": "Fitness equipment and residents",
+          "sort_order": 2
+        },
+        {
+          "url": "https://cdn.example.com/golden-pond/library.jpg",
+          "caption": "Cozy library with fireplace",
+          "alt": "Library with books and fireplace",
+          "sort_order": 3
+        }
+      ]
+    },
+    {
+      "title": "Apartments & Suites",
+      "category": "apartments",
+      "images": [
+        {
+          "url": "https://cdn.example.com/golden-pond/apartment-living-room.jpg",
+          "caption": "Bright living room with large windows",
+          "alt": "Apartment living room",
+          "sort_order": 1
+        },
+        {
+          "url": "https://cdn.example.com/golden-pond/apartment-kitchen.jpg",
+          "caption": "Full kitchen with modern appliances",
+          "alt": "Kitchen in apartment",
+          "sort_order": 2
+        },
+        {
+          "url": "https://cdn.example.com/golden-pond/apartment-bedroom.jpg",
+          "caption": "Spacious bedroom with mountain views",
+          "alt": "Bedroom",
+          "sort_order": 3
+        }
+      ]
+    },
+    {
+      "title": "Activities & Events",
+      "category": "activities",
+      "images": [
+        {
+          "url": "https://cdn.example.com/golden-pond/painting-class.jpg",
+          "caption": "Residents enjoying a painting class",
+          "alt": "Painting class",
+          "sort_order": 1
+        },
+        {
+          "url": "https://cdn.example.com/golden-pond/gardening-club.jpg",
+          "caption": "Gardening club working in the raised beds",
+          "alt": "Gardening club",
+          "sort_order": 2
+        },
+        {
+          "url": "https://cdn.example.com/golden-pond/live-music.jpg",
+          "caption": "Live music during happy hour",
+          "alt": "Live music event",
+          "sort_order": 3
+        }
+      ]
+    },
+    {
+      "title": "Dining & Culinary",
+      "category": "dining",
+      "images": [
+        {
+          "url": "https://cdn.example.com/golden-pond/chef-preparing-meal.jpg",
+          "caption": "Chef preparing fresh seasonal meal",
+          "alt": "Chef cooking",
+          "sort_order": 1
+        },
+        {
+          "url": "https://cdn.example.com/golden-pond/wine-night.jpg",
+          "caption": "Residents enjoying wine night",
+          "alt": "Wine night event",
+          "sort_order": 2
+        },
+        {
+          "url": "https://cdn.example.com/golden-pond/private-dining.jpg",
+          "caption": "Private dining room set up for a family celebration",
+          "alt": "Private dining room",
+          "sort_order": 3
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "title": "Annual Classic Car Show",
+      "summary": "Celebrate vintage automobiles with live music and food.",
+      "description": "Join us for our annual car show featuring classic vehicles, live entertainment and delicious food.  Residents and guests can vote for their favorite cars and enjoy a festive afternoon on the main lawn.",
+      "starts_at": "2025-06-15T10:00:00-06:00",
+      "ends_at": "2025-06-15T14:00:00-06:00",
+      "location_text": "Golden Pond Main Courtyard",
+      "image_url": "https://cdn.example.com/golden-pond/car-show.jpg",
+      "rsvp_url": "https://goldenpond.com/events/car-show",
+      "max_attendees": 150,
+      "is_public": true
+    },
+    {
+      "title": "Happy Hour Fridays",
+      "summary": "Weekly social hour with drinks, music and camaraderie.",
+      "description": "Every Friday at 4 p.m. residents gather for happy hour in our Bistro.  Enjoy wine, cocktails, live piano music and the company of friends.",
+      "starts_at": "2025-10-10T16:00:00-06:00",
+      "ends_at": "2025-10-10T17:30:00-06:00",
+      "location_text": "Golden Pond Bistro",
+      "image_url": "https://cdn.example.com/golden-pond/happy-hour.jpg",
+      "rsvp_url": "",
+      "max_attendees": 80,
+      "is_public": true
+    }
+  ]
+}

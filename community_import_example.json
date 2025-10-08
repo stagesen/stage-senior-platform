@@ -1,0 +1,306 @@
+{
+  "community": {
+    "name": "Sunny Acres Senior Living",
+    "slug": "sunny-acres",
+    "street": "456 Elm Avenue",
+    "city": "Denver",
+    "state": "CO",
+    "zip": "80202",
+    "latitude": 39.7392,
+    "longitude": -104.9903,
+    "phone_display": "(303) 555-7890",
+    "phone_dial": "3035557890",
+    "email": "info@sunnyacres.com",
+    "overview": "Sunny Acres is a premier senior living community in the heart of Denver, offering personalized care and luxurious amenities in a warm, welcoming environment.",
+    "description": "## Welcome to Sunny Acres\n\nSunny Acres Senior Living provides exceptional care in a beautiful setting. Our community features:\n\n- **Award-winning dining** with chef-prepared meals\n- **Spacious apartments** with modern finishes\n- **Engaging activities** tailored to resident interests\n- **Experienced staff** committed to personalized care\n\n### Our Philosophy\n\nWe believe every resident deserves dignity, respect, and the freedom to live life on their own terms.",
+    "short_description": "Premier senior living in Denver with personalized care, award-winning dining, and engaging activities.",
+    "starting_rate_display": "Starting at $4,500/month",
+    "rating": 4.9,
+    "review_count": 243,
+    "license_status": "Licensed & Insured",
+    "same_day_tours": true,
+    "no_obligation": true,
+    "featured": true,
+    "active": true,
+    "seo_title": "Sunny Acres Senior Living | Assisted Living in Denver, CO",
+    "seo_description": "Sunny Acres offers premier senior living in Denver with personalized care, award-winning dining, and a vibrant community atmosphere.",
+    "brochure_link": "https://cdn.example.com/sunny-acres-brochure.pdf"
+  },
+  "care_types": [
+    {
+      "slug": "independent-living",
+      "name": "Independent Living",
+      "description": "Active lifestyle with minimal assistance and maximum independence"
+    },
+    {
+      "slug": "assisted-living",
+      "name": "Assisted Living",
+      "description": "Personalized support with daily activities while maintaining independence"
+    },
+    {
+      "slug": "memory-care",
+      "name": "Memory Care",
+      "description": "Specialized care for residents with Alzheimer's and dementia in a secure environment"
+    }
+  ],
+  "amenities": [
+    {
+      "slug": "restaurant-dining",
+      "name": "Restaurant-Style Dining",
+      "category": "dining",
+      "description": "Chef-prepared meals with multiple dining options daily",
+      "icon": "utensils"
+    },
+    {
+      "slug": "fitness-center",
+      "name": "Fitness Center",
+      "category": "wellness",
+      "description": "State-of-the-art equipment and fitness classes",
+      "icon": "dumbbell"
+    },
+    {
+      "slug": "beauty-salon",
+      "name": "Beauty Salon & Spa",
+      "category": "services",
+      "description": "Full-service salon and spa treatments",
+      "icon": "scissors"
+    },
+    {
+      "slug": "pet-friendly",
+      "name": "Pet Friendly",
+      "category": "lifestyle",
+      "description": "Pets welcome - we love our furry friends!",
+      "icon": "paw"
+    }
+  ],
+  "floor_plans": [
+    {
+      "name": "Studio Apartment",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "square_feet": 400,
+      "description": "Efficient studio layout perfect for individuals. Features kitchenette, spacious closet, and private bathroom.",
+      "starting_rate_display": "Starting at $4,500/month",
+      "availability": "available",
+      "accessible": true,
+      "highlights": [
+        "Kitchenette with microwave and refrigerator",
+        "Large windows with natural light",
+        "Walk-in shower",
+        "Emergency call system"
+      ],
+      "images": [
+        {
+          "url": "https://cdn.example.com/studio-photo.jpg",
+          "caption": "Bright studio apartment",
+          "type": "photo"
+        },
+        {
+          "url": "https://cdn.example.com/studio-plan.jpg",
+          "caption": "Studio floor plan",
+          "type": "floor_plan"
+        }
+      ],
+      "sort_order": 1
+    },
+    {
+      "name": "One-Bedroom Deluxe",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "square_feet": 650,
+      "description": "Spacious one-bedroom with separate living area, full kitchen, and private balcony.",
+      "starting_rate_display": "Starting at $5,800/month",
+      "availability": "limited",
+      "accessible": false,
+      "highlights": [
+        "Full kitchen with appliances",
+        "Private balcony with city views",
+        "Walk-in closet",
+        "Separate dining area"
+      ],
+      "images": [
+        {
+          "url": "https://cdn.example.com/1br-living.jpg",
+          "caption": "One-bedroom living area",
+          "type": "photo"
+        },
+        {
+          "url": "https://cdn.example.com/1br-kitchen.jpg",
+          "caption": "Modern kitchen",
+          "type": "photo"
+        },
+        {
+          "url": "https://cdn.example.com/1br-plan.jpg",
+          "caption": "One-bedroom floor plan",
+          "type": "floor_plan"
+        }
+      ],
+      "sort_order": 2
+    }
+  ],
+  "team_members": [
+    {
+      "name": "Susan Martinez",
+      "role": "Executive Director",
+      "department": "Leadership",
+      "bio": "Susan has over 25 years of experience in senior living management and is passionate about creating a warm, caring community.",
+      "email": "susan@sunnyacres.com",
+      "phone": "(303) 555-7891",
+      "photo_url": "https://cdn.example.com/team/susan.jpg",
+      "linkedin_url": "https://linkedin.com/in/susanmartinez",
+      "featured": true,
+      "sort_order": 1
+    },
+    {
+      "name": "Dr. Michael Chen",
+      "role": "Director of Nursing",
+      "department": "Healthcare",
+      "bio": "Dr. Chen brings extensive clinical expertise and ensures the highest standards of care for all residents.",
+      "email": "michael@sunnyacres.com",
+      "photo_url": "https://cdn.example.com/team/michael.jpg",
+      "featured": true,
+      "sort_order": 2
+    },
+    {
+      "name": "Amanda Lopez",
+      "role": "Activities Director",
+      "department": "Life Enrichment",
+      "bio": "Amanda creates engaging programs that keep residents active, social, and fulfilled every day.",
+      "email": "amanda@sunnyacres.com",
+      "featured": true,
+      "sort_order": 3
+    }
+  ],
+  "features": [
+    {
+      "eyebrow": "Our Mission",
+      "title": "Person-Centered Care",
+      "body": "We believe in treating each resident as an individual with unique needs, preferences, and dreams. Our care plans are tailored to support the lifestyle each person wants to live.",
+      "image_url": "https://cdn.example.com/mission.jpg",
+      "image_alt": "Caregiver assisting smiling resident",
+      "image_left": false,
+      "sort_order": 1
+    },
+    {
+      "eyebrow": "Our Approach",
+      "title": "Family Atmosphere",
+      "body": "From the moment you walk through our doors, you'll feel the warmth of our community. We're not just a facility - we're a family that supports, celebrates, and cares for one another.",
+      "image_url": "https://cdn.example.com/family.jpg",
+      "image_alt": "Residents enjoying group activity",
+      "cta_label": "Meet Our Team",
+      "cta_href": "/team",
+      "image_left": true,
+      "sort_order": 2
+    }
+  ],
+  "highlights": [
+    {
+      "title": "Award-Winning Dining",
+      "description": "Our executive chef prepares restaurant-quality meals daily using fresh, local ingredients",
+      "sort_order": 1
+    },
+    {
+      "title": "Prime Denver Location",
+      "description": "Easy access to shopping, parks, medical facilities, and cultural attractions",
+      "sort_order": 2
+    },
+    {
+      "title": "Active Lifestyle",
+      "description": "Daily activities, fitness classes, outings, and social events keep life interesting",
+      "sort_order": 3
+    },
+    {
+      "title": "24/7 Care & Security",
+      "description": "Licensed nurses and caregivers available around the clock for peace of mind",
+      "sort_order": 4
+    }
+  ],
+  "faqs": [
+    {
+      "question": "What is included in the monthly fee?",
+      "answer": "Your monthly fee includes apartment rent, utilities (except phone), housekeeping, linen service, scheduled transportation, all meals, activities, and basic cable/Wi-Fi. Care services are customized based on individual needs.",
+      "category": "Pricing",
+      "sort_order": 1
+    },
+    {
+      "question": "Can I bring my pet?",
+      "answer": "Yes! We are a pet-friendly community and welcome cats and small dogs under 25 pounds. There is a small monthly pet fee.",
+      "category": "Lifestyle",
+      "sort_order": 1
+    },
+    {
+      "question": "What dining options are available?",
+      "answer": "We offer three chef-prepared meals daily in our restaurant-style dining room, plus a bistro with grab-and-go options. Special dietary needs are accommodated, and meals can be delivered to your apartment if needed.",
+      "category": "Dining",
+      "sort_order": 1
+    },
+    {
+      "question": "How do I schedule a tour?",
+      "answer": "Tours are available seven days a week, and we offer same-day tours! Call us at (303) 555-7890 or use our online contact form to schedule your visit.",
+      "category": "Tours",
+      "sort_order": 1
+    }
+  ],
+  "galleries": [
+    {
+      "title": "Community Spaces",
+      "description": "Explore our beautifully designed common areas and amenities",
+      "category": "amenities",
+      "hero": true,
+      "images": [
+        {
+          "url": "https://cdn.example.com/lobby.jpg",
+          "caption": "Welcoming main lobby",
+          "alt": "Bright lobby with comfortable seating",
+          "sort_order": 1
+        },
+        {
+          "url": "https://cdn.example.com/dining-room.jpg",
+          "caption": "Restaurant-style dining room",
+          "alt": "Elegant dining room with large windows",
+          "sort_order": 2
+        },
+        {
+          "url": "https://cdn.example.com/fitness.jpg",
+          "caption": "Modern fitness center",
+          "alt": "Fitness center with exercise equipment",
+          "sort_order": 3
+        }
+      ]
+    },
+    {
+      "title": "Apartment Homes",
+      "description": "Tour our comfortable, well-appointed apartments",
+      "category": "apartments",
+      "hero": false,
+      "images": [
+        {
+          "url": "https://cdn.example.com/apt-living.jpg",
+          "caption": "Bright apartment living area",
+          "alt": "Living room with large windows",
+          "sort_order": 1
+        },
+        {
+          "url": "https://cdn.example.com/apt-bedroom.jpg",
+          "caption": "Comfortable bedroom",
+          "alt": "Bedroom with natural light",
+          "sort_order": 2
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "title": "Summer Garden Party",
+      "summary": "Join us for an afternoon of music, refreshments, and fun in our garden",
+      "description": "Celebrate summer with live music from local musicians, delicious appetizers and refreshments, and games on the lawn. Family and friends welcome!",
+      "starts_at": "2025-07-20T14:00:00-06:00",
+      "ends_at": "2025-07-20T17:00:00-06:00",
+      "location_text": "Sunny Acres Garden Courtyard",
+      "image_url": "https://cdn.example.com/garden-party.jpg",
+      "rsvp_url": "https://sunnyacres.com/events/summer-party",
+      "max_attendees": 150,
+      "is_public": true
+    }
+  ]
+}
