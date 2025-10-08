@@ -86,13 +86,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Handle active filter:
-      // - active='all' or active='false': show all communities
+      // - active='all': show all communities (no filter)
       // - active='true': show only active communities
+      // - active='false': show only inactive communities
       // - no active param: default to active communities only (for public access)
-      if (active === 'all' || active === 'false') {
+      if (active === 'all') {
         // Show all communities (don't set active filter)
       } else if (active === 'true') {
         filters.active = true;
+      } else if (active === 'false') {
+        filters.active = false;
       } else if (active === undefined) {
         // Default to active communities only for public access
         filters.active = true;
