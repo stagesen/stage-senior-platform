@@ -3,6 +3,7 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Express } from "express";
 import session from "express-session";
+import rateLimit from "express-rate-limit";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
@@ -81,6 +82,15 @@ export function setupAuth(app: Express) {
     },
   };
 
+  // Rate limiter for authentication endpoints to prevent brute-force attacks
+  const authRateLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10, // Max 10 requests per window per IP
+    standardHeaders: true,
+    message: "Too many requests, please try again later",
+    skipSuccessfulRequests: false, // Count all attempts
+  });
+
   app.set("trust proxy", 1);
   app.use(session(sessionSettings));
   app.use(passport.initialize());
@@ -110,7 +120,7 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.post("/api/register", async (req, res, next) => {
+  app.post("/api/register", authRateLimiter, async (req, res, next) => {
     try {
       const { username, password, email } = req.body;
       
@@ -131,7 +141,7 @@ export function setupAuth(app: Express) {
 
       const existingUser = await storage.getUserByUsername(username);
       if (existingUser) {
-        return res.status(400).json({ message: "Username already exists" });
+        return res.status(400).json({ message: "Registration failed, please try again" });
       }
 
       const user = await storage.createUser({
@@ -157,7 +167,7 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.post("/api/login", (req, res, next) => {
+  app.post("/api/login", authRateLimiter, (req, res, next) => {
     passport.authenticate("local", (err: any, user: SelectUser | false, info: any) => {
       if (err) {
         console.error("Login authentication error:", err);
