@@ -1,0 +1,6 @@
+community_slug,name,slug,role,department,bio,avatar_image_url,email,phone,linkedin_url,sort_order,featured
+golden-pond,Jane Smith,jane-smith,Executive Director,Leadership,"Bio text here...",https://example.com/jane.jpg,jane@goldenpond.com,(303) 123-4567,https://linkedin.com/in/janesmith,1,true
+golden-pond,John Doe,john-doe,Care Coordinator,Care,"Bio text here...",https://example.com/john.jpg,john@goldenpond.com,(303) 123-4568,,2,false
+gardens-at-columbine,,,,,,,,,,
+the-gardens-on-quail,,,,,,,,,,
+stonebridge-senior,,,,,,,,,,

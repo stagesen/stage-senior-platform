@@ -1,0 +1,6 @@
+community_slug,gallery_slug,title,description,category,hero,published,thumbnail_index,image_1_url,image_1_alt,image_1_caption,image_2_url,image_2_alt,image_2_caption,image_3_url,image_3_alt,image_3_caption,image_4_url,image_4_alt,image_4_caption,image_5_url,image_5_alt,image_5_caption
+golden-pond,dining-room,Dining Room,"Our beautiful dining spaces",Amenities,true,true,0,https://example.com/dining1.jpg,Elegant dining room,Residents enjoying a meal,https://example.com/dining2.jpg,Bistro cafe,Coffee and conversation,https://example.com/dining3.jpg,Private dining,Special family dinner,,,,,,
+golden-pond,outdoor-spaces,Outdoor Spaces,"Gardens and patios",Amenities,false,true,0,https://example.com/garden1.jpg,Landscaped gardens,Beautiful walking paths,https://example.com/garden2.jpg,Patio seating,Relaxing outdoors,,,,,,,,,
+gardens-at-columbine,,,,,,,,,,,,,,,,,,,,,
+the-gardens-on-quail,,,,,,,,,,,,,,,,,,,,,
+stonebridge-senior,,,,,,,,,,,,,,,,,,,,,

@@ -1,0 +1,6 @@
+community_slug,plan_slug,name,bedrooms,bathrooms,square_feet,description,starting_rate_display,starting_price,availability,accessible,image_1_url,image_1_caption,image_2_url,image_2_caption,floor_plan_pdf_url,spec_pdf_url,highlights,sort_order
+golden-pond,studio-deluxe,Deluxe Studio,0,1,450,"Cozy studio with kitchenette and private bath",$4500,4500,available,true,https://example.com/studio1.jpg,Main living area,https://example.com/studio2.jpg,Bathroom,https://example.com/floorplan.pdf,https://example.com/spec.pdf,"Full bathroom,Kitchenette,Emergency call system,Walk-in closet",1
+golden-pond,one-bedroom,One Bedroom,1,1,650,"Spacious one bedroom with full kitchen",$5200,5200,available,false,https://example.com/1br1.jpg,Living room,https://example.com/1br2.jpg,Bedroom,https://example.com/floorplan.pdf,https://example.com/spec.pdf,"Full kitchen,Large bedroom,Patio or balcony,Emergency call system",2
+gardens-at-columbine,,,,,,,,,,,,,,,
+the-gardens-on-quail,,,,,,,,,,,,,,,
+stonebridge-senior,,,,,,,,,,,,,,,

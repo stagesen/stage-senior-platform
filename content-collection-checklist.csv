@@ -1,0 +1,173 @@
+Community,Category,Item,Description,Priority,Specifications,Quantity,Current Status,Notes
+Golden Pond,Branding,Community Logo,Main logo for website header and materials,High,"PNG with transparency, min 2000px wide, white version for dark backgrounds",1,Missing,Need both color and white versions
+Golden Pond,Branding,Favicon,Small icon for browser tab,Medium,"ICO or PNG, 512x512px",1,Missing,
+Golden Pond,Hero Images,Main Hero Image,Primary image for community homepage,High,"High-resolution JPEG, min 1920x1080px, landscape orientation",1,Missing,Should showcase building exterior or grounds
+Golden Pond,Hero Images,Secondary Hero Images,Additional hero rotation images,Medium,"High-resolution JPEG, min 1920x1080px",2-3,Missing,Mountain views or courtyard recommended
+Golden Pond,Gallery - Environment,Exterior Building Shot,Front view of main building with signage,High,"JPEG, min 1200x800px",1,Missing,
+Golden Pond,Gallery - Environment,Courtyard with Pergola,Lush courtyard showing water features and pergola,High,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Environment,Mountain Views,Views of North Table Mountain from grounds,High,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Environment,Walking Paths,Garden walking paths with landscaping,Medium,"JPEG, min 1200x800px",2,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Environment,Water Features,Ponds and water features on campus,Medium,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Amenities,Dining Room,Restaurant-style dining room setup,High,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Amenities,Private Dining Room,Private family dining room,Medium,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Amenities,Fitness Center,Residents using fitness equipment,Medium,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Amenities,Library,Cozy library with fireplace,Medium,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Amenities,Salon,On-site salon interior,Low,"JPEG, min 1200x800px",1,Missing,
+Golden Pond,Gallery - Amenities,Movie Theater,Community movie theater,Low,"JPEG, min 1200x800px",1,Missing,
+Golden Pond,Gallery - Apartments,Studio Living Area,Bright studio apartment with furnishings,High,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Apartments,One-Bedroom Living Room,One-bedroom apartment living space,High,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Apartments,Apartment Kitchen,Full kitchen with modern appliances,High,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Apartments,Bedroom,Spacious bedroom with mountain views,Medium,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Apartments,Bathroom,Modern bathroom with walk-in shower,Low,"JPEG, min 1200x800px",1,Missing,
+Golden Pond,Gallery - Activities,Art Class,Residents in painting or craft class,Medium,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Activities,Gardening Club,Residents working in raised garden beds,Medium,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Activities,Live Music,Live music performance or happy hour,Medium,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Activities,Exercise Class,Fitness or yoga class in action,Low,"JPEG, min 1200x800px",1,Missing,
+Golden Pond,Gallery - Dining,Chef Preparing Meal,Chef in kitchen preparing fresh food,Medium,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Gallery - Dining,Plated Meal,Beautiful plated meal close-up,Medium,"JPEG, min 1200x800px",1,Missing,
+Golden Pond,Gallery - Dining,Wine Night,Residents enjoying wine social,Low,"JPEG, min 1200x800px",1,Placeholder URL,Replace with actual photo
+Golden Pond,Floor Plans,Studio Floor Plan Diagram,Architectural layout for studio,High,"PDF or PNG, clear dimensions and labels",1,Missing,
+Golden Pond,Floor Plans,One-Bedroom Floor Plan Diagram,Architectural layout for 1BR,High,"PDF or PNG, clear dimensions and labels",1,Missing,
+Golden Pond,Floor Plans,Two-Bedroom Floor Plan Diagram,Architectural layout for 2BR,High,"PDF or PNG, clear dimensions and labels",1,Missing,
+Golden Pond,Floor Plans,Studio Interior Photo,Furnished studio apartment photo,High,"JPEG, min 1200x800px",1,Missing,Match floor plan
+Golden Pond,Floor Plans,One-Bedroom Interior Photo,Furnished 1BR apartment photo,High,"JPEG, min 1200x800px",1,Missing,Match floor plan
+Golden Pond,Floor Plans,Two-Bedroom Interior Photo,Furnished 2BR apartment photo,High,"JPEG, min 1200x800px",1,Missing,Match floor plan
+Golden Pond,Team,Team Headshots,Professional photos of all team members listed,Medium,"JPEG, 800x800px minimum, professional quality, consistent background",8,Missing,"Leigh Boney, Marci Gerke, Maria Torres, Shellie Yushka, Chaz Osen, Holly Jo Eames, Bob Burden, Sarah Stevenson"
+Golden Pond,Team,Team Contact Info,Email addresses and phone numbers for team,Low,Plain text or spreadsheet,8,Missing,Most currently null
+Golden Pond,Team,Team Bios,Short bio paragraphs for each team member,Low,"50-150 words each, professional tone",8,Missing,Expand current bios
+Golden Pond,Documents,Community Brochure,Downloadable PDF brochure,Medium,"PDF, optimized for web (under 5MB)",1,Missing,
+Golden Pond,Content,Current Pricing,Accurate pricing ranges by floor plan,High,Text or spreadsheet,3,Missing,Currently shows generic ranges
+Golden Pond,Content,Events Calendar,Upcoming events for next 3 months,Medium,"Event name, date/time, description",5-10,Partial,Has 2 events; need more
+
+Gardens on Quail,Branding,Community Logo,Main logo for website header and materials,High,"PNG with transparency, min 2000px wide",1,Missing,
+Gardens on Quail,Branding,Favicon,Small icon for browser tab,Medium,"ICO or PNG, 512x512px",1,Missing,
+Gardens on Quail,Hero Images,Main Hero Image,Primary image for community homepage,High,"High-resolution JPEG, min 1920x1080px",1,Missing,
+Gardens on Quail,Hero Images,Secondary Hero Images,Additional hero rotation images,Medium,"High-resolution JPEG, min 1920x1080px",2-3,Missing,
+Gardens on Quail,Gallery - Environment,Building Exterior,Front view with signage,High,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Environment,Courtyard with Train Set,Secure courtyard featuring train set and water feature,High,"JPEG, min 1200x800px",1,Missing,Unique feature!
+Gardens on Quail,Gallery - Environment,Garden Beds and Greenhouse,Raised garden beds and greenhouse,Medium,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Environment,Heated Walkways,Walkways winding through gardens,Medium,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Amenities,Dining Room,Restaurant-style dining room,High,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Amenities,1950s Themed Dining Room,Unique themed private dining room,High,"JPEG, min 1200x800px",1,Missing,Special feature!
+Gardens on Quail,Gallery - Amenities,Library,Library with seating,Medium,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Amenities,Salon,High-end salon interior,Medium,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Amenities,Fitness Room,Workout equipment,Medium,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Amenities,Chapel,Peaceful chapel space,Low,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Amenities,Putting Green,Outdoor putting green,Low,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Amenities,Basketball Court,Half-court basketball,Low,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Apartments,Memory Care Suite 350sf,Private memory care suite,High,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Apartments,Memory Care 1BR 485sf,One-bedroom memory care,High,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Apartments,Memory Care 2BR 705sf,Two-bedroom memory care,Medium,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Apartments,AL Studio,Assisted living studio,High,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Apartments,AL One-Bedroom,Assisted living one-bedroom,High,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Activities,Women's Tea Club,Women's tea club gathering,Medium,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Activities,Men's Club,Men's club activity,Medium,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Activities,Mountain Outing,Residents on scenic outing,Medium,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Dining,Chef Preparing Food,Chef with fresh ingredients,Medium,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Gallery - Dining,Plated Special,Daily special plated meal,Low,"JPEG, min 1200x800px",1,Missing,
+Gardens on Quail,Floor Plans,Memory Care 350sf Diagram,Keystone studio floor plan,High,"PDF or PNG",1,Missing,
+Gardens on Quail,Floor Plans,Memory Care 485sf Diagram,Durango suite floor plan,High,"PDF or PNG",1,Missing,
+Gardens on Quail,Floor Plans,Memory Care 705sf Diagram,Telluride companion floor plan,High,"PDF or PNG",1,Missing,
+Gardens on Quail,Floor Plans,AL Studio Diagram,Assisted living studio plan,High,"PDF or PNG",1,Missing,
+Gardens on Quail,Floor Plans,AL 1BR Diagram,Assisted living 1BR plan,High,"PDF or PNG",1,Missing,
+Gardens on Quail,Floor Plans,Memory Care Photos,Interior photos matching floor plans,High,"JPEG, min 1200x800px",3,Missing,
+Gardens on Quail,Floor Plans,AL Photos,Interior photos matching floor plans,High,"JPEG, min 1200x800px",2,Missing,
+Gardens on Quail,Team,Team Headshots,Professional photos of team members,Medium,"JPEG, 800x800px minimum",5+,Missing,Currently no team listed
+Gardens on Quail,Team,Team Information,Names, titles, bios, contact info,Medium,Text or spreadsheet,5+,Missing,Need complete team roster
+Gardens on Quail,Documents,Community Brochure,Downloadable PDF brochure,Medium,"PDF, under 5MB",1,Missing,
+Gardens on Quail,Content,Current Pricing,Pricing by floor plan,High,Text,5,Missing,Shows starting at $8300/mo but need details
+Gardens on Quail,Content,Events Calendar,Upcoming events,Medium,"Event details (name, date, description)",5-10,Complete,Has 3 events ✓
+
+Stonebridge Senior,Branding,Community Logo,Main logo for website header,High,"PNG with transparency, min 2000px wide",1,Missing,
+Stonebridge Senior,Branding,Favicon,Small icon for browser tab,Medium,"ICO or PNG, 512x512px",1,Missing,
+Stonebridge Senior,Hero Images,Main Hero Image,Primary homepage image,High,"High-resolution JPEG, min 1920x1080px",1,Missing,
+Stonebridge Senior,Hero Images,Secondary Hero Images,Additional hero images,Medium,"High-resolution JPEG, min 1920x1080px",2-3,Missing,
+Stonebridge Senior,Gallery - Environment,Building Exterior,Front exterior with signage,High,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Environment,Therapeutic Gardens,Covered patios and therapeutic gardens,High,"JPEG, min 1200x800px",2,Missing,
+Stonebridge Senior,Gallery - Environment,Water Features,Outdoor water features,Medium,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Environment,Secure Courtyard,Memory care secure courtyard,Medium,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Amenities,Dining Room,Elegant dining room,High,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Amenities,Private Dining,Private dining space,Medium,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Amenities,Creative Arts Studio,Arts and crafts studio,Medium,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Amenities,Common Areas,Living room with fireplace,Medium,"JPEG, min 1200x800px",2,Missing,
+Stonebridge Senior,Gallery - Amenities,Salon,On-site salon,Low,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Apartments,Studio 400sf,Studio apartment,High,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Apartments,One-Bedroom 550sf,1BR apartment,High,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Apartments,Two-Bedroom 1039sf,2BR apartment,High,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Apartments,Keystone Studio MC,Memory care Keystone studio,High,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Apartments,Durango Suite MC,Memory care Durango suite,Medium,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Apartments,Telluride Companion MC,Memory care Telluride companion,Medium,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Activities,Art Class,Residents in art class,Medium,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Activities,Gardening,Gardening club or trishaw rides,Medium,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Activities,Exercise Class,Wellness or yoga class,Low,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Dining,Chef,Regional Executive Chef Bob Burden,Medium,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Dining,Farm Fresh Meal,Locally sourced plated meal,Medium,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Gallery - Dining,Wine Social,Weekly wine social,Low,"JPEG, min 1200x800px",1,Missing,
+Stonebridge Senior,Floor Plans,Studio Diagram,400sf studio floor plan,High,"PDF or PNG",1,Missing,
+Stonebridge Senior,Floor Plans,1BR Diagram,550sf one-bedroom floor plan,High,"PDF or PNG",1,Missing,
+Stonebridge Senior,Floor Plans,2BR Diagram,1039sf two-bedroom floor plan,High,"PDF or PNG",1,Missing,
+Stonebridge Senior,Floor Plans,Keystone Studio MC Diagram,337sf memory care floor plan,High,"PDF or PNG",1,Missing,
+Stonebridge Senior,Floor Plans,Durango Suite MC Diagram,425sf memory care floor plan,High,"PDF or PNG",1,Missing,
+Stonebridge Senior,Floor Plans,Telluride Companion MC Diagram,501sf memory care floor plan,High,"PDF or PNG",1,Missing,
+Stonebridge Senior,Floor Plans,Floor Plan Photos,Interior photos for each plan,High,"JPEG, min 1200x800px",6,Missing,
+Stonebridge Senior,Team,Kyla Anderson Headshot,Executive Director photo,High,"JPEG, 800x800px minimum",1,Missing,
+Stonebridge Senior,Team,Jennie Dreiling Headshot,Marketing Director photo,Medium,"JPEG, 800x800px minimum",1,Missing,
+Stonebridge Senior,Team,Jennifer Harrington Headshot,Health & Wellness Director photo,Medium,"JPEG, 800x800px minimum",1,Missing,
+Stonebridge Senior,Team,Marci Gerke Headshot,Director of Memory Care photo,Medium,"JPEG, 800x800px minimum",1,Missing,
+Stonebridge Senior,Team,Bob Burden Headshot,Regional Executive Chef photo,Medium,"JPEG, 800x800px minimum",1,Missing,
+Stonebridge Senior,Team,Team Contact Info,Email and phone for all team,Low,Text or spreadsheet,5,Missing,All currently null
+Stonebridge Senior,Documents,Community Brochure,Downloadable PDF,Medium,"PDF, under 5MB",1,Missing,
+Stonebridge Senior,Content,Current Pricing,Pricing details by floor plan,High,Text,6,Missing,Shows "Contact for pricing"
+Stonebridge Senior,Content,Events Calendar,Upcoming community events,High,"Event details",5-10,Missing,0 events currently
+
+The Gardens at Columbine,Branding,Community Logo,Main logo for website,High,"PNG with transparency, min 2000px wide",1,Missing,
+The Gardens at Columbine,Branding,Favicon,Small icon for browser tab,Medium,"ICO or PNG, 512x512px",1,Missing,
+The Gardens at Columbine,Hero Images,Main Hero Image,Primary homepage image,High,"High-resolution JPEG, min 1920x1080px",1,Missing,
+The Gardens at Columbine,Hero Images,Secondary Hero Images,Additional hero images,Medium,"High-resolution JPEG, min 1920x1080px",2-3,Missing,
+The Gardens at Columbine,Gallery - Environment,Building Exterior,Main building with landscaping,High,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Environment,Raised Garden Beds,Waist-high planting boxes,High,"JPEG, min 1200x800px",2,Missing,Key feature!
+The Gardens at Columbine,Gallery - Environment,Walking Paths,5-acre campus walking paths,High,"JPEG, min 1200x800px",2,Missing,
+The Gardens at Columbine,Gallery - Environment,Courtyards,Landscaped courtyards,Medium,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Environment,Water Features,Tranquil water features,Medium,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Amenities,Dining Room,Restaurant-style dining,High,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Amenities,Reading Room,Library/reading room,Medium,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Amenities,Fitness & Rehab Center,Rehab and fitness facilities,Medium,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Amenities,Salon & Spa,Full-service salon,Medium,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Amenities,Common Lounges,Comfortable lounges,Low,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Apartments,Studio Bath 364sf,Studio apartment,High,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Apartments,Standard 1BR 450sf,Standard one-bedroom,High,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Apartments,Deluxe 1BR 515sf,Deluxe one-bedroom,High,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Apartments,2BR/1BA 970sf,Two-bedroom one-bath,Medium,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Apartments,2BR/2BA 728sf,Two-bedroom two-bath,Medium,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Apartments,Aspen Suite MC 217sf,Memory care Aspen,High,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Apartments,Blue Spruce MC 232sf,Memory care Blue Spruce,Medium,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Apartments,Conifer MC 236sf,Memory care Conifer,Medium,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Apartments,Evergreen MC 340sf,Memory care Evergreen,Medium,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Apartments,Douglas Fir MC 412sf,Memory care Douglas Fir,Low,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Activities,Creative Writing,Weekly creative writing club,Medium,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Activities,Gardening Club,Residents gardening,Medium,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Activities,Trishaw Rides,Trishaw bike rides,Medium,"JPEG, min 1200x800px",1,Missing,Unique activity!
+The Gardens at Columbine,Gallery - Activities,Happy Hour Friday,Happy hour event,Low,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Dining,Chef Cooking,Chef preparing seasonal meal,Medium,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Dining,Scratch-Made Soup,Fresh soup preparation,Low,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Gallery - Dining,Wine Night,Wine night or happy hour,Low,"JPEG, min 1200x800px",1,Missing,
+The Gardens at Columbine,Floor Plans,Studio Bath 364sf Diagram,Studio floor plan,High,"PDF or PNG",1,Missing,
+The Gardens at Columbine,Floor Plans,Standard 1BR 450sf Diagram,Standard 1BR floor plan,High,"PDF or PNG",1,Missing,
+The Gardens at Columbine,Floor Plans,Deluxe 1BR 515sf Diagram,Deluxe 1BR floor plan,High,"PDF or PNG",1,Missing,
+The Gardens at Columbine,Floor Plans,2BR/1BA 970sf Diagram,2BR/1BA floor plan,High,"PDF or PNG",1,Missing,
+The Gardens at Columbine,Floor Plans,2BR/2BA 728sf Diagram,2BR/2BA floor plan,High,"PDF or PNG",1,Missing,
+The Gardens at Columbine,Floor Plans,Memory Care Diagrams,All 5 memory care floor plans,High,"PDF or PNG",5,Missing,Aspen through Douglas Fir
+The Gardens at Columbine,Floor Plans,Apartment Photos,Interior photos for each plan,High,"JPEG, min 1200x800px",10,Missing,
+The Gardens at Columbine,Team,Alyssa Trujillo Headshot,Executive Director photo,High,"JPEG, 800x800px",1,Missing,
+The Gardens at Columbine,Team,Marnie McKissack Headshot,Health & Wellness Director photo,High,"JPEG, 800x800px",1,Missing,
+The Gardens at Columbine,Team,Helen Rossi Headshot,Director of Marketing photo,Medium,"JPEG, 800x800px",1,Missing,
+The Gardens at Columbine,Team,Marci Gerke Headshot,Regional Director Memory Care photo,Medium,"JPEG, 800x800px",1,Missing,
+The Gardens at Columbine,Team,Allie Mitchem Headshot,Memory Care Coordinator photo,Medium,"JPEG, 800x800px",1,Missing,
+The Gardens at Columbine,Team,Sydney Hertz Headshot,Director of Life Enrichment photo,Medium,"JPEG, 800x800px",1,Missing,
+The Gardens at Columbine,Team,Rich Thomas Headshot,Director of Maintenance photo,Low,"JPEG, 800x800px",1,Missing,
+The Gardens at Columbine,Team,Matt Turk Headshot,Director of Staffing photo,Low,"JPEG, 800x800px",1,Missing,
+The Gardens at Columbine,Team,Bob Burden Headshot,Regional Executive Chef photo,Medium,"JPEG, 800x800px",1,Missing,
+The Gardens at Columbine,Team,Team Contact Info,Email and phone numbers,Low,Text,9,Missing,All currently null
+The Gardens at Columbine,Documents,Community Brochure,Downloadable PDF,Medium,"PDF, under 5MB",1,Missing,
+The Gardens at Columbine,Content,Current Pricing,Pricing by floor plan,High,Text,10,Missing,Shows "Contact for pricing"
+The Gardens at Columbine,Content,Events Calendar,Upcoming community events,High,"Event details",5-10,Missing,0 events currently

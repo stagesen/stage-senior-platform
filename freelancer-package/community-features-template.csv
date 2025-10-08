@@ -1,0 +1,7 @@
+community_slug,eyebrow,title,body,image_url,image_alt,cta_label,cta_href,image_left,sort_order
+golden-pond,Dining Excellence,Restaurant-Style Dining,"Enjoy chef-prepared meals in our elegant dining room. Our culinary team creates nutritious and delicious menus daily.",https://example.com/dining-feature.jpg,Residents dining together,See Our Menus,/dining,false,1
+golden-pond,Health & Wellness,State-of-the-Art Fitness Center,"Stay active with our fully equipped fitness center and regular exercise classes led by certified instructors.",https://example.com/fitness-feature.jpg,Fitness center equipment,View Wellness Programs,/wellness,true,2
+golden-pond,Peace of Mind,24/7 Care & Security,"Our trained staff is available around the clock to ensure safety and provide assistance whenever needed.",https://example.com/care-feature.jpg,Staff member with resident,Learn About Our Care,/care,false,3
+gardens-at-columbine,,,,,,,,
+the-gardens-on-quail,,,,,,,,
+stonebridge-senior,,,,,,,,

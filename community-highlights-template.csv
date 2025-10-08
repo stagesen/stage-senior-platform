@@ -1,0 +1,7 @@
+community_slug,title,description,image_url,cta_label,cta_href,sort_order
+golden-pond,Award-Winning Care,"Our team has been recognized for excellence in senior care for over 10 years.",https://example.com/award.jpg,Learn More,/about,1
+golden-pond,Beautiful Location,"Nestled in the foothills with stunning mountain views.",https://example.com/location.jpg,View Gallery,/gallery,2
+golden-pond,Full Continuum of Care,"Stay in one place as your needs change over time.",https://example.com/care.jpg,Explore Care Options,/care-types,3
+gardens-at-columbine,,,,,
+the-gardens-on-quail,,,,,
+stonebridge-senior,,,,,

@@ -1,0 +1,6 @@
+community_slug,event_slug,title,summary,description,image_url,starts_at,ends_at,location_text,rsvp_url,published,is_public,max_attendees
+golden-pond,spring-open-house,Spring Open House,"Join us for our annual spring celebration","Come celebrate spring with us! Tour our beautiful community, enjoy refreshments, and meet our team. Family and friends welcome.",https://example.com/spring.jpg,2025-04-15 14:00:00,2025-04-15 17:00:00,Golden Pond Main Lobby,https://example.com/rsvp,true,true,50
+golden-pond,family-dinner-night,Family Dinner Night,"Monthly family dining event","Join your loved one for a complimentary dinner. Reservations required.",https://example.com/dinner.jpg,2025-05-10 18:00:00,2025-05-10 20:00:00,Golden Pond Dining Room,https://example.com/rsvp-dinner,true,false,30
+gardens-at-columbine,,,,,,,,,,,
+the-gardens-on-quail,,,,,,,,,,,
+stonebridge-senior,,,,,,,,,,,

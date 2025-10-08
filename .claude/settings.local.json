@@ -7,7 +7,8 @@
       "Read(//tmp/**)",
       "Bash(npm run check:*)",
       "Bash(node:*)",
-      "Bash(psql:*)"
+      "Bash(psql:*)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []
