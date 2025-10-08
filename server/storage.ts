@@ -653,13 +653,16 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(postAttachments)
       .where(eq(postAttachments.postId, postId))
-      .orderBy(asc(postAttachments.uploadedAt));
+      .orderBy(asc(postAttachments.createdAt));
   }
 
   async updatePostAttachment(id: string, attachment: Partial<InsertPostAttachment>): Promise<PostAttachment> {
     const [updated] = await db
       .update(postAttachments)
-      .set({ ...attachment, updatedAt: new Date() })
+      .set({
+        ...attachment,
+        updatedAt: new Date()
+      })
       .where(eq(postAttachments.id, id))
       .returning();
     return updated;

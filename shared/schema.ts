@@ -182,12 +182,16 @@ export const posts = pgTable("posts", {
 // Post attachments table for storing file attachment metadata
 export const postAttachments = pgTable("post_attachments", {
   id: varchar("id", { length: 255 }).primaryKey().default(sql`gen_random_uuid()`),
-  postId: uuid("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
-  fileName: text("file_name").notNull(),
-  fileUrl: text("file_url").notNull(),
+  postId: uuid("post_id").references(() => posts.id, { onDelete: "cascade" }), // Nullable - can be null until linked to a post
+  filename: text("filename").notNull(),
+  originalName: text("original_name").notNull(),
+  url: text("url").notNull(),
+  objectKey: text("object_key"), // For object storage reference
   mimeType: text("mime_type").notNull(),
   sizeBytes: integer("size_bytes"),
-  uploadedAt: timestamp("uploaded_at").defaultNow().notNull(),
+  uploadedBy: integer("uploaded_by"), // User ID who uploaded the file
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const events = pgTable("events", {
@@ -596,7 +600,8 @@ export const insertPostSchema = createInsertSchema(posts).omit({
 
 export const insertPostAttachmentSchema = createInsertSchema(postAttachments).omit({
   id: true,
-  uploadedAt: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 export const insertTeamMemberSchema = createInsertSchema(teamMembers).omit({
