@@ -2,14 +2,25 @@ import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { Community } from '@shared/schema';
+import { useResolveImageUrl } from '@/hooks/useResolveImageUrl';
 
-// Fix for default markers in Leaflet with Vite
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
+// Create custom marker icon with community color
+const createCustomMarker = (color: string = '#2563eb') => {
+  const svgIcon = `
+    <svg width="30" height="45" viewBox="0 0 30 45" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 0C6.716 0 0 6.716 0 15c0 8.284 15 30 15 30s15-21.716 15-30C30 6.716 23.284 0 15 0z" fill="${color}"/>
+      <circle cx="15" cy="15" r="8" fill="white"/>
+    </svg>
+  `;
+  
+  return L.divIcon({
+    html: svgIcon,
+    iconSize: [30, 45],
+    iconAnchor: [15, 45],
+    popupAnchor: [0, -45],
+    className: 'custom-marker'
+  });
+};
 
 interface CommunityMapProps {
   communities: Community[];
@@ -29,8 +40,14 @@ export default function CommunityMap({
   useEffect(() => {
     if (!mapRef.current) return;
 
-    // Initialize map centered on Colorado
-    const map = L.map(mapRef.current).setView([39.6992, -104.9375], 11);
+    // Initialize map centered on Colorado with zoom disabled
+    const map = L.map(mapRef.current, {
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      touchZoom: false,
+      zoomControl: false,
+      dragging: true,
+    }).setView([39.6992, -104.9375], 11);
     mapInstanceRef.current = map;
 
     // Add OpenStreetMap tiles
@@ -69,39 +86,63 @@ export default function CommunityMap({
 
       if (isNaN(lat) || isNaN(lng)) return;
 
-      // Create popup content safely using DOM
+      // Get community color (use mainColorHex or default to primary blue)
+      const markerColor = community.mainColorHex || '#2563eb';
+      
+      // Create popup content with centered logo, name and city
       const popupDiv = document.createElement('div');
-      popupDiv.className = 'p-2';
+      popupDiv.className = 'text-center p-4 min-w-[200px]';
+      
+      // Add logo if available
+      if (community.logoImageId) {
+        const logoContainer = document.createElement('div');
+        logoContainer.className = 'flex justify-center mb-3';
+        
+        const logo = document.createElement('img');
+        logo.src = `/api/images/${community.logoImageId}`;
+        logo.alt = `${community.name} logo`;
+        logo.className = 'h-12 w-auto object-contain';
+        logo.onerror = () => {
+          // Hide logo if it fails to load
+          logoContainer.style.display = 'none';
+        };
+        
+        logoContainer.appendChild(logo);
+        popupDiv.appendChild(logoContainer);
+      }
 
+      // Community name - bold and centered
       const title = document.createElement('h3');
-      title.className = 'font-semibold text-sm';
+      title.className = 'font-bold text-base mb-1';
+      title.style.color = markerColor;
       title.textContent = community.name;
       popupDiv.appendChild(title);
 
+      // City name - centered
       const location = document.createElement('p');
-      location.className = 'text-xs text-gray-600';
+      location.className = 'text-sm text-gray-600 mb-3';
       location.textContent = `${community.city}, ${community.state}`;
       popupDiv.appendChild(location);
 
-      if (community.startingPrice) {
-        const price = document.createElement('p');
-        price.className = 'text-xs mt-1';
-        price.textContent = `Starting at $${community.startingPrice.toLocaleString()}`;
-        popupDiv.appendChild(price);
-      }
-
+      // View Details button with community color
       const button = document.createElement('button');
-      button.className = 'mt-2 px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600';
+      button.className = 'px-4 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity w-full';
+      button.style.backgroundColor = markerColor;
       button.textContent = 'View Details';
       button.onclick = () => {
-        // Navigate to the community detail page
         window.location.href = `/communities/${community.slug}`;
       };
       popupDiv.appendChild(button);
 
-      const marker = L.marker([lat, lng])
+      // Create marker with custom color
+      const marker = L.marker([lat, lng], {
+        icon: createCustomMarker(markerColor)
+      })
         .addTo(mapInstanceRef.current!)
-        .bindPopup(popupDiv);
+        .bindPopup(popupDiv, {
+          maxWidth: 250,
+          className: 'custom-popup'
+        });
 
       // Highlight selected community
       if (selectedCommunityId === community.id) {
