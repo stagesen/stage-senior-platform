@@ -84,8 +84,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (city) {
         filters.city = city as string;
       }
-      if (active !== undefined) {
-        filters.active = active === 'true';
+      
+      // Handle active filter:
+      // - active='all' or active='false': show all communities
+      // - active='true': show only active communities
+      // - no active param: default to active communities only (for public access)
+      if (active === 'all' || active === 'false') {
+        // Show all communities (don't set active filter)
+      } else if (active === 'true') {
+        filters.active = true;
+      } else if (active === undefined) {
+        // Default to active communities only for public access
+        filters.active = true;
       }
       
       const communities = await storage.getCommunities(filters);
