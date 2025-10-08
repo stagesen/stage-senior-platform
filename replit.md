@@ -86,6 +86,8 @@ The current implementation appears to use session-based authentication:
 The platform includes a comprehensive admin interface for content management:
 
 - **Community Management**: CRUD operations for community information, amenities, and care types with integrated image uploads. Includes metadata fields for rating (4.8 default), review count, license status ("Licensed & Insured"), and trust indicators (same-day tours, no obligation) - all displayed dynamically in CommunityCard components
+  - **Active/Inactive Filtering**: Public-facing pages default to showing only active communities. Admin dashboard shows all communities (both active and inactive) for management. The GET /api/communities endpoint supports: `active='all'` (all communities), `active='true'` (active only), `active='false'` (inactive only), or no parameter (defaults to active only)
+  - **Cascade Delete**: All foreign key constraints properly configured with ON DELETE CASCADE to allow safe community deletion with all associated data (posts, events, FAQs, galleries, tour requests, floor plans, testimonials, etc.)
 - **Blog System**: Full blog management with categories, tags, featured content, hero image uploads, and team member author integration
 - **Team Member Management**: Complete team member profiles with avatar images, roles, departments, bio/blurb text area, social links, and blog post author connections
 - **Event Management**: Calendar-based event system with RSVP functionality and event image uploads
