@@ -10,6 +10,7 @@ import CommunityCard from "@/components/CommunityCard";
 import CommunityMap from "@/components/CommunityMap";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHero } from "@/components/PageHero";
+import CommunitySelectionModal from "@/components/CommunitySelectionModal";
 import type { Community } from "@shared/schema";
 
 const CARE_TYPES = [
@@ -23,6 +24,7 @@ export default function Communities() {
   const [selectedCareType, setSelectedCareType] = useState("all");
   const [sortBy, setSortBy] = useState("relevance");
   const [selectedCommunityId, setSelectedCommunityId] = useState<string | undefined>();
+  const [showCommunityModal, setShowCommunityModal] = useState(false);
   const [, navigate] = useLocation();
 
   const { data: communities = [], isLoading } = useQuery<Community[]>({
@@ -343,7 +345,7 @@ export default function Communities() {
               size="lg"
               variant="secondary"
               className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transform hover:scale-105 transition-all duration-200"
-              onClick={() => navigate('/contact')}
+              onClick={() => setShowCommunityModal(true)}
               data-testid="button-schedule-tour-cta"
             >
               <Calendar className="w-5 h-5 mr-2" />
@@ -363,6 +365,13 @@ export default function Communities() {
           </div>
         </div>
       </section>
+
+      {/* Community Selection Modal */}
+      <CommunitySelectionModal 
+        open={showCommunityModal}
+        onOpenChange={setShowCommunityModal}
+        communities={communities}
+      />
     </div>
   );
 }

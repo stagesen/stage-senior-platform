@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
 import TestimonialSection from "@/components/TestimonialSection";
 import CommunitySelectionModal from "@/components/CommunitySelectionModal";
+import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { 
   Carousel,
   CarouselContent,
@@ -150,6 +151,7 @@ const CarouselCommunityCard = ({
 };
 
 export default function Home() {
+  const { openScheduleTour } = useScheduleTour();
   const [showContactForm, setShowContactForm] = useState(false);
   const [showCommunityModal, setShowCommunityModal] = useState(false);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
@@ -315,7 +317,10 @@ export default function Home() {
                 size="lg" 
                 variant="glassmorphism"
                 className="font-semibold px-8 py-6 text-lg"
-                onClick={() => setShowCommunityModal(true)}
+                onClick={() => openScheduleTour({
+                  title: "Schedule a Tour",
+                  description: "Visit one of our Colorado communities and experience the Stage Senior difference."
+                })}
                 data-testid="button-schedule-tour"
               >
                 <Calendar className="w-5 h-5 mr-2" />

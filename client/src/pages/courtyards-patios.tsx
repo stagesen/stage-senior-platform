@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { PageHero } from "@/components/PageHero";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { 
   Trees,
   Flower,
@@ -33,6 +34,7 @@ import {
 } from "lucide-react";
 
 export default function CourtyardsPatios() {
+  const { openScheduleTour } = useScheduleTour();
   useEffect(() => {
     document.title = "Courtyards & Outdoor Spaces | Senior Living Communities";
     
@@ -509,6 +511,10 @@ export default function CourtyardsPatios() {
               size="lg" 
               variant="secondary"
               className="bg-white text-primary hover:bg-gray-100"
+              onClick={() => openScheduleTour({
+                title: "Experience Our Outdoor Spaces",
+                description: "Schedule a tour to explore our beautiful courtyards, gardens, and outdoor amenities in person."
+              })}
               data-testid="button-schedule-tour"
             >
               <Calendar className="mr-2 w-5 h-5" />
@@ -518,10 +524,11 @@ export default function CourtyardsPatios() {
               size="lg" 
               variant="outline"
               className="border-white text-white hover:bg-white/10"
+              onClick={() => window.open('tel:+1-970-444-4689', '_self')}
               data-testid="button-call-now"
             >
               <Phone className="mr-2 w-5 h-5" />
-              Call (303) 555-0100
+              Call (970) 444-4689
             </Button>
           </div>
 

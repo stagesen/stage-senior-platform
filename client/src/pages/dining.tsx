@@ -7,6 +7,7 @@ import { PageHero } from "@/components/PageHero";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useQuery } from "@tanstack/react-query";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { useScheduleTour } from "@/hooks/useScheduleTour";
 import type { Community } from "@shared/schema";
 import { 
   Utensils, 
@@ -27,6 +28,7 @@ import {
 } from "lucide-react";
 
 export default function Dining() {
+  const { openScheduleTour } = useScheduleTour();
   const [location] = useLocation();
   const searchParams = new URLSearchParams(window.location.search);
   const fromCommunity = searchParams.get('from');
@@ -472,13 +474,18 @@ export default function Dining() {
               size="lg" 
               variant="secondary"
               className="font-semibold"
+              onClick={() => openScheduleTour({
+                title: community ? `Experience Dining at ${community.name}` : "Experience Our Culinary Excellence",
+                description: community 
+                  ? `Reserve our private dining room and join us for a complimentary meal at ${community.name}.`
+                  : "Join us for a complimentary meal and discover why our residents look forward to every dining experience.",
+                communityId: community?.id,
+                communityName: community?.name
+              })}
               data-testid="button-schedule-tour"
-              asChild
             >
-              <Link href="/contact">
-                <Calendar className="w-5 h-5 mr-2" />
-                Schedule a Tour & Meal
-              </Link>
+              <Calendar className="w-5 h-5 mr-2" />
+              Schedule a Tour & Meal
             </Button>
             <Button 
               size="lg" 

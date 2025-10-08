@@ -7,6 +7,7 @@ import { PageHero } from "@/components/PageHero";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useQuery } from "@tanstack/react-query";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { useScheduleTour } from "@/hooks/useScheduleTour";
 import type { Community } from "@shared/schema";
 import { 
   Dumbbell,
@@ -31,6 +32,7 @@ import {
 } from "lucide-react";
 
 export default function FitnessTherapy() {
+  const { openScheduleTour } = useScheduleTour();
   const [location] = useLocation();
   const searchParams = new URLSearchParams(window.location.search);
   const fromCommunity = searchParams.get('from');
@@ -254,6 +256,12 @@ export default function FitnessTherapy() {
                 <Button 
                   size="lg" 
                   className="gap-2"
+                  onClick={() => openScheduleTour({
+                    title: community ? `Fitness Center Tour at ${community.name}` : "Fitness Center Tour",
+                    description: "Tour our state-of-the-art fitness center with senior-friendly equipment and meet our wellness staff.",
+                    communityId: community?.id,
+                    communityName: community?.name
+                  })}
                   data-testid="button-fitness-tour"
                 >
                   <Calendar className="w-5 h-5" />
@@ -572,14 +580,17 @@ export default function FitnessTherapy() {
             <Button 
               size="lg" 
               className="gap-2"
+              onClick={() => openScheduleTour({
+                title: community ? `Experience Fitness & Therapy at ${community.name}` : "Experience Our Fitness & Therapy Center",
+                description: "See our state-of-the-art facilities, meet our professional staff, and learn how our comprehensive wellness programs can help you live your best life.",
+                communityId: community?.id,
+                communityName: community?.name
+              })}
               data-testid="button-schedule-tour"
-              asChild
             >
-              <Link href={community ? `/communities/${community.slug}#tour` : "#"}>
-                <Calendar className="w-5 h-5" />
-                Schedule a Tour {community && `at ${community.name}`}
-                <ArrowRight className="w-5 h-5" />
-              </Link>
+              <Calendar className="w-5 h-5" />
+              Schedule a Tour {community && `at ${community.name}`}
+              <ArrowRight className="w-5 h-5" />
             </Button>
             <Button 
               size="lg" 

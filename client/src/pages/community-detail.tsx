@@ -49,6 +49,7 @@ import { cn } from "@/lib/utils";
 import { getCommunityFurtherClass } from "@/lib/furtherWidgetUtils";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { useScheduleTour } from "@/hooks/useScheduleTour";
 import stageSeniorLogo from "@assets/stage-horizintal_1759766576925.webp";
 import defaultBrochureImage from "@/assets/community-brochure-default.png";
 import NewsletterCard from "@/components/NewsletterCard";
@@ -946,6 +947,7 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
 };
 
 export default function CommunityDetail() {
+  const { openScheduleTour } = useScheduleTour();
   const params = useParams();
   const slug = params.slug;
   const [selectedFloorPlan, setSelectedFloorPlan] = useState<FloorPlan | null>(null);
@@ -1421,6 +1423,12 @@ export default function CommunityDetail() {
                   backgroundColor: (community as any)?.ctaColorHex || '#f59e0b',
                   color: (community as any)?.ctaColorHex ? getAccessibleTextColor((community as any).ctaColorHex) : '#ffffff'
                 }}
+                onClick={() => openScheduleTour({
+                  communityId: community.id,
+                  communityName: community.name,
+                  title: `Schedule a Tour at ${community.name}`,
+                  description: `Visit ${community.name} in ${community.city} to see our beautiful community and amenities in person.`
+                })}
                 data-testid="nav-schedule-tour"
               >
                 <Calendar className="w-4 h-4 mr-1 md:mr-2" />
@@ -2026,13 +2034,16 @@ export default function CommunityDetail() {
                 <CardContent>
                   <Button 
                     className={cn("w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white", getCommunityFurtherClass(community.slug || ''))} 
+                    onClick={() => openScheduleTour({
+                      communityId: community.id,
+                      communityName: community.name,
+                      title: `Schedule Your Visit to ${community.name}`,
+                      description: `Tour our community in ${community.city} and meet our caring team.`
+                    })}
                     data-testid="button-schedule-tour"
-                    asChild
                   >
-                    <Link href="/contact">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      Schedule Your Tour
-                    </Link>
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Schedule Your Tour
                   </Button>
                 </CardContent>
               </Card>
