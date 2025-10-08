@@ -97,9 +97,9 @@ export function PageHero({
             }}
             data-testid={`hero-background-${pagePath.replace(/\//g, "-") || "home"}`}
           />
-          {/* Overlay */}
+          {/* Blue Overlay */}
           <div
-            className="absolute inset-0 z-10 bg-gradient-to-t from-black/50 to-transparent"
+            className="absolute inset-0 z-10 bg-gradient-to-t from-blue-900/60 to-blue-600/20"
             style={{ opacity: overlayOpacity }}
             data-testid={`hero-overlay-${pagePath.replace(/\//g, "-") || "home"}`}
           />
@@ -114,9 +114,9 @@ export function PageHero({
             }}
             data-testid={`hero-gradient-${pagePath.replace(/\//g, "-") || "home"}`}
           />
-          {/* Subtle overlay effect for gradient */}
+          {/* Subtle blue overlay effect for gradient */}
           <div
-            className="absolute inset-0 z-10 bg-gradient-to-t from-black/20 to-transparent"
+            className="absolute inset-0 z-10 bg-gradient-to-t from-blue-800/30 to-blue-500/10"
             data-testid={`hero-gradient-overlay-${pagePath.replace(/\//g, "-") || "home"}`}
           />
         </>
