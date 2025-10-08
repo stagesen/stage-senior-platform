@@ -99,8 +99,7 @@ export function PageHero({
           />
           {/* Blue Overlay */}
           <div
-            className="absolute inset-0 z-10 bg-gradient-to-t from-blue-900/60 to-blue-600/20"
-            style={{ opacity: overlayOpacity }}
+            className="absolute inset-0 z-10 bg-gradient-to-t from-blue-900/70 to-blue-600/30"
             data-testid={`hero-overlay-${pagePath.replace(/\//g, "-") || "home"}`}
           />
         </>
