@@ -1248,8 +1248,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   });
 
   const { data: communities = [] } = useQuery<Community[]>({
-    queryKey: ["/api/communities", { active: 'all' }],
-    enabled: type !== "communities" || type === "community-highlights",
+    queryKey: ["/api/communities?active=all"],
+    enabled: type === "communities" || type === "community-highlights" || type === "community-features" || type === "tours",
   });
 
   // Fetch care types and amenities for multi-select
