@@ -1,0 +1,2401 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/client/src/App.tsx b/client/src/App.tsx
+index 33d6511b752fc82993600e7c78f45ad64111309c..045396d6772d56b6127a0386efd81cf16be1c6a4 100644
+--- a/client/src/App.tsx
++++ b/client/src/App.tsx
+@@ -16,50 +16,51 @@ import Login from "@/pages/login";
+ import FAQs from "@/pages/faqs";
+ import Privacy from "@/pages/privacy";
+ import Terms from "@/pages/terms";
+ import Accessibility from "@/pages/accessibility";
+ import AboutUs from "@/pages/about-us";
+ import Services from "@/pages/services";
+ import StageCares from "@/pages/stage-cares";
+ import CarePoints from "@/pages/care-points";
+ import SafetyWithDignity from "@/pages/safety-with-dignity";
+ import InHomeCare from "@/pages/in-home-care";
+ import Careers from "@/pages/careers";
+ import Contact from "@/pages/contact";
+ import Dining from "@/pages/dining";
+ import BeautySalon from "@/pages/beauty-salon";
+ import FitnessTherapy from "@/pages/fitness-therapy";
+ import CourtyardsPatios from "@/pages/courtyards-patios";
+ import Reviews from "@/pages/Reviews";
+ import ProfessionalManagement from "@/pages/services/management";
+ import LongTermCare from "@/pages/services/long-term-care";
+ import Chaplaincy from "@/pages/services/chaplaincy";
+ import NotFound from "@/pages/not-found";
+ import Header from "@/components/Header";
+ import Footer from "@/components/Footer";
+ import ScrollRestoration from "@/components/ScrollRestoration";
+ import ScrollToTop from "@/components/ScrollToTop";
++import { ScheduleTourProvider } from "@/hooks/useScheduleTour";
+ 
+ function Router() {
+   // Check if we're on a community detail page
+   const [isCommunityDetail] = useRoute("/communities/:slug");
+   // Check if we're on the in-home care page
+   const [isInHomeCare] = useRoute("/in-home-care");
+   
+   return (
+     <div className="min-h-screen bg-background flex flex-col">
+       <ScrollRestoration />
+       {/* Don't show main header on community detail pages or in-home care page */}
+       {!isCommunityDetail && !isInHomeCare && <Header />}
+       <main className="flex-1">
+         <Switch>
+           <Route path="/" component={Home} />
+           <Route path="/properties/">{() => <Redirect to="/communities/" />}</Route>
+           <Route path="/properties">{() => <Redirect to="/communities/" />}</Route>
+           <Route path="/communities" component={Communities} />
+           <Route path="/communities/:slug" component={CommunityDetail} />
+           <Route path="/events" component={Events} />
+           <Route path="/team" component={Team} />
+           <Route path="/team/:slug" component={TeamMember} />
+           <Route path="/blog" component={Blog} />
+           <Route path="/blog/:slug" component={Blog} />
+           <Route path="/reviews" component={Reviews} />
+@@ -81,34 +82,36 @@ function Router() {
+           <Route path="/services/chaplaincy" component={Chaplaincy} />
+           <Route path="/privacy" component={Privacy} />
+           <Route path="/terms" component={Terms} />
+           <Route path="/accessibility" component={Accessibility} />
+           <Route path="/login" component={Login} />
+           <Route path="/admin">
+             <RequireAuth>
+               <Admin />
+             </RequireAuth>
+           </Route>
+           <Route component={NotFound} />
+         </Switch>
+       </main>
+       {/* Don't show main footer on in-home care page */}
+       {!isInHomeCare && <Footer />}
+       <ScrollToTop />
+     </div>
+   );
+ }
+ 
+ function App() {
+   return (
+     <QueryClientProvider client={queryClient}>
+       <AuthProvider>
+         <TooltipProvider>
+-          <Toaster />
+-          <Router />
++          <ScheduleTourProvider>
++            <Toaster />
++            <Router />
++          </ScheduleTourProvider>
+         </TooltipProvider>
+       </AuthProvider>
+     </QueryClientProvider>
+   );
+ }
+ 
+ export default App;
+diff --git a/client/src/components/CommunitySelectionModal.tsx b/client/src/components/CommunitySelectionModal.tsx
+index f08c7ae99ec93e82bc7397661a65bd39a2b0127d..b3fe6e4b279aaecf3bee5cef59ab66a53776f2ae 100644
+--- a/client/src/components/CommunitySelectionModal.tsx
++++ b/client/src/components/CommunitySelectionModal.tsx
+@@ -1,47 +1,49 @@
+ import { MapPin, Calendar } from "lucide-react";
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+ import {
+   Dialog,
+   DialogContent,
+   DialogDescription,
+   DialogHeader,
+   DialogTitle,
+ } from "@/components/ui/dialog";
+ import type { Community } from "@shared/schema";
+ 
+ interface CommunitySelectionModalProps {
+   open: boolean;
+   onOpenChange: (open: boolean) => void;
+   communities: Community[];
++  onSelectCommunity?: (community: Community) => void;
+ }
+ 
+ export default function CommunitySelectionModal({
+   open,
+   onOpenChange,
+   communities,
++  onSelectCommunity,
+ }: CommunitySelectionModalProps) {
+   return (
+     <Dialog open={open} onOpenChange={onOpenChange}>
+       <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto" data-testid="community-selection-modal">
+         <DialogHeader>
+           <DialogTitle className="text-2xl font-bold">
+             Select a Community to Schedule Your Tour
+           </DialogTitle>
+           <DialogDescription className="text-base">
+             Choose from our beautiful communities across Colorado. Each offers exceptional care and amenities.
+           </DialogDescription>
+         </DialogHeader>
+         
+         <div className="grid gap-4 py-4 sm:grid-cols-2">
+           {communities.map((community) => (
+             <Card
+               key={community.id}
+               className="overflow-hidden hover:shadow-lg transition-shadow duration-200"
+               data-testid={`community-selection-card-${community.slug}`}
+             >
+               <CardHeader className="pb-3">
+                 <CardTitle className="flex items-start justify-between">
+                   <span
+                     className="text-lg font-semibold"
+                     data-testid={`community-name-${community.slug}`}
+@@ -60,48 +62,53 @@ export default function CommunitySelectionModal({
+               
+               <CardContent className="pt-0">
+                 {community.shortDescription && (
+                   <p
+                     className="text-sm text-muted-foreground mb-4 line-clamp-2"
+                     data-testid={`community-description-${community.slug}`}
+                   >
+                     {community.shortDescription}
+                   </p>
+                 )}
+                 
+                 {community.phoneDisplay && (
+                   <p
+                     className="text-sm text-muted-foreground mb-4"
+                     data-testid={`community-phone-${community.slug}`}
+                   >
+                     Call: {community.phoneDisplay}
+                   </p>
+                 )}
+                 
+                 <Button
+                   className="w-full"
+                   size="default"
+                   data-testid={`button-schedule-tour-${community.slug}`}
+                   onClick={() => {
+-                    window.location.href = `/communities/${community.slug}/#/further/55`;
++                    if (onSelectCommunity) {
++                      onSelectCommunity(community);
++                    } else if (community.slug) {
++                      window.location.href = `/communities/${community.slug}`;
++                    }
++                    onOpenChange(false);
+                   }}
+                 >
+                   <Calendar className="w-4 h-4 mr-2" />
+                   Schedule Tour
+                 </Button>
+               </CardContent>
+             </Card>
+           ))}
+         </div>
+         
+         {communities.length === 0 && (
+           <div
+             className="text-center py-8 text-muted-foreground"
+             data-testid="no-communities-message"
+           >
+             No communities available at this time.
+           </div>
+         )}
+       </DialogContent>
+     </Dialog>
+   );
+ }
+\ No newline at end of file
+diff --git a/client/src/components/ScheduleTourDialog.tsx b/client/src/components/ScheduleTourDialog.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..c87742520956aba3176e949ebf0d479fc5ce516b
+--- /dev/null
++++ b/client/src/components/ScheduleTourDialog.tsx
+@@ -0,0 +1,41 @@
++import { Dialog, DialogContent } from "@/components/ui/dialog";
++import LeadCaptureForm from "@/components/LeadCaptureForm";
++import type { ScheduleTourOptions } from "@/hooks/useScheduleTour";
++
++interface ScheduleTourDialogProps {
++  open: boolean;
++  onOpenChange: (open: boolean) => void;
++  options: ScheduleTourOptions;
++}
++
++export default function ScheduleTourDialog({ open, onOpenChange, options }: ScheduleTourDialogProps) {
++  const {
++    communityId,
++    communityName,
++    title,
++    description,
++    urgencyText,
++  } = options;
++
++  const resolvedTitle = title || (communityName ? `Schedule Your Tour at ${communityName}` : "Schedule Your Tour");
++  const resolvedDescription =
++    description || "Connect with our senior living advisors and get personalized guidance for your visit.";
++  const resolvedUrgency = urgencyText || "📞 Same-day tours available";
++
++  return (
++    <Dialog open={open} onOpenChange={onOpenChange}>
++      <DialogContent className="max-w-md">
++        <LeadCaptureForm
++          variant="modal"
++          title={resolvedTitle}
++          description={resolvedDescription}
++          communityId={communityId}
++          communityName={communityName}
++          urgencyText={resolvedUrgency}
++          onSuccess={() => onOpenChange(false)}
++          className="border-0 shadow-none bg-transparent"
++        />
++      </DialogContent>
++    </Dialog>
++  );
++}
+diff --git a/client/src/components/TestimonialSection.tsx b/client/src/components/TestimonialSection.tsx
+index c5bdc922eb3e4271aaa3077894a6ec1e6c9796a2..ff6de2e73b0cdc04ed6de07b5db291f51f2cc535 100644
+--- a/client/src/components/TestimonialSection.tsx
++++ b/client/src/components/TestimonialSection.tsx
+@@ -1,39 +1,40 @@
+ import { useState, useEffect } from "react";
+ import { Card, CardContent } from "@/components/ui/card";
+ import { Button } from "@/components/ui/button";
+ import { Star, Quote, ChevronLeft, ChevronRight, Heart, MessageCircle } from "lucide-react";
+ import {
+   Carousel,
+   CarouselContent,
+   CarouselItem,
+   type CarouselApi,
+ } from "@/components/ui/carousel";
+ import { useQuery } from "@tanstack/react-query";
+ import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+ import { Link } from "wouter";
+ import type { Testimonial as TestimonialType, Community } from "@shared/schema";
++import { useScheduleTour } from "@/hooks/useScheduleTour";
+ 
+ interface EnhancedTestimonial extends TestimonialType {
+   communityName?: string;
+   resolvedImageUrl?: string | null;
+ }
+ 
+ // Component for individual testimonial with image resolution
+ function TestimonialCard({ testimonial }: { testimonial: EnhancedTestimonial }) {
+   const resolvedImageUrl = useResolveImageUrl(testimonial.imageId);
+   
+   // Fallback to a default avatar if no image
+   const imageUrl = resolvedImageUrl || 
+     `https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.authorName)}&background=random&size=150`;
+   
+   return (
+     <Card className="h-full hover:shadow-2xl transition-all duration-300 border-primary/10 bg-white/80 backdrop-blur-sm">
+       <CardContent className="p-6 flex flex-col h-full">
+         {/* Star Rating */}
+         <div className="flex gap-1 mb-4">
+           {[...Array(5)].map((_, i) => (
+             <Star
+               key={i}
+               className={`w-4 h-4 ${
+                 i < (testimonial.rating || 5)
+                   ? "fill-primary text-primary"
+@@ -58,50 +59,51 @@ function TestimonialCard({ testimonial }: { testimonial: EnhancedTestimonial })
+           </div>
+         )}
+ 
+         {/* Author */}
+         <div className="flex items-center gap-4 pt-4 border-t">
+           <img
+             src={imageUrl}
+             alt={testimonial.authorName}
+             className="w-12 h-12 rounded-full object-cover"
+           />
+           <div className="flex-grow">
+             <div className="font-semibold text-foreground">{testimonial.authorName}</div>
+             <div className="text-sm text-muted-foreground">{testimonial.authorRelation}</div>
+             <div className="text-xs text-primary">{testimonial.communityName}</div>
+           </div>
+         </div>
+       </CardContent>
+     </Card>
+   );
+ }
+ 
+ export default function TestimonialSection() {
+   const [api, setApi] = useState<CarouselApi>();
+   const [current, setCurrent] = useState(0);
+   const [autoPlay, setAutoPlay] = useState(true);
++  const { openScheduleTour } = useScheduleTour();
+ 
+   // Fetch testimonials from API
+   const { data: testimonials = [], isLoading } = useQuery<EnhancedTestimonial[]>({
+     queryKey: ["/api/testimonials", { featured: true, approved: true }],
+     queryFn: async () => {
+       const response = await fetch("/api/testimonials?featured=true&approved=true");
+       if (!response.ok) throw new Error("Failed to fetch testimonials");
+       return response.json();
+     },
+   });
+ 
+   // Fetch communities to get names
+   const { data: communities = [] } = useQuery<Community[]>({
+     queryKey: ["/api/communities"],
+   });
+ 
+   // Enhance testimonials with community names
+   const enhancedTestimonials = testimonials.map(testimonial => ({
+     ...testimonial,
+     communityName: communities.find(c => c.id === testimonial.communityId)?.name || "Stage Senior"
+   }));
+ 
+   useEffect(() => {
+     if (!api) return;
+ 
+@@ -228,40 +230,49 @@ export default function TestimonialSection() {
+         <div className="flex justify-center gap-2 mt-8">
+           {enhancedTestimonials.map((_, index) => (
+             <button
+               key={index}
+               onClick={() => scrollTo(index)}
+               className={`transition-all duration-300 ${
+                 current === index
+                   ? 'w-8 h-2 bg-primary rounded-full'
+                   : 'w-2 h-2 bg-primary/30 rounded-full hover:bg-primary/50'
+               }`}
+               aria-label={`Go to testimonial ${index + 1}`}
+             />
+           ))}
+         </div>
+ 
+         {/* CTA Section */}
+         <div className="text-center mt-12 p-8 bg-white/60 backdrop-blur-sm rounded-2xl border border-primary/10">
+           <MessageCircle className="w-12 h-12 text-primary mx-auto mb-4" />
+           <h3 className="text-2xl font-bold text-foreground mb-3">
+             Join hundreds of happy families
+           </h3>
+           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+             Experience the Stage Senior difference for yourself. Schedule a tour today and see why families trust us with their loved ones.
+           </p>
+           <div className="flex flex-wrap gap-4 justify-center">
+-            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
++            <Button
++              size="lg"
++              className="bg-primary text-primary-foreground hover:bg-primary/90"
++              onClick={() =>
++                openScheduleTour({
++                  title: "Schedule a Tour",
++                  description: "Experience the Stage Senior difference with a guided visit.",
++                })
++              }
++            >
+               Schedule a Tour
+               <ChevronRight className="w-4 h-4 ml-2" />
+             </Button>
+             <Link href="/reviews">
+               <Button size="lg" variant="outline">
+                 Read More Reviews
+               </Button>
+             </Link>
+           </div>
+         </div>
+       </div>
+     </section>
+   );
+ }
+\ No newline at end of file
+diff --git a/client/src/hooks/useScheduleTour.tsx b/client/src/hooks/useScheduleTour.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..605ad17778f7c537366f011268baacc1dede57e1
+--- /dev/null
++++ b/client/src/hooks/useScheduleTour.tsx
+@@ -0,0 +1,52 @@
++import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
++import ScheduleTourDialog from "@/components/ScheduleTourDialog";
++
++export interface ScheduleTourOptions {
++  communityId?: string;
++  communityName?: string;
++  title?: string;
++  description?: string;
++  urgencyText?: string;
++}
++
++interface ScheduleTourContextValue {
++  openScheduleTour: (options?: ScheduleTourOptions) => void;
++}
++
++const DEFAULT_OPTIONS: ScheduleTourOptions = {};
++
++const ScheduleTourContext = createContext<ScheduleTourContextValue | undefined>(undefined);
++
++export function ScheduleTourProvider({ children }: { children: ReactNode }) {
++  const [isOpen, setIsOpen] = useState(false);
++  const [options, setOptions] = useState<ScheduleTourOptions>(DEFAULT_OPTIONS);
++
++  const openScheduleTour = useCallback((overrides: ScheduleTourOptions = {}) => {
++    setOptions({ ...DEFAULT_OPTIONS, ...overrides });
++    setIsOpen(true);
++  }, []);
++
++  const handleOpenChange = useCallback((open: boolean) => {
++    setIsOpen(open);
++    if (!open) {
++      setOptions(DEFAULT_OPTIONS);
++    }
++  }, []);
++
++  const value = useMemo(() => ({ openScheduleTour }), [openScheduleTour]);
++
++  return (
++    <ScheduleTourContext.Provider value={value}>
++      {children}
++      <ScheduleTourDialog open={isOpen} onOpenChange={handleOpenChange} options={options} />
++    </ScheduleTourContext.Provider>
++  );
++}
++
++export function useScheduleTour() {
++  const context = useContext(ScheduleTourContext);
++  if (!context) {
++    throw new Error("useScheduleTour must be used within a ScheduleTourProvider");
++  }
++  return context;
++}
+diff --git a/client/src/pages/about-us.tsx b/client/src/pages/about-us.tsx
+index 3ee0ec63b8bb48329f1160177659dddfdd3874b7..0ac19cb462de16bf3d55aa003ef7d68dfc998a4d 100644
+--- a/client/src/pages/about-us.tsx
++++ b/client/src/pages/about-us.tsx
+@@ -1,39 +1,41 @@
+ import { useEffect, useState } from "react";
+ import { Link } from "wouter";
+ import { useQuery } from "@tanstack/react-query";
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent } from "@/components/ui/card";
+ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+ import { Shield, Heart, Users, Award, Phone, Mail, MapPin, Calendar, Star } from "lucide-react";
+ import { PageHero } from "@/components/PageHero";
+ import { TeamCarousel } from "@/components/TeamCarousel";
+ import CommunitySelectionModal from "@/components/CommunitySelectionModal";
+ import type { Community } from "@shared/schema";
++import { useScheduleTour } from "@/hooks/useScheduleTour";
+ 
+ export default function AboutUs() {
+   const [showCommunityModal, setShowCommunityModal] = useState(false);
++  const { openScheduleTour } = useScheduleTour();
+   
+   const { data: communities = [] } = useQuery<Community[]>({
+     queryKey: ["/api/communities"],
+     staleTime: 5 * 60 * 1000,
+   });
+   useEffect(() => {
+     document.title = "About Us | Stage Senior";
+     
+     // Add meta description
+     const metaDescription = document.querySelector('meta[name="description"]');
+     if (metaDescription) {
+       metaDescription.setAttribute('content', 'Learn about Stage Senior Management - a locally owned, Colorado-based senior living management company founded in 2016. Discover our mission, values, leadership, and commitment to exceptional resident care.');
+     } else {
+       const meta = document.createElement('meta');
+       meta.name = 'description';
+       meta.content = 'Learn about Stage Senior Management - a locally owned, Colorado-based senior living management company founded in 2016. Discover our mission, values, leadership, and commitment to exceptional resident care.';
+       document.head.appendChild(meta);
+     }
+   }, []);
+ 
+   const values = [
+     {
+       icon: <Heart className="w-8 h-8" />,
+       title: "Residents First",
+       description: "Personalized care plans that honor each individual's needs and highest potential in a homelike environment."
+@@ -294,33 +296,40 @@ export default function AboutUs() {
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+               <div data-testid="contact-phone">
+                 <Phone className="w-6 h-6 mx-auto mb-2" />
+                 <p className="font-semibold">Call Us</p>
+                 <p className="text-primary-foreground/90">(970) 444-4689</p>
+               </div>
+               <div data-testid="contact-email">
+                 <Mail className="w-6 h-6 mx-auto mb-2" />
+                 <p className="font-semibold">Email Us</p>
+                 <p className="text-primary-foreground/90">info@stagesenior.com</p>
+               </div>
+               <div data-testid="contact-address">
+                 <MapPin className="w-6 h-6 mx-auto mb-2" />
+                 <p className="font-semibold">Visit Us</p>
+                 <p className="text-primary-foreground/90">
+                   8100 E Arapahoe Road, Suite 208<br />
+                   Centennial, CO 80112
+                 </p>
+               </div>
+             </div>
+           </div>
+         </div>
+       </section>
+       
+       {/* Community Selection Modal */}
+-      <CommunitySelectionModal 
++      <CommunitySelectionModal
+         open={showCommunityModal}
+         onOpenChange={setShowCommunityModal}
+         communities={communities}
++        onSelectCommunity={(community) => {
++          setShowCommunityModal(false);
++          openScheduleTour({
++            communityId: community.id,
++            communityName: community.name,
++          });
++        }}
+       />
+     </div>
+   );
+ }
+\ No newline at end of file
+diff --git a/client/src/pages/beauty-salon.tsx b/client/src/pages/beauty-salon.tsx
+index 47a40a9902e098f6e075c27fd9fed59181d0022d..1361524cca77d4b9b248c8592e39f40ab309c1ae 100644
+--- a/client/src/pages/beauty-salon.tsx
++++ b/client/src/pages/beauty-salon.tsx
+@@ -1,54 +1,56 @@
+ import { useEffect } from "react";
+ import { Link } from "wouter";
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+ import { Badge } from "@/components/ui/badge";
+ import { PageHero } from "@/components/PageHero";
+ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
++import { useScheduleTour } from "@/hooks/useScheduleTour";
+ import { 
+   Scissors,
+   Sparkles,
+   Heart,
+   Users,
+   Palette,
+   Clock,
+   Calendar,
+   ArrowRight,
+   CheckCircle,
+   Star,
+   User,
+   Smile,
+   Phone,
+   MapPin,
+   DollarSign,
+   Brush,
+   Crown,
+   Waves
+ } from "lucide-react";
+ 
+ export default function BeautySalon() {
++  const { openScheduleTour } = useScheduleTour();
+   useEffect(() => {
+     document.title = "Beauty Salon & Barber Services | Senior Living Communities";
+     
+     const metaDescription = document.querySelector('meta[name="description"]');
+     if (metaDescription) {
+       metaDescription.setAttribute('content', 'Enjoy convenient on-site beauty salon and barber services at our senior living communities. Professional haircuts, styling, color treatments, and grooming services that help residents look and feel their best.');
+     } else {
+       const meta = document.createElement('meta');
+       meta.name = 'description';
+       meta.content = 'Enjoy convenient on-site beauty salon and barber services at our senior living communities. Professional haircuts, styling, color treatments, and grooming services that help residents look and feel their best.';
+       document.head.appendChild(meta);
+     }
+   }, []);
+ 
+   const beautySalonServices = [
+     { icon: Scissors, name: "Haircuts & Styling", description: "Professional cuts and styles tailored to your preferences" },
+     { icon: Palette, name: "Hair Color", description: "Full color, highlights, and touch-ups with quality products" },
+     { icon: Waves, name: "Perms & Waves", description: "Beautiful curls and waves that last" },
+     { icon: Sparkles, name: "Special Occasion Styling", description: "Updos and formal styles for events and celebrations" },
+     { icon: Brush, name: "Blow Dry & Set", description: "Classic styling with rollers and professional finishing" },
+     { icon: Crown, name: "Hair Treatments", description: "Deep conditioning and scalp treatments for healthy hair" }
+   ];
+ 
+   const barberServices = [
+     { icon: Scissors, name: "Classic Haircuts", description: "Traditional and modern men's haircut styles" },
+@@ -458,53 +460,59 @@ export default function BeautySalon() {
+                   </p>
+                   <p className="text-xs text-muted-foreground">- Mary, Resident</p>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </section>
+ 
+       {/* Call-to-Action Section */}
+       <section className="py-20 bg-gradient-to-br from-primary to-primary-dark text-white">
+         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+           <div className="flex justify-center mb-6">
+             <div className="p-4 bg-white/20 rounded-full backdrop-blur-sm">
+               <Sparkles className="w-12 h-12 text-white" />
+             </div>
+           </div>
+           <h2 className="text-3xl md:text-4xl font-bold mb-6">
+             Experience Our Beauty & Barber Services
+           </h2>
+           <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
+             Schedule a tour today to see our beautiful salon and barber facilities, meet our 
+             professional stylists, and learn how we help residents look and feel their absolute best.
+           </p>
+           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+-            <Button 
+-              size="lg" 
++            <Button
++              size="lg"
+               variant="secondary"
+               className="group"
+               data-testid="button-schedule-tour"
++              onClick={() =>
++                openScheduleTour({
++                  title: "Schedule a Beauty & Barber Tour",
++                  description: "See our salon in person and plan a pampering visit for your loved one.",
++                })
++              }
+             >
+               <Calendar className="mr-2 h-5 w-5" />
+               Schedule a Tour
+               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+             </Button>
+             <Button 
+               size="lg" 
+               variant="outline"
+               className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+               data-testid="button-call-us"
+             >
+               <Phone className="mr-2 h-5 w-5" />
+               Call Us Today
+             </Button>
+           </div>
+           <p className="mt-6 text-sm text-white/70">
+             Our beauty professionals are available Tuesday through Saturday
+           </p>
+         </div>
+       </section>
+     </div>
+   );
+ }
+\ No newline at end of file
+diff --git a/client/src/pages/care-points.tsx b/client/src/pages/care-points.tsx
+index 43845f911231247c156485a692f11ee2303d36e2..316b1a19b88ac3b038d1b2cb7cd6844bb7d8bf24 100644
+--- a/client/src/pages/care-points.tsx
++++ b/client/src/pages/care-points.tsx
+@@ -1,49 +1,51 @@
+ import { useEffect, useState } from "react";
+ import { Link } from "wouter";
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+ import { Badge } from "@/components/ui/badge";
+ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+-import { 
+-  Shield, 
+-  CheckCircle, 
+-  Phone, 
+-  Calendar, 
+-  FileText, 
++import {
++  Shield,
++  CheckCircle,
++  Phone,
++  Calendar,
++  FileText,
+   Quote,
+   ArrowRight,
+   Bell,
+   TrendingDown,
+   Eye,
+   Calculator
+ } from "lucide-react";
++import { useScheduleTour } from "@/hooks/useScheduleTour";
+ 
+ export default function CarePoints() {
+   const [selectedSuiteType, setSelectedSuiteType] = useState<"private" | "companion">("private");
++  const { openScheduleTour } = useScheduleTour();
+   
+   useEffect(() => {
+     document.title = "Care Points vs Tiered Pricing | Stage Senior";
+     
+     const metaDescription = document.querySelector('meta[name="description"]');
+     if (metaDescription) {
+       metaDescription.setAttribute('content', 'Only pay for the care your loved one needs—nothing more. Our Care Points approach replaces one-size-fits-all tiers with transparent, personalized plans you can understand at a glance.');
+     } else {
+       const meta = document.createElement('meta');
+       meta.name = 'description';
+       meta.content = 'Only pay for the care your loved one needs—nothing more. Our Care Points approach replaces one-size-fits-all tiers with transparent, personalized plans you can understand at a glance.';
+       document.head.appendChild(meta);
+     }
+   }, []);
+ 
+   const baseRents = {
+     private: 5770,
+     companion: 4890
+   };
+ 
+   const careExamples = [
+     {
+       title: "Light Support",
+       subtitle: "A little help, most days",
+       points: 33,
+@@ -219,51 +221,61 @@ export default function CarePoints() {
+               <BreadcrumbSeparator />
+               <BreadcrumbItem>
+                 <BreadcrumbPage data-testid="breadcrumb-current">Care Points</BreadcrumbPage>
+               </BreadcrumbItem>
+             </BreadcrumbList>
+           </Breadcrumb>
+         </div>
+       </div>
+ 
+       {/* Hero Section */}
+       <section className="bg-gradient-to-br from-primary/10 via-primary/5 to-white py-16">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+           <div className="text-center max-w-4xl mx-auto">
+             <Badge className="mb-4" data-testid="badge-care-points">Care Points vs Tiered Pricing</Badge>
+             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6" data-testid="hero-title">
+               Only Pay for the Care Your Loved One Needs—Nothing More
+             </h1>
+             <p className="text-xl text-muted-foreground mb-8" data-testid="hero-description">
+               Our Care Points approach replaces one-size-fits-all tiers with transparent, personalized plans you can understand at a glance.
+             </p>
+             <div className="flex flex-col sm:flex-row gap-4 justify-center">
+               <Button size="lg" data-testid="button-use-calculator">
+                 <Calculator className="w-5 h-5 mr-2" />
+                 Use our Estimate Calculator
+               </Button>
+-              <Button size="lg" variant="outline" data-testid="button-schedule-consult">
++              <Button
++                size="lg"
++                variant="outline"
++                data-testid="button-schedule-consult"
++                onClick={() =>
++                  openScheduleTour({
++                    title: "Schedule a Pricing Consult",
++                    description: "Talk with our team about Care Points and get a personalized estimate.",
++                  })
++                }
++              >
+                 <Calendar className="w-5 h-5 mr-2" />
+                 Schedule a Pricing Consult
+               </Button>
+             </div>
+           </div>
+         </div>
+       </section>
+ 
+       {/* What Are Care Points */}
+       <section className="py-16 bg-white">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+           <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-12" data-testid="what-are-care-points-title">
+             What Are Care Points?
+           </h2>
+           
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+             <div>
+               <h3 className="text-xl font-bold text-foreground mb-4">Plain-English definition</h3>
+               <p className="text-muted-foreground leading-relaxed mb-6">
+                 Care Points are a simple way to price only the services your loved one actually receives. Each service (like medication management, bathing, or mobility support) is assigned a small point value. Points add up to a daily total, which translates into your monthly care cost.
+               </p>
+             </div>
+             
+             <div>
+               <h3 className="text-xl font-bold text-foreground mb-4">Why this matters</h3>
+@@ -417,51 +429,61 @@ export default function CarePoints() {
+               <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
+               <h3 className="text-xl font-bold mb-2">No cliff pricing</h3>
+               <p className="text-primary-foreground/90">
+                 Care changes in $20 steps, not $500–$1,000 tier jumps.
+               </p>
+             </div>
+             
+             <div className="text-center" data-testid="beat-tiers-1">
+               <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
+               <h3 className="text-xl font-bold mb-2">Resident-centered</h3>
+               <p className="text-primary-foreground/90">
+                 Points follow recurring needs and can adjust up or down.
+               </p>
+             </div>
+             
+             <div className="text-center" data-testid="beat-tiers-2">
+               <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
+               <h3 className="text-xl font-bold mb-2">Transparent math</h3>
+               <p className="text-primary-foreground/90">
+                 Total = Base Rent + (Points × $20). That's it.
+               </p>
+             </div>
+           </div>
+ 
+           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
+-            <Button size="lg" variant="secondary" data-testid="button-schedule-visit">
++            <Button
++              size="lg"
++              variant="secondary"
++              data-testid="button-schedule-visit"
++              onClick={() =>
++                openScheduleTour({
++                  title: "Schedule a Visit",
++                  description: "See how Care Points work during an in-person community tour.",
++                })
++              }
++            >
+               <Calendar className="w-5 h-5 mr-2" />
+               Schedule a Visit
+             </Button>
+             <Button size="lg" variant="outline" className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary" data-testid="button-pricing-guide">
+               <FileText className="w-5 h-5 mr-2" />
+               Open Pricing Guide
+             </Button>
+           </div>
+         </div>
+       </section>
+ 
+       {/* Not Nickel-and-Diming */}
+       <section className="py-16 bg-white">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+           <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-4" data-testid="prevention-title">
+             Not Nickel-and-Diming—Here's How We Prevent It
+           </h2>
+           
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+             {preventionPrinciples.map((principle, index) => (
+               <Card key={index} className="text-center hover:shadow-lg transition-shadow" data-testid={`prevention-principle-${index}`}>
+                 <CardContent className="pt-6">
+                   <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 text-primary rounded-full mb-4">
+                     {principle.icon}
+                   </div>
+@@ -522,52 +544,59 @@ export default function CarePoints() {
+                     <div className="font-semibold text-foreground" data-testid={`testimonial-author-${index}`}>
+                       {testimonial.author}
+                     </div>
+                     <div className="text-muted-foreground text-xs" data-testid={`testimonial-source-${index}`}>
+                       {testimonial.source}
+                     </div>
+                   </footer>
+                 </CardContent>
+               </Card>
+             ))}
+           </div>
+         </div>
+       </section>
+ 
+       {/* Final CTA */}
+       <section className="py-16 bg-gradient-to-br from-primary/10 to-white">
+         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="final-cta-title">
+             Schedule a Pricing Consult
+           </h2>
+           <p className="text-xl text-muted-foreground mb-8">
+             You have found a safe and secure place to call home. Take the next steps to make it yours.
+           </p>
+           
+           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+-            <Button size="lg" asChild data-testid="button-schedule-your-visit">
+-              <Link href="/communities">
+-                Schedule Your Visit
+-                <ArrowRight className="w-5 h-5 ml-2" />
+-              </Link>
++            <Button
++              size="lg"
++              data-testid="button-schedule-your-visit"
++              onClick={() =>
++                openScheduleTour({
++                  title: "Schedule Your Visit",
++                  description: "Meet with our team to see how Care Points can fit your family's plan.",
++                })
++              }
++            >
++              Schedule Your Visit
++              <ArrowRight className="w-5 h-5 ml-2" />
+             </Button>
+             <Button size="lg" variant="outline" asChild data-testid="button-virtual-tour">
+               <Link href="/communities">
+                 Virtual Tour
+                 <ArrowRight className="w-5 h-5 ml-2" />
+               </Link>
+             </Button>
+           </div>
+           
+           <div className="mt-8">
+             <Button variant="link" size="lg" asChild data-testid="button-call-now">
+               <a href="tel:+1-970-444-4689" className="text-xl">
+                 <Phone className="w-5 h-5 mr-2" />
+                 (970) 444-4689
+               </a>
+             </Button>
+           </div>
+         </div>
+       </section>
+     </div>
+   );
+ }
+diff --git a/client/src/pages/communities.tsx b/client/src/pages/communities.tsx
+index 675bd9c94a825da727ff9e22b592310fc4d890d3..cd0b5509ee4a2eb8b044a50e0809053187fb1103 100644
+--- a/client/src/pages/communities.tsx
++++ b/client/src/pages/communities.tsx
+@@ -1,51 +1,55 @@
+ import { useState } from "react";
+ import { useQuery } from "@tanstack/react-query";
+ import { useLocation } from "wouter";
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+ import { Badge } from "@/components/ui/badge";
+ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+ import { MapPin, Calendar, Phone, Star, HelpCircle } from "lucide-react";
+ import CommunityCard from "@/components/CommunityCard";
+ import CommunityMap from "@/components/CommunityMap";
+ import { Skeleton } from "@/components/ui/skeleton";
+ import { PageHero } from "@/components/PageHero";
+ import type { Community } from "@shared/schema";
++import CommunitySelectionModal from "@/components/CommunitySelectionModal";
++import { useScheduleTour } from "@/hooks/useScheduleTour";
+ 
+ const CARE_TYPES = [
+   { value: "all", label: "All Communities" },
+   { value: "assisted-living", label: "Assisted Living" },
+   { value: "memory-care", label: "Memory Care" },
+   { value: "independent-living", label: "Independent Living" },
+ ];
+ 
+ export default function Communities() {
+   const [selectedCareType, setSelectedCareType] = useState("all");
+   const [sortBy, setSortBy] = useState("relevance");
+   const [selectedCommunityId, setSelectedCommunityId] = useState<string | undefined>();
+   const [, navigate] = useLocation();
++  const [showCommunityModal, setShowCommunityModal] = useState(false);
++  const { openScheduleTour } = useScheduleTour();
+ 
+   const { data: communities = [], isLoading } = useQuery<Community[]>({
+     queryKey: ["/api/communities"],
+   });
+ 
+   const filteredCommunities = communities.filter((community) => {
+     const matchesCareType = selectedCareType === "all" ||
+       community.careTypes?.includes(selectedCareType);
+ 
+     return matchesCareType;
+   });
+ 
+   const sortedCommunities = [...filteredCommunities].sort((a, b) => {
+     switch (sortBy) {
+       case "price-low":
+         return (a.startingPrice || 0) - (b.startingPrice || 0);
+       case "price-high":
+         return (b.startingPrice || 0) - (a.startingPrice || 0);
+       case "distance":
+         return a.city.localeCompare(b.city);
+       default:
+         if (a.featured !== b.featured) {
+           return a.featured ? -1 : 1;
+         }
+         return a.name.localeCompare(b.name);
+@@ -321,48 +325,61 @@ export default function Communities() {
+                 </p>
+                 <div className="border-t pt-4">
+                   <p className="font-semibold text-foreground">Emily Rodriguez</p>
+                   <p className="text-xs sm:text-sm text-muted-foreground">Daughter of Resident</p>
+                 </div>
+               </CardContent>
+             </Card>
+           </div>
+         </div>
+       </section>
+ 
+       {/* CTA Section with Contact */}
+       <section id="contact-section" className="bg-gradient-to-br from-primary to-primary/90 text-white py-12 sm:py-16">
+         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 animate-fadeIn">
+             Ready to Find the Right Community?
+           </h2>
+           <p className="text-base sm:text-xl mb-6 sm:mb-8 opacity-90">
+             Our senior living advisors are here to help you every step of the way
+           </p>
+           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+             <Button
+               size="lg"
+               variant="secondary"
+               className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transform hover:scale-105 transition-all duration-200"
+-              onClick={() => navigate('/contact')}
++              onClick={() => setShowCommunityModal(true)}
+               data-testid="button-schedule-tour-cta"
+             >
+               <Calendar className="w-5 h-5 mr-2" />
+               Schedule Tours
+             </Button>
+             <Button
+               size="lg"
+               variant="outline"
+               className="bg-transparent text-white border-white hover:bg-white hover:text-primary text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transform hover:scale-105 transition-all duration-200"
+               onClick={() => window.open('tel:+1-970-444-4689', '_self')}
+               data-testid="button-call-cta"
+             >
+               <Phone className="w-5 h-5 mr-2" />
+               <span className="sm:hidden">Call Now</span>
+               <span className="hidden sm:inline">Call (970) 444-4689</span>
+             </Button>
+           </div>
+         </div>
+       </section>
++
++      <CommunitySelectionModal
++        open={showCommunityModal}
++        onOpenChange={setShowCommunityModal}
++        communities={communities}
++        onSelectCommunity={(community) => {
++          setShowCommunityModal(false);
++          openScheduleTour({
++            communityId: community.id,
++            communityName: community.name,
++          });
++        }}
++      />
+     </div>
+   );
+ }
+\ No newline at end of file
+diff --git a/client/src/pages/community-detail.tsx b/client/src/pages/community-detail.tsx
+index f9730b52ec3fd57cbb8938e7d751343202ff59b6..4c6a1ab4aba43c9f52332bdb5dbd89b10374868a 100644
+--- a/client/src/pages/community-detail.tsx
++++ b/client/src/pages/community-detail.tsx
+@@ -1,40 +1,41 @@
+ import { useParams } from "wouter";
+ import { useQuery } from "@tanstack/react-query";
+ import { useEffect, useMemo, useState } from "react";
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+ import { Badge } from "@/components/ui/badge";
+ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+ import { Skeleton } from "@/components/ui/skeleton";
+ import { Input } from "@/components/ui/input";
+ import { Separator } from "@/components/ui/separator";
+ import EventCard from "@/components/EventCard";
+ import EventDetailsModal from "@/components/EventDetailsModal";
+ import FloorPlanModal from "@/components/FloorPlanModal";
+ import GalleryModal from "@/components/GalleryModal";
+ import CommunityMap from "@/components/CommunityMap";
++import { useScheduleTour } from "@/hooks/useScheduleTour";
+ import { 
+   MapPin, 
+   Phone, 
+   Calendar, 
+   Mail,
+   Star,
+   Shield,
+   ChevronLeft,
+   Home,
+   Users,
+   Sparkles,
+   Image,
+   MessageSquare,
+   Wifi,
+   Car,
+   Coffee,
+   Heart,
+   Activity,
+   BookOpen,
+   Clock,
+   DollarSign,
+   CheckCircle,
+   ChevronRight,
+   Bath,
+   Bed,
+@@ -863,120 +864,123 @@ const ActionPanel = ({ community }: { community: any }) => {
+                 >
+                   <a href={community.brochureLink} target="_blank" rel="noopener noreferrer">
+                     <Download className="w-4 h-4 mr-2" />
+                     View PDF Brochure
+                   </a>
+                 </Button>
+               ) : (
+                 <Button 
+                   className="w-full" 
+                   data-testid="button-download-brochure"
+                   disabled
+                 >
+                   <Download className="w-4 h-4 mr-2" />
+                   Brochure Not Available
+                 </Button>
+               )}
+             </CardContent>
+           </Card>
+         </div>
+       </div>
+     </section>
+   );
+ };
+ 
+ // Local subcomponent: Enhanced Bottom CTA
+-const EnhancedBottomCTA = ({ community }: { community: any }) => {
++const EnhancedBottomCTA = ({ community, onScheduleTour }: { community: any; onScheduleTour?: (community: any) => void }) => {
+   const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
+   
+   return (
+     <section className="relative py-24 overflow-hidden">
+       {/* Background Image with Overlay */}
+       <div className="absolute inset-0">
+         <img
+           src={heroImageUrl || 'https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=2000'}
+           alt="Community background"
+           className="w-full h-full object-cover"
+         />
+         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/70 to-black/60" />
+       </div>
+ 
+       {/* Content */}
+       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+         {/* Logo */}
+         {community.heroLogoSrc && (
+           <img 
+             src={community.heroLogoSrc} 
+             alt={`${community.name} logo`}
+             className="h-20 mx-auto mb-8"
+           />
+         )}
+ 
+         <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+           Ready to Experience {community.name}?
+         </h2>
+         <p className="text-lg md:text-xl text-white/90 mb-12 max-w-3xl mx-auto">
+           Join our community of residents who are living their best life. Schedule a personalized tour today.
+         </p>
+ 
+         <div className="flex flex-col sm:flex-row gap-4 justify-center">
+-          <Button 
+-            size="lg" 
++          <Button
++            size="lg"
+             className={cn("text-lg px-8 py-6 shadow-2xl bg-white text-primary hover:bg-gray-100", getCommunityFurtherClass(community.slug || ''))}
+             data-testid="button-schedule-tour-hero"
++            disabled={!community}
++            onClick={() => community && onScheduleTour?.(community)}
+           >
+             <Calendar className="w-5 h-5 mr-2" />
+             Schedule Your Tour Today
+           </Button>
+           <Button 
+             size="lg" 
+             variant="outline"
+             className="border-white text-white bg-transparent hover:bg-white hover:text-gray-900 px-8 py-6 text-lg"
+             asChild
+             data-testid="button-call-hero"
+           >
+             <a href={`tel:${community.phone || '+1-970-444-4689'}`}>
+               <Phone className="w-5 h-5 mr-2" />
+               Call {community.phone || "(970) 444-4689"}
+             </a>
+           </Button>
+         </div>
+       </div>
+     </section>
+   );
+ };
+ 
+ export default function CommunityDetail() {
+   const params = useParams();
+   const slug = params.slug;
+   const [selectedFloorPlan, setSelectedFloorPlan] = useState<FloorPlan | null>(null);
+   const [isFloorPlanModalOpen, setIsFloorPlanModalOpen] = useState(false);
+   const [selectedGallery, setSelectedGallery] = useState<any>(null);
+   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
+   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+   const [activeSection, setActiveSection] = useState<string | null>("overview");
+   const [showNav, setShowNav] = useState(false);
++  const { openScheduleTour } = useScheduleTour();
+ 
+   useEffect(() => {
+     if (typeof window === "undefined") return;
+     if (!slug || window.location.hash) return;
+ 
+     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+   }, [slug]);
+ 
+   // Effect to show/hide navigation based on scroll position
+   useEffect(() => {
+     const handleScroll = () => {
+       // Show nav when scrolled past hero section (500px is roughly the hero height)
+       const scrollPosition = window.scrollY;
+       const heroHeight = 500; // Matches the hero section height
+       setShowNav(scrollPosition > heroHeight - 100); // Show a bit before hero ends
+     };
+ 
+     window.addEventListener('scroll', handleScroll);
+     // Don't check initial position - always start hidden
+ 
+     return () => window.removeEventListener('scroll', handleScroll);
+   }, []);
+ 
+   const { data: community, isLoading: communityLoading } = useQuery<Community>({
+     queryKey: [`/api/communities/${slug}`],
+@@ -1392,58 +1396,68 @@ export default function CommunityDetail() {
+                     className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center shadow-sm"
+                     style={{ backgroundColor: (community as any)?.mainColorHex || '#2563eb' }}
+                   >
+                     <Home className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                   </div>
+                   <div>
+                     <h2 className="text-lg md:text-xl font-bold text-gray-900">{community.name}</h2>
+                     <p className="text-xs text-gray-600 hidden md:block">{community.city}, {community.state}</p>
+                   </div>
+                 </div>
+               )}
+             </div>
+ 
+             {/* Contact Actions */}
+             <div className="flex items-center gap-2 md:gap-4">
+               {community.phoneDisplay && (
+                 <a
+                   href={`tel:${community.phoneDial || community.phoneDisplay}`}
+                   className="hidden md:flex items-center gap-2 text-gray-700 hover:text-primary transition-colors"
+                   data-testid="nav-phone"
+                 >
+                   <Phone className="w-4 h-4" />
+                   <span className="text-sm font-medium">{community.phoneDisplay}</span>
+                 </a>
+               )}
+-              <Button 
++              <Button
+                 size="sm"
+                 className={cn("shadow-sm", getCommunityFurtherClass(community.slug || ''))}
+-                style={{ 
++                style={{
+                   backgroundColor: (community as any)?.ctaColorHex || '#f59e0b',
+                   color: (community as any)?.ctaColorHex ? getAccessibleTextColor((community as any).ctaColorHex) : '#ffffff'
+                 }}
+                 data-testid="nav-schedule-tour"
++                onClick={() => {
++                  if (community) {
++                    openScheduleTour({
++                      communityId: community.id,
++                      communityName: community.name,
++                      title: `Schedule a Tour at ${community.name}`,
++                      description: "Connect with our team to plan your visit.",
++                    });
++                  }
++                }}
+               >
+                 <Calendar className="w-4 h-4 mr-1 md:mr-2" />
+                 <span className="hidden md:inline">Schedule</span> Tour
+               </Button>
+               <Button 
+                 variant="ghost"
+                 size="sm"
+                 asChild
+                 className="md:hidden"
+                 data-testid="nav-back-mobile"
+               >
+                 <Link href="/communities">
+                   <ChevronLeft className="w-4 h-4" />
+                 </Link>
+               </Button>
+               <Button 
+                 variant="outline"
+                 size="sm"
+                 asChild
+                 className="hidden md:inline-flex"
+                 data-testid="nav-back-desktop"
+               >
+                 <Link href="/communities">
+                   <ChevronLeft className="w-4 h-4 mr-2" />
+                   All Communities
+@@ -2002,59 +2016,66 @@ export default function CommunityDetail() {
+                       <Link href="/care-points" className="text-primary hover:underline">
+                         Care Points Pricing
+                       </Link>
+                     </div>
+                     <div className="flex items-center text-sm">
+                       <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
+                       <span>Month-to-month rental</span>
+                     </div>
+                     <div className="flex items-center text-sm">
+                       <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
+                       <span>All utilities included</span>
+                     </div>
+                   </div>
+                 </CardContent>
+               </Card>
+ 
+               {/* Schedule Tour Card */}
+               <Card className="shadow-lg">
+                 <CardHeader>
+                   <CardTitle>Schedule Your Visit</CardTitle>
+                   <CardDescription>
+                     Tour our community and meet our caring team
+                   </CardDescription>
+                 </CardHeader>
+                 <CardContent>
+-                  <Button 
+-                    className={cn("w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white", getCommunityFurtherClass(community.slug || ''))} 
++                  <Button
++                    className={cn("w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white", getCommunityFurtherClass(community.slug || ''))}
+                     data-testid="button-schedule-tour"
+-                    asChild
++                    onClick={() => {
++                      if (community) {
++                        openScheduleTour({
++                          communityId: community.id,
++                          communityName: community.name,
++                          title: `Schedule a Tour at ${community.name}`,
++                          description: "Tour the community, review floor plans, and get your questions answered.",
++                        });
++                      }
++                    }}
+                   >
+-                    <Link href="/contact">
+-                      <Calendar className="w-4 h-4 mr-2" />
+-                      Schedule Your Tour
+-                    </Link>
++                    <Calendar className="w-4 h-4 mr-2" />
++                    Schedule Your Tour
+                   </Button>
+                 </CardContent>
+               </Card>
+ 
+               {/* Contact Information */}
+               <Card className="shadow-lg">
+                 <CardHeader>
+                   <CardTitle>Contact Information</CardTitle>
+                 </CardHeader>
+                 <CardContent className="space-y-4">
+                   <Button variant="outline" className="w-full justify-start" asChild data-testid="button-call-community">
+                     <a href={`tel:${community.phoneDial || community.phoneDisplay || '+1-800-555-0123'}`}>
+                       <Phone className="w-4 h-4 mr-2" />
+                       {community.phoneDisplay || community.phone || '(800) 555-0123'}
+                     </a>
+                   </Button>
+                   <Separator />
+                   <div className="space-y-2">
+                     <div className="flex items-start gap-3">
+                       <MapPin className="w-4 h-4 text-muted-foreground mt-1" />
+                       <div className="text-sm">
+                         <p className="font-medium">Address</p>
+                         <p className="text-muted-foreground">
+                           {community.address}<br />
+                           {community.city}, {community.state} {community.zipCode}
+@@ -2393,51 +2414,63 @@ export default function CommunityDetail() {
+                     <h3 className="text-xl font-semibold mb-3">Nearby Healthcare</h3>
+                     <ul className="space-y-2 text-gray-600">
+                       <li>• St. Joseph Hospital - 5 miles</li>
+                       <li>• Kaiser Permanente - 3 miles</li>
+                       <li>• CVS Pharmacy - 0.5 miles</li>
+                     </ul>
+                   </CardContent>
+                 </Card>
+                 <Card>
+                   <CardContent className="p-6">
+                     <h3 className="text-xl font-semibold mb-3">Local Amenities</h3>
+                     <ul className="space-y-2 text-gray-600">
+                       <li>• King Soopers - 1 mile</li>
+                       <li>• Parks & Recreation - 2 miles</li>
+                       <li>• Shopping Centers - 3 miles</li>
+                     </ul>
+                   </CardContent>
+                 </Card>
+               </div>
+             </section>
+ 
+             {/* Action Panel - Contact, Pricing, and Resources */}
+             <ActionPanel community={community} />
+ 
+             {/* Enhanced Bottom CTA */}
+-            <EnhancedBottomCTA community={community} />
++            <EnhancedBottomCTA
++              community={community}
++              onScheduleTour={(selectedCommunity) => {
++                if (selectedCommunity) {
++                  openScheduleTour({
++                    communityId: selectedCommunity.id,
++                    communityName: selectedCommunity.name,
++                    title: `Schedule a Tour at ${selectedCommunity.name}`,
++                    description: "Plan a visit and explore every detail with our team.",
++                  });
++                }
++              }}
++            />
+           </div>
+ 
+       {/* Floor Plan Modal */}
+       {selectedFloorPlan && (
+         <FloorPlanModal
+           floorPlan={selectedFloorPlan}
+           communityName={community?.name || ''}
+           isOpen={isFloorPlanModalOpen}
+           onOpenChange={(open) => {
+             setIsFloorPlanModalOpen(open);
+             if (!open) {
+               setSelectedFloorPlan(null);
+             }
+           }}
+         />
+       )}
+ 
+       {/* Gallery Modal */}
+       <GalleryModal
+         isOpen={isGalleryModalOpen}
+         onClose={() => {
+           setIsGalleryModalOpen(false);
+           setSelectedGallery(null);
+         }}
+         gallery={selectedGallery}
+diff --git a/client/src/pages/contact.tsx b/client/src/pages/contact.tsx
+index ef8973a6d6812a9250fe5c69c199cc06a2094b2f..cae9e8e0aa489f8cbea1d40e8c415ea9eae9c52d 100644
+--- a/client/src/pages/contact.tsx
++++ b/client/src/pages/contact.tsx
+@@ -1,48 +1,50 @@
+ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+ import { Button } from "@/components/ui/button";
+ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+ import LeadCaptureForm from "@/components/LeadCaptureForm";
+ import { PageHero } from "@/components/PageHero";
+ import { Link } from "wouter";
+ import { useEffect, useState } from "react";
+ import { useQuery } from "@tanstack/react-query";
+ import CommunitySelectionModal from "@/components/CommunitySelectionModal";
+ import type { Community } from "@shared/schema";
++import { useScheduleTour } from "@/hooks/useScheduleTour";
+ import { 
+   Phone, 
+   Mail, 
+   MapPin, 
+   Clock,
+   MessageSquare,
+   Building2,
+   CheckCircle
+ } from "lucide-react";
+ 
+ export default function Contact() {
+   const [showCommunityModal, setShowCommunityModal] = useState(false);
+   const [showContactForm, setShowContactForm] = useState(false);
++  const { openScheduleTour } = useScheduleTour();
+   
+   const { data: communities = [] } = useQuery<Community[]>({
+     queryKey: ["/api/communities"],
+     staleTime: 5 * 60 * 1000,
+   });
+ 
+   useEffect(() => {
+     document.title = "Contact Us | Stage Senior";
+     
+     // Add meta description
+     const metaDescription = document.querySelector('meta[name="description"]');
+     if (metaDescription) {
+       metaDescription.setAttribute('content', 'Contact Stage Senior today. Call (970) 444-4689 or visit one of our four Colorado communities. Schedule tours, get answers, and explore senior living options.');
+     } else {
+       const meta = document.createElement('meta');
+       meta.name = 'description';
+       meta.content = 'Contact Stage Senior today. Call (970) 444-4689 or visit one of our four Colorado communities. Schedule tours, get answers, and explore senior living options.';
+       document.head.appendChild(meta);
+     }
+   }, []);
+ 
+   const communityLocations = [
+     {
+       name: "The Gardens at Columbine",
+       address: "5130 W Ken Caryl Ave",
+@@ -332,33 +334,40 @@ export default function Contact() {
+             ) : (
+               <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur">
+                 <CardHeader className="pb-4">
+                   <CardTitle className="text-2xl text-[var(--deep-blue)]">Ready to explore?</CardTitle>
+                 </CardHeader>
+                 <CardContent className="space-y-4">
+                   <p className="text-gray-600">
+                     Let us help you find the perfect senior living community for your loved one.
+                   </p>
+                   <Button 
+                     size="lg" 
+                     className="w-full bg-[var(--deep-blue)] text-white hover:bg-gradient-to-r hover:from-[var(--deep-blue)] hover:to-[var(--bright-blue)]"
+                     onClick={() => setShowContactForm(true)}
+                     data-testid="button-show-contact-form"
+                   >
+                     Start Your Search
+                   </Button>
+                 </CardContent>
+               </Card>
+             )}
+           </div>
+         </div>
+       </section>
+       
+       {/* Community Selection Modal */}
+-      <CommunitySelectionModal 
++      <CommunitySelectionModal
+         open={showCommunityModal}
+         onOpenChange={setShowCommunityModal}
+         communities={communities}
++        onSelectCommunity={(community) => {
++          setShowCommunityModal(false);
++          openScheduleTour({
++            communityId: community.id,
++            communityName: community.name,
++          });
++        }}
+       />
+     </div>
+   );
+ }
+\ No newline at end of file
+diff --git a/client/src/pages/courtyards-patios.tsx b/client/src/pages/courtyards-patios.tsx
+index fbf5d8a26f999467601ee5da3a0373d3258bca13..e2d888961956adcf488afa4c50a56acae8bd58ee 100644
+--- a/client/src/pages/courtyards-patios.tsx
++++ b/client/src/pages/courtyards-patios.tsx
+@@ -1,60 +1,62 @@
+ import { useEffect } from "react";
+ import { Link } from "wouter";
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+ import { Badge } from "@/components/ui/badge";
+ import { PageHero } from "@/components/PageHero";
+ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
++import { useScheduleTour } from "@/hooks/useScheduleTour";
+ import { 
+   Trees,
+   Flower,
+   Sun,
+   Wind,
+   Leaf,
+   TreePine,
+   Heart,
+   Users,
+   Shield,
+   Clock,
+   Calendar,
+   ArrowRight,
+   CheckCircle,
+   Star,
+   Sparkles,
+   MapPin,
+   Lamp,
+   Activity,
+   Coffee,
+   Bird,
+   Cloud,
+   Palette,
+   Home,
+   Phone
+ } from "lucide-react";
+ 
+ export default function CourtyardsPatios() {
++  const { openScheduleTour } = useScheduleTour();
+   useEffect(() => {
+     document.title = "Courtyards & Outdoor Spaces | Senior Living Communities";
+     
+     const metaDescription = document.querySelector('meta[name="description"]');
+     if (metaDescription) {
+       metaDescription.setAttribute('content', 'Enjoy beautiful courtyards, gardens, and outdoor spaces at our senior living communities. Safe, accessible patios, walking paths, and garden areas designed for relaxation, activities, and connection with nature.');
+     } else {
+       const meta = document.createElement('meta');
+       meta.name = 'description';
+       meta.content = 'Enjoy beautiful courtyards, gardens, and outdoor spaces at our senior living communities. Safe, accessible patios, walking paths, and garden areas designed for relaxation, activities, and connection with nature.';
+       document.head.appendChild(meta);
+     }
+   }, []);
+ 
+   const outdoorSpaces = [
+     {
+       icon: Trees,
+       name: "Secure Memory Care Courtyards",
+       description: "Safe, enclosed gardens designed specifically for memory care residents to enjoy nature independently",
+       features: ["Secured perimeter", "Sensory gardens", "Quiet seating areas", "Clear pathways"]
+     },
+     {
+       icon: Leaf,
+       name: "Walking Paths & Trails",
+       description: "Well-maintained paths winding through scenic grounds for daily walks and exercise",
+@@ -483,54 +485,60 @@ export default function CourtyardsPatios() {
+                 className="w-full h-full object-cover"
+                 data-testid="gallery-image-6"
+               />
+             </div>
+           </div>
+         </div>
+       </section>
+ 
+       {/* Call to Action Section */}
+       <section className="py-20 bg-primary text-white">
+         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+           <div className="mb-6">
+             <div className="inline-flex items-center justify-center p-3 bg-white/20 backdrop-blur-sm rounded-full mb-4">
+               <Trees className="w-10 h-10 text-white" />
+             </div>
+             <h2 className="text-3xl md:text-4xl font-bold mb-4">
+               Experience Our Outdoor Spaces in Person
+             </h2>
+             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+               Schedule a tour today to explore our beautiful gardens, courtyards, and outdoor amenities. 
+               See how our residents enjoy the perfect blend of nature, safety, and community.
+             </p>
+           </div>
+           
+           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+-            <Button 
+-              size="lg" 
++            <Button
++              size="lg"
+               variant="secondary"
+               className="bg-white text-primary hover:bg-gray-100"
+               data-testid="button-schedule-tour"
++              onClick={() =>
++                openScheduleTour({
++                  title: "Schedule a Garden Tour",
++                  description: "Walk our courtyards and patios with a community guide.",
++                })
++              }
+             >
+               <Calendar className="mr-2 w-5 h-5" />
+               Schedule a Tour
+             </Button>
+             <Button 
+               size="lg" 
+               variant="outline"
+               className="border-white text-white hover:bg-white/10"
+               data-testid="button-call-now"
+             >
+               <Phone className="mr-2 w-5 h-5" />
+               Call (303) 555-0100
+             </Button>
+           </div>
+ 
+           <div className="mt-8 flex items-center justify-center gap-2 text-white/80">
+             <MapPin className="w-5 h-5" />
+             <p>Visit any of our communities to see our outdoor spaces firsthand</p>
+           </div>
+         </div>
+       </section>
+     </div>
+   );
+ }
+\ No newline at end of file
+diff --git a/client/src/pages/dining.tsx b/client/src/pages/dining.tsx
+index d9f2d1e6d7259dbd24eb789707bc1584f13cedee..f858df4a2a45e615e8c1771b7bd557789414262e 100644
+--- a/client/src/pages/dining.tsx
++++ b/client/src/pages/dining.tsx
+@@ -1,57 +1,59 @@
+ import { useEffect } from "react";
+ import { Link, useLocation } from "wouter";
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+ import { Badge } from "@/components/ui/badge";
+ import { PageHero } from "@/components/PageHero";
+ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+ import { useQuery } from "@tanstack/react-query";
+ import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+ import type { Community } from "@shared/schema";
++import { useScheduleTour } from "@/hooks/useScheduleTour";
+ import { 
+   Utensils, 
+   Coffee, 
+   Heart, 
+   Users, 
+   ChefHat, 
+   Clock,
+   Salad,
+   Wine,
+   Sparkles,
+   Calendar,
+   ArrowRight,
+   CheckCircle,
+   Star,
+   Phone,
+   MapPin
+ } from "lucide-react";
+ 
+ export default function Dining() {
+   const [location] = useLocation();
+   const searchParams = new URLSearchParams(window.location.search);
+   const fromCommunity = searchParams.get('from');
++  const { openScheduleTour } = useScheduleTour();
+   
+   // Fetch community data if we have a 'from' parameter
+   const { data: community } = useQuery({
+     queryKey: ['/api/communities', fromCommunity],
+     enabled: !!fromCommunity,
+     queryFn: async () => {
+       const response = await fetch(`/api/communities/${fromCommunity}`);
+       if (!response.ok) return null;
+       return response.json() as Promise<Community>;
+     }
+   });
+   
+   // Resolve the private dining image URL if community has one
+   const communityPrivateDiningImage = useResolveImageUrl(community?.privateDiningImageId || '');
+   const privateDiningImage = communityPrivateDiningImage || "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80";
+ 
+   useEffect(() => {
+     // Dynamic page title
+     const title = community 
+       ? `Private Family Dining | ${community.name}` 
+       : "Dining & Restaurant Services | Senior Living Communities";
+     document.title = title;
+     
+     // Dynamic meta description
+     const metaContent = community 
+@@ -446,61 +448,71 @@ export default function Dining() {
+                   <p className="text-sm text-white/90">Building community one meal at a time</p>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </section>
+ 
+       {/* Call to Action Section */}
+       <section className="py-20 bg-gradient-to-br from-primary to-primary/90 text-white">
+         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+           <h2 className="text-3xl md:text-4xl font-bold mb-6">
+             {community 
+               ? `Experience Private Family Dining at ${community.name}`
+               : "Experience Our Culinary Excellence"
+             }
+           </h2>
+           <p className="text-xl mb-8 text-white/90">
+             {community 
+               ? `Reserve our private dining room for your special family gatherings. Tour our facilities and meet our culinary team.`
+               : "Join us for a complimentary meal and discover why our residents look forward to every dining experience. Tour our dining facilities and meet our culinary team."
+             }
+           </p>
+           
+           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+-            <Button 
+-              size="lg" 
++            <Button
++              size="lg"
+               variant="secondary"
+               className="font-semibold"
+               data-testid="button-schedule-tour"
+-              asChild
++              onClick={() =>
++                openScheduleTour({
++                  communityId: community?.id,
++                  communityName: community?.name,
++                  title: community
++                    ? `Schedule a Tour & Meal at ${community.name}`
++                    : "Schedule a Dining Tour & Meal",
++                  description:
++                    community
++                      ? `Reserve time with our culinary team at ${community.name} and enjoy a complimentary meal.`
++                      : "Join us for a complimentary meal and tour of our dining program.",
++                })
++              }
+             >
+-              <Link href="/contact">
+-                <Calendar className="w-5 h-5 mr-2" />
+-                Schedule a Tour & Meal
+-              </Link>
++              <Calendar className="w-5 h-5 mr-2" />
++              Schedule a Tour & Meal
+             </Button>
+             <Button 
+               size="lg" 
+               variant="outline"
+               className="font-semibold bg-white/10 border-white text-white hover:bg-white/20"
+               data-testid="button-view-communities"
+               asChild
+             >
+               <Link href="/communities">
+                 View Our Communities
+                 <ArrowRight className="w-5 h-5 ml-2" />
+               </Link>
+             </Button>
+           </div>
+ 
+           <div className="mt-12 flex flex-wrap justify-center gap-8 text-white/90">
+             <div className="flex items-center gap-2">
+               <ChefHat className="w-6 h-6" />
+               <span>Professional Culinary Team</span>
+             </div>
+             <div className="flex items-center gap-2">
+               <Heart className="w-6 h-6" />
+               <span>Heart-Healthy Options</span>
+             </div>
+             <div className="flex items-center gap-2">
+diff --git a/client/src/pages/fitness-therapy.tsx b/client/src/pages/fitness-therapy.tsx
+index 0021cc9b505dd2854c7d117eb6298e658032df24..4f8d1622ef288ee6ddff8b793dd0f4db3734326f 100644
+--- a/client/src/pages/fitness-therapy.tsx
++++ b/client/src/pages/fitness-therapy.tsx
+@@ -1,61 +1,63 @@
+ import { useEffect } from "react";
+ import { Link, useLocation } from "wouter";
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+ import { Badge } from "@/components/ui/badge";
+ import { PageHero } from "@/components/PageHero";
+ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+ import { useQuery } from "@tanstack/react-query";
+ import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+ import type { Community } from "@shared/schema";
++import { useScheduleTour } from "@/hooks/useScheduleTour";
+ import { 
+   Dumbbell,
+   Heart,
+   Activity,
+   Users,
+   Target,
+   Brain,
+   Clock,
+   Calendar,
+   ArrowRight,
+   CheckCircle,
+   Star,
+   Shield,
+   Sparkles,
+   Trophy,
+   Zap,
+   Waves,
+   User,
+   Phone,
+   MapPin
+ } from "lucide-react";
+ 
+ export default function FitnessTherapy() {
+   const [location] = useLocation();
+   const searchParams = new URLSearchParams(window.location.search);
+   const fromCommunity = searchParams.get('from');
++  const { openScheduleTour } = useScheduleTour();
+   
+   // Fetch community data if we have a 'from' parameter
+   const { data: community } = useQuery({
+     queryKey: ['/api/communities', fromCommunity],
+     enabled: !!fromCommunity,
+     queryFn: async () => {
+       const response = await fetch(`/api/communities/${fromCommunity}`);
+       if (!response.ok) return null;
+       return response.json() as Promise<Community>;
+     }
+   });
+   
+   // Resolve the fitness image URL if community has one
+   const communityFitnessImage = useResolveImageUrl(community?.fitnessImageId || '');
+   const fitnessImage = communityFitnessImage || "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=800&q=80";
+   useEffect(() => {
+     document.title = "Fitness & Therapy Center | Senior Living Communities";
+     
+     const metaDescription = document.querySelector('meta[name="description"]');
+     if (metaDescription) {
+       metaDescription.setAttribute('content', 'Discover our comprehensive fitness and therapy center offering personalized exercise programs, physical therapy, occupational therapy, and group fitness classes designed specifically for senior wellness and independence.');
+     } else {
+       const meta = document.createElement('meta');
+       meta.name = 'description';
+       meta.content = 'Discover our comprehensive fitness and therapy center offering personalized exercise programs, physical therapy, occupational therapy, and group fitness classes designed specifically for senior wellness and independence.';
+@@ -547,61 +549,69 @@ export default function FitnessTherapy() {
+                     <p className="text-muted-foreground">Our team works with your healthcare providers for comprehensive care</p>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </section>
+ 
+       {/* Call to Action Section */}
+       <section className="py-20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
+         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+           <div className="flex justify-center mb-6">
+             <div className="p-4 bg-primary/10 rounded-full">
+               <Activity className="w-10 h-10 text-primary" />
+             </div>
+           </div>
+           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+             Experience Our Fitness & Therapy Center
+           </h2>
+           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+             Schedule a tour today to see our state-of-the-art facilities, meet our professional staff, 
+             and learn how our comprehensive wellness programs can help you live your best life.
+           </p>
+           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+-            <Button 
+-              size="lg" 
++            <Button
++              size="lg"
+               className="gap-2"
+               data-testid="button-schedule-tour"
+-              asChild
++              onClick={() =>
++                openScheduleTour({
++                  communityId: community?.id,
++                  communityName: community?.name,
++                  title: community
++                    ? `Schedule a Tour at ${community.name}`
++                    : "Schedule a Fitness & Therapy Tour",
++                  description:
++                    "Meet our wellness team, see the equipment in action, and plan a personalized program.",
++                })
++              }
+             >
+-              <Link href={community ? `/communities/${community.slug}#tour` : "#"}>
+-                <Calendar className="w-5 h-5" />
+-                Schedule a Tour {community && `at ${community.name}`}
+-                <ArrowRight className="w-5 h-5" />
+-              </Link>
++              <Calendar className="w-5 h-5" />
++              Schedule a Tour {community && `at ${community.name}`}
++              <ArrowRight className="w-5 h-5" />
+             </Button>
+             <Button 
+               size="lg" 
+               variant="outline"
+               className="gap-2"
+               data-testid="button-contact-us"
+               asChild
+             >
+               <a href={`tel:${community?.phoneDial || community?.phoneDisplay || '+19704444689'}`}>
+                 <Phone className="w-5 h-5" />
+                 {community ? `Call ${community.name}` : 'Contact Us for More Information'}
+               </a>
+             </Button>
+           </div>
+           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-muted-foreground">
+             <div className="flex items-center gap-2">
+               <MapPin className="w-4 h-4" />
+               <span>On-site at all our communities</span>
+             </div>
+             <div className="flex items-center gap-2">
+               <Clock className="w-4 h-4" />
+               <span>Open 7 days a week</span>
+             </div>
+             <div className="flex items-center gap-2">
+               <Users className="w-4 h-4" />
+diff --git a/client/src/pages/home.tsx b/client/src/pages/home.tsx
+index c344ee1631ac58af7a7ef79566b9ceec88e5402e..a90a170d42f2f06c015b90a78043080e58f878e8 100644
+--- a/client/src/pages/home.tsx
++++ b/client/src/pages/home.tsx
+@@ -11,50 +11,51 @@ import {
+   CarouselContent,
+   CarouselItem,
+   CarouselNext,
+   CarouselPrevious,
+   CarouselDots,
+   CarouselProgressBar,
+   type CarouselApi,
+ } from "@/components/ui/carousel";
+ import {
+   MapPin,
+   Calendar,
+   Phone,
+   Star,
+   Shield,
+   Heart,
+   Users,
+   Award,
+   CheckCircle,
+   ArrowRight,
+   Mail,
+   Activity
+ } from "lucide-react";
+ import { Link } from "wouter";
+ import { useToast } from "@/hooks/use-toast";
+ import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
++import { useScheduleTour } from "@/hooks/useScheduleTour";
+ import type { Community, HomepageSection, HomepageConfig } from "@shared/schema";
+ import seniorCaregiverDocuments from '@/assets/senior-caregiver-documents.webp';
+ import carePricingImage from '@/assets/cp-home.webp';
+ 
+ // Subcomponent for carousel items that handles image resolution
+ const CarouselCommunityCard = ({ 
+   community, 
+   index, 
+   selectedIndex, 
+   setShowContactForm 
+ }: { 
+   community: Community; 
+   index: number; 
+   selectedIndex: number; 
+   setShowContactForm: (show: boolean) => void;
+ }) => {
+   const resolvedHeroUrl = useResolveImageUrl(community.heroImageUrl);
+   
+   return (
+     <div 
+       className={`relative overflow-hidden rounded-lg transition-all duration-500 ease-out ${
+         selectedIndex === index 
+           ? 'scale-110 opacity-100 shadow-2xl ring-4 ring-white/20 z-10' 
+           : 'scale-90 opacity-75 hover:scale-95 hover:opacity-85'
+       }`}
+@@ -132,50 +133,51 @@ const CarouselCommunityCard = ({
+             <div className="flex gap-2">
+               <Button 
+                 asChild 
+                 variant="secondary"
+                 size="sm"
+                 className="w-full bg-white text-primary hover:bg-white/90 font-semibold shadow-md"
+                 data-testid={`button-learn-more-${community.id}`}
+               >
+                 <Link href={`/communities/${community.slug}`}>
+                   Learn More
+                 </Link>
+               </Button>
+             </div>
+           </div>
+         </div>
+       </Card>
+     </div>
+   );
+ };
+ 
+ export default function Home() {
+   const [showContactForm, setShowContactForm] = useState(false);
+   const [showCommunityModal, setShowCommunityModal] = useState(false);
+   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+   const [selectedIndex, setSelectedIndex] = useState(0);
++  const { openScheduleTour } = useScheduleTour();
+ 
+   // Fetch homepage hero data
+   const { data: heroData } = useQuery({
+     queryKey: ['/api/page-heroes', '/'],
+     queryFn: async () => {
+       const response = await fetch('/api/page-heroes/' + encodeURIComponent('/'));
+       if (!response.ok) {
+         // Return null if no hero data exists
+         if (response.status === 404) return null;
+         throw new Error('Failed to fetch page hero');
+       }
+       return response.json();
+     },
+   });
+ 
+   // Default hero content for fallback
+   const defaultHero = {
+     title: "Colorado senior living that feels like home — with the professionalism families trust.",
+     subtitle: "Locally Owned • Resident‑Focused",
+     description: "Four Front Range communities + in-home support. Clear pricing, personalized care, and a team supported as well as they support you.",
+     backgroundImageUrl: "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?q=80&w=1600&auto=format&fit=crop",
+     ctaText: "Find a Community",
+     ctaLink: "/communities",
+     overlayOpacity: "0.85",
+     textAlignment: "left",
+@@ -289,52 +291,52 @@ export default function Home() {
+                 {hero.subtitle}
+               </p>
+             )}
+             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-white drop-shadow-md" data-testid="hero-title">
+               {hero.title}
+             </h1>
+             {hero.description && (
+               <p className="mt-6 text-xl text-white leading-relaxed drop-shadow-sm" data-testid="hero-description">
+                 {hero.description}
+               </p>
+             )}
+             <div className={`mt-8 flex flex-wrap gap-4 ${hero.textAlignment === 'center' ? 'justify-center' : hero.textAlignment === 'right' ? 'justify-end' : ''}`}>
+               {hero.ctaText && hero.ctaLink && (
+                 <Button 
+                   size="lg" 
+                   className="bg-[var(--stage-copper)] text-white hover:bg-gradient-to-r hover:from-[var(--stage-copper)] hover:to-[var(--foothill-sage)] font-semibold shadow-lg px-8 py-6 text-lg transition-all duration-300"
+                   asChild
+                   data-testid="button-hero-cta"
+                 >
+                   <Link href={hero.ctaLink}>
+                     {hero.ctaLink.includes('communities') && <MapPin className="w-5 h-5 mr-2" />}
+                     {hero.ctaText}
+                   </Link>
+                 </Button>
+               )}
+-              <Button 
+-                size="lg" 
++              <Button
++                size="lg"
+                 variant="glassmorphism"
+                 className="font-semibold px-8 py-6 text-lg"
+                 onClick={() => setShowCommunityModal(true)}
+                 data-testid="button-schedule-tour"
+               >
+                 <Calendar className="w-5 h-5 mr-2" />
+                 Schedule Tour
+               </Button>
+             </div>
+           </div>
+         </div>
+       </section>
+ 
+       {/* Community Carousel */}
+       <section id="finder" className="py-16 bg-primary text-white relative overflow-hidden">
+         {/* Enhanced dark background overlay */}
+         <div className="absolute inset-0 bg-primary/95 z-0" />
+         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+           {/* Header */}
+           <div className="text-center mb-12">
+             <h2 className="text-2xl md:text-3xl font-bold mb-4">
+               Find your Colorado community
+             </h2>
+             <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
+               Find a community near you and explore all the benefits of vibrant independent living.
+@@ -712,33 +714,40 @@ export default function Home() {
+             ) : (
+               <Card className="bg-white">
+                 <CardContent className="p-8 text-center">
+                   <Mail className="w-16 h-16 mx-auto mb-6 text-primary" />
+                   <h3 className="text-2xl font-bold mb-4">Get Expert Guidance</h3>
+                   <p className="text-muted-foreground mb-6">
+                     Our senior living advisors are standing by to help you find the perfect community for your loved one.
+                   </p>
+                   <Button 
+                     size="lg" 
+                     variant="default"
+                     onClick={() => setShowContactForm(true)}
+                     className="w-full"
+                     data-testid="button-show-contact-form"
+                   >
+                     Start Your Search
+                   </Button>
+                 </CardContent>
+               </Card>
+             )}
+           </div>
+         </div>
+       </section>
+       
+       {/* Community Selection Modal */}
+-      <CommunitySelectionModal 
++      <CommunitySelectionModal
+         open={showCommunityModal}
+         onOpenChange={setShowCommunityModal}
+         communities={communities}
++        onSelectCommunity={(community) => {
++          setShowCommunityModal(false);
++          openScheduleTour({
++            communityId: community.id,
++            communityName: community.name,
++          });
++        }}
+       />
+     </div>
+   );
+ }
+\ No newline at end of file
+diff --git a/client/src/pages/safety-with-dignity.tsx b/client/src/pages/safety-with-dignity.tsx
+index 47796b7385211f3d15faba318c10e3b6a35d4bce..2cdb9c681c1652f838ac23d8d6297690a484649d 100644
+--- a/client/src/pages/safety-with-dignity.tsx
++++ b/client/src/pages/safety-with-dignity.tsx
+@@ -13,52 +13,54 @@ import {
+   CheckCircle, 
+   Clock, 
+   Eye, 
+   Bell, 
+   FileText, 
+   HeartHandshake, 
+   Play, 
+   ChevronDown, 
+   MonitorUp, 
+   UserCheck, 
+   ShieldCheck, 
+   Activity,
+   ArrowRight,
+   Heart,
+   Zap,
+   TrendingUp,
+   Home,
+   Star,
+   Award,
+   Lightbulb,
+   Phone,
+   BadgeCheck,
+   Info
+ } from "lucide-react";
+ import { PageHero } from "@/components/PageHero";
++import { useScheduleTour } from "@/hooks/useScheduleTour";
+ 
+ export default function SafetyWithDignity() {
++  const { openScheduleTour } = useScheduleTour();
+   useEffect(() => {
+     document.title = "Safety with Dignity - Fall Detection Program | The Gardens on Quail";
+     
+     // Add meta description
+     const metaDescription = document.querySelector('meta[name="description"]');
+     if (metaDescription) {
+       metaDescription.setAttribute('content', 'Learn about our Safety with Dignity fall detection program at The Gardens on Quail. Privacy-focused technology that identifies falls quickly, alerts staff immediately, and helps adapt care—without live streaming or audio recording.');
+     } else {
+       const meta = document.createElement('meta');
+       meta.name = 'description';
+       meta.content = 'Learn about our Safety with Dignity fall detection program at The Gardens on Quail. Privacy-focused technology that identifies falls quickly, alerts staff immediately, and helps adapt care—without live streaming or audio recording.';
+       document.head.appendChild(meta);
+     }
+   }, []);
+ 
+   const scrollToHowItWorks = () => {
+     const element = document.getElementById('how-it-works');
+     if (element) {
+       element.scrollIntoView({ behavior: 'smooth' });
+     }
+   };
+ 
+   const processSteps = [
+     {
+       step: "Activate",
+@@ -693,57 +695,61 @@ export default function SafetyWithDignity() {
+                     <span>{faq.question}</span>
+                   </div>
+                 </AccordionTrigger>
+                 <AccordionContent data-testid={`faq-answer-${index}`}>
+                   <div className="text-muted-foreground whitespace-pre-line pl-8">
+                     {faq.answer}
+                   </div>
+                 </AccordionContent>
+               </AccordionItem>
+             ))}
+           </Accordion>
+         </div>
+       </section>
+ 
+       {/* Final CTA Section - Enhanced */}
+       <section className="py-20 bg-gradient-to-br from-primary to-primary/90 text-white relative overflow-hidden">
+         <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]"></div>
+         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+           <h2 className="text-3xl md:text-4xl font-bold mb-4" data-testid="cta-title">
+             Still have questions?
+           </h2>
+           <p className="text-xl text-white/95 mb-8 max-w-2xl mx-auto">
+             Our team would be happy to walk you through the program in person, show you how it works, and answer anything specific to your loved one's situation.
+           </p>
+           <div className="flex flex-wrap gap-4 justify-center">
+-            <Button 
+-              size="lg" 
++            <Button
++              size="lg"
+               variant="secondary"
+               className="px-8 py-6 text-lg"
+-              asChild
+               data-testid="button-schedule-visit"
++              onClick={() =>
++                openScheduleTour({
++                  communityName: "The Gardens on Quail",
++                  title: "Schedule a Visit",
++                  description: "Tour The Gardens on Quail and experience the Safety with Dignity program firsthand.",
++                })
++              }
+             >
+-              <Link href="/communities/the-gardens-on-quail">
+-                Schedule a Visit
+-              </Link>
++              Schedule a Visit
+             </Button>
+             <Button 
+               size="lg"
+               variant="outline"
+               className="px-8 py-6 text-lg bg-transparent text-white border-white hover:bg-white/10"
+               asChild
+               data-testid="button-call-now"
+             >
+               <a href="tel:+1-303-424-6116">
+                 <Phone className="mr-2 w-5 h-5" />
+                 Call (303) 424-6116
+               </a>
+             </Button>
+           </div>
+         </div>
+       </section>
+     </div>
+   );
+ }
+ 
+ // Add missing import
+ import { HelpCircle } from "lucide-react";
+\ No newline at end of file
+diff --git a/package-lock.json b/package-lock.json
+index e0fde1d2382181c4b0ccdcf8b119e13bd2466cc6..8187d8b20c77d87e99287118e74729b83a3a8553 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -35,50 +35,51 @@
+         "@radix-ui/react-slot": "^1.2.0",
+         "@radix-ui/react-switch": "^1.1.4",
+         "@radix-ui/react-tabs": "^1.1.4",
+         "@radix-ui/react-toast": "^1.2.7",
+         "@radix-ui/react-toggle": "^1.1.3",
+         "@radix-ui/react-toggle-group": "^1.1.3",
+         "@radix-ui/react-tooltip": "^1.2.0",
+         "@replit/object-storage": "^1.0.0",
+         "@tanstack/react-query": "^5.60.5",
+         "@tiptap/extension-image": "^3.6.1",
+         "@tiptap/extension-link": "^3.6.1",
+         "@tiptap/extension-placeholder": "^3.6.1",
+         "@tiptap/extension-text-align": "^3.6.1",
+         "@tiptap/extension-underline": "^3.6.1",
+         "@tiptap/react": "^3.6.1",
+         "@tiptap/starter-kit": "^3.6.1",
+         "@types/leaflet": "^1.9.20",
+         "@types/memoizee": "^0.4.12",
+         "@types/multer": "^2.0.0",
+         "@types/sharp": "^0.31.1",
+         "bcryptjs": "^3.0.2",
+         "class-variance-authority": "^0.7.1",
+         "clsx": "^2.1.1",
+         "cmdk": "^1.1.1",
+         "connect-pg-simple": "^10.0.0",
++        "csv-parse": "^5.6.0",
+         "date-fns": "^3.6.0",
+         "drizzle-orm": "^0.39.1",
+         "drizzle-zod": "^0.7.0",
+         "embla-carousel-react": "^8.6.0",
+         "express": "^4.21.2",
+         "express-session": "^1.18.1",
+         "framer-motion": "^11.13.1",
+         "input-otp": "^1.4.2",
+         "leaflet": "^1.9.4",
+         "lucide-react": "^0.453.0",
+         "memoizee": "^0.4.17",
+         "memorystore": "^1.6.7",
+         "multer": "^2.0.2",
+         "next-themes": "^0.4.6",
+         "openid-client": "^6.8.0",
+         "passport": "^0.7.0",
+         "passport-local": "^1.0.0",
+         "react": "^18.3.1",
+         "react-day-picker": "^8.10.1",
+         "react-dom": "^18.3.1",
+         "react-hook-form": "^7.55.0",
+         "react-icons": "^5.4.0",
+         "react-leaflet": "^4.2.1",
+         "react-resizable-panels": "^2.1.7",
+         "recharts": "^2.15.2",
+@@ -5392,50 +5393,56 @@
+         "shebang-command": "^2.0.0",
+         "which": "^2.0.1"
+       },
+       "engines": {
+         "node": ">= 8"
+       }
+     },
+     "node_modules/cssesc": {
+       "version": "3.0.0",
+       "resolved": "https://registry.npmjs.org/cssesc/-/cssesc-3.0.0.tgz",
+       "integrity": "sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==",
+       "license": "MIT",
+       "bin": {
+         "cssesc": "bin/cssesc"
+       },
+       "engines": {
+         "node": ">=4"
+       }
+     },
+     "node_modules/csstype": {
+       "version": "3.1.3",
+       "resolved": "https://registry.npmjs.org/csstype/-/csstype-3.1.3.tgz",
+       "integrity": "sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==",
+       "license": "MIT"
+     },
++    "node_modules/csv-parse": {
++      "version": "5.6.0",
++      "resolved": "https://registry.npmjs.org/csv-parse/-/csv-parse-5.6.0.tgz",
++      "integrity": "sha512-l3nz3euub2QMg5ouu5U09Ew9Wf6/wQ8I++ch1loQ0ljmzhmfZYrH9fflS22i/PQEvsPvxCwxgz5q7UB8K1JO4Q==",
++      "license": "MIT"
++    },
+     "node_modules/d": {
+       "version": "1.0.2",
+       "resolved": "https://registry.npmjs.org/d/-/d-1.0.2.tgz",
+       "integrity": "sha512-MOqHvMWF9/9MX6nza0KgvFH4HpMU0EF5uUDXqX/BtxtU8NfB0QzRtJ8Oe/6SuS4kbhyzVJwjd97EA4PKrzJ8bw==",
+       "license": "ISC",
+       "dependencies": {
+         "es5-ext": "^0.10.64",
+         "type": "^2.7.2"
+       },
+       "engines": {
+         "node": ">=0.12"
+       }
+     },
+     "node_modules/d3-array": {
+       "version": "3.2.4",
+       "resolved": "https://registry.npmjs.org/d3-array/-/d3-array-3.2.4.tgz",
+       "integrity": "sha512-tdQAmyA18i4J7wprpYq8ClcxZy3SC31QMeByyCFyRt7BVHdREQZ5lpzoe5mFEYZUWe+oq8HBvk9JjpibyEV4Jg==",
+       "license": "ISC",
+       "dependencies": {
+         "internmap": "1 - 2"
+       },
+       "engines": {
+         "node": ">=12"
+       }
+     },
+ 
+EOF
+)
