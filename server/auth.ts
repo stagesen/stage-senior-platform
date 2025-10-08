@@ -63,6 +63,9 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
+  // Trust proxy must be set before rate limiters
+  app.set("trust proxy", 1);
+
   // Ensure SESSION_SECRET is set in production
   const sessionSecret = process.env.SESSION_SECRET;
   if (!sessionSecret && process.env.NODE_ENV === "production") {
@@ -87,11 +90,19 @@ export function setupAuth(app: Express) {
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 10, // Max 10 requests per window per IP
     standardHeaders: true,
-    message: "Too many requests, please try again later",
+    legacyHeaders: false,
+    // Extract IP from forwarded headers or socket
+    keyGenerator: (req) => {
+      const forwarded = req.headers['x-forwarded-for'] as string;
+      const ip = forwarded ? forwarded.split(',')[0].trim() : 
+                req.socket.remoteAddress || 'unknown';
+      return ip;
+    },
+    handler: (req, res) => {
+      res.status(429).json({ message: "Too many requests, please try again later" });
+    },
     skipSuccessfulRequests: false, // Count all attempts
   });
-
-  app.set("trust proxy", 1);
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
