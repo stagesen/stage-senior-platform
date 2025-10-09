@@ -1,0 +1,336 @@
+================================================================================
+FLOOR PLAN IMAGE VERIFICATION REPORT
+Generated: 2025-10-09T22:28:39.960Z
+================================================================================
+
+Found 4 active communities
+
+Found 29 active floor plans across all communities
+
+================================================================================
+STATISTICS BY COMMUNITY
+================================================================================
+
+The Gardens on Quail:
+  Total Floor Plans: 5
+  Has Image (imageId): 5 (100.0%)
+  Using Legacy imageUrl: 0 (0.0%)
+  Broken References: 0 (0.0%)
+  Missing Images: 0 (0.0%)
+
+Stonebridge Senior:
+  Total Floor Plans: 9
+  Has Image (imageId): 0 (0.0%)
+  Using Legacy imageUrl: 0 (0.0%)
+  Broken References: 0 (0.0%)
+  Missing Images: 9 (100.0%)
+
+The Gardens at Columbine:
+  Total Floor Plans: 9
+  Has Image (imageId): 9 (100.0%)
+  Using Legacy imageUrl: 0 (0.0%)
+  Broken References: 0 (0.0%)
+  Missing Images: 0 (0.0%)
+
+Golden Pond Retirement Community:
+  Total Floor Plans: 6
+  Has Image (imageId): 0 (0.0%)
+  Using Legacy imageUrl: 0 (0.0%)
+  Broken References: 0 (0.0%)
+  Missing Images: 6 (100.0%)
+
+================================================================================
+OVERALL STATISTICS
+================================================================================
+
+Total Active Floor Plans: 29
+Has Image (imageId): 14 (48.3%)
+Using Legacy imageUrl: 0 (0.0%)
+Broken References: 0 (0.0%)
+Missing Images: 15 (51.7%)
+
+================================================================================
+FLOOR PLANS REQUIRING ATTENTION
+================================================================================
+
+Found 15 floor plan(s) that need attention:
+
+STONEBRIDGE SENIOR
+--------------------------------------------------------------------------------
+  Floor Plan: Aspen
+    Care Type: Assisted Living
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+  Floor Plan: Copper
+    Care Type: Assisted Living
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+  Floor Plan: Avon
+    Care Type: Assisted Living
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+  Floor Plan: Eldora
+    Care Type: Assisted Living
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+  Floor Plan: Vail
+    Care Type: Assisted Living
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+  Floor Plan: Georgetown
+    Care Type: Assisted Living
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+  Floor Plan: Keystone
+    Care Type: Memory Care – The Meadows
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+  Floor Plan: Telluride
+    Care Type: Memory Care – The Meadows
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+  Floor Plan: Durango
+    Care Type: Memory Care – The Meadows
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+GOLDEN POND RETIREMENT COMMUNITY
+--------------------------------------------------------------------------------
+  Floor Plan: Independent Living – One Bedroom
+    Care Type: Independent Living
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+  Floor Plan: Independent Living – Two Bedroom
+    Care Type: Independent Living
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+  Floor Plan: Assisted Living – Studio
+    Care Type: Assisted Living
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+  Floor Plan: Assisted Living – One Bedroom
+    Care Type: Assisted Living
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+  Floor Plan: Assisted Living – Two Bedroom
+    Care Type: Assisted Living
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+  Floor Plan: Memory Care – The Meadows Private Studio
+    Care Type: Memory Care – The Meadows
+    Status: MISSING
+    imageId: NULL
+    imageUrl: NULL
+
+================================================================================
+FLOOR PLANS USING LEGACY imageUrl FIELD
+================================================================================
+
+No floor plans using legacy imageUrl field.
+================================================================================
+DETAILED FLOOR PLAN LIST (ALL FLOOR PLANS)
+================================================================================
+
+THE GARDENS ON QUAIL
+--------------------------------------------------------------------------------
+  ✅ Memory Care - Private Suite
+     Care Type: Memory Care – The Meadows
+     Status: Has Image
+     Total Images: 2 (Main: 1, Additional: 1)
+     Main Image URL: /replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public...
+     Additional Images: 1
+
+  ✅ Memory Care - One Bedroom
+     Care Type: Memory Care – The Meadows
+     Status: Has Image
+     Total Images: 4 (Main: 1, Additional: 3)
+     Main Image URL: /replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public...
+     Additional Images: 3
+
+  ✅ Memory Care - Two Bedroom Jack & Jill
+     Care Type: Memory Care – The Meadows
+     Status: Has Image
+     Total Images: 1 (Main: 1, Additional: 0)
+     Main Image URL: /replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public...
+
+  ✅ Assisted Living - Private Suite
+     Care Type: Assisted Living
+     Status: Has Image
+     Total Images: 3 (Main: 1, Additional: 2)
+     Main Image URL: /replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public...
+     Additional Images: 2
+
+  ✅ Assisted Living - Two Bedroom Jack & Jill
+     Care Type: Assisted Living
+     Status: Has Image
+     Total Images: 1 (Main: 1, Additional: 0)
+     Main Image URL: /replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public...
+
+STONEBRIDGE SENIOR
+--------------------------------------------------------------------------------
+  ❌ Aspen
+     Care Type: Assisted Living
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+  ❌ Copper
+     Care Type: Assisted Living
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+  ❌ Avon
+     Care Type: Assisted Living
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+  ❌ Eldora
+     Care Type: Assisted Living
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+  ❌ Vail
+     Care Type: Assisted Living
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+  ❌ Georgetown
+     Care Type: Assisted Living
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+  ❌ Keystone
+     Care Type: Memory Care – The Meadows
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+  ❌ Telluride
+     Care Type: Memory Care – The Meadows
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+  ❌ Durango
+     Care Type: Memory Care – The Meadows
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+THE GARDENS AT COLUMBINE
+--------------------------------------------------------------------------------
+  ✅ Memory Care - Aspen Suite
+     Care Type: Memory Care – The Meadows
+     Status: Has Image
+     Total Images: 1 (Main: 1, Additional: 0)
+     Main Image URL: /replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public...
+
+  ✅ Memory Care - Blue Spruce Suite
+     Care Type: Memory Care – The Meadows
+     Status: Has Image
+     Total Images: 1 (Main: 1, Additional: 0)
+     Main Image URL: /replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public...
+
+  ✅ Assisted Living - Studio Bath
+     Care Type: Assisted Living
+     Status: Has Image
+     Total Images: 3 (Main: 1, Additional: 2)
+     Main Image URL: /replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public...
+     Additional Images: 2
+
+  ✅ Assisted Living - Standard One Bedroom
+     Care Type: Assisted Living
+     Status: Has Image
+     Total Images: 3 (Main: 1, Additional: 2)
+     Main Image URL: /replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public...
+     Additional Images: 2
+
+  ✅ Assisted Living - Deluxe One Bedroom
+     Care Type: Assisted Living
+     Status: Has Image
+     Total Images: 3 (Main: 1, Additional: 2)
+     Main Image URL: /replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public...
+     Additional Images: 2
+
+  ✅ Assisted Living - Two Bedroom, One Bath
+     Care Type: Assisted Living
+     Status: Has Image
+     Total Images: 1 (Main: 1, Additional: 0)
+     Main Image URL: /replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public...
+
+  ✅ Memory Care - Conifer Suite
+     Care Type: Memory Care – The Meadows
+     Status: Has Image
+     Total Images: 1 (Main: 1, Additional: 0)
+     Main Image URL: /replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public...
+
+  ✅ Memory Care - Evergreen Suite
+     Care Type: Memory Care – The Meadows
+     Status: Has Image
+     Total Images: 1 (Main: 1, Additional: 0)
+     Main Image URL: /replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public...
+
+  ✅ Memory Care - Douglas Fir Suite
+     Care Type: Memory Care – The Meadows
+     Status: Has Image
+     Total Images: 1 (Main: 1, Additional: 0)
+     Main Image URL: /replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public...
+
+GOLDEN POND RETIREMENT COMMUNITY
+--------------------------------------------------------------------------------
+  ❌ Independent Living – One Bedroom
+     Care Type: Independent Living
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+  ❌ Independent Living – Two Bedroom
+     Care Type: Independent Living
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+  ❌ Assisted Living – Studio
+     Care Type: Assisted Living
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+  ❌ Assisted Living – One Bedroom
+     Care Type: Assisted Living
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+  ❌ Assisted Living – Two Bedroom
+     Care Type: Assisted Living
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+  ❌ Memory Care – The Meadows Private Studio
+     Care Type: Memory Care – The Meadows
+     Status: MISSING
+     Total Images: 0 (Main: 0, Additional: 0)
+
+================================================================================
+END OF REPORT
+================================================================================
