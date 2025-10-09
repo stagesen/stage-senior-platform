@@ -85,14 +85,7 @@ export default function Communities() {
               <Button
                 size="lg"
                 className="w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-6 text-base sm:text-lg bg-white text-[var(--deep-blue)] hover:bg-gray-100 shadow-lg transform hover:scale-105 transition-all duration-200"
-                onClick={() => {
-                  const contactSection = document.getElementById('contact-section');
-                  if (contactSection) {
-                    contactSection.scrollIntoView({ behavior: 'smooth' });
-                  } else {
-                    navigate('/contact');
-                  }
-                }}
+                onClick={() => setShowCommunityModal(true)}
                 data-testid="button-get-help"
               >
                 <HelpCircle className="w-5 h-5 mr-2" />
