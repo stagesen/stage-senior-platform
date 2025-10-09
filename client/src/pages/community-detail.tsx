@@ -189,13 +189,58 @@ const FloorPlanCard = ({ plan, onOpen }: { plan: any, onOpen: (plan: any) => voi
   );
 };
 
-// Local subcomponent: Floor Plans Grid
-const FloorPlansGrid = ({ plans, onOpen }: { plans: any[], onOpen: (plan: any) => void }) => {
+// Local subcomponent: Floor Plans Carousel
+const FloorPlansCarousel = ({ plans, onOpen }: { plans: any[], onOpen: (plan: any) => void }) => {
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap());
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-      {plans.map((plan) => (
-        <FloorPlanCard key={plan.id} plan={plan} onOpen={onOpen} />
-      ))}
+    <div className="relative">
+      <Carousel
+        setApi={setApi}
+        opts={{
+          align: "start",
+          loop: false,
+        }}
+        className="w-full"
+      >
+        <CarouselContent className="-ml-2 md:-ml-4">
+          {plans.map((plan) => (
+            <CarouselItem key={plan.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+              <FloorPlanCard plan={plan} onOpen={onOpen} />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="hidden md:flex -left-4 lg:-left-12" />
+        <CarouselNext className="hidden md:flex -right-4 lg:-right-12" />
+      </Carousel>
+
+      {/* Carousel indicators */}
+      <div className="flex justify-center gap-2 mt-6">
+        {Array.from({ length: count }).map((_, index) => (
+          <button
+            key={index}
+            className={cn(
+              "h-2 rounded-full transition-all",
+              current === index ? "w-8 bg-primary" : "w-2 bg-gray-300 hover:bg-gray-400"
+            )}
+            onClick={() => api?.scrollTo(index)}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
     </div>
   );
 };
@@ -2168,8 +2213,8 @@ export default function CommunityDetail() {
                 <p className="text-lg text-gray-600 mb-8">
                   Each apartment home is designed for comfort and independence, with modern conveniences and thoughtful layouts.
                 </p>
-                <FloorPlansGrid 
-                  plans={floorPlans} 
+                <FloorPlansCarousel
+                  plans={floorPlans}
                   onOpen={(plan) => {
                     setSelectedFloorPlan(plan);
                     setIsFloorPlanModalOpen(true);
