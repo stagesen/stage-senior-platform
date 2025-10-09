@@ -481,7 +481,7 @@ export default function CarePoints() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
-            <Button size="lg" variant="secondary" data-testid="button-schedule-visit">
+            <Button size="lg" className="bg-white text-[var(--deep-blue)] hover:bg-gray-100" data-testid="button-schedule-visit">
               <Calendar className="w-5 h-5 mr-2" />
               Schedule a Visit
             </Button>

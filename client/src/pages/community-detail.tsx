@@ -133,7 +133,7 @@ const HighlightCard = ({ highlight }: { highlight: { title: string; description:
 
 // Local subcomponent: Floor Plan Card
 const FloorPlanCard = ({ plan, onOpen }: { plan: any, onOpen: (plan: any) => void }) => {
-  const resolvedImageUrl = useResolveImageUrl(plan.imageUrl);
+  const resolvedImageUrl = useResolveImageUrl(plan.imageId || plan.imageUrl);
   
   return (
     <Card 
