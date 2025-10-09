@@ -89,40 +89,62 @@ export default function CommunityMap({
       // Get community color (use mainColorHex or default to primary blue)
       const markerColor = community.mainColorHex || '#2563eb';
       
-      // Create popup content with centered logo, name and city
+      // Create popup content with hero image, name and city
       const popupDiv = document.createElement('div');
-      popupDiv.className = 'text-center p-4 min-w-[200px]';
+      popupDiv.className = 'overflow-hidden min-w-[280px]';
       
-      // Add logo if available
-      if (community.logoImageId) {
-        const logoContainer = document.createElement('div');
-        logoContainer.className = 'flex justify-center mb-3';
+      // Add hero image if available
+      if (community.imageId) {
+        const heroContainer = document.createElement('div');
+        heroContainer.className = 'relative h-32 mb-3 -mt-3 -mx-3';
         
+        const hero = document.createElement('img');
+        hero.src = `/api/images/${community.imageId}`;
+        hero.alt = `${community.name}`;
+        hero.className = 'w-full h-full object-cover';
+        hero.onerror = () => {
+          // Hide hero if it fails to load
+          heroContainer.style.display = 'none';
+        };
+        
+        heroContainer.appendChild(hero);
+        popupDiv.appendChild(heroContainer);
+      }
+
+      // Content container
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'px-4 pb-4';
+
+      // Add logo if available (small version next to title)
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'flex items-center justify-center gap-2 mb-2';
+      
+      if (community.logoImageId) {
         const logo = document.createElement('img');
         logo.src = `/api/images/${community.logoImageId}`;
         logo.alt = `${community.name} logo`;
-        logo.className = 'h-12 w-auto object-contain';
+        logo.className = 'h-8 w-auto object-contain';
         logo.onerror = () => {
           // Hide logo if it fails to load
-          logoContainer.style.display = 'none';
+          logo.style.display = 'none';
         };
-        
-        logoContainer.appendChild(logo);
-        popupDiv.appendChild(logoContainer);
+        headerDiv.appendChild(logo);
       }
 
       // Community name - bold and centered
       const title = document.createElement('h3');
-      title.className = 'font-bold text-base mb-1';
+      title.className = 'font-bold text-lg';
       title.style.color = markerColor;
       title.textContent = community.name;
-      popupDiv.appendChild(title);
+      headerDiv.appendChild(title);
+      
+      contentDiv.appendChild(headerDiv);
 
       // City name - centered
       const location = document.createElement('p');
-      location.className = 'text-sm text-gray-600 mb-3';
+      location.className = 'text-sm text-gray-600 mb-3 text-center';
       location.textContent = `${community.city}, ${community.state}`;
-      popupDiv.appendChild(location);
+      contentDiv.appendChild(location);
 
       // View Details button with community color
       const button = document.createElement('button');
@@ -132,7 +154,9 @@ export default function CommunityMap({
       button.onclick = () => {
         window.location.href = `/communities/${community.slug}`;
       };
-      popupDiv.appendChild(button);
+      contentDiv.appendChild(button);
+      
+      popupDiv.appendChild(contentDiv);
 
       // Create marker with custom color
       const marker = L.marker([lat, lng], {
@@ -164,7 +188,7 @@ export default function CommunityMap({
   return (
     <div 
       ref={mapRef} 
-      className="w-full h-96 rounded-lg z-0"
+      className="w-full h-full z-0"
       data-testid="community-map"
     />
   );
