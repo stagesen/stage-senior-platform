@@ -162,6 +162,7 @@ export default function LeadCaptureForm({
               <Input
                 {...field}
                 type="tel"
+                inputMode="tel"
                 placeholder="(303) 555-0123"
                 className="h-12 text-base"
                 autoComplete="tel"
@@ -204,6 +205,7 @@ export default function LeadCaptureForm({
               <Input
                 {...field}
                 type="email"
+                inputMode="email"
                 placeholder="your.email@example.com"
                 className="h-12 text-base"
                 autoComplete="email"

@@ -67,6 +67,8 @@ const CarouselCommunityCard = ({
               src={resolvedHeroUrl} 
               alt={community.name}
               className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
               data-testid={`community-image-${community.id}`}
             />
           ) : (
@@ -268,6 +270,8 @@ export default function Home() {
             src={resolvedBackgroundImageUrl}
             alt="Senior living community with beautiful gardens"
             className="absolute inset-0 h-full w-full object-cover"
+            loading="eager"
+            fetchpriority="high"
           />
         )}
         {!resolvedBackgroundImageUrl && resolvedBackgroundImageUrl !== null && (
@@ -275,6 +279,8 @@ export default function Home() {
             src={hero.backgroundImageUrl}
             alt="Senior living community with beautiful gardens"
             className="absolute inset-0 h-full w-full object-cover"
+            loading="eager"
+            fetchpriority="high"
           />
         )}
         {/* Enhanced Multi-layer Overlay for Better Text Legibility */}
@@ -471,6 +477,8 @@ export default function Home() {
                       src={transparentSectionImageUrl}
                       alt="Senior resident reviewing care pricing with staff member"  
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                   )}
                   {!transparentSectionImageUrl && transparentSectionImageUrl !== null && (
@@ -478,6 +486,8 @@ export default function Home() {
                       src={carePricingImage}
                       alt="Senior resident reviewing care pricing with staff member"
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                   )}
                 </div>
@@ -549,6 +559,8 @@ export default function Home() {
                       src={locallyOwnedSectionImageUrl}
                       alt="Local Colorado team and leadership"
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                   )}
                   {!locallyOwnedSectionImageUrl && locallyOwnedSectionImageUrl !== null && (
@@ -556,6 +568,8 @@ export default function Home() {
                       src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1600&auto=format&fit=crop"
                       alt="Local Colorado team and leadership"
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                   )}
                 </div>
@@ -571,6 +585,8 @@ export default function Home() {
                       src={safetySectionImageUrl}
                       alt="Advanced safety technology"
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                   )}
                   {!safetySectionImageUrl && safetySectionImageUrl !== null && (
@@ -578,6 +594,8 @@ export default function Home() {
                       src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1600&auto=format&fit=crop"
                       alt="Advanced safety technology"
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                   )}
                 </div>

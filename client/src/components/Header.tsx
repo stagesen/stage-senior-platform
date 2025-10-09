@@ -170,11 +170,18 @@ export default function Header() {
             {showNavigation && (
               <Sheet open={isOpen} onOpenChange={setIsOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="md:hidden" data-testid="button-menu">
-                    <Menu className="h-6 w-6" />
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="md:hidden min-h-[44px] min-w-[44px]" 
+                    data-testid="button-menu"
+                    aria-label="Open navigation menu"
+                    aria-expanded={isOpen}
+                  >
+                    <Menu className="h-6 w-6" aria-hidden="true" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[300px]">
+                <SheetContent side="right" className="w-[85vw] max-w-[300px] sm:w-[300px]">
                   <nav className="flex flex-col space-y-4 mt-8">
                     {navigation.map((item) => {
                       const base = location.split(/[?#]/)[0];

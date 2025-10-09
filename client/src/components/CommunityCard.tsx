@@ -75,6 +75,8 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
                   src={heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600`}
                   alt={`${community.name} - Senior Living Community`}
                   className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                  decoding="async"
                   data-testid={`image-${community.slug}`}
                 />
               </div>

@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-padding-top: 80px; /* Account for sticky header (64px) + buffer */
+}
+
 :root {
   /* Stage Senior Brand Colors - Refined Palette */
   --stage-copper: #C66A3D;                /* Primary accents, CTA buttons, active states */
