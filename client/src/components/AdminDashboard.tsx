@@ -2071,6 +2071,70 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   )}
                 />
               </div>
+              <div className="grid grid-cols-3 gap-4">
+                <FormField
+                  control={communityForm.control}
+                  name="rating"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Rating (1-5)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || ""} 
+                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)} 
+                          step="0.1"
+                          min="1"
+                          max="5"
+                          placeholder="4.8"
+                          data-testid="input-community-rating" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={communityForm.control}
+                  name="reviewCount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Review Count</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || ""} 
+                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)} 
+                          min="0"
+                          placeholder="0"
+                          data-testid="input-community-review-count" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={communityForm.control}
+                  name="licenseStatus"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>License Status</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          value={field.value || ""} 
+                          placeholder="Licensed & Insured"
+                          data-testid="input-community-license-status" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={communityForm.control}
