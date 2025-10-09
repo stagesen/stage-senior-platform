@@ -18,7 +18,8 @@
       "Bash(npm run build:*)",
       "WebFetch(domain:www.gardensatcolumbine.com)",
       "WebFetch(domain:www.gardensonquail.com)",
-      "WebFetch(domain:www.goldenpond.com)"
+      "WebFetch(domain:www.goldenpond.com)",
+      "Bash(echo:*)"
     ],
     "deny": [],
     "ask": []

@@ -49,10 +49,13 @@ export default function FloorPlanModal({
     enabled: isOpen && !!floorPlan.id,
   });
   
-  // Resolve image URLs
+  // Resolve image URLs - check imageId first (new), then fall back to old URL fields
   const resolvedPlanImageUrl = useResolveImageUrl(floorPlan.planImageUrl);
-  const resolvedImageUrl = useResolveImageUrl(floorPlan.imageUrl);
-  
+  const resolvedImageUrl = useResolveImageUrl(floorPlan.imageId || floorPlan.imageUrl);
+
+  // Check if we're still loading the main image
+  const isLoadingMainImage = (floorPlan.imageId || floorPlan.imageUrl) && resolvedImageUrl === null;
+
   // Combine main floor plan image with gallery images
   const images: { url: string; caption: string; type: 'plan' | 'photo' }[] = [];
   if (resolvedPlanImageUrl) {
@@ -66,10 +69,10 @@ export default function FloorPlanModal({
     const imgUrl = img.imageUrl || img.url;
     // Note: Gallery images are already resolved URLs from the database
     if (imgUrl) {
-      images.push({ 
-        url: imgUrl, 
-        caption: img.caption || "Gallery Image", 
-        type: 'photo' 
+      images.push({
+        url: imgUrl,
+        caption: img.caption || "Gallery Image",
+        type: 'photo'
       });
     }
   });
@@ -120,7 +123,14 @@ export default function FloorPlanModal({
         </DialogHeader>
 
         {/* Main Image Display with Carousel */}
-        {images.length > 0 ? (
+        {isLoadingMainImage || loadingImages ? (
+          <div className="aspect-video bg-muted rounded-lg flex flex-col items-center justify-center p-8">
+            <div className="animate-pulse space-y-2 text-center">
+              <Square className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+              <p className="text-muted-foreground">Loading images...</p>
+            </div>
+          </div>
+        ) : images.length > 0 ? (
           <div className="space-y-4">
             {images.length > 1 ? (
               <Carousel 
