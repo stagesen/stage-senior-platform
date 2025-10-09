@@ -162,9 +162,10 @@ export default function Header() {
               onClick={() => setShowHelpModal(true)}
               className="bg-primary text-primary-foreground hover:bg-primary/90"
               data-testid="button-get-help"
+              aria-label="Get Help"
             >
-              <Phone className="w-4 h-4 mr-2" />
-              Get Help
+              <Phone className="w-4 h-4 sm:mr-2" aria-hidden="true" />
+              <span className="hidden sm:inline">Get Help</span>
             </Button>
             
             {showNavigation && (

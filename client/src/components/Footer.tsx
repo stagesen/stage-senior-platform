@@ -1,11 +1,54 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import { Linkedin, Phone, Mail, MapPin, ArrowRight, Heart, Users, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 import logoWhiteUrl from "@assets/stagesenior-logo-wht_1758726884711.webp";
 import ashaLogoUrl from "@assets/68af28185bce7fea2a2d6c03_ASHA_ASHA_WHITE_RGB-ezgif.com-resize_1758727665004.webp";
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    // Simulate newsletter subscription (replace with actual API call)
+    try {
+      // TODO: Replace with actual newsletter API endpoint
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Successfully Subscribed!",
+        description: "Thank you for subscribing to our newsletter.",
+      });
+      
+      setEmail("");
+    } catch (error) {
+      toast({
+        title: "Subscription Failed",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   const communities = [
     { name: "The Gardens at Columbine", slug: "the-gardens-at-columbine" },
     { name: "The Gardens on Quail", slug: "the-gardens-on-quail" }, 
@@ -38,21 +81,29 @@ export default function Footer() {
           <p className="text-white/95 text-lg mb-10 max-w-2xl mx-auto leading-relaxed" data-testid="newsletter-description">
             Get the latest updates on events, wellness tips, and community news delivered to your inbox.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
+          <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 justify-center items-stretch max-w-md mx-auto">
             <Input
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email address"
               className="bg-white text-[var(--midnight-slate)] border-0 flex-1 h-14 text-base shadow-lg"
+              disabled={isSubmitting}
+              required
+              inputMode="email"
               data-testid="newsletter-input"
+              aria-label="Email address for newsletter"
             />
             <Button
-              className="bg-[var(--deep-blue)] text-white hover:bg-gradient-to-r hover:from-[var(--deep-blue)] hover:to-[var(--bright-blue)] h-14 px-10 group shadow-lg font-semibold transition-all duration-300"
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-[var(--deep-blue)] text-white hover:bg-gradient-to-r hover:from-[var(--deep-blue)] hover:to-[var(--bright-blue)] h-14 px-10 group shadow-lg font-semibold transition-all duration-300 w-full sm:w-auto"
               data-testid="newsletter-submit"
             >
-              Subscribe
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              {isSubmitting ? "Subscribing..." : "Subscribe"}
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Button>
-          </div>
+          </form>
           <p className="text-white/70 text-sm mt-4">
             <CheckCircle className="w-4 h-4 inline mr-1" />
             No spam, unsubscribe at any time

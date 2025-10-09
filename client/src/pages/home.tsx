@@ -306,11 +306,11 @@ export default function Home() {
                 {hero.description}
               </p>
             )}
-            <div className={`mt-8 flex flex-wrap gap-4 ${hero.textAlignment === 'center' ? 'justify-center' : hero.textAlignment === 'right' ? 'justify-end' : ''}`}>
+            <div className={`mt-8 flex flex-col sm:flex-row gap-4 ${hero.textAlignment === 'center' ? 'sm:justify-center' : hero.textAlignment === 'right' ? 'sm:justify-end' : ''}`}>
               {hero.ctaText && hero.ctaLink && (
                 <Button 
                   size="lg" 
-                  className="bg-[var(--stage-copper)] text-white hover:bg-gradient-to-r hover:from-[var(--stage-copper)] hover:to-[var(--foothill-sage)] font-semibold shadow-lg px-8 py-6 text-lg transition-all duration-300"
+                  className="w-full sm:w-auto bg-[var(--stage-copper)] text-white hover:bg-gradient-to-r hover:from-[var(--stage-copper)] hover:to-[var(--foothill-sage)] font-semibold shadow-lg px-6 py-4 text-base sm:px-8 sm:py-6 sm:text-lg transition-all duration-300"
                   asChild
                   data-testid="button-hero-cta"
                 >
@@ -323,7 +323,7 @@ export default function Home() {
               <Button 
                 size="lg" 
                 variant="glassmorphism"
-                className="font-semibold px-8 py-6 text-lg"
+                className="w-full sm:w-auto font-semibold px-6 py-4 text-base sm:px-8 sm:py-6 sm:text-lg"
                 onClick={() => openScheduleTour({
                   title: "Schedule a Tour",
                   description: "Visit one of our Colorado communities and experience the Stage Senior difference."

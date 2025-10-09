@@ -1,0 +1,15 @@
+
+## Header & Primary Navigation
+- On sub-400px devices the combination of the 180px-wide logo and full-width "Get Help" pill causes the header content to wrap or clip before the menu button, making the menu hard to reach. Consider rendering a condensed CTA (icon-only or shorter copy) below the `md` breakpoint so the button and hamburger comfortably fit beside the logo.【F:client/src/components/Header.tsx†L70-L176】
+
+## Hero Calls-to-Action
+- Both hero buttons keep large `px-8 py-6 text-lg` spacing on every breakpoint. On small screens they wrap but still render side-by-side, which makes each tap target feel cramped and can cause horizontal overflow in languages with longer translations. Add responsive classes so the buttons become `w-full text-base` (or stack vertically) below `sm` for better thumb reach.【F:client/src/pages/home.tsx†L302-L329】
+
+## Community Carousel Controls
+- The previous/next controls inherit `absolute -left-12` / `-right-12` positioning from the shared carousel component. On phones this pushes the buttons off-screen, so the only reliable control path is swipe. Provide a mobile override (e.g. `left-2 right-2 top-auto bottom-4 md:top-1/2`) so the affordance stays visible and reachable without relying on gestures.【F:client/src/components/ui/carousel.tsx†L208-L236】【F:client/src/pages/home.tsx†L380-L417】
+
+## Lead Capture Form Step Actions
+- In step two of the lead form, the Back and Submit buttons share a single row of half-width buttons. On 320–360px devices each button ends up ~140px wide, which increases the chance of mis-taps during a critical conversion step. Stack the actions vertically on very small viewports (e.g. `flex-col gap-2 sm:flex-row`) to keep comfortable tap areas.【F:client/src/components/LeadCaptureForm.tsx†L240-L268】
+
+## Footer Newsletter Form
+- The newsletter input and button sit in a `div` without a `<form>`. Mobile users tapping the keyboard “Go” key won’t trigger anything, and there’s no validation feedback. Wrap the controls in a form handler so Enter/Go submits, add lightweight validation, and announce success/errors for assistive tech.【F:client/src/components/Footer.tsx†L41-L55】

@@ -239,12 +239,12 @@ export default function LeadCaptureForm({
         )}
       />
 
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <Button
           type="button"
           onClick={() => setStep(1)}
           variant="outline"
-          className="flex-1 h-12"
+          className="w-full sm:flex-1 h-12"
           data-testid="button-lead-back"
         >
           Back
@@ -252,7 +252,7 @@ export default function LeadCaptureForm({
         <Button
           type="submit"
           disabled={isLoading}
-          className="flex-1 h-12 text-base font-semibold"
+          className="w-full sm:flex-1 h-12 text-base font-semibold"
           variant={getButtonVariant()}
           data-testid="button-lead-submit"
         >
