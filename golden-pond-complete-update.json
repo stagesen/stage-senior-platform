@@ -1,0 +1,402 @@
+{
+  "community": {
+    "name": "Golden Pond Retirement Community",
+    "slug": "golden-pond",
+    "street": "1270 N Ford Street",
+    "city": "Golden",
+    "state": "CO",
+    "zip": "80403",
+    "latitude": 39.7706,
+    "longitude": -105.2204,
+    "phone_display": "(303) 271-0430",
+    "phone_dial": "3032710430",
+    "secondary_phone_display": "(303) 502-5554",
+    "secondary_phone_dial": "3035025554",
+    "email": "",
+    "overview": "Since 2004, Golden Pond has been a proud part of Golden, Colorado. We're deeply connected to the community — partnering with local schools, churches, and organizations — while offering independent living, assisted living, and memory care designed for comfort, independence, and care that grows with you.",
+    "description": "**Locally Owned Excellence**\n\nGolden Pond is locally owned and managed, providing an upscale yet down-to-earth experience that feels like home. Most residents make Golden Pond their forever home — supported by compassionate staff, engaging activities, and chef-prepared dining.\n\nOur 98% resident satisfaction rate reflects what families already know: life here is golden.\n\n**Independent Living**\n\nNewly remodeled apartments feature granite countertops, stainless appliances, tile backsplash, and in-unit washer and dryer. Enjoy spacious one- and two-bedroom floor plans with community-wide Wi-Fi, Comcast Xfinity HD cable TV, and free transportation to doctor appointments.\n\nOn-site dining serves three chef-prepared meals daily, seven days a week. Transportation to stores, banks, churches, and restaurants is included, along with on-site medical services like physicians, podiatry, audiology, and radiology.\n\n24-hour emergency pull cord monitoring, all utilities (except telephone), bi-weekly housekeeping and linen service, and daily trash pickup round out our services. Residents stay active with fitness classes, card games, movie nights, lectures, and scenic drives.\n\n**Assisted Living**\n\nNewly remodeled apartments offer beautiful western views of the foothills or eastern views of North Table Mountain. Care includes 24/7 staff and RN oversight, individualized care plans, three meals daily, and weekly housekeeping and linen service.\n\nAll utilities are included — electricity, water, trash, cable, and phone. Daily trash service, free laundry rooms or staff laundry option, Wi-Fi, Comcast HD cable, and a 24-hour emergency system with optional pendant provide peace of mind.\n\nThird-party therapy services, on-site medical providers (physicians, podiatry, audiology, concierge physicians, radiology), scheduled transportation to appointments, and bus transportation to local stores, banks, and churches keep residents connected and cared for.\n\nActivities include fitness classes, card games, lectures, and scenic drives.\n\n**Memory Care – The Meadows**\n\nThe Meadows is a specialized, secure neighborhood offering individualized dementia care in a calm, supportive setting. With 15 private studio apartments, warm community spaces, and mountain views, The Meadows provides safety, connection, and dignity.\n\nNewly remodeled private studios include a secured courtyard with views of North Table Mountain, registered nurse oversight, mini refrigerators in every apartment, three daily meals, Comcast HD cable, Wi-Fi, and all utilities.\n\nA full activities calendar, inclusive care up to 150 points, weekly housekeeping and laundry, 24-hour emergency monitoring with optional pendant, on-site medical and therapy services, and newly remodeled dining and activity areas complete the experience.\n\n**Engaging Programs**\n\nOur art program encourages creativity and memory stimulation. Music therapy brings joy through familiar songs and rhythm activities. Memory-specific activities — from hallway bowling to goat yoga — keep life lively.\n\nA sensory room offers a calming, multisensory environment. The courtyard features heated paths and manicured gardens for safe outdoor time and events.\n\n**Dining Excellence**\n\nRestaurant-style dining seven days a week features chef-prepared meals using fresh, seasonal ingredients. Friday happy hour runs 4–5 p.m. with wine, beer, and cocktails available with meals.\n\nMonthly food committee meetings with residents, weekly chef specials, a la carte menu options, and holiday menus and themed dining events make every meal special.",
+    "short_description": "Locally owned senior living in Golden, CO since 2004. Independent, assisted, and memory care with 98% resident satisfaction.",
+    "starting_rate_display": "Starting at $4,600/month",
+    "rating": 4.8,
+    "review_count": 127,
+    "license_status": "Licensed & Insured",
+    "same_day_tours": true,
+    "no_obligation": true,
+    "featured": true,
+    "active": true,
+    "seo_title": "Golden Pond Retirement Community | Senior Living in Golden, CO Since 2004",
+    "seo_description": "Golden Pond offers locally owned independent living, assisted living, and memory care in Golden, CO. 98% resident satisfaction. Call (303) 271-0430.",
+    "brochure_link": ""
+  },
+  "care_types": [
+    {
+      "slug": "independent-living",
+      "name": "Independent Living",
+      "description": "Newly remodeled one- and two-bedroom apartments with granite kitchens, stainless appliances, in-unit washer/dryer, and mountain views. Starting at $4,600/month."
+    },
+    {
+      "slug": "assisted-living",
+      "name": "Assisted Living",
+      "description": "24/7 care staff and RN oversight with individualized care plans. Studio, one-bedroom, and two-bedroom apartments available. Starting at $5,900/month."
+    },
+    {
+      "slug": "memory-care",
+      "name": "Memory Care – The Meadows",
+      "description": "15 private studios in a secure neighborhood with specialized dementia care, mountain views, and person-centered support. $10,000/month."
+    }
+  ],
+  "amenities": [
+    {
+      "slug": "restaurant-dining",
+      "name": "Restaurant-Style Dining",
+      "category": "dining",
+      "description": "Chef-prepared meals seven days a week with fresh, seasonal ingredients. Friday happy hour 4–5 p.m.",
+      "icon": "utensils"
+    },
+    {
+      "slug": "friday-happy-hour",
+      "name": "Friday Happy Hour",
+      "category": "dining",
+      "description": "Weekly social hour with wine, beer, cocktails, chef-made appetizers, and Coors refreshments honoring Golden's hometown brewery."
+    },
+    {
+      "slug": "monthly-food-committee",
+      "name": "Resident Food Committee",
+      "category": "dining",
+      "description": "Monthly meetings where residents help shape menus and dining experiences."
+    },
+    {
+      "slug": "in-unit-washer-dryer",
+      "name": "In-Unit Washer & Dryer",
+      "category": "lifestyle",
+      "description": "All Independent Living apartments include stackable washer and dryer units."
+    },
+    {
+      "slug": "granite-kitchens",
+      "name": "Granite Kitchens",
+      "category": "lifestyle",
+      "description": "Independent Living apartments feature granite countertops, stainless appliances, and tile backsplash."
+    },
+    {
+      "slug": "fitness-activities",
+      "name": "Fitness & Wellness Activities",
+      "category": "wellness",
+      "description": "Fitness classes, walking groups, and exercise programs designed for seniors.",
+      "icon": "dumbbell"
+    },
+    {
+      "slug": "medical-services",
+      "name": "On-Site Medical Services",
+      "category": "wellness",
+      "description": "Access to physicians, podiatry, audiology, concierge physicians, and radiology."
+    },
+    {
+      "slug": "transportation",
+      "name": "Transportation Services",
+      "category": "lifestyle",
+      "description": "Free transportation to doctor appointments (Mon/Wed/Fri, 30-mile round trip) and to stores, banks, churches, and restaurants."
+    },
+    {
+      "slug": "wifi-cable",
+      "name": "Wi-Fi & HD Cable TV",
+      "category": "lifestyle",
+      "description": "Community-wide Wi-Fi and Comcast Xfinity HD cable TV included.",
+      "icon": "wifi"
+    },
+    {
+      "slug": "emergency-monitoring",
+      "name": "24-Hour Emergency Monitoring",
+      "category": "safety",
+      "description": "Emergency pull cord monitoring and optional pendant system for enhanced safety."
+    },
+    {
+      "slug": "mountain-views",
+      "name": "Mountain Views",
+      "category": "outdoor",
+      "description": "Western views of the foothills and eastern views of North Table Mountain."
+    },
+    {
+      "slug": "cody-room",
+      "name": "Cody Room",
+      "category": "lifestyle",
+      "description": "Special gathering space named after Buffalo Bill Cody, celebrating Golden's heritage."
+    },
+    {
+      "slug": "secured-courtyard",
+      "name": "Secured Courtyard – The Meadows",
+      "category": "outdoor",
+      "description": "Heated paths and manicured gardens for memory care residents."
+    },
+    {
+      "slug": "art-program",
+      "name": "Art Program",
+      "category": "recreation",
+      "description": "Creativity and memory stimulation activities for all residents."
+    },
+    {
+      "slug": "music-therapy",
+      "name": "Music Therapy",
+      "category": "recreation",
+      "description": "Familiar songs and rhythm activities bringing joy and comfort."
+    },
+    {
+      "slug": "sensory-room",
+      "name": "Sensory Room",
+      "category": "wellness",
+      "description": "Calming, multisensory environment for memory care residents."
+    }
+  ],
+  "floor_plans": [
+    {
+      "name": "Independent Living – One Bedroom",
+      "care_type": "Independent Living",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "square_feet": null,
+      "description": "Granite kitchen, stackable washer/dryer, stainless appliances, natural two-tone wall colors.",
+      "starting_rate_display": "$4,600/month",
+      "starting_price": 4600,
+      "availability": "available",
+      "accessible": true,
+      "highlights": [
+        "Granite countertops",
+        "In-unit washer/dryer",
+        "Stainless appliances",
+        "Tile backsplash"
+      ],
+      "sort_order": 1
+    },
+    {
+      "name": "Independent Living – Two Bedroom",
+      "care_type": "Independent Living",
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "square_feet": null,
+      "description": "Spacious two-bedroom with granite kitchen, stackable washer/dryer, stainless appliances, and mountain views.",
+      "starting_rate_display": "$5,300/month",
+      "starting_price": 5300,
+      "availability": "limited",
+      "accessible": true,
+      "highlights": [
+        "Granite countertops",
+        "In-unit washer/dryer",
+        "Stainless appliances",
+        "Mountain views"
+      ],
+      "sort_order": 2
+    },
+    {
+      "name": "Assisted Living – Studio",
+      "care_type": "Assisted Living",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "square_feet": null,
+      "description": "Newly remodeled studio with mountain views, mini fridge, and emergency monitoring.",
+      "starting_rate_display": "$5,900/month",
+      "starting_price": 5900,
+      "availability": "available",
+      "accessible": true,
+      "highlights": [
+        "Mountain views",
+        "All utilities included",
+        "24/7 care staff"
+      ],
+      "sort_order": 3
+    },
+    {
+      "name": "Assisted Living – One Bedroom",
+      "care_type": "Assisted Living",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "square_feet": null,
+      "description": "Spacious one-bedroom assisted living apartment with beautiful views and personalized care.",
+      "starting_rate_display": "$7,900/month",
+      "starting_price": 7900,
+      "availability": "limited",
+      "accessible": true,
+      "highlights": [
+        "Separate bedroom",
+        "Mountain or foothill views",
+        "Individualized care plan"
+      ],
+      "sort_order": 4
+    },
+    {
+      "name": "Assisted Living – Two Bedroom",
+      "care_type": "Assisted Living",
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "square_feet": null,
+      "description": "Large two-bedroom for couples or roommates with full assisted living services.",
+      "starting_rate_display": "$9,500/month",
+      "starting_price": 9500,
+      "availability": "waitlist",
+      "accessible": true,
+      "highlights": [
+        "Two bedrooms",
+        "Spacious layout",
+        "Perfect for couples"
+      ],
+      "sort_order": 5
+    },
+    {
+      "name": "Memory Care – The Meadows Private Studio",
+      "care_type": "Memory Care",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "square_feet": null,
+      "description": "Private studio in secure memory care neighborhood with specialized dementia care and mountain views.",
+      "starting_rate_display": "$10,000/month",
+      "starting_price": 10000,
+      "availability": "limited",
+      "accessible": true,
+      "highlights": [
+        "Secured courtyard access",
+        "RN oversight",
+        "Mini refrigerator",
+        "Inclusive care up to 150 points"
+      ],
+      "sort_order": 6
+    }
+  ],
+  "team_members": [
+    {
+      "name": "Sarah Stevenson",
+      "role": "Director of Wellness",
+      "department": "Memory Care",
+      "bio": "Sarah leads The Meadows with expertise and compassion, ensuring individualized care for every resident.",
+      "tags": ["golden-pond", "memory-care"]
+    }
+  ],
+  "features": [
+    {
+      "eyebrow": "Since 2004",
+      "title": "Proud Part of Golden, Colorado",
+      "body": "Deeply connected to the community through partnerships with local schools, churches, and organizations. We honor Golden's heritage with local artwork, historic photos, and Friday happy hours featuring Coors refreshments from our hometown brewery.",
+      "image_url": "https://cdn.example.com/golden-pond/golden-heritage.jpg",
+      "image_alt": "Historic Golden, Colorado with mountain backdrop",
+      "cta_label": "Learn About Golden",
+      "cta_href": "#about-golden",
+      "image_left": true,
+      "sort_order": 1
+    },
+    {
+      "eyebrow": "98% Satisfaction",
+      "title": "Your Forever Home",
+      "body": "Most residents make Golden Pond their forever home. With care that grows with you — from independent living to assisted living and memory care — you can age in place with dignity and compassion.",
+      "image_url": "https://cdn.example.com/golden-pond/residents-happy.jpg",
+      "image_alt": "Happy residents enjoying activities",
+      "cta_label": "See Care Options",
+      "cta_href": "#care-options",
+      "image_left": false,
+      "sort_order": 2
+    },
+    {
+      "eyebrow": "Locally Owned",
+      "title": "Upscale Yet Down-to-Earth",
+      "body": "Experience the personal touch of local ownership. Responsive leadership, compassionate staff, and a family feel make all the difference. Life here is golden.",
+      "image_url": "https://cdn.example.com/golden-pond/local-ownership.jpg",
+      "image_alt": "Staff member helping a resident",
+      "cta_label": "Meet Our Team",
+      "cta_href": "#team",
+      "image_left": true,
+      "sort_order": 3
+    },
+    {
+      "eyebrow": "Chef-Prepared",
+      "title": "Restaurant-Style Dining",
+      "body": "Seven days a week, enjoy fresh seasonal ingredients, weekly chef specials, and a la carte menus. Friday happy hours feature wine, beer, cocktails, and live entertainment.",
+      "image_url": "https://cdn.example.com/golden-pond/dining.jpg",
+      "image_alt": "Chef preparing a gourmet meal",
+      "cta_label": "View Dining Options",
+      "cta_href": "#dining",
+      "image_left": false,
+      "sort_order": 4
+    }
+  ],
+  "highlights": [
+    {
+      "title": "98% Resident Satisfaction",
+      "description": "Families know what we know: life here is golden.",
+      "image_url": "https://cdn.example.com/golden-pond/satisfaction-icon.svg",
+      "sort_order": 1
+    },
+    {
+      "title": "Locally Owned Since 2004",
+      "description": "Personal touch, responsive leadership, family feel.",
+      "image_url": "https://cdn.example.com/golden-pond/local-icon.svg",
+      "sort_order": 2
+    },
+    {
+      "title": "Care That Grows With You",
+      "description": "Independent, assisted, and memory care options.",
+      "image_url": "https://cdn.example.com/golden-pond/continuum-icon.svg",
+      "sort_order": 3
+    }
+  ],
+  "faqs": [
+    {
+      "question": "What is included in Independent Living?",
+      "answer": "Newly remodeled apartments with granite countertops, stainless appliances, tile backsplash, in-unit washer/dryer, community-wide Wi-Fi, Comcast HD cable, free transportation to doctor appointments, on-site dining with three chef-prepared meals daily, bi-weekly housekeeping and linen service, all utilities except telephone, daily trash service, and 24-hour emergency monitoring.",
+      "category": "Independent Living",
+      "sort_order": 1
+    },
+    {
+      "question": "What is included in Assisted Living?",
+      "answer": "24/7 care staff and RN oversight, individualized care plans, three meals daily, weekly housekeeping and linen service, all utilities (electricity, water, trash, cable, phone), daily trash service, free laundry rooms or staff laundry option, Wi-Fi and Comcast HD cable, 24-hour emergency system with optional pendant, on-site medical services, and scheduled transportation.",
+      "category": "Assisted Living",
+      "sort_order": 2
+    },
+    {
+      "question": "What is The Meadows?",
+      "answer": "The Meadows is our specialized, secure memory care neighborhood with 15 private studios, registered nurse oversight, secured courtyard with mountain views, full activities calendar, inclusive care up to 150 points, weekly housekeeping and laundry, and newly remodeled dining and activity areas.",
+      "category": "Memory Care",
+      "sort_order": 3
+    },
+    {
+      "question": "How much does it cost?",
+      "answer": "Independent Living starts at $4,600/month for one-bedroom apartments. Assisted Living starts at $5,900/month for studios. Memory Care at The Meadows is $10,000/month for private studios. All options include a one-time community fee of $5,000.",
+      "category": "Pricing",
+      "sort_order": 4
+    },
+    {
+      "question": "What are Care Points?",
+      "answer": "In Assisted Living, care needs are evaluated before move-in. Each Care Point equals $20 per month, added to base rent according to assessed needs. Memory Care includes up to 150 Care Points; beyond that, each additional point is $20/month.",
+      "category": "Pricing",
+      "sort_order": 5
+    },
+    {
+      "question": "What dining options are available?",
+      "answer": "Restaurant-style dining seven days a week with breakfast (7–9 a.m.), lunch (11 a.m.–1 p.m.), and dinner (4–6 p.m.). Assisted Living and Memory Care include all meals. Independent Living residents can purchase meal plans: breakfast $10, lunch $17, dinner $17. Friday happy hour runs 4–5 p.m. with wine, beer, and cocktails.",
+      "category": "Dining",
+      "sort_order": 6
+    },
+    {
+      "question": "What activities are offered?",
+      "answer": "Scenic drives, discussion groups, guest speakers, music and painting classes, bingo, games, holiday and family events, religious programs, walking and exercise groups, knitting and hobby circles, creative workshops, intergenerational activities, resident council, and memory-specific activities like art program, music therapy, hallway bowling, and goat yoga.",
+      "category": "Activities",
+      "sort_order": 7
+    },
+    {
+      "question": "Tell me about Golden, Colorado.",
+      "answer": "Golden was founded during the 1859 gold rush along Clear Creek and served as capital of the Colorado Territory from 1862–1867. It's home to the world's largest single brewery (Coors) and is surrounded by foothills, trails, and open space. Today it has 45,000 residents and a thriving small-town culture.",
+      "category": "Community",
+      "sort_order": 8
+    }
+  ],
+  "galleries": [],
+  "events": [
+    {
+      "title": "Friday Happy Hour",
+      "summary": "Weekly social hour with drinks, appetizers, and live entertainment.",
+      "description": "Every Friday at 4 p.m., residents gather for happy hour featuring wine, beer, cocktails, chef-made appetizers, and Coors refreshments — honoring Golden's hometown brewery. Enjoy live music and the company of friends.",
+      "starts_at": "2025-11-07T16:00:00-07:00",
+      "ends_at": "2025-11-07T17:00:00-07:00",
+      "location_text": "Golden Pond Dining Room",
+      "image_url": "https://cdn.example.com/golden-pond/happy-hour.jpg",
+      "rsvp_url": "",
+      "max_attendees": 100,
+      "is_public": true
+    }
+  ]
+}
