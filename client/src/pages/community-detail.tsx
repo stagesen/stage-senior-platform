@@ -1635,26 +1635,47 @@ export default function CommunityDetail() {
             {/* Featured Testimonial */}
             {testimonials.length > 0 && (
               <div className="mb-12">
-                <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 shadow-lg">
-                  <CardContent className="p-8">
-                    <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0">
-                        <Star className="w-12 h-12 text-primary fill-primary/20" />
+                <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 shadow-lg overflow-hidden">
+                  <CardContent className="p-8 md:p-12">
+                    <div className="max-w-4xl mx-auto text-center">
+                      {/* Quote Icon */}
+                      <div className="flex justify-center mb-6">
+                        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                          <svg className="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                          </svg>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <p className="text-lg italic leading-relaxed mb-4">
-                          "{testimonials[0].content}"
-                        </p>
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                            <span className="text-primary font-semibold text-lg">
-                              {testimonials[0].authorName?.charAt(0) || 'R'}
-                            </span>
-                          </div>
-                          <div>
-                            <p className="font-semibold">{testimonials[0].authorName}</p>
+
+                      {/* Testimonial Content */}
+                      <blockquote className="text-xl md:text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
+                        "{testimonials[0].content}"
+                      </blockquote>
+
+                      {/* Rating Stars */}
+                      {testimonials[0].rating && (
+                        <div className="flex items-center justify-center gap-1 mb-6">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-5 h-5 ${i < (testimonials[0].rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-300 text-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Author Info */}
+                      <div className="flex items-center justify-center gap-4">
+                        <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center ring-2 ring-primary/30">
+                          <span className="text-primary font-bold text-xl">
+                            {testimonials[0].authorName?.charAt(0) || 'R'}
+                          </span>
+                        </div>
+                        <div className="text-left">
+                          <p className="font-semibold text-lg text-gray-900">{testimonials[0].authorName}</p>
+                          {testimonials[0].authorRelation && (
                             <p className="text-sm text-gray-600">{testimonials[0].authorRelation}</p>
-                          </div>
+                          )}
                         </div>
                       </div>
                     </div>
