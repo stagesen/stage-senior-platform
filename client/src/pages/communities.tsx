@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Calendar, Phone, Star, HelpCircle } from "lucide-react";
+import { MapPin, Calendar, Phone, Star, HelpCircle, Check } from "lucide-react";
 import CommunityCard from "@/components/CommunityCard";
 import CommunityMap from "@/components/CommunityMap";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -325,19 +325,25 @@ export default function Communities() {
       </section>
 
       {/* CTA Section with Contact */}
-      <section id="contact-section" className="bg-gradient-to-br from-primary to-primary/90 text-white py-12 sm:py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 animate-fadeIn">
+      <section id="contact-section" className="relative bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] text-white py-16 sm:py-24 overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+        </div>
+        
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 animate-fadeIn">
             Ready to Find the Right Community?
           </h2>
-          <p className="text-base sm:text-xl mb-6 sm:mb-8 opacity-90">
+          <p className="text-lg sm:text-xl md:text-2xl mb-8 sm:mb-10 text-white/95 max-w-2xl mx-auto leading-relaxed">
             Our senior living advisors are here to help you every step of the way
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
             <Button
               size="lg"
-              variant="secondary"
-              className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transform hover:scale-105 transition-all duration-200"
+              className="w-full sm:w-auto px-8 sm:px-10 py-5 sm:py-6 text-base sm:text-lg bg-white text-[var(--deep-blue)] hover:bg-gray-100 shadow-xl transform hover:scale-105 transition-all duration-200 font-semibold"
               onClick={() => setShowCommunityModal(true)}
               data-testid="button-schedule-tour-cta"
             >
@@ -347,7 +353,7 @@ export default function Communities() {
             <Button
               size="lg"
               variant="outline"
-              className="bg-transparent text-white border-white hover:bg-white hover:text-primary text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transform hover:scale-105 transition-all duration-200"
+              className="w-full sm:w-auto px-8 sm:px-10 py-5 sm:py-6 text-base sm:text-lg bg-transparent border-2 border-white text-white hover:bg-white hover:text-[var(--deep-blue)] transform hover:scale-105 transition-all duration-200 font-semibold"
               onClick={() => window.open('tel:+1-970-444-4689', '_self')}
               data-testid="button-call-cta"
             >
@@ -355,6 +361,22 @@ export default function Communities() {
               <span className="sm:hidden">Call Now</span>
               <span className="hidden sm:inline">Call (970) 444-4689</span>
             </Button>
+          </div>
+          
+          {/* Trust Badges */}
+          <div className="flex flex-wrap justify-center gap-6 sm:gap-8 text-white/80 text-sm sm:text-base pt-8 border-t border-white/20">
+            <div className="flex items-center gap-2">
+              <Check className="w-5 h-5 text-white" />
+              <span>Same-day tours available</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-5 h-5 text-white" />
+              <span>No obligation</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-5 h-5 text-white" />
+              <span>Locally owned since 2016</span>
+            </div>
           </div>
         </div>
       </section>
