@@ -8,7 +8,17 @@
       "Bash(npm run check:*)",
       "Bash(node:*)",
       "Bash(psql:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "WebFetch(domain:www.stagesenior.com)",
+      "WebFetch(domain:gardensonquail.com)",
+      "WebFetch(domain:gardensatcolumbine.com)",
+      "WebFetch(domain:goldenpond.com)",
+      "WebFetch(domain:stonebridgesenior.com)",
+      "WebFetch(domain:stagesenior.com)",
+      "Bash(npm run build:*)",
+      "WebFetch(domain:www.gardensatcolumbine.com)",
+      "WebFetch(domain:www.gardensonquail.com)",
+      "WebFetch(domain:www.goldenpond.com)"
     ],
     "deny": [],
     "ask": []

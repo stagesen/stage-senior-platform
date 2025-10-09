@@ -16,39 +16,82 @@ interface TeamCarouselProps {
   subtitle?: string;
 }
 
+// Community color mapping
+const COMMUNITY_COLORS: Record<string, string> = {
+  "The Gardens on Quail": "#1a464c",
+  "Gardens on Quail": "#1a464c",
+  "Golden Pond": "#2c417f",
+  "Gardens at Columbine": "#43238b",
+  "The Gardens at Columbine": "#43238b",
+  "Stonebridge Senior": "#0e1824",
+};
+
+// Helper function to get community color from tags
+const getCommunityColor = (tags?: string[]): string | null => {
+  if (!tags) return null;
+
+  for (const tag of tags) {
+    const color = COMMUNITY_COLORS[tag];
+    if (color) return color;
+  }
+  return null;
+};
+
 // Single team member card with avatar image
 const TeamMemberCard = ({ member }: { member: TeamMember }) => {
   const avatarUrl = useResolveImageUrl(member.avatarImageId);
-  
+  const communityColor = getCommunityColor(member.tags as string[]);
+
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
-  
+
   return (
     <Link href={`/team/${member.slug}`}>
-      <Card className="text-center p-6 hover:shadow-lg transition-shadow h-full cursor-pointer" data-testid={`carousel-member-${member.id}`}>
+      <Card
+        className="group text-center p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full cursor-pointer bg-white"
+        style={{ borderTop: `5px solid ${communityColor || '#6366f1'}` }}
+        data-testid={`carousel-member-${member.id}`}
+      >
         <CardContent className="pt-6">
-          <Avatar className="w-20 h-20 mx-auto mb-4" data-testid={`carousel-avatar-${member.id}`} aria-label={`Portrait of ${member.name}`}>
-            {avatarUrl ? (
-              <img
-                src={avatarUrl}
-                alt={`${member.name} portrait`}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <AvatarFallback className="text-lg font-semibold bg-primary/10 text-primary">
-                {getInitials(member.name)}
-              </AvatarFallback>
-            )}
-          </Avatar>
-          <h3 className="font-semibold text-lg mb-2 hover:text-primary transition-colors" data-testid={`carousel-member-name-${member.id}`}>
+          <div className="relative w-24 h-24 mx-auto mb-4">
+            <Avatar
+              className="w-full h-full border-4 shadow-lg transition-transform duration-300 group-hover:scale-110"
+              style={{ borderColor: communityColor || '#e5e7eb' }}
+              data-testid={`carousel-avatar-${member.id}`}
+              aria-label={`Portrait of ${member.name}`}
+            >
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt={`${member.name} portrait`}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <AvatarFallback
+                  className="text-xl font-semibold"
+                  style={{
+                    backgroundColor: communityColor ? `${communityColor}15` : '#f3f4f6',
+                    color: communityColor || '#6366f1'
+                  }}
+                >
+                  {getInitials(member.name)}
+                </AvatarFallback>
+              )}
+            </Avatar>
+          </div>
+          <h3 className="font-bold text-lg mb-1 group-hover:underline decoration-2"
+              style={{ textDecorationColor: communityColor || '#6366f1' }}
+              data-testid={`carousel-member-name-${member.id}`}>
             {member.name}
           </h3>
-          <p className="text-muted-foreground text-sm mb-2" data-testid={`carousel-member-role-${member.id}`}>
+          <p className="text-sm font-semibold mb-2"
+             style={{ color: communityColor || '#6366f1' }}
+             data-testid={`carousel-member-role-${member.id}`}>
             {member.role}
           </p>
           {member.department && (
-            <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+            <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
               <Building className="w-3 h-3" />
               {member.department}
             </p>

@@ -21,11 +21,12 @@ import {
 } from "lucide-react";
 
 export default function CarePoints() {
-  const [selectedSuiteType, setSelectedSuiteType] = useState<"private" | "companion">("private");
-  
+  const [selectedCareType, setSelectedCareType] = useState<"assisted-living" | "memory-care">("assisted-living");
+  const [selectedSuiteType, setSelectedSuiteType] = useState<"private" | "one-bedroom" | "two-bedroom">("private");
+
   useEffect(() => {
     document.title = "Care Points vs Tiered Pricing | Stage Senior";
-    
+
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute('content', 'Only pay for the care your loved one needs—nothing more. Our Care Points approach replaces one-size-fits-all tiers with transparent, personalized plans you can understand at a glance.');
@@ -38,8 +39,16 @@ export default function CarePoints() {
   }, []);
 
   const baseRents = {
-    private: 5770,
-    companion: 4890
+    "assisted-living": {
+      private: 5770,
+      "one-bedroom": 7000,
+      "two-bedroom": 8640
+    },
+    "memory-care": {
+      private: 8800,
+      "one-bedroom": 9450,
+      "two-bedroom": 9900
+    }
   };
 
   const careExamples = [
@@ -196,12 +205,25 @@ export default function CarePoints() {
 
   const calculateTotal = (points: number) => {
     const careAmount = points * 20;
-    const baseRent = baseRents[selectedSuiteType];
+    const baseRent = baseRents[selectedCareType][selectedSuiteType];
     return {
       careAmount,
       baseRent,
       total: careAmount + baseRent
     };
+  };
+
+  const getSuiteTypeLabel = (type: string) => {
+    switch (type) {
+      case "private": return "Private Suite";
+      case "one-bedroom": return "One Bedroom Suite";
+      case "two-bedroom": return "Two Bedroom Suite";
+      default: return type;
+    }
+  };
+
+  const getCareTypeLabel = (type: string) => {
+    return type === "assisted-living" ? "Assisted Living" : "Memory Care";
   };
 
   return (
@@ -309,16 +331,29 @@ export default function CarePoints() {
           </h2>
           <p className="text-center text-muted-foreground mb-12">Scroll to see examples</p>
 
-          <Tabs defaultValue="assisted-living" className="mb-8">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2" data-testid="care-type-tabs">
-              <TabsTrigger value="assisted-living" data-testid="tab-assisted-living">Assisted Living</TabsTrigger>
-              <TabsTrigger value="memory-care" data-testid="tab-memory-care">Memory Care</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Care Type</h3>
+            <div className="flex gap-4 flex-wrap">
+              <Button
+                variant={selectedCareType === "assisted-living" ? "default" : "outline"}
+                onClick={() => setSelectedCareType("assisted-living")}
+                data-testid="button-assisted-living"
+              >
+                Assisted Living
+              </Button>
+              <Button
+                variant={selectedCareType === "memory-care" ? "default" : "outline"}
+                onClick={() => setSelectedCareType("memory-care")}
+                data-testid="button-memory-care"
+              >
+                Memory Care
+              </Button>
+            </div>
+          </div>
 
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-foreground mb-4">Suite Type</h3>
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-wrap">
               <Button
                 variant={selectedSuiteType === "private" ? "default" : "outline"}
                 onClick={() => setSelectedSuiteType("private")}
@@ -327,15 +362,22 @@ export default function CarePoints() {
                 Private Suite
               </Button>
               <Button
-                variant={selectedSuiteType === "companion" ? "default" : "outline"}
-                onClick={() => setSelectedSuiteType("companion")}
-                data-testid="button-companion-suite"
+                variant={selectedSuiteType === "one-bedroom" ? "default" : "outline"}
+                onClick={() => setSelectedSuiteType("one-bedroom")}
+                data-testid="button-one-bedroom-suite"
               >
-                Companion Suite
+                One Bedroom Suite
+              </Button>
+              <Button
+                variant={selectedSuiteType === "two-bedroom" ? "default" : "outline"}
+                onClick={() => setSelectedSuiteType("two-bedroom")}
+                data-testid="button-two-bedroom-suite"
+              >
+                Two Bedroom Suite
               </Button>
             </div>
             <p className="text-sm text-muted-foreground mt-4">
-              Base Rent (Assisted Living, {selectedSuiteType === "private" ? "Private" : "Companion"} Suite): ${baseRents[selectedSuiteType].toLocaleString()} / month
+              Base Rent ({getCareTypeLabel(selectedCareType)}, {getSuiteTypeLabel(selectedSuiteType)}): ${baseRents[selectedCareType][selectedSuiteType].toLocaleString()} / month
             </p>
           </div>
 
@@ -381,13 +423,13 @@ export default function CarePoints() {
                         <span className="font-semibold">${pricing.careAmount.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Base Rent (Assisted Living, {selectedSuiteType === "private" ? "Private" : "Companion"} Suite)</span>
+                        <span className="text-muted-foreground">Base Rent ({getCareTypeLabel(selectedCareType)}, {getSuiteTypeLabel(selectedSuiteType)})</span>
                         <span className="font-semibold">${pricing.baseRent.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between text-lg font-bold pt-2 border-t">
                         <span>Total</span>
                         <span className="text-primary" data-testid={`example-total-${index}`}>
-                          ${pricing.total.toLocaleString()}
+                          ${pricing.total.toLocaleString()}/mo
                         </span>
                       </div>
                     </div>
@@ -406,7 +448,7 @@ export default function CarePoints() {
       </section>
 
       {/* Why Points Beat Tiers */}
-      <section className="py-16 bg-gradient-to-br from-primary to-primary/80 text-primary-foreground">
+      <section className="py-16 bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12" data-testid="why-points-beat-tiers-title">
             Why points beat tiers
@@ -416,7 +458,7 @@ export default function CarePoints() {
             <div className="text-center" data-testid="beat-tiers-0">
               <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
               <h3 className="text-xl font-bold mb-2">No cliff pricing</h3>
-              <p className="text-primary-foreground/90">
+              <p className="text-white/90">
                 Care changes in $20 steps, not $500–$1,000 tier jumps.
               </p>
             </div>
@@ -424,7 +466,7 @@ export default function CarePoints() {
             <div className="text-center" data-testid="beat-tiers-1">
               <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
               <h3 className="text-xl font-bold mb-2">Resident-centered</h3>
-              <p className="text-primary-foreground/90">
+              <p className="text-white/90">
                 Points follow recurring needs and can adjust up or down.
               </p>
             </div>
@@ -432,7 +474,7 @@ export default function CarePoints() {
             <div className="text-center" data-testid="beat-tiers-2">
               <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
               <h3 className="text-xl font-bold mb-2">Transparent math</h3>
-              <p className="text-primary-foreground/90">
+              <p className="text-white/90">
                 Total = Base Rent + (Points × $20). That's it.
               </p>
             </div>
@@ -443,7 +485,7 @@ export default function CarePoints() {
               <Calendar className="w-5 h-5 mr-2" />
               Schedule a Visit
             </Button>
-            <Button size="lg" variant="outline" className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary" data-testid="button-pricing-guide">
+            <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-[var(--deep-blue)]" data-testid="button-pricing-guide">
               <FileText className="w-5 h-5 mr-2" />
               Open Pricing Guide
             </Button>

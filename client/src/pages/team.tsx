@@ -44,76 +44,113 @@ const TAG_PRIORITY = {
   "Maintenance": 24,
 };
 
+// Community color mapping
+const COMMUNITY_COLORS: Record<string, string> = {
+  "The Gardens on Quail": "#1a464c",
+  "Gardens on Quail": "#1a464c",
+  "Golden Pond": "#2c417f",
+  "Gardens at Columbine": "#43238b",
+  "The Gardens at Columbine": "#43238b",
+  "Stonebridge Senior": "#0e1824",
+};
+
+// Helper function to get community color from tags
+const getCommunityColor = (tags?: string[]): string | null => {
+  if (!tags) return null;
+
+  for (const tag of tags) {
+    const color = COMMUNITY_COLORS[tag];
+    if (color) return color;
+  }
+  return null;
+};
+
 // Team member card component
 const TeamMemberCard = ({ member }: { member: TeamMember }) => {
   const [expanded, setExpanded] = useState(false);
   const avatarUrl = useResolveImageUrl(member.avatarImageId);
+  const communityColor = getCommunityColor(member.tags as string[]);
 
-  const bioPreview = member.bio && member.bio.length > 150 
-    ? member.bio.substring(0, 150) + "..." 
+  const bioPreview = member.bio && member.bio.length > 120
+    ? member.bio.substring(0, 120) + "..."
     : member.bio;
 
   return (
-    <Card 
-      className={`overflow-hidden transition-all duration-300 hover:shadow-xl ${
-        member.featured ? 'ring-2 ring-primary shadow-lg' : ''
+    <Card
+      className={`group overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 bg-white ${
+        member.featured ? 'ring-2 shadow-lg' : ''
       }`}
+      style={{
+        borderTop: `6px solid ${communityColor || '#6366f1'}`,
+        ...(member.featured && { borderColor: communityColor || '#6366f1' })
+      }}
       data-testid={`team-member-${member.id}`}
     >
       {member.featured && (
-        <div className="bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold flex items-center gap-1">
-          <Star className="w-3 h-3 fill-current" />
+        <div
+          className="text-white px-4 py-2 text-xs font-semibold flex items-center gap-2"
+          style={{ backgroundColor: communityColor || '#6366f1' }}
+        >
+          <Star className="w-4 h-4 fill-current" />
           <span>Featured Team Member</span>
         </div>
       )}
-      
-      <CardHeader className="pb-4">
-        <div className="flex items-start gap-4">
-          <div className="relative">
+
+      <CardHeader className="pb-3 pt-6 text-center">
+        <Link href={`/team/${member.slug}`} className="inline-block">
+          <div className="relative mx-auto w-28 h-28 mb-4">
             {avatarUrl ? (
               <img
                 src={avatarUrl}
-                alt={`${member.name} avatar`}
-                className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+                alt={`${member.name}`}
+                className="w-full h-full rounded-full object-cover border-4 shadow-lg transition-transform duration-300 group-hover:scale-105"
+                style={{ borderColor: communityColor || '#e5e7eb' }}
                 data-testid={`team-member-avatar-${member.id}`}
               />
             ) : (
-              <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center">
-                <User className="w-10 h-10 text-gray-500" />
+              <div
+                className="w-full h-full rounded-full flex items-center justify-center border-4 shadow-lg transition-transform duration-300 group-hover:scale-105"
+                style={{
+                  borderColor: communityColor || '#e5e7eb',
+                  backgroundColor: communityColor ? `${communityColor}15` : '#f3f4f6'
+                }}
+              >
+                <User className="w-12 h-12" style={{ color: communityColor || '#6b7280' }} />
               </div>
             )}
           </div>
-          
-          <div className="flex-1 min-w-0">
-            <Link href={`/team/${member.slug}`}>
-              <h3 className="text-lg font-bold text-gray-900 truncate hover:text-primary transition-colors cursor-pointer" data-testid={`team-member-name-${member.id}`}>
-                {member.name}
-              </h3>
-            </Link>
-            <p className="text-sm font-medium text-primary" data-testid={`team-member-role-${member.id}`}>
-              {member.role}
-            </p>
-            {member.department && (
-              <p className="text-xs text-gray-600 flex items-center gap-1 mt-1">
-                <Building className="w-3 h-3" />
-                {member.department}
-              </p>
-            )}
-          </div>
-        </div>
+
+          <h3 className="text-xl font-bold text-gray-900 mb-1 hover:underline decoration-2"
+              style={{ textDecorationColor: communityColor || '#6366f1' }}
+              data-testid={`team-member-name-${member.id}`}>
+            {member.name}
+          </h3>
+        </Link>
+        <p className="text-sm font-semibold mb-1"
+           style={{ color: communityColor || '#6366f1' }}
+           data-testid={`team-member-role-${member.id}`}>
+          {member.role}
+        </p>
+        {member.department && (
+          <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
+            <Building className="w-3 h-3" />
+            {member.department}
+          </p>
+        )}
       </CardHeader>
 
-      <CardContent className="pt-0">
+      <CardContent className="pt-0 space-y-4">
         {member.bio && (
-          <div className="mb-4">
-            <p className="text-sm text-gray-700 leading-relaxed">
-              {expanded ? member.bio : bioPreview}
+          <div className="text-center px-2">
+            <p className="text-sm text-gray-600 leading-relaxed italic">
+              "{expanded ? member.bio : bioPreview}"
             </p>
-            {member.bio.length > 150 && (
+            {member.bio.length > 120 && (
               <Button
                 variant="link"
                 size="sm"
-                className="p-0 h-auto font-medium text-primary"
+                className="p-0 h-auto font-medium mt-2"
+                style={{ color: communityColor || '#6366f1' }}
                 onClick={() => setExpanded(!expanded)}
                 data-testid={`team-member-bio-toggle-${member.id}`}
               >
@@ -127,22 +164,24 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
           </div>
         )}
 
-        <div className="space-y-2">
+        <div className="space-y-2 px-2">
           {member.email && (
             <a
               href={`mailto:${member.email}`}
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-primary transition-colors"
+              className="flex items-center justify-center gap-2 text-sm text-gray-600 hover:font-medium transition-all"
+              style={{ color: communityColor || '#6366f1' }}
               data-testid={`team-member-email-${member.id}`}
             >
               <Mail className="w-4 h-4" />
-              <span className="truncate">{member.email}</span>
+              <span className="truncate">Email Me</span>
             </a>
           )}
-          
+
           {member.phone && (
             <a
               href={`tel:${member.phone}`}
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-primary transition-colors"
+              className="flex items-center justify-center gap-2 text-sm text-gray-600 hover:font-medium transition-all"
+              style={{ color: communityColor || '#6366f1' }}
               data-testid={`team-member-phone-${member.id}`}
             >
               <Phone className="w-4 h-4" />
@@ -151,26 +190,27 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
           )}
         </div>
 
-        <div className="mt-4">
-          <Link href={`/team/${member.slug}`}>
-            <Button variant="outline" className="w-full" data-testid={`view-profile-${member.id}`}>
-              View Full Profile
-            </Button>
-          </Link>
-        </div>
-
         {(member.linkedinUrl || member.twitterUrl) && (
-          <div className="flex gap-2 mt-4 pt-4 border-t border-gray-100">
+          <div className="flex gap-3 justify-center pt-2">
             {member.linkedinUrl && (
               <a
                 href={member.linkedinUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 hover:bg-primary hover:text-white transition-colors"
+                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:text-white transition-all hover:shadow-md"
+                style={{
+                  ['--hover-bg' as string]: communityColor || '#6366f1'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = communityColor || '#6366f1';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f3f4f6';
+                }}
                 aria-label={`${member.name}'s LinkedIn profile`}
                 data-testid={`team-member-linkedin-${member.id}`}
               >
-                <Linkedin className="w-4 h-4" />
+                <Linkedin className="w-5 h-5" />
               </a>
             )}
             {member.twitterUrl && (
@@ -178,15 +218,33 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
                 href={member.twitterUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 hover:bg-primary hover:text-white transition-colors"
+                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:text-white transition-all hover:shadow-md"
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = communityColor || '#6366f1';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f3f4f6';
+                }}
                 aria-label={`${member.name}'s Twitter profile`}
                 data-testid={`team-member-twitter-${member.id}`}
               >
-                <Twitter className="w-4 h-4" />
+                <Twitter className="w-5 h-5" />
               </a>
             )}
           </div>
         )}
+
+        <div className="pt-2">
+          <Link href={`/team/${member.slug}`}>
+            <Button
+              className="w-full font-semibold transition-all hover:shadow-md"
+              style={{ backgroundColor: communityColor || '#6366f1' }}
+              data-testid={`view-profile-${member.id}`}
+            >
+              View Full Profile
+            </Button>
+          </Link>
+        </div>
       </CardContent>
     </Card>
   );

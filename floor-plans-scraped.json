@@ -1,0 +1,579 @@
+{
+  "golden-pond": [
+    {
+      "name": "Independent Living - One Bedroom",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "squareFeet": null,
+      "description": "Spacious one-bedroom apartment with full kitchen, washer and dryer, abundant natural light and mountain views. Includes bi-weekly housekeeping and linen changes.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "Full kitchen",
+        "Washer and dryer",
+        "Mountain views",
+        "Bi-weekly housekeeping",
+        "Linen changes included"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/64c14938c6cd4b92279f3f12_kitchen64.webp",
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/64c14943d9d1fe0f6482d333_bath64.webp",
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/64c1496f98602f33356dd450_wash64.webp",
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/64b3188a71c9469766164ed9_living-area.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "independent-living"
+    },
+    {
+      "name": "Independent Living - Two Bedroom",
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "squareFeet": null,
+      "description": "Large two-bedroom apartment with full kitchen, washer and dryer, abundant natural light and mountain views. Includes bi-weekly housekeeping and linen changes.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "Full kitchen",
+        "Washer and dryer",
+        "Mountain views",
+        "Bi-weekly housekeeping",
+        "Linen changes included"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/64c14938c6cd4b92279f3f12_kitchen64.webp",
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/64c14943d9d1fe0f6482d333_bath64.webp",
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/64c1496f98602f33356dd450_wash64.webp",
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/64b3188a71c9469766164ed9_living-area.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "independent-living"
+    },
+    {
+      "name": "Assisted Living - Standard Suite",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFeet": null,
+      "description": "Studio apartment with kitchenette, bathroom, and climate control. Includes weekly housekeeping, all utilities, daily trash service, community WiFi, emergency call system.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "Kitchenette",
+        "Climate control",
+        "Weekly housekeeping",
+        "All utilities included",
+        "Emergency call system",
+        "Virtual 360-degree tour available"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/6721b3e4ee1cfde218c0a840_Standard-suite.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "assisted-living"
+    },
+    {
+      "name": "Assisted Living - Inside Corner Suite",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFeet": null,
+      "description": "Studio corner suite with kitchenette and climate control. Includes weekly housekeeping, all utilities, daily trash service, community WiFi, emergency call system.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "Corner location",
+        "Kitchenette",
+        "Climate control",
+        "Weekly housekeeping",
+        "All utilities included",
+        "Emergency call system"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/6721b486854bc296cb06d7e8_gp-v2-inside.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "assisted-living"
+    },
+    {
+      "name": "Assisted Living - Outside Corner Suite",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFeet": null,
+      "description": "Studio outside corner suite with kitchenette and climate control. Includes weekly housekeeping, all utilities, daily trash service, community WiFi, emergency call system.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "Outside corner location",
+        "Kitchenette",
+        "Climate control",
+        "Weekly housekeeping",
+        "All utilities included",
+        "Emergency call system"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/6721b53ad13e4322d57aaaeb_gp-v2-outside.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "assisted-living"
+    },
+    {
+      "name": "Assisted Living - One Bedroom",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "squareFeet": null,
+      "description": "One-bedroom apartment with full kitchen, bathroom, and living area. Includes weekly housekeeping, all utilities, daily trash service, community WiFi, emergency call system.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "Full kitchen",
+        "Separate bedroom",
+        "Living area",
+        "Weekly housekeeping",
+        "All utilities included",
+        "Emergency call system"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/6721b59139776589d3f7c83f_gp-v2-one.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "assisted-living"
+    },
+    {
+      "name": "Assisted Living - Two Bedroom",
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "squareFeet": null,
+      "description": "Two-bedroom apartment with full kitchen, bathroom, and living area. Includes weekly housekeeping, all utilities, daily trash service, community WiFi, emergency call system.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "Full kitchen",
+        "Two bedrooms",
+        "Living area",
+        "Weekly housekeeping",
+        "All utilities included",
+        "Emergency call system"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/6721b5e6d4d96eb89414a8eb_gp-v2-two-bed.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "assisted-living"
+    },
+    {
+      "name": "Memory Care - Standard Suite",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFeet": null,
+      "description": "Private studio apartment with mini refrigerator. Includes weekly housekeeping, weekly linen changes, all utilities, daily trash service, RN oversight, community WiFi, Comcast Extended Package, 24/7 emergency pull cord/pendant monitoring.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "Mini refrigerator",
+        "Weekly housekeeping",
+        "Weekly linen changes",
+        "All utilities included",
+        "RN oversight",
+        "24/7 emergency monitoring"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/6721b3e4ee1cfde218c0a840_Standard-suite.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "memory-care"
+    },
+    {
+      "name": "Memory Care - Inside Corner Suite",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFeet": null,
+      "description": "Private studio corner apartment with mini refrigerator. Includes weekly housekeeping, weekly linen changes, all utilities, daily trash service, RN oversight, community WiFi, Comcast Extended Package, 24/7 emergency pull cord/pendant monitoring.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "Corner location",
+        "Mini refrigerator",
+        "Weekly housekeeping",
+        "Weekly linen changes",
+        "All utilities included",
+        "RN oversight",
+        "24/7 emergency monitoring"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/6721b486854bc296cb06d7e8_gp-v2-inside.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "memory-care"
+    },
+    {
+      "name": "Memory Care - Outside Corner Suite",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFeet": null,
+      "description": "Private studio outside corner apartment with mini refrigerator. Includes weekly housekeeping, weekly linen changes, all utilities, daily trash service, RN oversight, community WiFi, Comcast Extended Package, 24/7 emergency pull cord/pendant monitoring.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "Outside corner location",
+        "Mini refrigerator",
+        "Weekly housekeeping",
+        "Weekly linen changes",
+        "All utilities included",
+        "RN oversight",
+        "24/7 emergency monitoring"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628822b/6721b53ad13e4322d57aaaeb_gp-v2-outside.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "memory-care"
+    }
+  ],
+  "gardens-at-columbine": [
+    {
+      "name": "Assisted Living - Studio Bath",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFeet": 364,
+      "description": "Studio apartment with bathroom. Spacious and comfortable layout perfect for independent seniors who need minimal assistance.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "364 sq. ft.",
+        "Studio layout",
+        "Bathroom included"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/641a8214c04bba09338ecf29_room1.webp",
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/641a824979a4d3699287ee37_room3.webp",
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/641a82273ed7590d083fcd9c_room2.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "assisted-living"
+    },
+    {
+      "name": "Assisted Living - Standard One Bedroom",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "squareFeet": 450,
+      "description": "Standard one-bedroom apartment with bathroom. Comfortable living space with separate bedroom area.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "450 sq. ft.",
+        "One bedroom",
+        "Bathroom included"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/641a8214c04bba09338ecf29_room1.webp",
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/641a888acec88a7969a3f7d6_room7.webp",
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/641a827379a4d31f3787f69d_room6.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "assisted-living"
+    },
+    {
+      "name": "Assisted Living - Deluxe One Bedroom",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "squareFeet": 515,
+      "description": "Deluxe one-bedroom apartment with bathroom. Spacious layout with enhanced features and more living space.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "515 sq. ft.",
+        "Deluxe layout",
+        "One bedroom",
+        "Bathroom included"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/641a8214c04bba09338ecf29_room1.webp",
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/641a888acec88a7969a3f7d6_room7.webp",
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/641a827379a4d31f3787f69d_room6.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "assisted-living"
+    },
+    {
+      "name": "Assisted Living - Two Bedroom, One Bath",
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "squareFeet": 970,
+      "description": "Spacious two-bedroom apartment with one bathroom. Ideal for couples or those who need extra space.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "970 sq. ft.",
+        "Two bedrooms",
+        "One bathroom"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/641a8214c04bba09338ecf29_room1.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "assisted-living"
+    },
+    {
+      "name": "Memory Care - Aspen Suite",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFeet": 217,
+      "description": "Private memory care suite with kitchenette. Includes weekly housekeeping, all utilities, daily trash service, complimentary laundry, community WiFi, Comcast Extended Package, and emergency pull cord/pendant system.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "217 sq. ft.",
+        "Kitchenette",
+        "Weekly housekeeping",
+        "All utilities included",
+        "Complimentary laundry",
+        "Emergency call system"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/67b6136a0a30afecda6d1f05_aspen.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "memory-care"
+    },
+    {
+      "name": "Memory Care - Blue Spruce Suite",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFeet": 232,
+      "description": "Private memory care suite with kitchenette. Includes weekly housekeeping, all utilities, daily trash service, complimentary laundry, community WiFi, Comcast Extended Package, and emergency pull cord/pendant system.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "232 sq. ft.",
+        "Kitchenette",
+        "Weekly housekeeping",
+        "All utilities included",
+        "Complimentary laundry",
+        "Emergency call system"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/67b6141f3ed54c70ac2bf7a9_blue-spruce-ezgif.com-resize.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "memory-care"
+    },
+    {
+      "name": "Memory Care - Conifer Suite",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFeet": 236,
+      "description": "Private memory care suite with kitchenette. Includes weekly housekeeping, all utilities, daily trash service, complimentary laundry, community WiFi, Comcast Extended Package, and emergency pull cord/pendant system.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "236 sq. ft.",
+        "Kitchenette",
+        "Weekly housekeeping",
+        "All utilities included",
+        "Complimentary laundry",
+        "Emergency call system"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/67b6152ef7c264a12e5b5a81_conifer.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "memory-care"
+    },
+    {
+      "name": "Memory Care - Evergreen Suite",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFeet": 340,
+      "description": "Spacious private memory care suite with kitchenette. Includes weekly housekeeping, all utilities, daily trash service, complimentary laundry, community WiFi, Comcast Extended Package, and emergency pull cord/pendant system.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "340 sq. ft.",
+        "Kitchenette",
+        "Weekly housekeeping",
+        "All utilities included",
+        "Complimentary laundry",
+        "Emergency call system"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/67b6162ec2a590944c7513fc_ezgif-73e04f0d1534dc.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "memory-care"
+    },
+    {
+      "name": "Memory Care - Douglas Fir Suite",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFeet": 412,
+      "description": "Large private memory care suite with kitchenette. Includes weekly housekeeping, all utilities, daily trash service, complimentary laundry, community WiFi, Comcast Extended Package, and emergency pull cord/pendant system.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "412 sq. ft.",
+        "Kitchenette",
+        "Weekly housekeeping",
+        "All utilities included",
+        "Complimentary laundry",
+        "Emergency call system"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/6419daa2eec9a904590b95e0/67b6162ec2a590944c7513fc_ezgif-73e04f0d1534dc.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "memory-care"
+    }
+  ],
+  "gardens-on-quail": [
+    {
+      "name": "Assisted Living - Private Suite",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFeet": 350,
+      "description": "Studio apartment with kitchenette, heating and air conditioning. Comfortable and efficient layout for assisted living residents.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "350 sq. ft.",
+        "Kitchenette",
+        "Heating and air conditioning"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/63641f0f9c16993a52f2c40d/6721b7abfd5cc6d6b87b68be_350.webp",
+        "https://cdn.prod.website-files.com/63641f0f9c16993a52f2c40d/6389109bd677fc7de294d455_studio-1.webp",
+        "https://cdn.prod.website-files.com/63641f0f9c16993a52f2c40d/6389109fb64a2349e2775cba_studio2.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "assisted-living"
+    },
+    {
+      "name": "Assisted Living - One Bedroom",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "squareFeet": 485,
+      "description": "One-bedroom apartment with kitchenette, living area, heating and air conditioning. Spacious layout with separate bedroom and living space.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "485 sq. ft.",
+        "Kitchenette",
+        "Living area",
+        "Heating and air conditioning"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/63641f0f9c16993a52f2c40d/6721b81acce41c25984e3d11_Quail-485.webp",
+        "https://cdn.prod.website-files.com/63641f0f9c16993a52f2c40d/638912a1af9a540ae3322426_senior-1-bedroom-apartment.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "assisted-living"
+    },
+    {
+      "name": "Assisted Living - Two Bedroom Jack & Jill",
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "squareFeet": 705,
+      "description": "Two-bedroom apartment with kitchenette, living area, storage, and shared Jack & Jill bathroom setup. Heating and air conditioning included. Perfect for couples or roommates.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "705 sq. ft.",
+        "Two bedrooms",
+        "Jack & Jill bathroom",
+        "Kitchenette",
+        "Living area",
+        "Storage",
+        "Heating and air conditioning"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/63641f0f9c16993a52f2c40d/6389176671c98ed393bce906_senior-living-2-bedroom-apartment-bed.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "assisted-living"
+    },
+    {
+      "name": "Memory Care - Private Suite",
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "squareFeet": 350,
+      "description": "Private memory care suite with courtyard view and kitchenette. Secure and comfortable environment for memory care residents.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "350 sq. ft.",
+        "Courtyard view",
+        "Kitchenette"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/63641f0f9c16993a52f2c40d/6389109bd677fc7de294d455_studio-1.webp",
+        "https://cdn.prod.website-files.com/63641f0f9c16993a52f2c40d/6389109fb64a2349e2775cba_studio2.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "memory-care"
+    },
+    {
+      "name": "Memory Care - One Bedroom",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "squareFeet": 485,
+      "description": "One-bedroom memory care apartment with living area, kitchenette, and bathroom. Spacious layout designed for memory care residents.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "485 sq. ft.",
+        "Living area",
+        "Kitchenette",
+        "Bathroom"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/63641f0f9c16993a52f2c40d/638912a1af9a540ae3322426_senior-1-bedroom-apartment.webp",
+        "https://cdn.prod.website-files.com/63641f0f9c16993a52f2c40d/638912a17fdb66814fbcc05c_senior-1-bedroom-apartment-living.webp",
+        "https://cdn.prod.website-files.com/63641f0f9c16993a52f2c40d/638912a12abef7015a4b033d_senior-1-bedroom-apartment-kitchenette.webp",
+        "https://cdn.prod.website-files.com/63641f0f9c16993a52f2c40d/638912a1255f2c3a9fadc0d5_senior-1-bedroom-apartment-bathroom.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "memory-care"
+    },
+    {
+      "name": "Memory Care - Two Bedroom Jack & Jill",
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "squareFeet": 705,
+      "description": "Two-bedroom memory care apartment with Jack & Jill bathroom setup. Ideal for couples in memory care or roommates needing secure living environment.",
+      "startingRateDisplay": "Contact for pricing",
+      "highlights": [
+        "705 sq. ft.",
+        "Two bedrooms",
+        "Jack & Jill bathroom"
+      ],
+      "imageUrls": [
+        "https://cdn.prod.website-files.com/63641f0f9c16993a52f2c40d/6389176671c98ed393bce906_senior-living-2-bedroom-apartment-bed.webp"
+      ],
+      "pdfUrl": null,
+      "accessible": null,
+      "availability": "available",
+      "careType": "memory-care"
+    }
+  ]
+}
