@@ -134,55 +134,61 @@ const HighlightCard = ({ highlight }: { highlight: { title: string; description:
 // Local subcomponent: Floor Plan Card
 const FloorPlanCard = ({ plan, onOpen }: { plan: any, onOpen: (plan: any) => void }) => {
   const resolvedImageUrl = useResolveImageUrl(plan.imageId || plan.imageUrl);
-  
+
   return (
-    <Card 
-      className="overflow-hidden hover:shadow-xl transition-all cursor-pointer group" 
+    <Card
+      className="overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer group border-gray-200 h-full flex flex-col"
       onClick={() => onOpen(plan)}
       data-testid={`floor-plan-${plan.id}`}
     >
       {resolvedImageUrl && (
-        <AspectRatio ratio={4/3}>
-          <img
-            src={resolvedImageUrl}
-            alt={`${plan.name} floor plan`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            data-testid={`floor-plan-image-${plan.id}`}
-          />
-        </AspectRatio>
-      )}
-      <CardContent className="p-5">
-        <h4 className="font-semibold text-lg mb-2" data-testid={`floor-plan-name-${plan.id}`}>
-          {plan.name}
-        </h4>
-        {plan.startingPrice && (
-          <p className="text-2xl font-bold text-primary mb-3" data-testid={`floor-plan-price-${plan.id}`}>
-            {formatPrice(plan.startingPrice)}<span className="text-sm font-normal">/mo</span>
-          </p>
-        )}
-        <div className="flex flex-wrap gap-3 text-sm text-gray-600 mb-3">
-          {plan.bedrooms !== null && (
-            <span className="flex items-center gap-1" data-testid={`floor-plan-bedrooms-${plan.id}`}>
-              <Bed className="w-4 h-4" />
-              {plan.bedrooms} {plan.bedrooms === 1 ? 'Bed' : 'Beds'}
-            </span>
-          )}
-          {plan.bathrooms !== null && (
-            <span className="flex items-center gap-1" data-testid={`floor-plan-bathrooms-${plan.id}`}>
-              <Bath className="w-4 h-4" />
-              {Number(plan.bathrooms)} {Number(plan.bathrooms) === 1 ? 'Bath' : 'Baths'}
-            </span>
-          )}
-          {plan.squareFeet && (
-            <span className="flex items-center gap-1" data-testid={`floor-plan-sqft-${plan.id}`}>
-              <Square className="w-4 h-4" />
-              {plan.squareFeet} sq ft
-            </span>
-          )}
+        <div className="relative overflow-hidden bg-gray-100">
+          <AspectRatio ratio={16/10}>
+            <img
+              src={resolvedImageUrl}
+              alt={`${plan.name} floor plan`}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              data-testid={`floor-plan-image-${plan.id}`}
+            />
+          </AspectRatio>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
-        <div className="flex items-center text-primary group-hover:translate-x-1 transition-transform">
-          <span className="text-sm font-medium">View Details</span>
-          <ArrowRight className="w-4 h-4 ml-2" />
+      )}
+      <CardContent className="p-6 flex-1 flex flex-col">
+        <div className="flex-1">
+          <h4 className="font-bold text-xl mb-3 text-gray-900 group-hover:text-primary transition-colors" data-testid={`floor-plan-name-${plan.id}`}>
+            {plan.name}
+          </h4>
+          {plan.startingPrice && (
+            <p className="text-3xl font-bold text-primary mb-4" data-testid={`floor-plan-price-${plan.id}`}>
+              {formatPrice(plan.startingPrice)}
+              <span className="text-base font-normal text-gray-600">/mo</span>
+            </p>
+          )}
+          <div className="flex flex-wrap gap-4 text-base text-gray-700 mb-4">
+            {plan.bedrooms !== null && (
+              <span className="flex items-center gap-2" data-testid={`floor-plan-bedrooms-${plan.id}`}>
+                <Bed className="w-5 h-5 text-primary" />
+                <span className="font-medium">{plan.bedrooms}</span> {plan.bedrooms === 1 ? 'Bed' : 'Beds'}
+              </span>
+            )}
+            {plan.bathrooms !== null && (
+              <span className="flex items-center gap-2" data-testid={`floor-plan-bathrooms-${plan.id}`}>
+                <Bath className="w-5 h-5 text-primary" />
+                <span className="font-medium">{Number(plan.bathrooms)}</span> {Number(plan.bathrooms) === 1 ? 'Bath' : 'Baths'}
+              </span>
+            )}
+            {plan.squareFeet && (
+              <span className="flex items-center gap-2" data-testid={`floor-plan-sqft-${plan.id}`}>
+                <Square className="w-5 h-5 text-primary" />
+                <span className="font-medium">{plan.squareFeet}</span> sq ft
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+          <span className="text-base font-semibold text-primary group-hover:text-primary-dark transition-colors">View Floor Plan</span>
+          <ArrowRight className="w-5 h-5 text-primary group-hover:translate-x-1 transition-transform" />
         </div>
       </CardContent>
     </Card>
@@ -275,15 +281,15 @@ const FloorPlansCarousel = ({ plans, onOpen }: { plans: any[], onOpen: (plan: an
         }}
         className="w-full"
       >
-        <CarouselContent className="-ml-2 md:-ml-4">
+        <CarouselContent className="-ml-3 md:-ml-6">
           {filteredPlans.map((plan) => (
-            <CarouselItem key={plan.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+            <CarouselItem key={plan.id} className="pl-3 md:pl-6 basis-full sm:basis-1/2 lg:basis-1/3">
               <FloorPlanCard plan={plan} onOpen={onOpen} />
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="hidden md:flex -left-4 lg:-left-12" />
-        <CarouselNext className="hidden md:flex -right-4 lg:-right-12" />
+        <CarouselPrevious className="hidden md:flex -left-6 lg:-left-14 h-12 w-12" />
+        <CarouselNext className="hidden md:flex -right-6 lg:-right-14 h-12 w-12" />
       </Carousel>
 
       {/* Carousel indicators */}

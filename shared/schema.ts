@@ -314,6 +314,7 @@ export const tourRequests = pgTable("tour_requests", {
 export const floorPlans = pgTable("floor_plans", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   communityId: uuid("community_id").references(() => communities.id, { onDelete: "cascade" }),
+  careTypeId: uuid("care_type_id").references(() => careTypes.id),
   planSlug: varchar("plan_slug", { length: 255 }), // Additional field from CSV
   name: varchar("name", { length: 255 }).notNull(),
   bedrooms: integer("bedrooms").notNull(),
@@ -501,6 +502,10 @@ export const floorPlansRelations = relations(floorPlans, ({ one, many }) => ({
   community: one(communities, {
     fields: [floorPlans.communityId],
     references: [communities.id],
+  }),
+  careType: one(careTypes, {
+    fields: [floorPlans.careTypeId],
+    references: [careTypes.id],
   }),
   image: one(images, {
     fields: [floorPlans.imageId],
