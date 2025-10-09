@@ -1,0 +1,206 @@
+{
+  "teamMembers": [
+    {
+      "name": "Jonathan Hachmeister",
+      "slug": "jonathan-hachmeister",
+      "role": "Managing Partner",
+      "email": "jonathan@stagesenior.com",
+      "phone": "303-378-2377",
+      "bio": "Jonathan is the founder and Managing Partner of Stage Management, LLC. Jonathan formed Stage Management after over a decade of work in commercial real estate development, finance and management, primarily concentrating on senior housing. Jonathan is a leader by example and is involved in all aspects of his businesses and development projects. His experience with HUD/FHA financing programs, commercial real estate development, construction, property management, and senior living management has afforded him a unique skill set for his future opportunities.",
+      "tags": ["Stage Management"],
+      "communities": [],
+      "avatarUrl": "https://cdn.prod.website-files.com/6723ee3b64edd88a5265b2d4/67245b82c20cd160348d02ec_Jonathan-stage-400x328.avif"
+    },
+    {
+      "name": "Troy McClymonds",
+      "slug": "troy-mcclymonds",
+      "role": "Managing Partner",
+      "tags": ["Stage Management"],
+      "communities": [],
+      "avatarUrl": "https://cdn.prod.website-files.com/6723ee3b64edd88a5265b2d4/67245bc6a336dc41879254d0_troy-stage-400x328.avif"
+    },
+    {
+      "name": "Jeff Ippen",
+      "slug": "jeff-ippen",
+      "role": "Partner",
+      "tags": ["Stage Management"],
+      "communities": [],
+      "avatarUrl": "https://cdn.prod.website-files.com/6723ee3b64edd88a5265b2d4/67245c124c98cd5eac911ee8_jeff-stage-400x328.avif"
+    },
+    {
+      "name": "Ben Chandler",
+      "slug": "ben-chandler",
+      "role": "Regional Director",
+      "tags": ["Stage Management"],
+      "communities": [],
+      "avatarUrl": "https://cdn.prod.website-files.com/6723ee3b64edd88a5265b2d4/67245ac8487b0a37a6226992_BenC-400x328.avif"
+    },
+    {
+      "name": "Colleen Emery",
+      "slug": "colleen-emery",
+      "role": "Director of Operations",
+      "tags": ["Stage Management"],
+      "communities": [],
+      "avatarUrl": "https://cdn.prod.website-files.com/6723ee3b64edd88a5265b2d4/67245c5ca51c4a94b7127330_colleen-400x328.avif"
+    },
+    {
+      "name": "Marci Gerke",
+      "slug": "marci-gerke",
+      "role": "Director of Memory Care Services",
+      "tags": ["Stage Management"],
+      "communities": ["the-gardens-at-columbine", "golden-pond"],
+      "avatarUrl": "https://cdn.prod.website-files.com/6723ee3b64edd88a5265b2d4/67245ca5cebdc79fe7c2be83_marci-stage-400x328.avif"
+    },
+    {
+      "name": "Natasha Barba",
+      "slug": "natasha-barba",
+      "role": "Benefits Administrator",
+      "tags": ["Stage Management"],
+      "communities": [],
+      "avatarUrl": "https://cdn.prod.website-files.com/6723ee3b64edd88a5265b2d4/67245d5104b26f75916f1e1c_natasha1.avif"
+    },
+    {
+      "name": "Josh Kavinsky",
+      "slug": "josh-kavinsky",
+      "role": "Regional Maintenance Director",
+      "tags": ["Stage Management"],
+      "communities": [],
+      "avatarUrl": "https://cdn.prod.website-files.com/6723ee3b64edd88a5265b2d4/67245d23e52e4a1a1573d599_josh4.avif"
+    },
+    {
+      "name": "Bob Burden",
+      "slug": "bob-burden",
+      "role": "Regional Executive Chef",
+      "tags": ["Stage Management"],
+      "communities": ["the-gardens-at-columbine", "golden-pond"],
+      "avatarUrl": "https://cdn.prod.website-files.com/6723ee3b64edd88a5265b2d4/67245d859c7fab3089e703bf_bob.avif"
+    },
+    {
+      "name": "Trevor Harwood",
+      "slug": "trevor-harwood",
+      "role": "Digital Marketing",
+      "tags": ["Stage Management"],
+      "communities": [],
+      "avatarUrl": "https://cdn.prod.website-files.com/6723ee3b64edd88a5265b2d4/67245cebaf343de82a81177d_trevor.avif"
+    },
+    {
+      "name": "Alyssa Trujillo",
+      "slug": "alyssa-trujillo",
+      "role": "Executive Director",
+      "email": "Alyssa@gardensatcolumbine.com",
+      "phone": "(720) 740-1249",
+      "tags": ["Community Leadership"],
+      "communities": ["the-gardens-at-columbine"],
+      "avatarUrl": "https://cdn.prod.website-files.com/6419daa2eec9a95f450b95a6/682f4b5dad13f8b774180925_alyssa.webp"
+    },
+    {
+      "name": "Marnie McKissack",
+      "slug": "marnie-mckissack",
+      "role": "Health & Wellness Director",
+      "tags": ["Community Leadership"],
+      "communities": ["the-gardens-at-columbine"],
+      "avatarUrl": "https://cdn.prod.website-files.com/6419daa2eec9a95f450b95a6/6825fdd48e06b6e69f16683e_marnie.webp"
+    },
+    {
+      "name": "Helen Rossi",
+      "slug": "helen-rossi",
+      "role": "Director of Marketing",
+      "tags": ["Community Leadership"],
+      "communities": ["the-gardens-at-columbine"],
+      "avatarUrl": "https://cdn.prod.website-files.com/6419daa2eec9a95f450b95a6/678feb1fcc898485b1b42941_helen-ezgif.com-png-to-webp-converter.webp"
+    },
+    {
+      "name": "Allie Mitchem",
+      "slug": "allie-mitchem",
+      "role": "Memory Care Coordinator",
+      "tags": ["Community Leadership"],
+      "communities": ["the-gardens-at-columbine"],
+      "avatarUrl": "https://cdn.prod.website-files.com/6419daa2eec9a95f450b95a6/66be3c9abcbd6c95ded981d9_AllieMitchem-ezgif.com-png-to-webp-converter.webp"
+    },
+    {
+      "name": "Matt Turk",
+      "slug": "matt-turk",
+      "role": "Director of Staffing",
+      "tags": ["Community Leadership"],
+      "communities": ["the-gardens-at-columbine"],
+      "avatarUrl": "https://cdn.prod.website-files.com/6419daa2eec9a95f450b95a6/67f54d3a3a9a201705f42657_67943115aeecd4c6baa541d9_matthew.avif"
+    },
+    {
+      "name": "Rich Thomas",
+      "slug": "rich-thomas",
+      "role": "Director of Maintenance",
+      "tags": ["Community Leadership"],
+      "communities": ["the-gardens-at-columbine"],
+      "avatarUrl": "https://cdn.prod.website-files.com/6419daa2eec9a95f450b95a6/64f22e1baad6914b12ddcbe2_rich2.webp"
+    },
+    {
+      "name": "Sydney Hertz",
+      "slug": "sydney-hertz",
+      "role": "Director of Life Enrichment",
+      "tags": ["Community Leadership"],
+      "communities": ["the-gardens-at-columbine"],
+      "avatarUrl": "https://cdn.prod.website-files.com/6419daa2eec9a95f450b95a6/678fe8de7e2e4c9566702c22_sydney-ezgif.com-png-to-webp-converter.webp"
+    },
+    {
+      "name": "Mariah Ruell",
+      "slug": "mariah-ruell",
+      "role": "Executive Director",
+      "email": "mruell@stagesenior.com",
+      "phone": "720-797-7164",
+      "tags": ["Community Leadership"],
+      "communities": ["the-gardens-on-quail"],
+      "avatarUrl": "https://cdn.prod.website-files.com/637e82335616ba47c774e6bc/669568e3c4530852ffdd7c9e_mariah.avif"
+    },
+    {
+      "name": "Leigh Boney",
+      "slug": "leigh-boney",
+      "role": "Executive Director",
+      "email": "lboney@stagesenior.com",
+      "phone": "303-271-0430",
+      "bio": "The most fulfilling aspect of my role in senior care is the deep connection I build with residents and their families. As long as I can remember, I have wanted to run a retirement community, and now I am living my dream job. I am passionate about senior care and find immense joy in making a positive difference in their lives.",
+      "tags": ["Community Leadership"],
+      "communities": ["golden-pond"],
+      "avatarUrl": "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628824d/64b807f7e273824f370ce31f_leigh.webp"
+    },
+    {
+      "name": "Maria Torres",
+      "slug": "maria-torres",
+      "role": "Director of Life Enrichment",
+      "tags": ["Community Leadership"],
+      "communities": ["golden-pond"],
+      "avatarUrl": "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628824d/64c14b4113b5f96ea0a8b6d8_maria.webp"
+    },
+    {
+      "name": "Shellie Yushka",
+      "slug": "shellie-yushka",
+      "role": "Director of Facilities",
+      "tags": ["Community Leadership"],
+      "communities": ["golden-pond"],
+      "avatarUrl": "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628824d/64b80b592ec664b15ff351db_shelliah.webp"
+    },
+    {
+      "name": "Chaz Osen",
+      "slug": "chaz-osen",
+      "role": "Regional Marketing Director",
+      "tags": ["Community Leadership"],
+      "communities": ["golden-pond"],
+      "avatarUrl": "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628824d/66be40aa35ce4cb7f8bb1392_chz3.webp"
+    },
+    {
+      "name": "Holly Jo Eames",
+      "slug": "holly-jo-eames",
+      "role": "Staff Care Manager",
+      "tags": ["Community Leadership"],
+      "communities": ["golden-pond"],
+      "avatarUrl": "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628824d/64b80a93858635b381363d0b_holly.webp"
+    },
+    {
+      "name": "Sarah Stevenson",
+      "slug": "sarah-stevenson",
+      "role": "Director of Wellness",
+      "tags": ["Community Leadership"],
+      "communities": ["golden-pond"],
+      "avatarUrl": "https://cdn.prod.website-files.com/64b0cfee8f0d1851d628824d/6880fb2825b734cae7d1b47d_sarah.jpeg"
+    }
+  ]
+}
