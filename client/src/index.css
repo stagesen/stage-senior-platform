@@ -176,6 +176,54 @@ html {
     font-size: clamp(1rem, 0.95rem + 0.3vw, 1.125rem);
     line-height: 1.6;
   }
+
+  /* Enhanced keyboard focus states for accessibility */
+  *:focus-visible {
+    outline: 2px solid var(--stage-copper);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Button and link focus states */
+  button:focus-visible,
+  a:focus-visible {
+    outline: 2px solid var(--stage-copper);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(198, 106, 61, 0.2);
+  }
+
+  /* Input focus states */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid var(--stage-copper);
+    outline-offset: 0px;
+    border-color: var(--stage-copper);
+  }
+
+  /* Optimize touch gestures for scrollable containers */
+  .overflow-y-auto,
+  .overflow-y-scroll,
+  [data-radix-scroll-area-viewport] {
+    touch-action: pan-y;
+  }
+
+  .overflow-x-auto,
+  .overflow-x-scroll {
+    touch-action: pan-x;
+  }
+
+  /* Respect user's reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
   
   /* Button Styles with Matte Finish and Copper Color */
   .btn-primary {

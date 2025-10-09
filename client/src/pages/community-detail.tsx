@@ -367,7 +367,7 @@ const TestimonialsCarousel = ({ testimonials }: { testimonials: any[] }) => {
       } else {
         api.scrollTo(0);
       }
-    }, 5000);
+    }, 7000);
 
     return () => clearInterval(interval);
   }, [api]);

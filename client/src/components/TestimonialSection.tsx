@@ -120,9 +120,13 @@ export default function TestimonialSection() {
   useEffect(() => {
     if (!api || !autoPlay) return;
 
+    // Respect user's reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
     const interval = setInterval(() => {
       api.scrollNext();
-    }, 5000);
+    }, 7000);
 
     return () => clearInterval(interval);
   }, [api, autoPlay]);

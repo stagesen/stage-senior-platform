@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
 import TestimonialSection from "@/components/TestimonialSection";
 import CommunitySelectionModal from "@/components/CommunitySelectionModal";
@@ -356,13 +357,14 @@ export default function Home() {
           {isLoading ? (
             <div className="flex justify-center gap-6 px-12">
               {[...Array(3)].map((_, i) => (
-                <Card key={i} className="relative overflow-hidden flex-shrink-0 w-full max-w-md">
-                  <div className="h-80 bg-gray-200 animate-pulse" />
-                  <CardContent className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+                <Card key={i} className="relative overflow-hidden flex-shrink-0 w-full max-w-md bg-white/10 border-white/20">
+                  <Skeleton className="h-80 bg-white/20" />
+                  <CardContent className="absolute bottom-0 left-0 right-0 p-6">
                     <div className="space-y-3">
-                      <div className="h-6 bg-gray-300 rounded animate-pulse" />
-                      <div className="h-4 bg-gray-300 rounded w-2/3 animate-pulse" />
-                      <div className="h-4 bg-gray-300 rounded animate-pulse" />
+                      <Skeleton className="h-6 w-3/4 bg-white/30" />
+                      <Skeleton className="h-4 w-1/2 bg-white/20" />
+                      <Skeleton className="h-4 w-full bg-white/20" />
+                      <Skeleton className="h-10 w-full mt-4 bg-white/30" />
                     </div>
                   </CardContent>
                 </Card>

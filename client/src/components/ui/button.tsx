@@ -23,10 +23,10 @@ const buttonVariants = cva(
         "glassmorphism-dark": "bg-black/50 backdrop-blur-md border border-white/20 text-white shadow-lg hover:bg-black/60 hover:shadow-[var(--shadow-lift)] hover:scale-[1.02] transition-all duration-300 ease-out",
       },
       size: {
-        default: "px-5 py-3 text-base", // 12px 20px padding
-        sm: "rounded-[8px] px-3 py-2 text-sm", // smaller radius for sm  
-        lg: "rounded-[16px] px-8 py-4 text-lg", // larger radius for lg
-        icon: "h-10 w-10",
+        default: "px-5 py-3 text-base min-h-[44px]", // Minimum 44px for mobile touch targets
+        sm: "rounded-[8px] px-3 py-2 text-sm min-h-[40px]", // smaller radius for sm  
+        lg: "rounded-[16px] px-8 py-4 text-lg min-h-[48px]", // larger radius for lg, 48px minimum for mobile
+        icon: "h-10 w-10 min-h-[44px] min-w-[44px]", // 44px minimum for icon buttons
       },
     },
     defaultVariants: {
