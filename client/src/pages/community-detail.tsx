@@ -189,11 +189,30 @@ const FloorPlanCard = ({ plan, onOpen }: { plan: any, onOpen: (plan: any) => voi
   );
 };
 
+// Helper function to extract care type from floor plan name
+const extractCareType = (planName: string): string => {
+  // Try format: "Care Type - Plan Name" (care type comes first)
+  const beforeDashMatch = planName.match(/^(.+?)\s*(?:–|—|-)\s*/);
+  if (beforeDashMatch) {
+    return beforeDashMatch[1].trim();
+  }
+
+  // Try format: "Plan Name – Care Type" (care type comes last)
+  const afterDashMatch = planName.match(/(?:–|—|-)\s*(.+)$/);
+  if (afterDashMatch) {
+    return afterDashMatch[1].trim();
+  }
+
+  // No dash found, return the whole name
+  return planName.trim();
+};
+
 // Local subcomponent: Floor Plans Carousel
 const FloorPlansCarousel = ({ plans, onOpen }: { plans: any[], onOpen: (plan: any) => void }) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const [selectedCareType, setSelectedCareType] = useState<string>("All");
 
   useEffect(() => {
     if (!api) return;
@@ -206,8 +225,48 @@ const FloorPlansCarousel = ({ plans, onOpen }: { plans: any[], onOpen: (plan: an
     });
   }, [api]);
 
+  // Extract unique care types from plans
+  const careTypes = useMemo(() => {
+    const types = new Set<string>();
+    plans.forEach(plan => {
+      const careType = extractCareType(plan.name);
+      types.add(careType);
+    });
+    return ["All", ...Array.from(types).sort()];
+  }, [plans]);
+
+  // Filter plans based on selected care type
+  const filteredPlans = useMemo(() => {
+    if (selectedCareType === "All") return plans;
+    return plans.filter(plan => extractCareType(plan.name) === selectedCareType);
+  }, [plans, selectedCareType]);
+
+  // Reset carousel to first slide when filter changes
+  useEffect(() => {
+    if (api) {
+      api.scrollTo(0);
+    }
+  }, [selectedCareType, api]);
+
   return (
     <div className="relative">
+      {/* Care Type Filter Buttons */}
+      {careTypes.length > 2 && (
+        <div className="flex flex-wrap gap-2 mb-6 justify-center">
+          {careTypes.map((careType) => (
+            <Button
+              key={careType}
+              variant={selectedCareType === careType ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedCareType(careType)}
+              className="transition-all"
+            >
+              {careType}
+            </Button>
+          ))}
+        </div>
+      )}
+
       <Carousel
         setApi={setApi}
         opts={{
@@ -217,7 +276,7 @@ const FloorPlansCarousel = ({ plans, onOpen }: { plans: any[], onOpen: (plan: an
         className="w-full"
       >
         <CarouselContent className="-ml-2 md:-ml-4">
-          {plans.map((plan) => (
+          {filteredPlans.map((plan) => (
             <CarouselItem key={plan.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
               <FloorPlanCard plan={plan} onOpen={onOpen} />
             </CarouselItem>
@@ -228,19 +287,28 @@ const FloorPlansCarousel = ({ plans, onOpen }: { plans: any[], onOpen: (plan: an
       </Carousel>
 
       {/* Carousel indicators */}
-      <div className="flex justify-center gap-2 mt-6">
-        {Array.from({ length: count }).map((_, index) => (
-          <button
-            key={index}
-            className={cn(
-              "h-2 rounded-full transition-all",
-              current === index ? "w-8 bg-primary" : "w-2 bg-gray-300 hover:bg-gray-400"
-            )}
-            onClick={() => api?.scrollTo(index)}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
+      {filteredPlans.length > 0 && (
+        <div className="flex justify-center gap-2 mt-6">
+          {Array.from({ length: count }).map((_, index) => (
+            <button
+              key={index}
+              className={cn(
+                "h-2 rounded-full transition-all",
+                current === index ? "w-8 bg-primary" : "w-2 bg-gray-300 hover:bg-gray-400"
+              )}
+              onClick={() => api?.scrollTo(index)}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Empty state */}
+      {filteredPlans.length === 0 && (
+        <div className="text-center py-12 text-gray-500">
+          No floor plans available for {selectedCareType}
+        </div>
+      )}
     </div>
   );
 };

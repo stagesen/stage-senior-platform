@@ -19,7 +19,12 @@
       "WebFetch(domain:www.gardensatcolumbine.com)",
       "WebFetch(domain:www.gardensonquail.com)",
       "WebFetch(domain:www.goldenpond.com)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "WebFetch(domain:www.stonebridgesenior.com)",
+      "Bash(nix-env:*)",
+      "Bash(pdftotext:*)",
+      "Bash(qpdf:*)",
+      "Bash(pdfinfo:*)"
     ],
     "deny": [],
     "ask": []
