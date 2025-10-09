@@ -771,7 +771,7 @@ const BlogPostCard = ({ post }: { post: BlogPost }) => {
 };
 
 // Local subcomponent: Action Panel
-const ActionPanel = ({ community }: { community: any }) => {
+const ActionPanel = ({ community, handleNavClick }: { community: any; handleNavClick: (sectionId: string) => void }) => {
   // Fetch team members for this community
   const { data: teamMembers = [], isLoading: teamMembersLoading } = useQuery<TeamMember[]>({
     queryKey: [`/api/communities/${community.id}/team-members`],
@@ -1006,6 +1006,7 @@ const ActionPanel = ({ community }: { community: any }) => {
 
 // Local subcomponent: Enhanced Bottom CTA
 const EnhancedBottomCTA = ({ community }: { community: any }) => {
+  const { openScheduleTour } = useScheduleTour();
   const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
   
   return (
@@ -1042,6 +1043,12 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
           <Button 
             size="lg" 
             className={cn("text-lg px-8 py-6 shadow-2xl bg-white text-primary hover:bg-gray-100", getCommunityFurtherClass(community.slug || ''))}
+            onClick={() => openScheduleTour({
+              communityId: community.id,
+              communityName: community.name,
+              title: `Schedule a Tour at ${community.name}`,
+              description: `Visit ${community.name} in ${community.city} to experience our exceptional community and amenities firsthand.`
+            })}
             data-testid="button-schedule-tour-hero"
           >
             <Calendar className="w-5 h-5 mr-2" />
@@ -2563,7 +2570,7 @@ export default function CommunityDetail() {
             </section>
 
             {/* Action Panel - Contact, Pricing, and Resources */}
-            <ActionPanel community={community} />
+            <ActionPanel community={community} handleNavClick={handleNavClick} />
 
             {/* Enhanced Bottom CTA */}
             <EnhancedBottomCTA community={community} />
