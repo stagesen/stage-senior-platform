@@ -894,9 +894,9 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <img
-          src={heroImageUrl || 'https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=2000'}
+          src={heroImageUrl === null ? '' : (heroImageUrl || 'https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=2000')}
           alt="Community background"
-          className="w-full h-full object-cover"
+          className={`w-full h-full object-cover transition-opacity duration-300 ${heroImageUrl === null ? 'opacity-0' : 'opacity-100'}`}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/70 to-black/60" />
       </div>
@@ -1292,9 +1292,9 @@ export default function CommunityDetail() {
       {/* Hero Section */}
       <section className="relative h-[500px] md:h-[600px] overflow-hidden">
         <img
-          src={heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600`}
+          src={heroImageUrl === null ? '' : (heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600`)}
           alt={`${community.name} - Senior Living Community`}
-          className="w-full h-full object-cover"
+          className={`w-full h-full object-cover transition-opacity duration-300 ${heroImageUrl === null ? 'opacity-0' : 'opacity-100'}`}
           data-testid="hero-image"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
