@@ -80,11 +80,11 @@ export default function Communities() {
       {/* Hero Actions & Map Overlap */}
       <section className="relative z-20 -mt-20 sm:-mt-24 lg:-mt-32 pb-8 sm:pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-primary to-primary/90 text-white rounded-2xl sm:rounded-3xl px-4 sm:px-8 py-6 sm:py-10 shadow-2xl flex flex-col items-center gap-4 sm:gap-6 animate-fadeIn">
+          <div className="bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] text-white rounded-2xl sm:rounded-3xl px-4 sm:px-8 py-6 sm:py-10 shadow-2xl flex flex-col items-center gap-4 sm:gap-6 animate-fadeIn">
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
               <Button
                 size="lg"
-                className="w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-6 text-base sm:text-lg bg-white text-primary hover:bg-white/90 shadow-lg transform hover:scale-105 transition-all duration-200"
+                className="w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-6 text-base sm:text-lg bg-white text-[var(--deep-blue)] hover:bg-gray-100 shadow-lg transform hover:scale-105 transition-all duration-200"
                 onClick={() => {
                   const contactSection = document.getElementById('contact-section');
                   if (contactSection) {
@@ -101,7 +101,7 @@ export default function Communities() {
               <Button
                 size="lg"
                 variant="outline"
-                className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg bg-white/10 text-white border-white/30 hover:bg-white/20 backdrop-blur-sm"
+                className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg bg-transparent border-white text-white hover:bg-white hover:text-[var(--deep-blue)] backdrop-blur-sm"
                 onClick={() => window.open('tel:+1-970-444-4689', '_self')}
                 data-testid="button-quick-call"
               >
