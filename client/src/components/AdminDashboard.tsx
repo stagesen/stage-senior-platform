@@ -1932,8 +1932,9 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
           })
           .then(images => {
             setGalleryImages(images);
-            // Set the images in the form
+            // Set the images in the form - include id for later use
             const imageUrls = images.map((img: any) => ({
+              id: img.imageId,  // Include the imageId so we can reference it
               url: img.imageUrl || img.url,
               alt: img.alt || '',
               caption: img.caption || ''

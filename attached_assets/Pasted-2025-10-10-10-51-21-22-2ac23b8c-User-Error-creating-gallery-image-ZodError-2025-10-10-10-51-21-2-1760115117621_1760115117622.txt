@@ -1,0 +1,104 @@
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+Error creating gallery image: ZodError: [
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+{
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+"code": "invalid_type",
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+"expected": "string",
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+"received": "undefined",
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+"path": [
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+"imageId"
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+],
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+"message": "Required"
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+}
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+]
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+at get error [as error] (file:///home/runner/workspace/node_modules/zod/lib/index.mjs:587:31)
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+at ZodObject.parse (file:///home/runner/workspace/node_modules/zod/lib/index.mjs:663:22)
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+at file:///home/runner/workspace/dist/index.js:4122:54
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+at next (/home/runner/workspace/node_modules/express/lib/router/route.js:149:13)
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+at requireAuth (file:///home/runner/workspace/dist/index.js:3169:3)
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+at next (/home/runner/workspace/node_modules/express/lib/router/route.js:149:13)
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+at Route.dispatch (/home/runner/workspace/node_modules/express/lib/router/route.js:119:3)
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5) {
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+issues: [
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+{
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+code: 'invalid_type',
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+expected: 'string',
+2025-10-10 10:51:21.22
+2ac23b8c
+User
+received: 'undefined',
