@@ -1756,8 +1756,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         galleryId: editingItem.id,
                         imageId: image.id, // The UUID from the upload
                         sortOrder: startingSortOrder + i,
-                        alt: image.alt || '',
-                        caption: image.caption || ''
+                        caption: image.caption || image.alt || '' // Use caption or fall back to alt
                       })
                     });
 
@@ -1801,8 +1800,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                       galleryId: newGallery.id,
                       imageId: image.id, // The UUID from the upload
                       sortOrder: i,
-                      alt: image.alt || '',
-                      caption: image.caption || ''
+                      caption: image.caption || image.alt || '' // Use caption or fall back to alt
                     })
                   });
 
