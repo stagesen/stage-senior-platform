@@ -102,7 +102,7 @@ import {
 } from "@shared/schema";
 
 interface AdminDashboardProps {
-  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "community-highlights" | "homepage" | "email-recipients" | "database-sync" | "page-content";
+  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "homepage" | "email-recipients" | "database-sync" | "page-content";
 }
 
 // Helper function to generate slug from title
@@ -1210,6 +1210,336 @@ function BlogPostAttachmentButton({ postId }: { postId: string }) {
   );
 }
 
+// Community Highlights Manager Component
+function CommunityHighlightsManager({ communityId, communityName }: { communityId: string; communityName: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [editingHighlight, setEditingHighlight] = useState<CommunityHighlight | null>(null);
+  const [isHighlightDialogOpen, setIsHighlightDialogOpen] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const { data: highlights = [], isLoading } = useQuery<CommunityHighlight[]>({
+    queryKey: [`/api/communities/${communityId}/highlights`],
+  });
+
+  const highlightForm = useForm<InsertCommunityHighlight>({
+    resolver: zodResolver(insertCommunityHighlightSchema),
+    defaultValues: {
+      communityId,
+      title: "",
+      description: "",
+      imageId: undefined,
+      ctaLabel: "",
+      ctaHref: "",
+      sortOrder: 0,
+      active: true,
+    },
+  });
+
+  const createHighlightMutation = useMutation({
+    mutationFn: async (data: InsertCommunityHighlight) => {
+      return await apiRequest("POST", "/api/community-highlights", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/communities/${communityId}/highlights`] });
+      setIsHighlightDialogOpen(false);
+      highlightForm.reset();
+      toast({
+        title: "Success",
+        description: "Highlight created successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to create highlight.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateHighlightMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: InsertCommunityHighlight }) => {
+      return await apiRequest("PUT", `/api/community-highlights/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/communities/${communityId}/highlights`] });
+      setIsHighlightDialogOpen(false);
+      setEditingHighlight(null);
+      highlightForm.reset();
+      toast({
+        title: "Success",
+        description: "Highlight updated successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update highlight.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteHighlightMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return await apiRequest("DELETE", `/api/community-highlights/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/communities/${communityId}/highlights`] });
+      toast({
+        title: "Success",
+        description: "Highlight deleted successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete highlight.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSubmit = (values: InsertCommunityHighlight) => {
+    if (editingHighlight) {
+      updateHighlightMutation.mutate({ id: editingHighlight.id, data: values });
+    } else {
+      createHighlightMutation.mutate(values);
+    }
+  };
+
+  const handleEdit = (highlight: CommunityHighlight) => {
+    setEditingHighlight(highlight);
+    highlightForm.reset({
+      communityId: highlight.communityId,
+      title: highlight.title,
+      description: highlight.description,
+      imageId: highlight.imageId || undefined,
+      ctaLabel: highlight.ctaLabel || "",
+      ctaHref: highlight.ctaHref || "",
+      sortOrder: highlight.sortOrder || 0,
+      active: highlight.active,
+    });
+    setIsHighlightDialogOpen(true);
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirm("Are you sure you want to delete this highlight?")) {
+      deleteHighlightMutation.mutate(id);
+    }
+  };
+
+  const handleAddNew = () => {
+    setEditingHighlight(null);
+    highlightForm.reset({
+      communityId,
+      title: "",
+      description: "",
+      imageId: undefined,
+      ctaLabel: "",
+      ctaHref: "",
+      sortOrder: highlights.length,
+      active: true,
+    });
+    setIsHighlightDialogOpen(true);
+  };
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="border rounded-lg p-4">
+      <CollapsibleTrigger asChild>
+        <div className="flex items-center justify-between cursor-pointer">
+          <h3 className="text-lg font-semibold">Community Highlights ({highlights.length})</h3>
+          {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+        </div>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="mt-4">
+        <div className="space-y-4">
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin" />
+            </div>
+          ) : highlights.length === 0 ? (
+            <p className="text-sm text-gray-500 text-center py-4">No highlights yet. Add one below.</p>
+          ) : (
+            <div className="space-y-2">
+              {highlights.map((highlight) => (
+                <div key={highlight.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{highlight.title}</span>
+                      {!highlight.active && <Badge variant="secondary">Inactive</Badge>}
+                    </div>
+                    <p className="text-sm text-gray-600 mt-1">{highlight.description}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleEdit(highlight)}
+                      data-testid={`button-edit-highlight-${highlight.id}`}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleDelete(highlight.id)}
+                      data-testid={`button-delete-highlight-${highlight.id}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <Button
+            onClick={handleAddNew}
+            variant="outline"
+            className="w-full"
+            data-testid="button-add-highlight"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Highlight
+          </Button>
+        </div>
+
+        <Dialog open={isHighlightDialogOpen} onOpenChange={setIsHighlightDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                {editingHighlight ? "Edit Highlight" : "Add Highlight"} for {communityName}
+              </DialogTitle>
+            </DialogHeader>
+            <Form {...highlightForm}>
+              <form onSubmit={highlightForm.handleSubmit(handleSubmit)} className="space-y-4">
+                <FormField
+                  control={highlightForm.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input {...field} data-testid="input-highlight-title" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={highlightForm.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} rows={4} data-testid="textarea-highlight-description" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={highlightForm.control}
+                  name="imageId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Image</FormLabel>
+                      <FormControl>
+                        <ImageUploader
+                          value={field.value}
+                          onChange={field.onChange}
+                          label="Upload highlight image"
+                          maxSize={10 * 1024 * 1024}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={highlightForm.control}
+                    name="ctaLabel"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>CTA Label</FormLabel>
+                        <FormControl>
+                          <Input {...field} value={field.value || ""} placeholder="Learn More" data-testid="input-highlight-cta-label" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={highlightForm.control}
+                    name="ctaHref"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>CTA Link</FormLabel>
+                        <FormControl>
+                          <Input {...field} value={field.value || ""} placeholder="/contact" data-testid="input-highlight-cta-href" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={highlightForm.control}
+                    name="sortOrder"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Sort Order</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            {...field}
+                            onChange={(e) => field.onChange(parseInt(e.target.value))}
+                            data-testid="input-highlight-sort-order"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={highlightForm.control}
+                    name="active"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center space-x-2 pt-8">
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-highlight-active" />
+                        </FormControl>
+                        <FormLabel>Active</FormLabel>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsHighlightDialogOpen(false)}
+                    data-testid="button-cancel-highlight"
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" data-testid="button-submit-highlight">
+                    {editingHighlight ? "Update" : "Create"}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
+
 export default function AdminDashboard({ type }: AdminDashboardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -1233,10 +1563,6 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     if (type === "homepage") return "homepage-sections";
     if (type === "email-recipients") return "email-recipients";
     if (type === "page-content") return "page-content";
-    if (type === "community-highlights") {
-      // For community highlights, we need to select a community first
-      return selectedCommunityForHighlights ? `communities/${selectedCommunityForHighlights}/highlights` : "community-highlights";
-    }
     return type;
   };
 
@@ -1254,7 +1580,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
 
   const { data: communities = [] } = useQuery<Community[]>({
     queryKey: ["/api/communities?active=all"],
-    enabled: type === "communities" || type === "community-highlights" || type === "community-features" || type === "tours" || type === "galleries" || type === "events" || type === "faqs" || type === "blog-posts" || type === "posts" || type === "testimonials" || type === "floor-plans" || type === "team",
+    enabled: type === "communities" || type === "tours" || type === "galleries" || type === "events" || type === "faqs" || type === "blog-posts" || type === "posts" || type === "testimonials" || type === "floor-plans" || type === "team",
   });
 
   // Fetch care types and amenities for multi-select
@@ -1585,7 +1911,6 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "floor-plans": return floorPlanForm;
       case "care-types": return careTypeForm;
       case "amenities": return amenityForm;
-      case "community-highlights": return communityHighlightForm;
       case "homepage": return homepageSectionForm;
       case "email-recipients": return emailRecipientForm;
       case "page-content": return pageContentForm;
@@ -2964,6 +3289,12 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   )}
                 />
               </div>
+              
+              {/* Community Highlights Section */}
+              {editingItem && (
+                <CommunityHighlightsManager communityId={editingItem.id} communityName={editingItem.name} />
+              )}
+              
               <div className="flex justify-end space-x-2">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
                   Cancel
@@ -4330,174 +4661,6 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-testimonial-featured" />
                       </FormControl>
                       <FormLabel>Featured</FormLabel>
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="flex justify-end space-x-2">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
-                  Cancel
-                </Button>
-                <Button type="submit" data-testid="button-submit">
-                  {editingItem ? "Update" : "Create"}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        );
-
-      case "community-highlights":
-        return (
-          <Form {...communityHighlightForm}>
-            <form onSubmit={communityHighlightForm.handleSubmit(handleSubmit)} className="space-y-4">
-              <FormField
-                control={communityHighlightForm.control}
-                name="communityId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Community</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger data-testid="select-highlight-community">
-                          <SelectValue placeholder="Select a community" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {communities.map((community) => (
-                          <SelectItem key={community.id} value={community.id}>
-                            {community.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={communityHighlightForm.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} data-testid="input-highlight-title" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={communityHighlightForm.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} rows={3} data-testid="textarea-highlight-description" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={communityHighlightForm.control}
-                name="imageId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Image (Optional)</FormLabel>
-                    <FormControl>
-                      <ImageUploader
-                        value={field.value || undefined}
-                        onChange={(value) => field.onChange(value || null)}
-                        multiple={false}
-                        label=""
-                        accept="image/*"
-                        showDelete={true}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Upload an image or select from existing uploads
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={communityHighlightForm.control}
-                name="ctaLabel"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>CTA Button Text (Optional)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field} 
-                        value={field.value || ""} 
-                        placeholder="e.g. Learn More" 
-                        data-testid="input-highlight-cta-label" 
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Text for the call-to-action button
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={communityHighlightForm.control}
-                name="ctaHref"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>CTA Link (Optional)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field} 
-                        value={field.value || ""} 
-                        placeholder="e.g. /contact or https://example.com" 
-                        data-testid="input-highlight-cta-href" 
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Link for the call-to-action button
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={communityHighlightForm.control}
-                  name="sortOrder"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Sort Order</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          {...field} 
-                          value={field.value || 0} 
-                          onChange={(e) => field.onChange(Number(e.target.value))} 
-                          data-testid="input-highlight-sort" 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={communityHighlightForm.control}
-                  name="active"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center space-x-2 mt-8">
-                      <FormControl>
-                        <Switch 
-                          checked={field.value} 
-                          onCheckedChange={field.onChange} 
-                          data-testid="switch-highlight-active" 
-                        />
-                      </FormControl>
-                      <FormLabel>Active</FormLabel>
                     </FormItem>
                   )}
                 />
@@ -6745,80 +6908,6 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       );
     }
 
-    // Community Highlights table
-    if (type === "community-highlights") {
-      return (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Community</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Image</TableHead>
-              <TableHead>Sort Order</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.map((item: CommunityHighlight) => {
-              const community = communities.find(c => c.id === item.communityId);
-              return (
-                <TableRow key={item.id} data-testid={`highlight-row-${item.id}`}>
-                  <TableCell className="font-medium">
-                    <div className="font-semibold">{item.title}</div>
-                  </TableCell>
-                  <TableCell>
-                    {community?.name || "Unknown"}
-                  </TableCell>
-                  <TableCell className="max-w-[300px]">
-                    <div className="truncate">
-                      {item.description.substring(0, 100)}...
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {item.imageId ? (
-                      <Badge variant="outline">Has Image</Badge>
-                    ) : (
-                      <Badge variant="secondary">No Image</Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{item.sortOrder}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={item.active ? "default" : "secondary"}>
-                      {item.active ? "Active" : "Inactive"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        onClick={() => handleEdit(item)}
-                        data-testid={`button-edit-${item.id}`}
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="destructive" 
-                        onClick={() => handleDelete(item.id)}
-                        data-testid={`button-delete-${item.id}`}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      );
-    }
-
     // Page Heroes table
     if (type === "page-heroes") {
       return (
@@ -7404,7 +7493,6 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "care-types": return "Care Types";
       case "amenities": return "Amenities";
       case "blog-posts": return "Blog Posts";
-      case "community-highlights": return "Community Highlights";
       case "email-recipients": return "Email Recipients";
       case "homepage": return "Homepage Sections";
       case "page-content": return "Page Content";

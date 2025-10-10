@@ -137,7 +137,6 @@ export default function Admin() {
             <TabsTrigger value="page-heroes" data-testid="tab-page-heroes" className="bg-primary text-primary-foreground hover:bg-primary/90">Page Heroes</TabsTrigger>
             <TabsTrigger value="care-types" data-testid="tab-care-types">Care Types</TabsTrigger>
             <TabsTrigger value="amenities" data-testid="tab-amenities">Amenities</TabsTrigger>
-            <TabsTrigger value="community-highlights" data-testid="tab-community-highlights">Highlights</TabsTrigger>
             <TabsTrigger value="page-content" data-testid="tab-page-content" className="bg-primary text-primary-foreground hover:bg-primary/90">Page Content</TabsTrigger>
             <TabsTrigger value="homepage" data-testid="tab-homepage">Homepage</TabsTrigger>
             <TabsTrigger value="email-recipients" data-testid="tab-email-recipients">Email Recipients</TabsTrigger>
@@ -378,10 +377,6 @@ export default function Admin() {
 
           <TabsContent value="amenities">
             <AdminDashboard type="amenities" />
-          </TabsContent>
-
-          <TabsContent value="community-highlights">
-            <AdminDashboard type="community-highlights" />
           </TabsContent>
 
           <TabsContent value="homepage">

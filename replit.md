@@ -97,7 +97,7 @@ The platform includes a comprehensive admin interface for content management:
 - **Page Heroes**: Dynamic hero sections with background image uploads for all major pages manageable through admin dashboard
 - **Floor Plans**: Complete floor plan management with image uploads, pricing, and availability tracking
 - **Testimonials**: Customer testimonials with community associations
-- **Community Highlights**: Dynamic highlight cards for each community with customizable titles, descriptions, and images, replacing hardcoded content
+- **Community Highlights**: Dynamic highlight cards for each community with customizable titles, descriptions, and images, managed inline within community edit forms for better context and organization
 - **Experience the Difference Features**: Customizable feature sections for each community with eyebrow text, titles, descriptions, images, CTAs, and layout options, fully manageable through admin dashboard
 - **Homepage Sections**: Dynamic homepage content management system for editing homepage feature sections (e.g., "Safety with Dignity") with title, subtitle, body, CTA, image support, and visibility controls through admin dashboard
 - **Email Forwarding System**: Automated email notification system for tour request submissions with admin-configurable recipient management. Tour requests are automatically forwarded to all active recipients via Resend email service.
