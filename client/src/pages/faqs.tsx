@@ -9,7 +9,7 @@ import { Loader2, Search, Building2, Home, HelpCircle } from "lucide-react";
 import type { Faq, Community } from "@shared/schema";
 
 export default function FAQs() {
-  const [selectedFilter, setSelectedFilter] = useState<string>("all");
+  const [selectedFilter, setSelectedFilter] = useState<string>("stage-senior");
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: faqs = [], isLoading: isLoadingFaqs } = useQuery<Faq[]>({
@@ -27,17 +27,17 @@ export default function FAQs() {
     let filtered = faqs;
 
     // Filter by community/service
-    if (selectedFilter !== "all") {
-      if (selectedFilter === "stage-senior") {
-        filtered = filtered.filter(faq => !faq.communityId);
-      } else if (selectedFilter === "healthy-at-home") {
-        // For now, show Stage Senior FAQs for Healthy at Home
-        // In the future, you can add specific Healthy at Home FAQs
-        filtered = filtered.filter(faq => !faq.communityId);
-      } else {
-        // Filter by specific community
-        filtered = filtered.filter(faq => faq.communityId === selectedFilter);
-      }
+    if (selectedFilter === "stage-senior") {
+      // Show Stage Senior FAQs (communityId = null and category != "Healthy at Home")
+      filtered = filtered.filter(faq =>
+        (!faq.communityId || faq.communityId === null) && faq.category !== "Healthy at Home"
+      );
+    } else if (selectedFilter === "healthy-at-home") {
+      // Show Healthy at Home FAQs (category = "Healthy at Home")
+      filtered = filtered.filter(faq => faq.category === "Healthy at Home");
+    } else {
+      // Filter by specific community
+      filtered = filtered.filter(faq => faq.communityId === selectedFilter);
     }
 
     // Search filter
@@ -91,7 +91,7 @@ export default function FAQs() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6">
               <HelpCircle className="w-8 h-8 text-blue-600" />
             </div>
-            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent" data-testid="page-title">
+            <h1 className="text-5xl font-bold mb-4 text-gray-900" data-testid="page-title">
               Frequently Asked Questions
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -117,14 +117,6 @@ export default function FAQs() {
           <div className="mb-12">
             <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-4">Filter by:</h3>
             <div className="flex flex-wrap gap-3">
-              <Button
-                variant={selectedFilter === "all" ? "default" : "outline"}
-                onClick={() => setSelectedFilter("all")}
-                className="rounded-full px-6"
-              >
-                <Building2 className="w-4 h-4 mr-2" />
-                All FAQs
-              </Button>
               <Button
                 variant={selectedFilter === "stage-senior" ? "default" : "outline"}
                 onClick={() => setSelectedFilter("stage-senior")}
@@ -224,10 +216,10 @@ export default function FAQs() {
           )}
 
           {/* Contact CTA */}
-          <Card className="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0">
+          <Card className="mt-12 bg-gradient-to-r from-blue-600 to-blue-700 text-white border-0">
             <CardContent className="p-8 text-center">
               <h3 className="text-2xl font-bold mb-3">Still have questions?</h3>
-              <p className="text-blue-100 mb-6">
+              <p className="text-blue-50 mb-6">
                 We're here to help. Contact us to speak with one of our senior living experts.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

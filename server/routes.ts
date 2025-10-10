@@ -556,7 +556,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { communityId, category, active } = req.query;
       const filters: any = {};
-      
+
       if (communityId) {
         filters.communityId = communityId as string;
       }
@@ -566,12 +566,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (active !== undefined) {
         filters.active = active === 'true';
       }
-      
+
       const faqs = await storage.getFaqs(filters);
       res.json(faqs);
     } catch (error) {
       console.error("Error fetching FAQs:", error);
       res.status(500).json({ message: "Failed to fetch FAQs" });
+    }
+  });
+
+  // Reset FAQs endpoint (admin only)
+  app.post("/api/faqs/reset", async (req, res) => {
+    try {
+      const { resetFAQs } = await import("./reset-faqs");
+      const result = await resetFAQs();
+      res.json(result);
+    } catch (error) {
+      console.error("Error resetting FAQs:", error);
+      res.status(500).json({ message: "Failed to reset FAQs" });
     }
   });
 
