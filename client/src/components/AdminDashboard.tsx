@@ -2751,28 +2751,46 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
               <div className="space-y-2">
                 <FormLabel>Care Types *</FormLabel>
                 <div className="border rounded-md p-3 space-y-2 max-h-48 overflow-y-auto">
-                  {allCareTypes.filter(ct => ct.active).map((careType) => (
-                    <label key={careType.id} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded" data-testid={`checkbox-care-type-${careType.slug}`}>
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        checked={selectedCareTypes.includes(careType.id)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedCareTypes([...selectedCareTypes, careType.id]);
-                          } else {
-                            setSelectedCareTypes(selectedCareTypes.filter(id => id !== careType.id));
-                          }
-                        }}
-                      />
-                      <div className="flex-1">
-                        <span className="font-medium">{careType.name}</span>
-                        {careType.description && (
-                          <p className="text-sm text-gray-500">{careType.description}</p>
+                  {allCareTypes.filter(ct => ct.active).map((careType) => {
+                    const isChecked = selectedCareTypes.includes(careType.id);
+                    return (
+                      <label 
+                        key={careType.id} 
+                        className={`flex items-center space-x-2 cursor-pointer p-2 rounded transition-colors ${
+                          isChecked 
+                            ? 'bg-blue-50 border-l-4 border-blue-500 hover:bg-blue-100' 
+                            : 'bg-white hover:bg-gray-50 border-l-4 border-transparent'
+                        }`}
+                        data-testid={`checkbox-care-type-${careType.slug}`}
+                      >
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          checked={isChecked}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedCareTypes([...selectedCareTypes, careType.id]);
+                            } else {
+                              setSelectedCareTypes(selectedCareTypes.filter(id => id !== careType.id));
+                            }
+                          }}
+                        />
+                        <div className="flex-1">
+                          <span className={`font-medium ${isChecked ? 'text-blue-900' : 'text-gray-700'}`}>
+                            {careType.name}
+                          </span>
+                          {careType.description && (
+                            <p className={`text-sm ${isChecked ? 'text-blue-700' : 'text-gray-500'}`}>
+                              {careType.description}
+                            </p>
+                          )}
+                        </div>
+                        {isChecked && (
+                          <span className="text-blue-600 text-sm font-semibold">✓ Selected</span>
                         )}
-                      </div>
-                    </label>
-                  ))}
+                      </label>
+                    );
+                  })}
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <span>{selectedCareTypes.length} care type(s) selected</span>
@@ -2820,31 +2838,46 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         {category.replace(/_/g, ' ')}
                       </h4>
                       <div className="space-y-2 ml-4">
-                        {categoryAmenities.map((amenity) => (
-                          <label key={amenity.id} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded" data-testid={`checkbox-amenity-${amenity.slug}`}>
-                            <input
-                              type="checkbox"
-                              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                              checked={selectedAmenities.includes(amenity.id)}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  setSelectedAmenities([...selectedAmenities, amenity.id]);
-                                } else {
-                                  setSelectedAmenities(selectedAmenities.filter(id => id !== amenity.id));
-                                }
-                              }}
-                            />
-                            <div className="flex-1 flex items-center space-x-2">
-                              {amenity.icon && (
-                                <span className="text-gray-500">
-                                  {/* You could render an icon component here based on amenity.icon */}
-                                  {amenity.icon}
+                        {categoryAmenities.map((amenity) => {
+                          const isChecked = selectedAmenities.includes(amenity.id);
+                          return (
+                            <label 
+                              key={amenity.id} 
+                              className={`flex items-center space-x-2 cursor-pointer p-2 rounded transition-colors ${
+                                isChecked 
+                                  ? 'bg-blue-50 border-l-4 border-blue-500 hover:bg-blue-100' 
+                                  : 'bg-white hover:bg-gray-50 border-l-4 border-transparent'
+                              }`}
+                              data-testid={`checkbox-amenity-${amenity.slug}`}
+                            >
+                              <input
+                                type="checkbox"
+                                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                checked={isChecked}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedAmenities([...selectedAmenities, amenity.id]);
+                                  } else {
+                                    setSelectedAmenities(selectedAmenities.filter(id => id !== amenity.id));
+                                  }
+                                }}
+                              />
+                              <div className="flex-1 flex items-center space-x-2">
+                                {amenity.icon && (
+                                  <span className={isChecked ? "text-blue-600" : "text-gray-500"}>
+                                    {amenity.icon}
+                                  </span>
+                                )}
+                                <span className={`font-medium ${isChecked ? 'text-blue-900' : 'text-gray-700'}`}>
+                                  {amenity.name}
                                 </span>
+                              </div>
+                              {isChecked && (
+                                <span className="text-blue-600 text-sm font-semibold">✓ Selected</span>
                               )}
-                              <span className="font-medium">{amenity.name}</span>
-                            </div>
-                          </label>
-                        ))}
+                            </label>
+                          );
+                        })}
                       </div>
                     </div>
                   ))}
