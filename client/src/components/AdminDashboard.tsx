@@ -7781,6 +7781,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
             <div className="text-center py-8" data-testid={`${type}-loading`}>
               Loading...
             </div>
+          ) : type === "page-content" ? (
+            renderTable()
           ) : items.length > 0 ? (
             renderTable()
           ) : (
