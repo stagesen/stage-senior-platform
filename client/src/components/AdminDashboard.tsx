@@ -1222,7 +1222,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   const [selectedCommunityForFeatures, setSelectedCommunityForFeatures] = useState<string | null>(null);
   const [isFeaturesDialogOpen, setIsFeaturesDialogOpen] = useState(false);
   const [editingFeature, setEditingFeature] = useState<CommunityFeature | null>(null);
-  const [selectedPagePath, setSelectedPagePath] = useState<string>("all");
+  const [selectedPagePath, setSelectedPagePath] = useState<string | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -7104,55 +7104,93 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       );
     }
 
-    // Page content sections table
+    // Page content sections - two-step interface
     if (type === "page-content") {
-      // Get unique page paths from items
-      const uniquePagePaths = Array.from(new Set(items.map((item: PageContentSection) => item.pagePath)));
+      // Define all available pages with metadata
+      const availablePages = [
+        { path: '/courtyards-patios', name: '🌳 Courtyards & Patios', icon: '🌳', description: 'Outdoor spaces and garden areas' },
+        { path: '/dining', name: '🍽️ Dining Services', icon: '🍽️', description: 'Restaurant-style dining and menus' },
+        { path: '/beauty-salon', name: '💇 Beauty Salon & Barber', icon: '💇', description: 'On-site beauty and barber services' },
+        { path: '/fitness-therapy', name: '💪 Fitness & Therapy', icon: '💪', description: 'Fitness center and therapy programs' },
+        { path: '/safety-with-dignity', name: '🛡️ Safety with Dignity', icon: '🛡️', description: 'Fall detection program' },
+        { path: '/care-points', name: '📊 Care Points', icon: '📊', description: 'Pricing system information' },
+        { path: '/stage-cares', name: '❤️ Stage Cares Foundation', icon: '❤️', description: 'Foundation and charitable work' },
+        { path: '/in-home-care', name: '🏠 In-Home Care', icon: '🏠', description: 'In-home care services' },
+        { path: '/accessibility', name: '♿ Accessibility', icon: '♿', description: 'Accessibility statement' },
+        { path: '/services/management', name: '🏢 Management Services', icon: '🏢', description: 'Professional management' },
+        { path: '/services/chaplaincy', name: '⛪ Chaplaincy Program', icon: '⛪', description: 'Spiritual care services' },
+        { path: '/services/long-term-care', name: '📋 Long-Term Care', icon: '📋', description: 'Insurance and support' },
+      ];
       
-      // Helper function to get friendly page name
-      const getPageName = (path: string) => {
-        const pageNames: Record<string, string> = {
-          '/courtyards-patios': 'Courtyards & Patios',
-          '/dining': 'Dining Services',
-          '/beauty-salon': 'Beauty Salon & Barber',
-          '/fitness-therapy': 'Fitness & Therapy Center'
-        };
-        return pageNames[path] || path;
-      };
+      // Get counts for each page
+      const pageCounts = availablePages.map(page => ({
+        ...page,
+        count: items.filter((item: PageContentSection) => item.pagePath === page.path).length
+      }));
       
-      // Filter items by selected page (or show all if "all" is selected)
-      const filteredItems = selectedPagePath === "all" 
-        ? items 
-        : items.filter((item: PageContentSection) => item.pagePath === selectedPagePath);
+      // If no page selected, show page selection grid
+      if (!selectedPagePath) {
+        return (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Select a Page to Edit</h3>
+              <p className="text-muted-foreground text-sm">Click on a page to view and edit its content sections</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {pageCounts.map((page) => (
+                <Card 
+                  key={page.path} 
+                  className="cursor-pointer hover:border-primary transition-colors"
+                  onClick={() => setSelectedPagePath(page.path)}
+                  data-testid={`card-page-${page.path.replace(/\//g, '-')}`}
+                >
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      <span className="text-base" data-testid={`text-page-name-${page.path.replace(/\//g, '-')}`}>{page.name}</span>
+                      <Badge 
+                        variant={page.count > 0 ? "default" : "secondary"}
+                        data-testid={`badge-count-${page.path.replace(/\//g, '-')}`}
+                      >
+                        {page.count} sections
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground" data-testid={`text-description-${page.path.replace(/\//g, '-')}`}>{page.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        );
+      }
+      
+      // Page is selected - show content blocks
+      const selectedPage = availablePages.find(p => p.path === selectedPagePath);
+      const pageItems = items.filter((item: PageContentSection) => item.pagePath === selectedPagePath);
       
       return (
         <div className="space-y-4">
           <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedPagePath(null)}
+              data-testid="button-back-to-pages"
+            >
+              <ArrowRight className="w-4 h-4 mr-2 rotate-180" />
+              Back to Pages
+            </Button>
             <div className="flex-1">
-              <label className="text-sm font-medium mb-2 block">Select Page to Edit</label>
-              <Select value={selectedPagePath} onValueChange={setSelectedPagePath}>
-                <SelectTrigger className="w-full max-w-md" data-testid="select-page-path">
-                  <SelectValue placeholder="Select a page" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Pages ({items.length} sections)</SelectItem>
-                  {uniquePagePaths.map((path) => {
-                    const count = items.filter((item: PageContentSection) => item.pagePath === path).length;
-                    return (
-                      <SelectItem key={path} value={path}>
-                        {getPageName(path)} ({count} sections)
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
+              <h3 className="text-lg font-semibold" data-testid="text-selected-page-name">{selectedPage?.name}</h3>
+              <p className="text-sm text-muted-foreground" data-testid="text-selected-page-description">{selectedPage?.description}</p>
             </div>
           </div>
 
           <Table>
             <TableHeader>
               <TableRow>
-                {selectedPagePath === "all" && <TableHead>Page</TableHead>}
                 <TableHead>Section Type</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Sort Order</TableHead>
@@ -7161,20 +7199,15 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredItems.length === 0 ? (
+              {pageItems.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={selectedPagePath === "all" ? 6 : 5} className="text-center text-muted-foreground py-8">
-                    No content sections found
+                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                    No content sections for this page yet. Click "Add New" to create one.
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredItems.map((item: PageContentSection) => (
+                pageItems.map((item: PageContentSection) => (
                   <TableRow key={item.id} data-testid={`page-content-row-${item.id}`}>
-                    {selectedPagePath === "all" && (
-                      <TableCell>
-                        <Badge variant="secondary">{getPageName(item.pagePath)}</Badge>
-                      </TableCell>
-                    )}
                     <TableCell>
                       <Badge variant="outline">{item.sectionType}</Badge>
                     </TableCell>
