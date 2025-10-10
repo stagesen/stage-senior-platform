@@ -1,0 +1,140 @@
+2025-10-10 12:00:13.41
+45121fd9
+User
+Error creating gallery image: error: insert or update on table "gallery_images" violates foreign key constraint "gallery_images_image_id_fkey"
+2025-10-10 12:00:13.41
+45121fd9
+User
+at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+2025-10-10 12:00:13.41
+45121fd9
+User
+at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-10-10 12:00:13.41
+45121fd9
+User
+at async NeonPreparedQuery.execute (file:///home/runner/workspace/node_modules/drizzle-orm/neon-serverless/session.js:76:20)
+2025-10-10 12:00:13.41
+45121fd9
+User
+at async DatabaseStorage.createGalleryImage (file:///home/runner/workspace/dist/index.js:1644:27)
+2025-10-10 12:00:13.41
+45121fd9
+User
+at async file:///home/runner/workspace/dist/index.js:4132:28 {
+2025-10-10 12:00:13.41
+45121fd9
+User
+length: 393,
+2025-10-10 12:00:13.41
+45121fd9
+User
+severity: 'ERROR',
+2025-10-10 12:00:13.41
+45121fd9
+User
+code: '23503',
+2025-10-10 12:00:13.41
+45121fd9
+User
+detail: 'Key (image_id)=(/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1760119046693-a9e2ccafb6c693c524cb76909e82648d.webp) is not present in table "images".',
+2025-10-10 12:00:13.41
+45121fd9
+User
+hint: undefined,
+2025-10-10 12:00:13.41
+45121fd9
+User
+position: undefined,
+2025-10-10 12:00:13.41
+45121fd9
+User
+internalPosition: undefined,
+2025-10-10 12:00:13.41
+45121fd9
+User
+internalQuery: undefined,
+2025-10-10 12:00:13.41
+45121fd9
+User
+where: undefined,
+2025-10-10 12:00:13.41
+45121fd9
+User
+schema: 'public',
+2025-10-10 12:00:13.41
+45121fd9
+User
+table: 'gallery_images',
+2025-10-10 12:00:13.41
+45121fd9
+User
+column: undefined,
+2025-10-10 12:00:13.41
+45121fd9
+User
+dataType: undefined,
+2025-10-10 12:00:13.41
+45121fd9
+User
+constraint: 'gallery_images_image_id_fkey',
+2025-10-10 12:00:13.41
+45121fd9
+User
+file: 'ri_triggers.c',
+2025-10-10 12:00:13.41
+45121fd9
+User
+line: '2608',
+2025-10-10 12:00:13.41
+45121fd9
+User
+routine: 'ri_ReportViolation'
+2025-10-10 12:00:13.41
+45121fd9
+User
+}
+2025-10-10 12:00:13.46
+45121fd9
+User
+6:00:13 PM [express] POST /api/gallery-images 400 in 203ms :: {"message":"Failed to create gallery i…
+2025-10-10 12:00:13.73
+45121fd9
+User
+6:00:13 PM [express] GET /api/galleries 304 in 470ms :: [{"id":"fc023108-07a3-496e-8ccf-0f2d25ea0f1b…
+2025-10-10 12:00:18.26
+45121fd9
+User
+6:00:18 PM [express] GET /api/user 304 in 172ms :: {"id":2,"username":"admin","email":"Trevorharwood…
+2025-10-10 12:00:18.50
+45121fd9
+User
+6:00:18 PM [express] GET /api/tour-requests 304 in 190ms :: [{"id":"06049a05-b61e-45db-86a2-eea49909…
+2025-10-10 12:00:18.50
+45121fd9
+User
+6:00:18 PM [express] GET /api/posts 304 in 186ms :: [{"id":"078eff05-00e8-4413-bb1b-52516b1c3885","s…
+2025-10-10 12:00:18.51
+45121fd9
+User
+6:00:18 PM [express] GET /api/testimonials 304 in 181ms :: [{"id":"c7080855-fe8b-41d0-b0c4-4cdf7b736…
+2025-10-10 12:00:18.51
+45121fd9
+User
+6:00:18 PM [express] GET /api/page-heroes 304 in 188ms :: [{"id":"9475fc8f-84c1-4ce4-b630-a4f2053b5e…
+2025-10-10 12:00:18.51
+45121fd9
+User
+6:00:18 PM [express] GET /api/events 304 in 189ms :: [{"id":"e338e249-5e06-4e55-ba14-c139ea103fcb","…
+2025-10-10 12:00:18.60
+45121fd9
+User
+6:00:18 PM [express] GET /api/faqs 304 in 284ms :: [{"id":"ac1423ed-98f1-41a6-b0e1-e6725d443e67","qu…
+2025-10-10 12:00:18.60
+45121fd9
+User
+6:00:18 PM [express] GET /api/floor-plans 304 in 269ms :: [{"id":"83123daa-06eb-4a5e-9e38-4484407151…
+2025-10-10 12:00:18.65
+45121fd9
+User
+6:00:18 PM [express] GET /api/galleries 304 in 341ms :: [{"id":"fc023108-07a3-496e-8ccf-0f2d25ea0f1b…

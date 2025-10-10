@@ -1746,6 +1746,20 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
 
                   for (let i = 0; i < imagesToAdd.length; i++) {
                     const image = imagesToAdd[i];
+                    
+                    // Extract imageId - prioritize id field, but log if something's wrong
+                    const imageId = image.id || image.imageId;
+                    
+                    if (!imageId) {
+                      console.error('Missing imageId for image:', image);
+                      throw new Error(`Image ${i + 1} is missing an ID`);
+                    }
+                    
+                    // Validate it's a UUID, not a URL
+                    if (imageId.startsWith('http') || imageId.startsWith('/')) {
+                      console.error('Invalid imageId (looks like a URL):', imageId, image);
+                      throw new Error(`Image ${i + 1} has invalid ID format`);
+                    }
 
                     // Create gallery image record
                     const response = await fetch('/api/gallery-images', {
@@ -1754,14 +1768,16 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                       credentials: 'include',
                       body: JSON.stringify({
                         galleryId: editingItem.id,
-                        imageId: image.id, // The UUID from the upload
+                        imageId: imageId, // The UUID from the upload
                         sortOrder: startingSortOrder + i,
                         caption: image.caption || image.alt || '' // Use caption or fall back to alt
                       })
                     });
 
                     if (!response.ok) {
-                      throw new Error(`Failed to add image ${i + 1}`);
+                      const errorData = await response.json().catch(() => ({}));
+                      console.error('Failed to add image:', errorData);
+                      throw new Error(`Failed to add image ${i + 1}: ${errorData.message || 'Unknown error'}`);
                     }
                   }
 
@@ -1790,6 +1806,20 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
               try {
                 for (let i = 0; i < images.length; i++) {
                   const image = images[i];
+                  
+                  // Extract imageId - prioritize id field, but log if something's wrong
+                  const imageId = image.id || image.imageId;
+                  
+                  if (!imageId) {
+                    console.error('Missing imageId for image:', image);
+                    throw new Error(`Image ${i + 1} is missing an ID`);
+                  }
+                  
+                  // Validate it's a UUID, not a URL
+                  if (imageId.startsWith('http') || imageId.startsWith('/')) {
+                    console.error('Invalid imageId (looks like a URL):', imageId, image);
+                    throw new Error(`Image ${i + 1} has invalid ID format`);
+                  }
 
                   // Create gallery image record
                   const response = await fetch('/api/gallery-images', {
@@ -1798,14 +1828,16 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     credentials: 'include',
                     body: JSON.stringify({
                       galleryId: newGallery.id,
-                      imageId: image.id, // The UUID from the upload
+                      imageId: imageId, // The UUID from the upload
                       sortOrder: i,
                       caption: image.caption || image.alt || '' // Use caption or fall back to alt
                     })
                   });
 
                   if (!response.ok) {
-                    throw new Error(`Failed to add image ${i + 1}`);
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('Failed to add image:', errorData);
+                    throw new Error(`Failed to add image ${i + 1}: ${errorData.message || 'Unknown error'}`);
                   }
                 }
 
@@ -4750,7 +4782,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     ) : null}
                     <FormControl>
                       <ImageUploader
-                        value={field.value ? (Array.isArray(field.value) && field.value.length > 0 && typeof field.value[0] === 'object' ? field.value.map((img: any) => img.url || img) : field.value) : []}
+                        value={field.value ? (Array.isArray(field.value) && field.value.length > 0 && typeof field.value[0] === 'object' ? field.value.map((img: any) => img.id || img.imageId || img) : field.value) : []}
                         onChange={async (imageIds) => {
                           if (Array.isArray(imageIds) && imageIds.length > 0) {
                             setIsFetchingImages(true);
