@@ -4789,6 +4789,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                                 const allImages = [
                                   ...existingImages,
                                   ...fetchedImages.map((img: any) => ({
+                                    id: img.id, // Include the image ID so we can reference it later
                                     url: img.url || img.secureUrl || '',
                                     alt: img.alt || img.originalName || '',
                                     caption: '',
@@ -4808,9 +4809,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                                 description: "Failed to load some image details. Using URLs directly.",
                                 variant: "destructive",
                               });
-                              // Fallback: treat all as URLs
+                              // Fallback: treat all as image IDs  
                               field.onChange(imageIds.map(id => ({ 
-                                url: id, 
+                                id: id, // Assume it's an image ID
+                                url: id, // Also set as URL for fallback display
                                 alt: '', 
                                 caption: '' 
                               })));
