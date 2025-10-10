@@ -102,7 +102,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const communities = await storage.getCommunities(filters);
-      res.json(communities);
+      
+      // Include care type and amenity IDs for admin dashboard
+      const communitiesWithRelationships = await Promise.all(
+        communities.map(async (community) => {
+          const careTypeIds = await storage.getCommunityCareTypes(community.id);
+          const amenityIds = await storage.getCommunityAmenities(community.id);
+          return {
+            ...community,
+            careTypeIds,
+            amenityIds,
+          };
+        })
+      );
+      
+      res.json(communitiesWithRelationships);
     } catch (error) {
       console.error("Error fetching communities:", error);
       res.status(500).json({ message: "Failed to fetch communities" });
