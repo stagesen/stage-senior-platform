@@ -2228,7 +2228,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                           type="number" 
                           {...field} 
                           value={field.value || ""} 
-                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)} 
+                          onChange={(e) => field.onChange(e.target.value || null)} 
                           step="0.1"
                           min="1"
                           max="5"
