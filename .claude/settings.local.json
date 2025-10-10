@@ -24,7 +24,10 @@
       "Bash(nix-env:*)",
       "Bash(pdftotext:*)",
       "Bash(qpdf:*)",
-      "Bash(pdfinfo:*)"
+      "Bash(pdfinfo:*)",
+      "Bash(pkill:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)"
     ],
     "deny": [],
     "ask": []
