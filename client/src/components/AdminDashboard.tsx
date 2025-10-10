@@ -96,10 +96,13 @@ import {
   type HomepageConfig,
   type EmailRecipient,
   type InsertEmailRecipient,
+  insertPageContentSectionSchema,
+  type PageContentSection,
+  type InsertPageContentSection,
 } from "@shared/schema";
 
 interface AdminDashboardProps {
-  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "community-highlights" | "homepage" | "email-recipients" | "database-sync";
+  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "community-highlights" | "homepage" | "email-recipients" | "database-sync" | "page-content";
 }
 
 // Helper function to generate slug from title
@@ -1228,6 +1231,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     if (type === "team") return "team-members";
     if (type === "homepage") return "homepage-sections";
     if (type === "email-recipients") return "email-recipients";
+    if (type === "page-content") return "page-content";
     if (type === "community-highlights") {
       // For community highlights, we need to select a community first
       return selectedCommunityForHighlights ? `communities/${selectedCommunityForHighlights}/highlights` : "community-highlights";
@@ -7098,6 +7102,61 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
         </Table>
       );
     }
+
+    // Page content sections table
+    if (type === "page-content") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Page Path</TableHead>
+              <TableHead>Section Type</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>Sort Order</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: PageContentSection) => (
+              <TableRow key={item.id} data-testid={`page-content-row-${item.id}`}>
+                <TableCell className="font-medium">{item.pagePath}</TableCell>
+                <TableCell>
+                  <Badge variant="outline">{item.sectionType}</Badge>
+                </TableCell>
+                <TableCell>{item.title || <span className="text-muted-foreground">No title</span>}</TableCell>
+                <TableCell>{item.sortOrder}</TableCell>
+                <TableCell>
+                  <Badge variant={item.active ? "default" : "secondary"}>
+                    {item.active ? "Active" : "Inactive"}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => handleEdit(item)}
+                      data-testid={`button-edit-${item.id}`}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="destructive" 
+                      onClick={() => handleDelete(item.id)}
+                      data-testid={`button-delete-${item.id}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      );
+    }
   };
 
   const getTitle = () => {
@@ -7118,6 +7177,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "community-highlights": return "Community Highlights";
       case "email-recipients": return "Email Recipients";
       case "homepage": return "Homepage Sections";
+      case "page-content": return "Page Content";
       default: return type;
     }
   };

@@ -71,6 +71,9 @@ import {
   emailRecipients,
   type EmailRecipient,
   type InsertEmailRecipient,
+  pageContentSections,
+  type PageContentSection,
+  type InsertPageContentSection,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm";
@@ -336,6 +339,13 @@ export interface IStorage {
   createEmailRecipient(recipient: InsertEmailRecipient): Promise<EmailRecipient>;
   updateEmailRecipient(id: string, recipient: Partial<InsertEmailRecipient>): Promise<EmailRecipient>;
   deleteEmailRecipient(id: string): Promise<void>;
+
+  // Page content section operations
+  getPageContentSections(pagePath?: string, activeOnly?: boolean): Promise<PageContentSection[]>;
+  getPageContentSection(id: string): Promise<PageContentSection | undefined>;
+  createPageContentSection(section: InsertPageContentSection): Promise<PageContentSection>;
+  updatePageContentSection(id: string, section: Partial<InsertPageContentSection>): Promise<PageContentSection>;
+  deletePageContentSection(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -2288,6 +2298,61 @@ export class DatabaseStorage implements IStorage {
 
   async deleteEmailRecipient(id: string): Promise<void> {
     await db.delete(emailRecipients).where(eq(emailRecipients.id, id));
+  }
+
+  // Page content section operations
+  async getPageContentSections(pagePath?: string, activeOnly?: boolean): Promise<PageContentSection[]> {
+    let query = db.select().from(pageContentSections);
+    
+    const conditions = [];
+    if (pagePath) {
+      conditions.push(eq(pageContentSections.pagePath, pagePath));
+    }
+    if (activeOnly) {
+      conditions.push(eq(pageContentSections.active, true));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions)) as any;
+    }
+    
+    const sections = await query.orderBy(asc(pageContentSections.sortOrder));
+    return sections;
+  }
+
+  async getPageContentSection(id: string): Promise<PageContentSection | undefined> {
+    const [section] = await db
+      .select()
+      .from(pageContentSections)
+      .where(eq(pageContentSections.id, id));
+    
+    return section;
+  }
+
+  async createPageContentSection(section: InsertPageContentSection): Promise<PageContentSection> {
+    const [created] = await db
+      .insert(pageContentSections)
+      .values(section)
+      .returning();
+    
+    return created;
+  }
+
+  async updatePageContentSection(id: string, section: Partial<InsertPageContentSection>): Promise<PageContentSection> {
+    const [updated] = await db
+      .update(pageContentSections)
+      .set({
+        ...section,
+        updatedAt: new Date()
+      })
+      .where(eq(pageContentSections.id, id))
+      .returning();
+    
+    return updated;
+  }
+
+  async deletePageContentSection(id: string): Promise<void> {
+    await db.delete(pageContentSections).where(eq(pageContentSections.id, id));
   }
 }
 

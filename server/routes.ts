@@ -35,6 +35,7 @@ import {
   insertTeamMemberSchema,
   insertHomepageSectionSchema,
   insertHomepageConfigSchema,
+  insertPageContentSectionSchema,
 } from "@shared/schema";
 
 // Middleware to protect admin routes - referenced by javascript_auth_all_persistance integration
@@ -839,6 +840,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting email recipient:", error);
       res.status(500).json({ message: "Failed to delete email recipient" });
+    }
+  });
+
+  // Page content section routes
+  app.get("/api/page-content", async (req, res) => {
+    try {
+      const { pagePath, active } = req.query;
+      const sections = await storage.getPageContentSections(
+        pagePath as string | undefined,
+        active === 'true'
+      );
+      res.json(sections);
+    } catch (error) {
+      console.error("Error fetching page content sections:", error);
+      res.status(500).json({ message: "Failed to fetch page content sections" });
+    }
+  });
+
+  app.get("/api/page-content/:id", requireAuth, async (req, res) => {
+    try {
+      const section = await storage.getPageContentSection(req.params.id);
+      if (!section) {
+        return res.status(404).json({ message: "Page content section not found" });
+      }
+      res.json(section);
+    } catch (error) {
+      console.error("Error fetching page content section:", error);
+      res.status(500).json({ message: "Failed to fetch page content section" });
+    }
+  });
+
+  app.post("/api/page-content", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertPageContentSectionSchema.parse(req.body);
+      const section = await storage.createPageContentSection(validatedData);
+      res.status(201).json(section);
+    } catch (error) {
+      console.error("Error creating page content section:", error);
+      res.status(400).json({ message: "Failed to create page content section" });
+    }
+  });
+
+  app.put("/api/page-content/:id", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertPageContentSectionSchema.partial().parse(req.body);
+      const section = await storage.updatePageContentSection(req.params.id, validatedData);
+      res.json(section);
+    } catch (error) {
+      console.error("Error updating page content section:", error);
+      res.status(400).json({ message: "Failed to update page content section" });
+    }
+  });
+
+  app.delete("/api/page-content/:id", requireAuth, async (req, res) => {
+    try {
+      await storage.deletePageContentSection(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting page content section:", error);
+      res.status(500).json({ message: "Failed to delete page content section" });
     }
   });
 
