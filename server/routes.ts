@@ -636,7 +636,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const galleries = await storage.getGalleries(filters);
-      res.json(galleries);
+      
+      // Fetch images for each gallery and attach them
+      const galleriesWithImages = await Promise.all(
+        galleries.map(async (gallery) => {
+          const images = await storage.getGalleryImagesByGalleryId(gallery.id);
+          return {
+            ...gallery,
+            images: images
+          };
+        })
+      );
+      
+      res.json(galleriesWithImages);
     } catch (error) {
       console.error("Error fetching galleries:", error);
       res.status(500).json({ message: "Failed to fetch galleries" });
