@@ -450,7 +450,9 @@ export default function ImageUploader({
     );
   }
 
-  const showUploadArea = !multiple ? previewImages.length === 0 : previewImages.length < maxFiles;
+  // For single image mode, always show upload area to allow replacing
+  // For multiple image mode, show upload area until max files reached
+  const showUploadArea = !multiple ? true : previewImages.length < maxFiles;
 
   return (
     <div className={cn("space-y-2", className)}>
@@ -469,7 +471,7 @@ export default function ImageUploader({
             </Badge>
             {!multiple && previewImages.length === 1 && (
               <span className="text-xs text-muted-foreground">
-                Click the X to remove and upload a different image
+                Upload a new image below to replace, or click X to remove
               </span>
             )}
           </div>
@@ -668,15 +670,15 @@ export default function ImageUploader({
               </div>
               
               <p className="text-sm font-medium mb-1">
-                {isDragActive ? "Drop files here" : 
-                  previewImages.length === 0 ? "Click to upload or drag and drop" :
-                  "Add more images"}
+                {isDragActive ? "Drop files here" :
+                  multiple ? (previewImages.length === 0 ? "Click to upload or drag and drop" : "Add more images") :
+                  (previewImages.length === 0 ? "Click to upload or drag and drop" : "Click to replace image")}
               </p>
-              
+
               <p className="text-xs text-muted-foreground mb-4">
-                {multiple 
+                {multiple
                   ? `Upload up to ${maxFiles} images`
-                  : previewImages.length === 0 ? "Upload an image" : "Replace current image"
+                  : previewImages.length === 0 ? "Upload an image" : "Upload a new image to replace the current one"
                 }
               </p>
 
