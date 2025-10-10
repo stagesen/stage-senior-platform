@@ -1,0 +1,96 @@
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+Error creating gallery image: error: insert or update on table "gallery_images" violates foreign key constraint "gallery_images_image_id_fkey"
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+at async NeonPreparedQuery.execute (file:///home/runner/workspace/node_modules/drizzle-orm/neon-serverless/session.js:76:20)
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+at async DatabaseStorage.createGalleryImage (file:///home/runner/workspace/dist/index.js:1644:27)
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+at async file:///home/runner/workspace/dist/index.js:4123:28 {
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+length: 393,
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+severity: 'ERROR',
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+code: '23503',
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+detail: 'Key (image_id)=(/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1760113978809-cdfaf22778e3edc4d725d17fd990da83.webp) is not present in table "images".',
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+hint: undefined,
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+position: undefined,
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+internalPosition: undefined,
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+internalQuery: undefined,
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+where: undefined,
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+schema: 'public',
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+table: 'gallery_images',
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+column: undefined,
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+dataType: undefined,
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+constraint: 'gallery_images_image_id_fkey',
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+file: 'ri_triggers.c',
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+line: '2608',
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+routine: 'ri_ReportViolation'
+2025-10-10 10:33:02.37
+f8cf6a3c
+User
+}

@@ -1727,11 +1727,11 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
 
       if (editingItem) {
         // Editing existing gallery
-        const existingImageUrls = galleryImages.map((img: any) => img.imageUrl || img.url);
+        const existingImageIds = galleryImages.map((img: any) => img.imageId);
 
         // Filter out images that already exist
         const imagesToAdd = images.filter((img: any) =>
-          !existingImageUrls.includes(img.url)
+          !existingImageIds.includes(img.id)
         );
 
         // Update gallery without images
@@ -1754,7 +1754,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                       credentials: 'include',
                       body: JSON.stringify({
                         galleryId: editingItem.id,
-                        imageId: image.url, // The imageId from the upload
+                        imageId: image.id, // The UUID from the upload
                         sortOrder: startingSortOrder + i,
                         alt: image.alt || '',
                         caption: image.caption || ''
@@ -1799,7 +1799,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     credentials: 'include',
                     body: JSON.stringify({
                       galleryId: newGallery.id,
-                      imageId: image.url, // The imageId from the upload
+                      imageId: image.id, // The UUID from the upload
                       sortOrder: i,
                       alt: image.alt || '',
                       caption: image.caption || ''
