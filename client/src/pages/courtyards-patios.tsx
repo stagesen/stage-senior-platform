@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PageHero } from "@/components/PageHero";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
+import type { Gallery } from "@shared/schema";
 import { 
   Trees,
   Flower,
@@ -35,6 +37,41 @@ import {
 
 export default function CourtyardsPatios() {
   const { openScheduleTour } = useScheduleTour();
+  
+  // Fetch gallery for courtyards & patios page
+  const { data: galleries = [] } = useQuery<Gallery[]>({
+    queryKey: ['/api/galleries?active=true'],
+  });
+  
+  // Find the courtyards gallery (you can filter by title or category)
+  const courtyardsGallery = galleries.find(g => 
+    g.title?.toLowerCase().includes('courtyard') || 
+    g.title?.toLowerCase().includes('outdoor') ||
+    g.category === 'outdoors-colorado'
+  );
+  
+  // Extract gallery images with fallbacks to Unsplash
+  const galleryImages = courtyardsGallery?.images || [];
+  const outdoorSpaceImages = [
+    galleryImages[0]?.url || "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80",
+    galleryImages[1]?.url || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+    galleryImages[2]?.url || "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80",
+    galleryImages[3]?.url || "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&q=80",
+    galleryImages[4]?.url || "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80",
+    galleryImages[5]?.url || "https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=800&q=80",
+  ];
+  
+  const safetyImage = galleryImages[6]?.url || "https://images.unsplash.com/photo-1559304787-945aa4341065?w=800&q=80";
+  
+  const bottomGalleryImages = [
+    galleryImages[7]?.url || "https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=600&q=80",
+    galleryImages[8]?.url || "https://images.unsplash.com/photo-1585637071863-3d2bc3a10225?w=600&q=80",
+    galleryImages[9]?.url || "https://images.unsplash.com/photo-1591226632858-e0f7e3000d7c?w=600&q=80",
+    galleryImages[10]?.url || "https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=600&q=80",
+    galleryImages[11]?.url || "https://images.unsplash.com/photo-1598902108854-10e335adac99?w=600&q=80",
+    galleryImages[12]?.url || "https://images.unsplash.com/photo-1584479898061-15742e14f50d?w=600&q=80",
+  ];
+  
   useEffect(() => {
     document.title = "Courtyards & Outdoor Spaces | Senior Living Communities";
     
@@ -287,12 +324,7 @@ export default function CourtyardsPatios() {
                 >
                   <div className="absolute inset-0">
                     <img 
-                      src={index === 0 ? "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80" :
-                           index === 1 ? "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80" :
-                           index === 2 ? "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80" :
-                           index === 3 ? "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&q=80" :
-                           index === 4 ? "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80" :
-                           "https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=800&q=80"}
+                      src={outdoorSpaceImages[index]}
                       alt={space.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
@@ -409,7 +441,7 @@ export default function CourtyardsPatios() {
             
             <div className="relative h-96 rounded-2xl overflow-hidden shadow-xl">
               <img 
-                src="https://images.unsplash.com/photo-1559304787-945aa4341065?w=800&q=80" 
+                src={safetyImage}
                 alt="Well-lit garden pathway with handrails and comfortable seating"
                 className="w-full h-full object-cover"
                 data-testid="safety-features-image"
@@ -438,54 +470,16 @@ export default function CourtyardsPatios() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="relative h-64 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-              <img 
-                src="https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=600&q=80" 
-                alt="Residents enjoying garden activities"
-                className="w-full h-full object-cover"
-                data-testid="gallery-image-1"
-              />
-            </div>
-            <div className="relative h-64 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-              <img 
-                src="https://images.unsplash.com/photo-1585637071863-3d2bc3a10225?w=600&q=80" 
-                alt="Beautiful flower garden with walking path"
-                className="w-full h-full object-cover"
-                data-testid="gallery-image-2"
-              />
-            </div>
-            <div className="relative h-64 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-              <img 
-                src="https://images.unsplash.com/photo-1591226632858-e0f7e3000d7c?w=600&q=80" 
-                alt="Covered patio with comfortable seating"
-                className="w-full h-full object-cover"
-                data-testid="gallery-image-3"
-              />
-            </div>
-            <div className="relative h-64 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-              <img 
-                src="https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=600&q=80" 
-                alt="Outdoor dining area with scenic views"
-                className="w-full h-full object-cover"
-                data-testid="gallery-image-4"
-              />
-            </div>
-            <div className="relative h-64 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-              <img 
-                src="https://images.unsplash.com/photo-1598902108854-10e335adac99?w=600&q=80" 
-                alt="Residents participating in outdoor activities"
-                className="w-full h-full object-cover"
-                data-testid="gallery-image-5"
-              />
-            </div>
-            <div className="relative h-64 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-              <img 
-                src="https://images.unsplash.com/photo-1584479898061-15742e14f50d?w=600&q=80" 
-                alt="Secure memory care courtyard"
-                className="w-full h-full object-cover"
-                data-testid="gallery-image-6"
-              />
-            </div>
+            {bottomGalleryImages.map((imgSrc, index) => (
+              <div key={index} className="relative h-64 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <img 
+                  src={imgSrc}
+                  alt={galleryImages[index + 7]?.alt || `Outdoor space ${index + 1}`}
+                  className="w-full h-full object-cover"
+                  data-testid={`gallery-image-${index + 1}`}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </section>
