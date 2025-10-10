@@ -1558,6 +1558,18 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     },
   });
 
+  const pageContentForm = useForm<InsertPageContentSection>({
+    resolver: zodResolver(insertPageContentSectionSchema),
+    defaultValues: {
+      pagePath: "",
+      sectionType: "text_block",
+      title: "",
+      content: "",
+      sortOrder: 0,
+      active: true,
+    },
+  });
+
   // Get current form based on type
   const getCurrentForm = () => {
     switch (type) {
@@ -1576,6 +1588,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "community-highlights": return communityHighlightForm;
       case "homepage": return homepageSectionForm;
       case "email-recipients": return emailRecipientForm;
+      case "page-content": return pageContentForm;
       default: return communityForm;
     }
   };
@@ -2012,7 +2025,20 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
 
   const openCreateDialog = () => {
     setEditingItem(null);
-    getCurrentForm().reset();
+    
+    // For page-content, pre-fill the pagePath with the selected page
+    if (type === "page-content" && selectedPagePath) {
+      const pageContentForm = getCurrentForm();
+      pageContentForm.reset({
+        pagePath: selectedPagePath,
+        sectionType: 'text_block',
+        sortOrder: 0,
+        active: true,
+      });
+    } else {
+      getCurrentForm().reset();
+    }
+    
     setGalleryImages([]);
     setSelectedCareTypes([]);
     setSelectedAmenities([]);
@@ -5851,6 +5877,121 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
           </Form>
         );
 
+      case "page-content":
+        return (
+          <Form {...pageContentForm}>
+            <form onSubmit={pageContentForm.handleSubmit(handleSubmit)} className="space-y-4">
+              <FormField
+                control={pageContentForm.control}
+                name="pagePath"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Page Path *</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled={!!selectedPagePath} data-testid="input-page-path" />
+                    </FormControl>
+                    <FormDescription>The page this content section belongs to (locked when editing from a page)</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={pageContentForm.control}
+                name="sectionType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Section Type *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger data-testid="select-section-type">
+                          <SelectValue placeholder="Select section type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="text_block">Text Block</SelectItem>
+                        <SelectItem value="benefit_cards">Benefit Cards</SelectItem>
+                        <SelectItem value="feature_list">Feature List</SelectItem>
+                        <SelectItem value="seasonal_cards">Seasonal Cards</SelectItem>
+                        <SelectItem value="feature_grid">Feature Grid</SelectItem>
+                        <SelectItem value="section_header">Section Header</SelectItem>
+                        <SelectItem value="cta">Call to Action</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={pageContentForm.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value || ""} placeholder="Section title" data-testid="input-content-title" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={pageContentForm.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Content</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} value={field.value || ""} rows={6} placeholder="Section content (supports JSON for structured data)" data-testid="textarea-content" />
+                    </FormControl>
+                    <FormDescription>For complex sections, use JSON format</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={pageContentForm.control}
+                name="sortOrder"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sort Order *</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} onChange={(e) => field.onChange(parseInt(e.target.value) || 0)} data-testid="input-sort-order" />
+                    </FormControl>
+                    <FormDescription>Lower numbers appear first</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={pageContentForm.control}
+                name="active"
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-2">
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-content-active" />
+                    </FormControl>
+                    <FormLabel>Active</FormLabel>
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="button-submit">
+                  {editingItem ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        );
+
       default:
         return <div>Form not implemented for {type}</div>;
     }
@@ -7597,7 +7738,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle data-testid={`${type}-title`}>{getTitle()}</CardTitle>
-            {type !== "tours" && (
+            {type !== "tours" && type !== "page-content" && (
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button onClick={openCreateDialog} data-testid={`button-add-${type}`}>
@@ -7609,6 +7750,24 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   <DialogHeader>
                     <DialogTitle data-testid={`dialog-title-${type}`}>
                       {editingItem ? "Edit" : "Create"} {type.slice(0, -1)}
+                    </DialogTitle>
+                  </DialogHeader>
+                  {renderForm()}
+                </DialogContent>
+              </Dialog>
+            )}
+            {type === "page-content" && selectedPagePath && (
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button onClick={openCreateDialog} data-testid="button-add-page-content">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Content Block
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle data-testid="dialog-title-page-content">
+                      {editingItem ? "Edit" : "Create"} Content Block
                     </DialogTitle>
                   </DialogHeader>
                   {renderForm()}
