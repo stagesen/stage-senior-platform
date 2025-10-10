@@ -1249,7 +1249,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
 
   const { data: communities = [] } = useQuery<Community[]>({
     queryKey: ["/api/communities?active=all"],
-    enabled: type === "communities" || type === "community-highlights" || type === "community-features" || type === "tours" || type === "galleries" || type === "events" || type === "faqs" || type === "blog-posts" || type === "posts" || type === "testimonials" || type === "floor-plans",
+    enabled: type === "communities" || type === "community-highlights" || type === "community-features" || type === "tours" || type === "galleries" || type === "events" || type === "faqs" || type === "blog-posts" || type === "posts" || type === "testimonials" || type === "floor-plans" || type === "team",
   });
 
   // Fetch care types and amenities for multi-select
