@@ -137,6 +137,7 @@ export default function Admin() {
             <TabsTrigger value="care-types" data-testid="tab-care-types">Care Types</TabsTrigger>
             <TabsTrigger value="amenities" data-testid="tab-amenities">Amenities</TabsTrigger>
             <TabsTrigger value="community-highlights" data-testid="tab-community-highlights">Highlights</TabsTrigger>
+            <TabsTrigger value="page-content" data-testid="tab-page-content" className="bg-primary text-primary-foreground hover:bg-primary/90">Page Content</TabsTrigger>
             <TabsTrigger value="homepage" data-testid="tab-homepage">Homepage</TabsTrigger>
             <TabsTrigger value="email-recipients" data-testid="tab-email-recipients">Email Recipients</TabsTrigger>
             <TabsTrigger value="image-gallery" data-testid="tab-image-gallery">
@@ -315,6 +316,15 @@ export default function Admin() {
                     <Image className="w-4 h-4 mr-2" />
                     Manage Images
                   </Button>
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline"
+                    onClick={() => setActiveTab("page-content")}
+                    data-testid="button-page-content"
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    Edit Page Content
+                  </Button>
                 </CardContent>
               </Card>
             </div>
@@ -375,6 +385,10 @@ export default function Admin() {
 
           <TabsContent value="homepage">
             <AdminDashboard type="homepage" />
+          </TabsContent>
+
+          <TabsContent value="page-content">
+            <AdminDashboard type="page-content" />
           </TabsContent>
 
           <TabsContent value="email-recipients">
