@@ -462,6 +462,50 @@ export default function ImageUploader({
         </label>
       )}
 
+      {/* Upload Area - Show first for single image mode when image exists */}
+      {showUploadArea && !multiple && previewImages.length > 0 && (
+        <div className="space-y-2">
+          <Card
+            className={cn(
+              "border-2 border-dashed transition-colors cursor-pointer",
+              isDragActive ? "border-primary bg-primary/5" : "border-border hover:border-primary/50",
+              disabled && "opacity-50 cursor-not-allowed"
+            )}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            onClick={handleClick}
+            data-testid="upload-area"
+          >
+            <CardContent className="flex flex-col items-center justify-center py-6 px-4 text-center">
+              <div className="p-2 rounded-full bg-muted mb-2">
+                <Upload className="h-5 w-5 text-muted-foreground" />
+              </div>
+
+              <p className="text-sm font-medium mb-1">
+                {isDragActive ? "Drop file here" : "Click to replace image"}
+              </p>
+
+              <p className="text-xs text-muted-foreground mb-2">
+                Upload a new image to replace the current one
+              </p>
+
+              <div className="flex flex-wrap gap-2 justify-center">
+                <Badge variant="secondary" className="text-xs">
+                  Max size: {(maxSize / (1024 * 1024)).toFixed(0)}MB
+                </Badge>
+                {accept !== "image/*" && (
+                  <Badge variant="secondary" className="text-xs">
+                    {accept}
+                  </Badge>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {/* Preview Images */}
       {previewImages.length > 0 && (
         <div className="space-y-2">
@@ -471,7 +515,7 @@ export default function ImageUploader({
             </Badge>
             {!multiple && previewImages.length === 1 && (
               <span className="text-xs text-muted-foreground">
-                Upload a new image below to replace, or click X to remove
+                Current image - Click X to remove
               </span>
             )}
           </div>
@@ -642,8 +686,8 @@ export default function ImageUploader({
         </div>
       )}
 
-      {/* Upload Area */}
-      {showUploadArea && (
+      {/* Upload Area - For empty single mode or multiple mode */}
+      {showUploadArea && (multiple || (!multiple && previewImages.length === 0)) && (
         <div className="space-y-2">
           {previewImages.length === 0 && !multiple && (
             <Badge variant="outline" className="text-xs border-orange-500/50 text-orange-600">
