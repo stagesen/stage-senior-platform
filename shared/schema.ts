@@ -881,3 +881,32 @@ export const insertEmailRecipientSchema = createInsertSchema(emailRecipients, {
 
 export type EmailRecipient = typeof emailRecipients.$inferSelect;
 export type InsertEmailRecipient = z.infer<typeof insertEmailRecipientSchema>;
+
+// Page Content Sections table for managing dynamic page content
+export const pageContentSections = pgTable("page_content_sections", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  pagePath: varchar("page_path", { length: 255 }).notNull(), // e.g., '/courtyards-patios'
+  sectionType: varchar("section_type", { length: 100 }).notNull(), // e.g., 'text_block', 'feature_list', 'benefit_cards'
+  sectionKey: varchar("section_key", { length: 255 }).notNull(), // Unique identifier for the section
+  title: text("title"),
+  subtitle: text("subtitle"),
+  content: jsonb("content").$type<Record<string, any>>(), // Flexible JSON for section data
+  sortOrder: integer("sort_order").default(0),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertPageContentSectionSchema = createInsertSchema(pageContentSections, {
+  pagePath: z.string().min(1).max(255),
+  sectionType: z.string().min(1).max(100),
+  sectionKey: z.string().min(1).max(255),
+  title: z.string().optional(),
+  subtitle: z.string().optional(),
+  content: z.record(z.any()).optional(),
+  sortOrder: z.number().int().default(0),
+  active: z.boolean().default(true),
+}).omit({ id: true, createdAt: true, updatedAt: true });
+
+export type PageContentSection = typeof pageContentSections.$inferSelect;
+export type InsertPageContentSection = z.infer<typeof insertPageContentSectionSchema>;
