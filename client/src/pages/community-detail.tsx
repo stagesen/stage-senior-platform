@@ -1640,11 +1640,8 @@ export default function CommunityDetail() {
               Welcome to {community.name}
             </h2>
             <p className="text-lg text-gray-600 leading-relaxed mb-6" data-testid="community-description">
-              {community.description || community.shortDescription || 
+              {community.description || community.shortDescription ||
                 "Experience exceptional senior living in a warm, welcoming community designed with your comfort and well-being in mind. Our dedicated team provides personalized care and support, ensuring every resident enjoys a fulfilling lifestyle."}
-            </p>
-            <p className="text-gray-600 leading-relaxed">
-              At {community.name}, we believe in fostering a fulfilling lifestyle for our residents. Living in our community makes it easy to nurture your mind, body, and spirit—whether it's over a meal or during a group activity. With daily opportunities for creativity, learning, fitness, and social connections, you'll discover ways to ignite your passions and uncover new possibilities.
             </p>
           </div>
 

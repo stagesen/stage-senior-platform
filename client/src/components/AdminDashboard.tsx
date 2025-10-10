@@ -1222,6 +1222,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   const [selectedCommunityForFeatures, setSelectedCommunityForFeatures] = useState<string | null>(null);
   const [isFeaturesDialogOpen, setIsFeaturesDialogOpen] = useState(false);
   const [editingFeature, setEditingFeature] = useState<CommunityFeature | null>(null);
+  const [selectedPagePath, setSelectedPagePath] = useState<string>("all");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -7105,56 +7106,111 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
 
     // Page content sections table
     if (type === "page-content") {
+      // Get unique page paths from items
+      const uniquePagePaths = Array.from(new Set(items.map((item: PageContentSection) => item.pagePath)));
+      
+      // Helper function to get friendly page name
+      const getPageName = (path: string) => {
+        const pageNames: Record<string, string> = {
+          '/courtyards-patios': 'Courtyards & Patios',
+          '/dining': 'Dining Services',
+          '/beauty-salon': 'Beauty Salon & Barber',
+          '/fitness-therapy': 'Fitness & Therapy Center'
+        };
+        return pageNames[path] || path;
+      };
+      
+      // Filter items by selected page (or show all if "all" is selected)
+      const filteredItems = selectedPagePath === "all" 
+        ? items 
+        : items.filter((item: PageContentSection) => item.pagePath === selectedPagePath);
+      
       return (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Page Path</TableHead>
-              <TableHead>Section Type</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Sort Order</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.map((item: PageContentSection) => (
-              <TableRow key={item.id} data-testid={`page-content-row-${item.id}`}>
-                <TableCell className="font-medium">{item.pagePath}</TableCell>
-                <TableCell>
-                  <Badge variant="outline">{item.sectionType}</Badge>
-                </TableCell>
-                <TableCell>{item.title || <span className="text-muted-foreground">No title</span>}</TableCell>
-                <TableCell>{item.sortOrder}</TableCell>
-                <TableCell>
-                  <Badge variant={item.active ? "default" : "secondary"}>
-                    {item.active ? "Active" : "Inactive"}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={() => handleEdit(item)}
-                      data-testid={`button-edit-${item.id}`}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="destructive" 
-                      onClick={() => handleDelete(item.id)}
-                      data-testid={`button-delete-${item.id}`}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </TableCell>
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <label className="text-sm font-medium mb-2 block">Select Page to Edit</label>
+              <Select value={selectedPagePath} onValueChange={setSelectedPagePath}>
+                <SelectTrigger className="w-full max-w-md" data-testid="select-page-path">
+                  <SelectValue placeholder="Select a page" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Pages ({items.length} sections)</SelectItem>
+                  {uniquePagePaths.map((path) => {
+                    const count = items.filter((item: PageContentSection) => item.pagePath === path).length;
+                    return (
+                      <SelectItem key={path} value={path}>
+                        {getPageName(path)} ({count} sections)
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <Table>
+            <TableHeader>
+              <TableRow>
+                {selectedPagePath === "all" && <TableHead>Page</TableHead>}
+                <TableHead>Section Type</TableHead>
+                <TableHead>Title</TableHead>
+                <TableHead>Sort Order</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {filteredItems.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={selectedPagePath === "all" ? 6 : 5} className="text-center text-muted-foreground py-8">
+                    No content sections found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredItems.map((item: PageContentSection) => (
+                  <TableRow key={item.id} data-testid={`page-content-row-${item.id}`}>
+                    {selectedPagePath === "all" && (
+                      <TableCell>
+                        <Badge variant="secondary">{getPageName(item.pagePath)}</Badge>
+                      </TableCell>
+                    )}
+                    <TableCell>
+                      <Badge variant="outline">{item.sectionType}</Badge>
+                    </TableCell>
+                    <TableCell className="font-medium">{item.title || <span className="text-muted-foreground">No title</span>}</TableCell>
+                    <TableCell>{item.sortOrder}</TableCell>
+                    <TableCell>
+                      <Badge variant={item.active ? "default" : "secondary"}>
+                        {item.active ? "Active" : "Inactive"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleEdit(item)}
+                          data-testid={`button-edit-${item.id}`}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="destructive" 
+                          onClick={() => handleDelete(item.id)}
+                          data-testid={`button-delete-${item.id}`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       );
     }
   };

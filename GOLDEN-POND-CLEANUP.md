@@ -192,15 +192,93 @@ WHERE community_id = 'ac9dae44-d18f-4e96-b3bf-ba3d4fc406e9'
   AND title = 'Active Lifestyle';
 ```
 
+### 3. Community Overview & Description (communities table)
+**Reduced description from 2,143 to 983 characters**
+
+**New Overview:**
+```
+Since 2004, Golden Pond has been a proud part of Golden, Colorado. We're locally owned and deeply connected to the community — offering independent living, assisted living, and memory care designed for comfort, independence, and care that grows with you.
+```
+
+**New Description:**
+```
+Welcome to Golden Pond, where life is golden. Our locally owned community sits at the base of North Table Mountain with stunning views and a warm, family feel.
+
+**Your Home, Your Way**
+
+Choose from spacious studios, one-bedroom, or two-bedroom apartments with mountain views. Enjoy chef-prepared meals, Friday happy hour, and all the conveniences of home — housekeeping, Wi-Fi, cable, and utilities included.
+
+**Stay Active & Engaged**
+
+From art classes and live music to scenic drives and trishaw bike rides, there's always something to enjoy. Join clubs, make friends, and live life to the fullest.
+
+**Care That Grows With You**
+
+Start in independent living and stay as your needs change. Our experienced team provides support at every stage — from assisted living to specialized memory care at The Meadows.
+
+**98% Resident Satisfaction**
+
+Families know what we know: this is home. With responsive leadership, caring staff, and a vibrant community, Golden Pond is where you belong.
+```
+
+### 4. Remove Hardcoded Generic Text (community-detail.tsx)
+**Removed generic "fostering a fulfilling lifestyle" paragraph that appeared on all community pages**
+
+File: `client/src/pages/community-detail.tsx` (line 1646-1648)
+
+Removed this hardcoded text:
+```
+At {community.name}, we believe in fostering a fulfilling lifestyle for our residents. Living in our community makes it easy to nurture your mind, body, and spirit—whether it's over a meal or during a group activity. With daily opportunities for creativity, learning, fitness, and social connections, you'll discover ways to ignite your passions and uncover new possibilities.
+```
+
+## SQL Script to Apply Changes
+
+Add this to the previous SQL script:
+
+```sql
+-- ============================================
+-- GOLDEN POND CLEANUP - OVERVIEW & DESCRIPTION
+-- ============================================
+
+-- Update overview and description with mobile-friendly content
+UPDATE communities
+SET
+  overview = 'Since 2004, Golden Pond has been a proud part of Golden, Colorado. We''re locally owned and deeply connected to the community — offering independent living, assisted living, and memory care designed for comfort, independence, and care that grows with you.',
+  description = 'Welcome to Golden Pond, where life is golden. Our locally owned community sits at the base of North Table Mountain with stunning views and a warm, family feel.
+
+**Your Home, Your Way**
+
+Choose from spacious studios, one-bedroom, or two-bedroom apartments with mountain views. Enjoy chef-prepared meals, Friday happy hour, and all the conveniences of home — housekeeping, Wi-Fi, cable, and utilities included.
+
+**Stay Active & Engaged**
+
+From art classes and live music to scenic drives and trishaw bike rides, there''s always something to enjoy. Join clubs, make friends, and live life to the fullest.
+
+**Care That Grows With You**
+
+Start in independent living and stay as your needs change. Our experienced team provides support at every stage — from assisted living to specialized memory care at The Meadows.
+
+**98% Resident Satisfaction**
+
+Families know what we know: this is home. With responsive leadership, caring staff, and a vibrant community, Golden Pond is where you belong.'
+WHERE slug = 'golden-pond';
+```
+
 ## Final State
 
 **Features:** 4 unique items (all database-driven)
 **Highlights:** 4 unique items (all database-driven)
+**Overview & Description:** Updated to mobile-friendly, concise content
 **Language:** Mobile-friendly, conversational, senior demographic appropriate
-**Hardcoded Content:** None (all pulled from database)
+**Hardcoded Content:** Removed generic paragraph from template
+
+## Code Changes
+- **File:** `client/src/pages/community-detail.tsx`
+- **Change:** Removed hardcoded "fostering a fulfilling lifestyle" paragraph (lines 1646-1648)
 
 ## Notes
 - Community ID: `ac9dae44-d18f-4e96-b3bf-ba3d4fc406e9`
 - Community Slug: `golden-pond`
 - All content now pulls from database (no hardcoded fallbacks will display)
 - Language optimized for mobile with shorter sentences and clearer messaging
+- Description reduced from 2,143 to 983 characters (54% reduction)
