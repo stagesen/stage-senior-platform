@@ -97,7 +97,7 @@ export default function ImageUploader({
   // Upload mutation
   const uploadMutation = useImageUpload({
     mixedMode: allowsPdf, // Enable mixed mode if PDFs are allowed
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (Array.isArray(data)) {
         // Multiple upload
         const newIds = data.map((img) => img.imageId);
@@ -115,7 +115,19 @@ export default function ImageUploader({
           return [...prev.filter((p) => p.id), ...uploaded];
         });
       } else {
-        // Single upload
+        // Single upload - delete old image if exists (replace functionality)
+        const oldImageId = imageIds[0];
+        if (oldImageId && oldImageId !== data.imageId) {
+          try {
+            // Try to delete the old image, but don't block if it fails
+            // (it might be referenced elsewhere or already deleted)
+            await deleteMutation.mutateAsync(oldImageId);
+          } catch (error) {
+            // Silently handle deletion errors - the new image is already uploaded
+            console.log("Could not delete old image (may still be in use):", error);
+          }
+        }
+        
         onChange(data.imageId);
         setPreviewImages([{
           id: data.imageId,

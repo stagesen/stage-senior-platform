@@ -276,20 +276,41 @@ const FloorPlansCarousel = ({ plans, onOpen }: { plans: any[], onOpen: (plan: an
       <Carousel
         setApi={setApi}
         opts={{
-          align: "start",
-          loop: false,
+          align: "center",
+          loop: filteredPlans.length > 1,
         }}
-        className="w-full"
+        className="w-full px-4 md:px-16"
       >
-        <CarouselContent className="-ml-3 md:-ml-6">
-          {filteredPlans.map((plan) => (
-            <CarouselItem key={plan.id} className="pl-3 md:pl-6 basis-full sm:basis-1/2 lg:basis-1/3">
-              <FloorPlanCard plan={plan} onOpen={onOpen} />
-            </CarouselItem>
-          ))}
+        <CarouselContent className="-ml-4 md:-ml-6">
+          {filteredPlans.map((plan, index) => {
+            const isCurrent = index === current;
+            const isPrev = index === current - 1 || (current === 0 && index === filteredPlans.length - 1);
+            const isNext = index === current + 1 || (current === filteredPlans.length - 1 && index === 0);
+            
+            return (
+              <CarouselItem 
+                key={plan.id} 
+                className={cn(
+                  "pl-4 md:pl-6 basis-full transition-all duration-700 ease-in-out",
+                  isCurrent 
+                    ? "md:basis-3/5 lg:basis-1/2 scale-100 opacity-100 z-10" 
+                    : "md:basis-2/5 lg:basis-1/4 scale-90 md:scale-75 opacity-50 md:opacity-30 z-0"
+                )}
+              >
+                <div 
+                  className={cn(
+                    "transition-all duration-700 ease-in-out h-full",
+                    !isCurrent && "pointer-events-none select-none"
+                  )}
+                >
+                  <FloorPlanCard plan={plan} onOpen={onOpen} />
+                </div>
+              </CarouselItem>
+            );
+          })}
         </CarouselContent>
-        <CarouselPrevious className="hidden md:flex -left-6 lg:-left-14 h-12 w-12" />
-        <CarouselNext className="hidden md:flex -right-6 lg:-right-14 h-12 w-12" />
+        <CarouselPrevious className="hidden md:flex -left-8 lg:-left-14 h-14 w-14 bg-white/95 hover:bg-white shadow-xl border-2 hover:scale-110 transition-all" />
+        <CarouselNext className="hidden md:flex -right-8 lg:-right-14 h-14 w-14 bg-white/95 hover:bg-white shadow-xl border-2 hover:scale-110 transition-all" />
       </Carousel>
 
       {/* Carousel indicators */}
@@ -784,8 +805,10 @@ const ActionPanel = ({ community, handleNavClick }: { community: any; handleNavC
   // Resolve avatar image URL - pass ID directly without /api/images prefix
   const avatarImageUrl = useResolveImageUrl(primaryContact?.avatarImageId || null);
 
-  // Resolve brochure image URL
+  // Resolve image URLs
   const resolvedBrochureUrl = useResolveImageUrl(community?.brochureImageId);
+  const resolvedContactUrl = useResolveImageUrl(community?.contactImageId);
+  const resolvedPricingUrl = useResolveImageUrl(community?.pricingImageId);
 
   // Determine grid columns based on whether we have a team member
   const gridCols = primaryContact ? "md:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-3";
@@ -798,7 +821,7 @@ const ActionPanel = ({ community, handleNavClick }: { community: any; handleNavC
           <Card className="shadow-lg border-2 border-primary/20 overflow-hidden">
             <div className="h-48 overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2000"
+                src={resolvedPricingUrl || "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2000"}
                 alt="Comfortable senior living apartment"
                 className="w-full h-full object-cover"
               />
@@ -837,7 +860,6 @@ const ActionPanel = ({ community, handleNavClick }: { community: any; handleNavC
               </div>
               <Button 
                 className="w-full" 
-                variant="outline" 
                 data-testid="button-view-pricing"
                 onClick={() => handleNavClick('floor-plans')}
               >
@@ -900,7 +922,7 @@ const ActionPanel = ({ community, handleNavClick }: { community: any; handleNavC
           <Card className="shadow-lg overflow-hidden">
             <div className="h-48 overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=2000"
+                src={resolvedContactUrl || "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=2000"}
                 alt="Friendly staff ready to help"
                 className="w-full h-full object-cover"
               />
@@ -1692,357 +1714,22 @@ export default function CommunityDetail() {
             )}
 
             {/* Features & Highlights */}
-            <section id="highlights" className="scroll-mt-24">
-              <h2 className="text-2xl md:text-3xl font-bold mb-8">Community Highlights</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {highlights.length > 0 ? (
-                  // Use database highlights if available
-                  highlights.map((highlight) => (
+            {highlights.length > 0 && (
+              <section id="highlights" className="scroll-mt-24">
+                <h2 className="text-2xl md:text-3xl font-bold mb-8">Community Highlights</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {highlights.map((highlight) => (
                     <HighlightCard key={highlight.id} highlight={{
                       ...highlight,
                       imageId: highlight.imageId ?? undefined,
                       ctaLabel: highlight.ctaLabel ?? undefined,
                       ctaHref: highlight.ctaHref ?? undefined
                     }} />
-                  ))
-                ) : community.slug === 'golden-pond' ? (
-                  <>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80"
-                          alt="Locally Owned & Rooted in Golden"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-locally-owned"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Locally Owned & Rooted in Golden</h3>
-                        <p className="text-gray-600">
-                          More than two decades of service, trusted by families through word of mouth.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"
-                          alt="All Levels of Care in One Place"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-care-levels"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">All Levels of Care in One Place</h3>
-                        <p className="text-gray-600">
-                          Independent, Assisted, and Memory Care — seamless transitions without the stress of moving again.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1543269664-56d93c1b41a6?w=800&q=80"
-                          alt="Stable, Familiar Staff"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-staff"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Stable, Familiar Staff</h3>
-                        <p className="text-gray-600">
-                          Many caregivers and managers have been here for years, creating continuity and real relationships.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80"
-                          alt="Active, Connected Lifestyle"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-lifestyle"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Active, Connected Lifestyle</h3>
-                        <p className="text-gray-600">
-                          Fitness, art, social events, and outings into Golden keep residents engaged and part of the community.
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </>
-                ) : community.slug === 'the-gardens-on-quail' ? (
-                  <>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1560707303-4e980ce876ad?w=800&q=80"
-                          alt="Independent Plus Option"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-independent-plus"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Independent Plus Option</h3>
-                        <p className="text-gray-600">
-                          A unique choice for seniors who want independence with optional support.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"
-                          alt="Seamless Care Transitions"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-seamless-care"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Seamless Care Transitions</h3>
-                        <p className="text-gray-600">
-                          Move easily between Independent, Assisted, and Memory Care.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80"
-                          alt="Community Connections"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-community-connections"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Community Connections</h3>
-                        <p className="text-gray-600">
-                          Partnerships with Arvada schools, churches, and non-profits keep residents engaged.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80"
-                          alt="Upscale, Modern Design"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-modern-design"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Upscale, Modern Design</h3>
-                        <p className="text-gray-600">
-                          Bistro, theater, library, and courtyards for comfortable daily living.
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </>
-                ) : community.slug === 'gardens-at-columbine' ? (
-                  <>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80"
-                          alt="Beautiful Gardens"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-gardens"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Beautiful Gardens</h3>
-                        <p className="text-gray-600">
-                          Over two acres of outdoor paths, art, and water features.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1543269664-56d93c1b41a6?w=800&q=80"
-                          alt="Strong Staff Tenure"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-staff-tenure"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Strong Staff Tenure</h3>
-                        <p className="text-gray-600">
-                          Many caregivers and directors have been here since the community opened.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80"
-                          alt="Dedicated Memory Care Wing"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-memory-care"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Dedicated Memory Care Wing</h3>
-                        <p className="text-gray-600">
-                          Secure, bright, and purpose-built for dementia care.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1516733968668-dbdce39c4651?w=800&q=80"
-                          alt="Home-Like Feel"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-home-like"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Home-Like Feel</h3>
-                        <p className="text-gray-600">
-                          A warm, personal environment rather than a corporate setting.
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </>
-                ) : community.slug === 'stonebridge-senior' ? (
-                  <>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"
-                          alt="Personalized Care Plans"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-personalized-plans"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Personalized Care Plans</h3>
-                        <p className="text-gray-600">
-                          Developed with residents and families, updated regularly.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1559234938-b60fff04894d?w=800&q=80"
-                          alt="Your Story First Philosophy"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-story-first"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Your Story First Philosophy</h3>
-                        <p className="text-gray-600">
-                          Staff learn each resident's life story to guide daily care.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1516733968668-dbdce39c4651?w=800&q=80"
-                          alt="Cozy, Intimate Setting"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-intimate"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Cozy, Intimate Setting</h3>
-                        <p className="text-gray-600">
-                          Smaller community feel with modern amenities.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1601760562234-9814eea6663a?w=800&q=80"
-                          alt="Pet-Friendly"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-pet-friendly"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Pet-Friendly</h3>
-                        <p className="text-gray-600">
-                          Residents are welcome to bring pets; pet therapy is also offered.
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </>
-                ) : (
-                  <>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1543269664-56d93c1b41a6?w=800&q=80"
-                          alt="Vibrant Community Life"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-community-life"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Vibrant Community Life</h3>
-                        <p className="text-gray-600">
-                          Join a warm community where friendships flourish and every day brings new opportunities for connection and growth.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"
-                          alt="Personalized Care"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-personalized-care"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Personalized Care</h3>
-                        <p className="text-gray-600">
-                          Our dedicated team provides tailored support that honors your independence while ensuring comfort and safety.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80"
-                          alt="Active Lifestyle"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-active-lifestyle"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">Active Lifestyle</h3>
-                        <p className="text-gray-600">
-                          From fitness classes to cultural outings, enjoy a full calendar of activities designed to keep you engaged.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="overflow-hidden">
-                      <AspectRatio ratio={16 / 9}>
-                        <img
-                          src="https://images.unsplash.com/photo-1559304787-b655434341065?w=800&q=80"
-                          alt="24/7 Support"
-                          className="w-full h-full object-cover"
-                          data-testid="highlight-24-7-support"
-                        />
-                      </AspectRatio>
-                      <CardContent className="p-6">
-                        <h3 className="text-xl font-semibold mb-2 text-primary">24/7 Support</h3>
-                        <p className="text-gray-600">
-                          Rest easy knowing our caring staff is available around the clock for assistance whenever you need it.
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </>
-                )}
-              </div>
-            </section>
+                  ))}
+                </div>
+              </section>
+            )}
+
 
             {/* Amenities Showcase */}
             {community.amenities && community.amenities.length > 0 && (

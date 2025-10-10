@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Search, Building2, Home, HelpCircle } from "lucide-react";
+import { useScheduleTour } from "@/hooks/useScheduleTour";
 import type { Faq, Community } from "@shared/schema";
 
 export default function FAQs() {
   const [selectedFilter, setSelectedFilter] = useState<string>("stage-senior");
   const [searchQuery, setSearchQuery] = useState("");
+  const { openScheduleTour } = useScheduleTour();
 
   const { data: faqs = [], isLoading: isLoadingFaqs } = useQuery<Faq[]>({
     queryKey: ['/api/faqs']
@@ -220,23 +222,18 @@ export default function FAQs() {
             <CardContent className="p-8 text-center">
               <h3 className="text-2xl font-bold mb-3">Still have questions?</h3>
               <p className="text-blue-50 mb-6">
-                We're here to help. Contact us to speak with one of our senior living experts.
+                We're here to help. Schedule a tour or speak with one of our senior living experts.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button
                   size="lg"
                   className="bg-white text-blue-600 hover:bg-blue-50 font-semibold"
-                  asChild
+                  onClick={() => openScheduleTour({
+                    title: "Schedule a Tour",
+                    description: "Visit one of our Colorado communities and get answers to your questions."
+                  })}
                 >
-                  <a href="/contact">Contact Us</a>
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-2 border-white text-white hover:bg-white/10 font-semibold"
-                  asChild
-                >
-                  <a href="tel:3034362300">Call (303) 436-2300</a>
+                  Schedule a Tour
                 </Button>
               </div>
             </CardContent>

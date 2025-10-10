@@ -73,6 +73,7 @@ export const communities = pgTable("communities", {
   imageId: varchar("image_id", { length: 255 }).references(() => images.id), // New image reference
   logoImageId: varchar("logo_image_id", { length: 255 }).references(() => images.id), // Logo image reference
   contactImageId: varchar("contact_image_id", { length: 255 }).references(() => images.id), // Contact Us card image reference
+  pricingImageId: varchar("pricing_image_id", { length: 255 }).references(() => images.id), // Pricing card image reference
   brochureImageId: varchar("brochure_image_id", { length: 255 }).references(() => images.id), // Brochure card image reference
   brochureLink: text("brochure_link"), // Brochure link URL
   experienceImageId: varchar("experience_image_id", { length: 255 }).references(() => images.id), // Experience our Community image reference

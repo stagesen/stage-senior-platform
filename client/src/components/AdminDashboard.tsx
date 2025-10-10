@@ -1294,6 +1294,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       heroImageUrl: "",
       logoImageId: "",
       contactImageId: "",
+      pricingImageId: "",
       brochureImageId: "",
       brochureLink: "",
       experienceImageId: "",
@@ -1716,6 +1717,119 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     if (type === "galleries" && !data.gallerySlug && data.title) {
       data.gallerySlug = data.title.toLowerCase().replace(/\s+/g, '-');
     }
+
+    // Special handling for galleries - separate image uploads from gallery data
+    if (type === "galleries") {
+      const images = data.images || [];
+
+      // Remove images field from gallery data to prevent overwriting
+      const { images: _, ...galleryDataWithoutImages } = data;
+
+      if (editingItem) {
+        // Editing existing gallery
+        const existingImageUrls = galleryImages.map((img: any) => img.imageUrl || img.url);
+
+        // Filter out images that already exist
+        const imagesToAdd = images.filter((img: any) =>
+          !existingImageUrls.includes(img.url)
+        );
+
+        // Update gallery without images
+        updateMutation.mutate(
+          { id: editingItem.id, data: galleryDataWithoutImages },
+          {
+            onSuccess: async (updatedGallery) => {
+              // After successful gallery update, add new images to gallery_images table
+              if (imagesToAdd.length > 0) {
+                try {
+                  const startingSortOrder = galleryImages.length;
+
+                  for (let i = 0; i < imagesToAdd.length; i++) {
+                    const image = imagesToAdd[i];
+
+                    // Create gallery image record
+                    const response = await fetch('/api/gallery-images', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      credentials: 'include',
+                      body: JSON.stringify({
+                        galleryId: editingItem.id,
+                        imageId: image.url, // The imageId from the upload
+                        sortOrder: startingSortOrder + i,
+                        alt: image.alt || '',
+                        caption: image.caption || ''
+                      })
+                    });
+
+                    if (!response.ok) {
+                      throw new Error(`Failed to add image ${i + 1}`);
+                    }
+                  }
+
+                  toast({
+                    title: "Success",
+                    description: `Gallery updated with ${imagesToAdd.length} new image(s)`,
+                  });
+                } catch (error) {
+                  console.error('Error adding gallery images:', error);
+                  toast({
+                    title: "Warning",
+                    description: "Gallery updated but some images may not have been added",
+                    variant: "destructive",
+                  });
+                }
+              }
+            }
+          }
+        );
+      } else {
+        // Creating new gallery
+        createMutation.mutate(galleryDataWithoutImages, {
+          onSuccess: async (newGallery: any) => {
+            // After successful gallery creation, add images to gallery_images table
+            if (images.length > 0) {
+              try {
+                for (let i = 0; i < images.length; i++) {
+                  const image = images[i];
+
+                  // Create gallery image record
+                  const response = await fetch('/api/gallery-images', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                      galleryId: newGallery.id,
+                      imageId: image.url, // The imageId from the upload
+                      sortOrder: i,
+                      alt: image.alt || '',
+                      caption: image.caption || ''
+                    })
+                  });
+
+                  if (!response.ok) {
+                    throw new Error(`Failed to add image ${i + 1}`);
+                  }
+                }
+
+                toast({
+                  title: "Success",
+                  description: `Gallery created with ${images.length} image(s)`,
+                });
+              } catch (error) {
+                console.error('Error adding gallery images:', error);
+                toast({
+                  title: "Warning",
+                  description: "Gallery created but some images may not have been added",
+                  variant: "destructive",
+                });
+              }
+            }
+          }
+        });
+      }
+      return;
+    }
+
     if (editingItem) {
       updateMutation.mutate({ id: editingItem.id, data });
     } else {
@@ -2105,8 +2219,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         <Input 
                           type="number" 
                           {...field} 
-                          value={field.value || ""} 
-                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)} 
+                          value={field.value ?? ""} 
+                          onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value, 10) : 0)} 
                           min="0"
                           placeholder="0"
                           data-testid="input-community-review-count" 
@@ -2263,6 +2377,24 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         value={field.value || undefined}
                         onChange={field.onChange}
                         label="Upload image for the contact card section"
+                        maxSize={10 * 1024 * 1024}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
+                name="pricingImageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Pricing Card Image</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload image for the pricing card section"
                         maxSize={10 * 1024 * 1024}
                       />
                     </FormControl>

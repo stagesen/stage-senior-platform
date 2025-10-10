@@ -1752,26 +1752,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Check if image is referenced by any entities
       const imageId = req.params.id;
+      console.log(`[DELETE IMAGE] Starting deletion for image: ${imageId}`);
       const references = await storage.checkImageReferences(imageId);
+      console.log(`[DELETE IMAGE] References found:`, references);
       
       if (references.length > 0) {
-        // Image is in use, return 409 Conflict
-        const referencedTables = references.map(ref => ref.table).join(", ");
-        return res.status(409).json({ 
-          message: `Cannot delete image. It is currently referenced by: ${referencedTables}. Please update or remove these references before deleting the image.`,
-          references: references
-        });
+        // Image is in use - automatically unreference it instead of blocking deletion
+        console.log(`[DELETE IMAGE] Image ${imageId} is referenced by ${references.length} entities. Unreferencing...`);
+        await storage.unreferenceImage(imageId);
+        console.log(`[DELETE IMAGE] Unreferencing complete. Verifying...`);
+        
+        // Verify references are cleared
+        const remainingRefs = await storage.checkImageReferences(imageId);
+        console.log(`[DELETE IMAGE] Remaining references after unreference:`, remainingRefs);
       }
 
       // Delete from object storage
+      console.log(`[DELETE IMAGE] Deleting from object storage: ${image.objectKey}`);
       await deleteFromObjectStorage(image.objectKey);
+      console.log(`[DELETE IMAGE] Object storage deletion complete`);
       
       // Delete from database
+      console.log(`[DELETE IMAGE] Deleting from database: ${imageId}`);
       await storage.deleteImage(req.params.id);
+      console.log(`[DELETE IMAGE] Database deletion complete`);
       
       res.status(204).send();
     } catch (error) {
-      console.error("Error deleting image:", error);
+      console.error("[DELETE IMAGE] Error deleting image:", error);
       res.status(500).json({ message: "Failed to delete image" });
     }
   });

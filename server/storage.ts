@@ -288,6 +288,7 @@ export interface IStorage {
   getImages(): Promise<Image[]>;
   deleteImage(id: string): Promise<void>;
   checkImageReferences(imageId: string): Promise<Array<{ table: string; count: number }>>;
+  unreferenceImage(imageId: string): Promise<void>;
   getGalleryImagesByGalleryId(galleryId: string): Promise<GalleryImageWithDetails[]>;
 
   // Floor plan image operations
@@ -1726,6 +1727,96 @@ export class DatabaseStorage implements IStorage {
     }
 
     return references;
+  }
+
+  async unreferenceImage(imageId: string): Promise<void> {
+    // Set all image references to NULL across all tables
+    // This allows the image to be deleted without foreign key constraint issues
+    // Each field must be updated separately to avoid setting unrelated fields to NULL
+    
+    console.log(`[UNREFERENCE] Starting unreference for image: ${imageId}`);
+    
+    // Update communities table - each field separately
+    console.log(`[UNREFERENCE] Updating communities.imageId`);
+    await db.update(communities)
+      .set({ imageId: null })
+      .where(eq(communities.imageId, imageId));
+    
+    await db.update(communities)
+      .set({ logoImageId: null })
+      .where(eq(communities.logoImageId, imageId));
+    
+    await db.update(communities)
+      .set({ contactImageId: null })
+      .where(eq(communities.contactImageId, imageId));
+    
+    await db.update(communities)
+      .set({ pricingImageId: null })
+      .where(eq(communities.pricingImageId, imageId));
+    
+    await db.update(communities)
+      .set({ brochureImageId: null })
+      .where(eq(communities.brochureImageId, imageId));
+    
+    await db.update(communities)
+      .set({ experienceImageId: null })
+      .where(eq(communities.experienceImageId, imageId));
+    
+    await db.update(communities)
+      .set({ calendarFile1Id: null })
+      .where(eq(communities.calendarFile1Id, imageId));
+    
+    await db.update(communities)
+      .set({ calendarFile2Id: null })
+      .where(eq(communities.calendarFile2Id, imageId));
+    
+    await db.update(communities)
+      .set({ fitnessImageId: null })
+      .where(eq(communities.fitnessImageId, imageId));
+    
+    await db.update(communities)
+      .set({ privateDiningImageId: null })
+      .where(eq(communities.privateDiningImageId, imageId));
+    
+    await db.update(communities)
+      .set({ experienceImage1Id: null })
+      .where(eq(communities.experienceImage1Id, imageId));
+    
+    await db.update(communities)
+      .set({ experienceImage2Id: null })
+      .where(eq(communities.experienceImage2Id, imageId));
+    
+    await db.update(communities)
+      .set({ experienceImage3Id: null })
+      .where(eq(communities.experienceImage3Id, imageId));
+    
+    await db.update(communities)
+      .set({ experienceImage4Id: null })
+      .where(eq(communities.experienceImage4Id, imageId));
+    
+    // Update posts table
+    await db.update(posts)
+      .set({ imageId: null })
+      .where(eq(posts.imageId, imageId));
+    
+    // Update events table
+    await db.update(events)
+      .set({ imageId: null })
+      .where(eq(events.imageId, imageId));
+    
+    // Update floor_plans table
+    await db.update(floorPlans)
+      .set({ imageId: null })
+      .where(eq(floorPlans.imageId, imageId));
+    
+    // Update page_heroes table
+    await db.update(pageHeroes)
+      .set({ imageId: null })
+      .where(eq(pageHeroes.imageId, imageId));
+    
+    // Delete gallery_images records (they're just junction table entries)
+    await db.delete(galleryImages)
+      .where(eq(galleryImages.imageId, imageId));
   }
 
   async deleteImage(id: string): Promise<void> {
