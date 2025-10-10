@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import AdminDashboard from "@/components/AdminDashboard";
 import PageGalleryAdmin from "@/components/PageGalleryAdmin";
+import PageContentManager from "@/components/PageContentManager";
 import { useAuth } from "@/lib/auth";
 import { 
   Users, 
@@ -388,7 +389,7 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="page-content">
-            <AdminDashboard type="page-content" />
+            <PageContentManager />
           </TabsContent>
 
           <TabsContent value="email-recipients">
