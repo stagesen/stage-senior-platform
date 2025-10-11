@@ -4699,6 +4699,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         <SelectItem value="/blog">Blog</SelectItem>
                         <SelectItem value="/services">Services</SelectItem>
                         <SelectItem value="/services/management">Management Services</SelectItem>
+                        <SelectItem value="/services/long-term-care">Long-Term Care Services</SelectItem>
+                        <SelectItem value="/services/chaplaincy">Chaplaincy Services</SelectItem>
                         <SelectItem value="/stage-cares">Stage Cares</SelectItem>
                         <SelectItem value="/communities">Communities</SelectItem>
                         <SelectItem value="/care-points">Care Points</SelectItem>
@@ -4707,6 +4709,15 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         <SelectItem value="/beauty-salon">Beauty Salon & Barber</SelectItem>
                         <SelectItem value="/fitness-therapy">Fitness & Therapy Center</SelectItem>
                         <SelectItem value="/courtyards-patios">Courtyards & Patios</SelectItem>
+                        <SelectItem value="/in-home-care">In-Home Care</SelectItem>
+                        <SelectItem value="/faqs">FAQs</SelectItem>
+                        <SelectItem value="/Reviews">Reviews</SelectItem>
+                        <SelectItem value="/accessibility">Accessibility</SelectItem>
+                        <SelectItem value="/privacy">Privacy Policy</SelectItem>
+                        <SelectItem value="/terms">Terms of Service</SelectItem>
+                        <SelectItem value="/contact">Contact</SelectItem>
+                        <SelectItem value="/team">Team</SelectItem>
+                        <SelectItem value="/careers">Careers</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
