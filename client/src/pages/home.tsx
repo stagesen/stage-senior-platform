@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
 import TestimonialSection from "@/components/TestimonialSection";
 import CommunitySelectionModal from "@/components/CommunitySelectionModal";
+import { PageHero } from "@/components/PageHero";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { 
   Carousel,
@@ -160,50 +161,6 @@ export default function Home() {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  // Fetch homepage hero data
-  const { data: heroData } = useQuery({
-    queryKey: ['/api/page-heroes', '/'],
-    queryFn: async () => {
-      const response = await fetch('/api/page-heroes/' + encodeURIComponent('/'));
-      if (!response.ok) {
-        // Return null if no hero data exists
-        if (response.status === 404) return null;
-        throw new Error('Failed to fetch page hero');
-      }
-      return response.json();
-    },
-  });
-
-  // Default hero content for fallback
-  const defaultHero = {
-    title: "Colorado senior living that feels like home — with the professionalism families trust.",
-    subtitle: "Locally Owned • Resident‑Focused",
-    description: "Four Front Range communities + in-home support. Clear pricing, personalized care, and a team supported as well as they support you.",
-    backgroundImageUrl: "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?q=80&w=1600&auto=format&fit=crop",
-    ctaText: "Find a Community",
-    ctaLink: "/communities",
-    overlayOpacity: "0.85",
-    textAlignment: "left",
-  };
-
-  // Merge hero data with defaults (only use non-empty values from API)
-  const hero = {
-    ...defaultHero,
-    ...(heroData ? {
-      title: heroData.title || defaultHero.title,
-      subtitle: heroData.subtitle || defaultHero.subtitle,
-      description: heroData.description || defaultHero.description,
-      backgroundImageUrl: heroData.backgroundImageUrl || defaultHero.backgroundImageUrl,
-      ctaText: heroData.ctaText || defaultHero.ctaText,
-      ctaLink: heroData.ctaLink || defaultHero.ctaLink,
-      overlayOpacity: heroData.overlayOpacity || defaultHero.overlayOpacity,
-      textAlignment: heroData.textAlignment || defaultHero.textAlignment,
-    } : {}),
-  };
-
-  // Resolve the background image URL if it's an image ID
-  const resolvedBackgroundImageUrl = useResolveImageUrl(hero.backgroundImageUrl);
-
   // Track selected carousel index for visual emphasis
   useEffect(() => {
     if (!carouselApi) {
@@ -264,79 +221,12 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        {/* Background Image */}
-        {resolvedBackgroundImageUrl && (
-          <img
-            src={resolvedBackgroundImageUrl}
-            alt="Senior living community with beautiful gardens"
-            className="absolute inset-0 h-full w-full object-cover"
-            loading="eager"
-            fetchpriority="high"
-          />
-        )}
-        {!resolvedBackgroundImageUrl && resolvedBackgroundImageUrl !== null && (
-          <img
-            src={hero.backgroundImageUrl}
-            alt="Senior living community with beautiful gardens"
-            className="absolute inset-0 h-full w-full object-cover"
-            loading="eager"
-            fetchpriority="high"
-          />
-        )}
-        {/* Enhanced Multi-layer Overlay for Better Text Legibility */}
-        <div className="absolute inset-0 bg-black/20" />
-        <div 
-          className="absolute inset-0 bg-gradient-to-br from-[var(--deep-blue)] via-[var(--bright-blue)] to-[var(--deep-blue)]"
-          style={{ opacity: parseFloat(hero.overlayOpacity || "0.85") }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-white">
-          <div className={`max-w-3xl ${hero.textAlignment === 'center' ? 'mx-auto text-center' : hero.textAlignment === 'right' ? 'ml-auto text-right' : ''}`}>
-            {hero.subtitle && (
-              <p className="uppercase tracking-widest text-white text-xs mb-2 drop-shadow-sm" data-testid="hero-tagline">
-                {hero.subtitle}
-              </p>
-            )}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-white drop-shadow-md" data-testid="hero-title">
-              {hero.title}
-            </h1>
-            {hero.description && (
-              <p className="mt-6 text-xl text-white leading-relaxed drop-shadow-sm" data-testid="hero-description">
-                {hero.description}
-              </p>
-            )}
-            <div className={`mt-8 flex flex-col sm:flex-row gap-4 ${hero.textAlignment === 'center' ? 'sm:justify-center' : hero.textAlignment === 'right' ? 'sm:justify-end' : ''}`}>
-              {hero.ctaText && hero.ctaLink && (
-                <Button 
-                  size="lg" 
-                  className="w-full sm:w-auto bg-[var(--stage-copper)] text-white hover:bg-gradient-to-r hover:from-[var(--stage-copper)] hover:to-[var(--foothill-sage)] font-semibold shadow-lg px-6 py-4 text-base sm:px-8 sm:py-6 sm:text-lg transition-all duration-300"
-                  asChild
-                  data-testid="button-hero-cta"
-                >
-                  <Link href={hero.ctaLink}>
-                    {hero.ctaLink.includes('communities') && <MapPin className="w-5 h-5 mr-2" />}
-                    {hero.ctaText}
-                  </Link>
-                </Button>
-              )}
-              <Button 
-                size="lg" 
-                variant="glassmorphism"
-                className="w-full sm:w-auto font-semibold px-6 py-4 text-base sm:px-8 sm:py-6 sm:text-lg"
-                onClick={() => openScheduleTour({
-                  title: "Schedule a Tour",
-                  description: "Visit one of our Colorado communities and experience the Stage Senior difference."
-                })}
-                data-testid="button-schedule-tour"
-              >
-                <Calendar className="w-5 h-5 mr-2" />
-                Schedule Tour
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        pagePath="/"
+        defaultTitle="Colorado senior living that feels like home — with the professionalism families trust."
+        defaultSubtitle="Locally Owned • Resident‑Focused"
+        defaultBackgroundImage="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?q=80&w=1600&auto=format&fit=crop"
+      />
 
       {/* Community Carousel */}
       <section id="finder" className="py-16 bg-primary text-white relative overflow-hidden">
