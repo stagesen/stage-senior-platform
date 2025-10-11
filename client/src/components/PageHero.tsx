@@ -132,10 +132,9 @@ export function PageHero({
         >
           {title && (
             <h1
-              className="text-white font-bold"
+              className="text-white font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl"
               style={{
                 fontFamily: "var(--font-display)",
-                fontSize: "3rem",
                 lineHeight: "1.2",
               }}
               data-testid={`hero-title-${pagePath.replace(/\//g, "-") || "home"}`}

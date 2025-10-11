@@ -277,14 +277,14 @@ export default function CommunitiesCarousel({
                 ))}
               </CarouselContent>
               
-              {/* Navigation arrows */}
+              {/* Navigation arrows - hidden on mobile for better UX */}
               <CarouselPrevious 
-                className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 h-10 w-10 bg-white hover:bg-gray-50 text-gray-700 shadow-lg border-gray-200"
+                className="hidden md:flex absolute -left-12 top-1/2 -translate-y-1/2 h-10 w-10 bg-white hover:bg-gray-50 text-gray-700 shadow-lg border-gray-200"
                 aria-label="Previous community"
                 data-testid="carousel-previous"
               />
               <CarouselNext 
-                className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 h-10 w-10 bg-white hover:bg-gray-50 text-gray-700 shadow-lg border-gray-200"
+                className="hidden md:flex absolute -right-12 top-1/2 -translate-y-1/2 h-10 w-10 bg-white hover:bg-gray-50 text-gray-700 shadow-lg border-gray-200"
                 aria-label="Next community"
                 data-testid="carousel-next"
               />
