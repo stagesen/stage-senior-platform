@@ -81,15 +81,15 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
         member.featured ? 'ring-2 shadow-lg' : ''
       }`}
       style={{
-        borderTop: `6px solid ${communityColor || '#6366f1'}`,
-        ...(member.featured && { borderColor: communityColor || '#6366f1' })
+        borderTop: `6px solid ${communityColor || '#2B334B'}`,
+        ...(member.featured && { borderColor: communityColor || '#2B334B' })
       }}
       data-testid={`team-member-${member.id}`}
     >
       {member.featured && (
         <div
           className="text-white px-4 py-2 text-xs font-semibold flex items-center gap-2"
-          style={{ backgroundColor: communityColor || '#6366f1' }}
+          style={{ backgroundColor: communityColor || '#2B334B' }}
         >
           <Star className="w-4 h-4 fill-current" />
           <span>Featured Team Member</span>
@@ -115,19 +115,19 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
                   backgroundColor: communityColor ? `${communityColor}15` : '#f3f4f6'
                 }}
               >
-                <User className="w-12 h-12" style={{ color: communityColor || '#6b7280' }} />
+                <User className="w-12 h-12" style={{ color: communityColor || '#2B334B' }} />
               </div>
             )}
           </div>
 
           <h3 className="text-xl font-bold text-gray-900 mb-1 hover:underline decoration-2"
-              style={{ textDecorationColor: communityColor || '#6366f1' }}
+              style={{ textDecorationColor: communityColor || '#2B334B' }}
               data-testid={`team-member-name-${member.id}`}>
             {member.name}
           </h3>
         </Link>
         <p className="text-sm font-semibold mb-1"
-           style={{ color: communityColor || '#6366f1' }}
+           style={{ color: communityColor || '#2B334B' }}
            data-testid={`team-member-role-${member.id}`}>
           {member.role}
         </p>
@@ -150,7 +150,7 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
                 variant="link"
                 size="sm"
                 className="p-0 h-auto font-medium mt-2"
-                style={{ color: communityColor || '#6366f1' }}
+                style={{ color: communityColor || '#2B334B' }}
                 onClick={() => setExpanded(!expanded)}
                 data-testid={`team-member-bio-toggle-${member.id}`}
               >
@@ -169,7 +169,7 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
             <a
               href={`mailto:${member.email}`}
               className="flex items-center justify-center gap-2 text-sm text-gray-600 hover:font-medium transition-all"
-              style={{ color: communityColor || '#6366f1' }}
+              style={{ color: communityColor || '#2B334B' }}
               data-testid={`team-member-email-${member.id}`}
             >
               <Mail className="w-4 h-4" />
@@ -181,7 +181,7 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
             <a
               href={`tel:${member.phone}`}
               className="flex items-center justify-center gap-2 text-sm text-gray-600 hover:font-medium transition-all"
-              style={{ color: communityColor || '#6366f1' }}
+              style={{ color: communityColor || '#2B334B' }}
               data-testid={`team-member-phone-${member.id}`}
             >
               <Phone className="w-4 h-4" />
@@ -199,10 +199,10 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:text-white transition-all hover:shadow-md"
                 style={{
-                  ['--hover-bg' as string]: communityColor || '#6366f1'
+                  ['--hover-bg' as string]: communityColor || '#2B334B'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = communityColor || '#6366f1';
+                  e.currentTarget.style.backgroundColor = communityColor || '#2B334B';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = '#f3f4f6';
@@ -220,7 +220,7 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:text-white transition-all hover:shadow-md"
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = communityColor || '#6366f1';
+                  e.currentTarget.style.backgroundColor = communityColor || '#2B334B';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = '#f3f4f6';
@@ -238,7 +238,7 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
           <Link href={`/team/${member.slug}`}>
             <Button
               className="w-full font-semibold transition-all hover:shadow-md"
-              style={{ backgroundColor: communityColor || '#6366f1' }}
+              style={{ backgroundColor: communityColor || '#2B334B' }}
               data-testid={`view-profile-${member.id}`}
             >
               View Full Profile

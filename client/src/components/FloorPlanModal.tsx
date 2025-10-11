@@ -18,7 +18,8 @@ import {
   Check,
   Phone,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  X
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
@@ -104,21 +105,33 @@ export default function FloorPlanModal({
         data-testid={`floor-plan-modal-${floorPlan.id}`}
       >
         <DialogHeader className="mb-4">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-            <div>
-              <DialogTitle className="text-xl sm:text-2xl font-bold">
-                {floorPlan.name}
-              </DialogTitle>
-              <p className="text-sm sm:text-base text-muted-foreground mt-1">{communityName}</p>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 min-w-0">
+              <div className="min-w-0">
+                <DialogTitle className="text-xl sm:text-2xl font-bold">
+                  {floorPlan.name}
+                </DialogTitle>
+                <p className="text-sm sm:text-base text-muted-foreground mt-1">{communityName}</p>
+              </div>
+              <div className="text-left sm:text-right">
+                {getAvailabilityBadge(floorPlan.availability)}
+                {floorPlan.startingPrice && (
+                  <p className="text-xl sm:text-2xl font-bold text-primary mt-1 sm:mt-2">
+                    {formatPrice(floorPlan.startingPrice)}/mo
+                  </p>
+                )}
+              </div>
             </div>
-            <div className="text-left sm:text-right">
-              {getAvailabilityBadge(floorPlan.availability)}
-              {floorPlan.startingPrice && (
-                <p className="text-xl sm:text-2xl font-bold text-primary mt-1 sm:mt-2">
-                  {formatPrice(floorPlan.startingPrice)}/mo
-                </p>
-              )}
-            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 shrink-0 rounded-full hover:bg-muted"
+              onClick={() => onOpenChange(false)}
+              data-testid="button-close-modal"
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </Button>
           </div>
         </DialogHeader>
 

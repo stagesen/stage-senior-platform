@@ -147,20 +147,20 @@ export default function TeamMemberProfile() {
           </Breadcrumb>
         </div>
 
-        <Card className="overflow-hidden bg-white shadow-xl" style={{ borderTop: `8px solid ${communityColor || '#6366f1'}` }}>
+        <Card className="overflow-hidden bg-white shadow-xl" style={{ borderTop: `8px solid ${communityColor || '#2B334B'}` }}>
           <CardHeader
             className="text-center pb-10 pt-16 relative"
             style={{
               background: communityColor
                 ? `linear-gradient(to bottom, ${communityColor}08, white 70%)`
-                : 'linear-gradient(to bottom, rgb(99 102 241 / 0.03), white 70%)'
+                : 'linear-gradient(to bottom, rgb(43 51 75 / 0.03), white 70%)'
             }}
           >
-            <div className="absolute top-0 left-0 right-0 h-2" style={{ backgroundColor: `${communityColor || '#6366f1'}20` }} />
+            <div className="absolute top-0 left-0 right-0 h-2" style={{ backgroundColor: `${communityColor || '#2B334B'}20` }} />
 
             <Avatar
               className="w-40 h-40 mx-auto mb-6 ring-4 shadow-2xl"
-              style={{ borderColor: communityColor || '#6366f1' }}
+              style={{ borderColor: communityColor || '#2B334B' }}
               data-testid={`profile-avatar-${teamMember.id}`}
             >
               {avatarUrl ? (
@@ -173,8 +173,8 @@ export default function TeamMemberProfile() {
                 <AvatarFallback
                   className="text-4xl font-semibold"
                   style={{
-                    backgroundColor: communityColor ? `${communityColor}15` : 'rgb(99 102 241 / 0.1)',
-                    color: communityColor || '#6366f1'
+                    backgroundColor: communityColor ? `${communityColor}15` : 'rgb(43 51 75 / 0.1)',
+                    color: communityColor || '#2B334B'
                   }}
                 >
                   {getInitials(teamMember.name)}
@@ -184,7 +184,7 @@ export default function TeamMemberProfile() {
             <CardTitle className="text-4xl font-bold mb-3" data-testid="profile-name">{teamMember.name}</CardTitle>
             <CardDescription
               className="text-xl font-semibold mb-3"
-              style={{ color: communityColor || '#6366f1' }}
+              style={{ color: communityColor || '#2B334B' }}
               data-testid="profile-role"
             >
               {teamMember.role}
@@ -200,9 +200,9 @@ export default function TeamMemberProfile() {
           <CardContent className="space-y-8 p-10">
             {/* Bio Section */}
             {teamMember.bio && (
-              <div className="space-y-4 bg-gray-50 p-6 rounded-lg border-l-4" style={{ borderColor: communityColor || '#6366f1' }}>
+              <div className="space-y-4 bg-gray-50 p-6 rounded-lg border-l-4" style={{ borderColor: communityColor || '#2B334B' }}>
                 <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                  <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: communityColor || '#6366f1' }} />
+                  <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: communityColor || '#2B334B' }} />
                   About {teamMember.name.split(' ')[0]}
                 </h2>
                 <div className="prose prose-lg max-w-none">
@@ -217,7 +217,7 @@ export default function TeamMemberProfile() {
             {(teamMember.email || teamMember.phone) && (
               <div className="space-y-4">
                 <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                  <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: communityColor || '#6366f1' }} />
+                  <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: communityColor || '#2B334B' }} />
                   Get in Touch
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -226,14 +226,14 @@ export default function TeamMemberProfile() {
                       href={`mailto:${teamMember.email}`}
                       className="flex items-center gap-4 p-4 rounded-lg border-2 transition-all hover:shadow-lg hover:-translate-y-1"
                       style={{
-                        borderColor: `${communityColor || '#6366f1'}40`,
-                        backgroundColor: `${communityColor || '#6366f1'}05`
+                        borderColor: `${communityColor || '#2B334B'}40`,
+                        backgroundColor: `${communityColor || '#2B334B'}05`
                       }}
                       data-testid="profile-email"
                     >
                       <div
                         className="flex items-center justify-center w-12 h-12 rounded-full"
-                        style={{ backgroundColor: communityColor || '#6366f1' }}
+                        style={{ backgroundColor: communityColor || '#2B334B' }}
                       >
                         <Mail className="w-6 h-6 text-white" />
                       </div>
@@ -248,14 +248,14 @@ export default function TeamMemberProfile() {
                       href={`tel:${teamMember.phone}`}
                       className="flex items-center gap-4 p-4 rounded-lg border-2 transition-all hover:shadow-lg hover:-translate-y-1"
                       style={{
-                        borderColor: `${communityColor || '#6366f1'}40`,
-                        backgroundColor: `${communityColor || '#6366f1'}05`
+                        borderColor: `${communityColor || '#2B334B'}40`,
+                        backgroundColor: `${communityColor || '#2B334B'}05`
                       }}
                       data-testid="profile-phone"
                     >
                       <div
                         className="flex items-center justify-center w-12 h-12 rounded-full"
-                        style={{ backgroundColor: communityColor || '#6366f1' }}
+                        style={{ backgroundColor: communityColor || '#2B334B' }}
                       >
                         <Phone className="w-6 h-6 text-white" />
                       </div>
@@ -273,7 +273,7 @@ export default function TeamMemberProfile() {
             {(teamMember.linkedinUrl || teamMember.twitterUrl) && (
               <div className="space-y-4">
                 <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                  <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: communityColor || '#6366f1' }} />
+                  <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: communityColor || '#2B334B' }} />
                   Connect on Social Media
                 </h2>
                 <div className="flex gap-4">
@@ -283,7 +283,7 @@ export default function TeamMemberProfile() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 px-6 py-3 rounded-lg font-semibold text-white transition-all hover:shadow-lg hover:-translate-y-1"
-                      style={{ backgroundColor: communityColor || '#6366f1' }}
+                      style={{ backgroundColor: communityColor || '#2B334B' }}
                       data-testid="profile-linkedin"
                     >
                       <Linkedin className="w-5 h-5" />
@@ -296,7 +296,7 @@ export default function TeamMemberProfile() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 px-6 py-3 rounded-lg font-semibold text-white transition-all hover:shadow-lg hover:-translate-y-1"
-                      style={{ backgroundColor: communityColor || '#6366f1' }}
+                      style={{ backgroundColor: communityColor || '#2B334B' }}
                       data-testid="profile-twitter"
                     >
                       <Twitter className="w-5 h-5" />
@@ -311,7 +311,7 @@ export default function TeamMemberProfile() {
             {communityTags.length > 0 && (
               <div className="space-y-4">
                 <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                  <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: communityColor || '#6366f1' }} />
+                  <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: communityColor || '#2B334B' }} />
                   {communityTags.length === 1 ? 'Community' : 'Communities'}
                 </h2>
                 <div className="flex flex-wrap gap-3">
@@ -321,7 +321,7 @@ export default function TeamMemberProfile() {
                       <div
                         key={tag}
                         className="inline-flex items-center gap-3 px-5 py-3 rounded-lg text-base font-semibold text-white shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5"
-                        style={{ backgroundColor: tagColor || communityColor || '#6366f1' }}
+                        style={{ backgroundColor: tagColor || communityColor || '#2B334B' }}
                         data-testid={`profile-community-${tag}`}
                       >
                         <MapPin className="w-5 h-5" />
@@ -337,7 +337,7 @@ export default function TeamMemberProfile() {
             {otherTags.length > 0 && (
               <div className="space-y-4">
                 <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                  <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: communityColor || '#6366f1' }} />
+                  <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: communityColor || '#2B334B' }} />
                   Areas of Expertise
                 </h2>
                 <div className="flex flex-wrap gap-3">
@@ -346,8 +346,8 @@ export default function TeamMemberProfile() {
                       key={tag}
                       className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white border-2 shadow-sm hover:shadow-md transition-all"
                       style={{
-                        borderColor: communityColor || '#6366f1',
-                        color: communityColor || '#6366f1'
+                        borderColor: communityColor || '#2B334B',
+                        color: communityColor || '#2B334B'
                       }}
                       data-testid={`profile-tag-${tag}`}
                     >
