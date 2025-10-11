@@ -27,6 +27,7 @@ import {
   ExternalLink,
   BookOpen
 } from "lucide-react";
+import { PageHero } from "@/components/PageHero";
 
 export default function InHomeCare() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -225,78 +226,12 @@ export default function InHomeCare() {
         </div>
       </header>
 
-      {/* Hero Section with Full-Width Image */}
-      <section className="relative overflow-hidden">
-        {/* Hero Background Image */}
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=2078&auto=format&fit=crop"
-            alt="Caregiver helping senior at home"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/90 to-transparent"></div>
-        </div>
-        
-        <div className="relative z-10 py-24 lg:py-32">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight" data-testid="page-title">
-                Denver Metro<br/>
-                <span className="text-green-600">In-Home Caregiving</span>
-              </h1>
-              <p className="text-2xl md:text-3xl text-gray-700 font-medium mb-6" data-testid="hero-subtitle">
-                In-Home Care You Can Trust—Right here in Colorado
-              </p>
-              <p className="text-xl text-gray-600 mb-10" data-testid="hero-description">
-                Providing non-medical homecare support—from bathing assistance to grocery shopping—so you can live well in the place you love.
-              </p>
-              
-              {/* Highlight Badges */}
-              <div className="flex flex-wrap gap-3 mb-10">
-                <Badge className="px-5 py-3 text-base font-semibold bg-white/90 text-green-700 border-2 border-green-600 shadow-lg" data-testid="badge-locally-owned">
-                  <Shield className="w-5 h-5 mr-2" />
-                  Locally Owned
-                </Badge>
-                <Badge className="px-5 py-3 text-base font-semibold bg-white/90 text-green-700 border-2 border-green-600 shadow-lg" data-testid="badge-background-checked">
-                  <ShieldCheck className="w-5 h-5 mr-2" />
-                  Background Checked
-                </Badge>
-                <Badge className="px-5 py-3 text-base font-semibold bg-white/90 text-green-700 border-2 border-green-600 shadow-lg" data-testid="badge-rigorous-training">
-                  <Award className="w-5 h-5 mr-2" />
-                  Rigorous Training
-                </Badge>
-              </div>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button 
-                  size="lg" 
-                  className="px-10 py-7 text-lg bg-green-600 hover:bg-green-700 text-white shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
-                  data-testid="button-schedule-assessment"
-                  asChild
-                >
-                  <a href="tel:3032909000">
-                    Schedule a Care Assessment
-                    <Phone className="ml-2 w-5 h-5" />
-                  </a>
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  className="px-10 py-7 text-lg border-2 border-green-600 text-green-600 hover:bg-green-50 shadow-lg hover:shadow-xl transition-all"
-                  data-testid="button-care-plan"
-                  asChild
-                >
-                  <a href="https://www.healthyathomeco.com/" target="_blank" rel="noopener noreferrer">
-                    Visit Our Main Website
-                    <ExternalLink className="ml-2 w-5 h-5" />
-                  </a>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        pagePath="/in-home-care"
+        defaultTitle="Healthy at Home"
+        defaultSubtitle="Denver Metro In-Home Caregiving"
+        defaultDescription="Trusted non-medical homecare support from bathing assistance to grocery shopping. Locally owned, background checked caregivers."
+      />
 
       {/* Visual Break - Decorative Section */}
       <section className="relative h-48 overflow-hidden">

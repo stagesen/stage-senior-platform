@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { useResolveImageUrl } from '@/hooks/useResolveImageUrl';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
+import { PageHero } from '@/components/PageHero';
 
 type TestimonialWithCommunity = Testimonial & {
   communityName?: string;
@@ -57,16 +58,13 @@ export default function Reviews() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      <PageHero
+        pagePath="/Reviews"
+        defaultTitle="Resident & Family Reviews"
+        defaultSubtitle="Hear from our community"
+        defaultDescription="Read testimonials from residents and their families about life at Stage Senior communities"
+      />
       <div className="container mx-auto px-4 py-20">
-        {/* Page Header */}
-        <div className="text-center mb-16 max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            What Our Families Say
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            Real stories from families who trust Stage Senior with their loved ones' care
-          </p>
-        </div>
 
         {/* Statistics Bar */}
         {approvedTestimonials.length > 0 && (

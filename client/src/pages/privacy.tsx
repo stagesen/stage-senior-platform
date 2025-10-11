@@ -11,6 +11,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Shield, Mail, Phone, MapPin, Calendar } from "lucide-react";
+import { PageHero } from "@/components/PageHero";
 
 export default function Privacy() {
   useEffect(() => {
@@ -49,26 +50,12 @@ export default function Privacy() {
         </div>
       </div>
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-background to-primary/5 py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-              <Shield className="w-8 h-8 text-primary" />
-            </div>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4" data-testid="page-title">
-            Privacy Policy
-          </h1>
-          <p className="text-xl text-muted-foreground mb-6" data-testid="page-description">
-            Your privacy and the security of your personal information are fundamental to our mission of providing exceptional senior living services.
-          </p>
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="w-4 h-4" />
-            <span data-testid="last-updated">Last Updated: September 24, 2025</span>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        pagePath="/privacy"
+        defaultTitle="Privacy Policy"
+        defaultSubtitle="Your privacy matters to us"
+        defaultDescription="Learn how we protect and manage your personal information"
+      />
 
       {/* Main Content */}
       <section className="py-16">

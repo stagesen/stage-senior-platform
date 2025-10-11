@@ -19,6 +19,7 @@ import {
   Eye,
   Calculator
 } from "lucide-react";
+import { PageHero } from "@/components/PageHero";
 
 export default function CarePoints() {
   const [selectedCareType, setSelectedCareType] = useState<"assisted-living" | "memory-care">("assisted-living");
@@ -248,29 +249,12 @@ export default function CarePoints() {
       </div>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary/10 via-primary/5 to-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <Badge className="mb-4" data-testid="badge-care-points">Care Points vs Tiered Pricing</Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6" data-testid="hero-title">
-              Only Pay for the Care Your Loved One Needs—Nothing More
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8" data-testid="hero-description">
-              Our Care Points approach replaces one-size-fits-all tiers with transparent, personalized plans you can understand at a glance.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" data-testid="button-use-calculator">
-                <Calculator className="w-5 h-5 mr-2" />
-                Use our Estimate Calculator
-              </Button>
-              <Button size="lg" variant="outline" data-testid="button-schedule-consult">
-                <Calendar className="w-5 h-5 mr-2" />
-                Schedule a Pricing Consult
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        pagePath="/care-points"
+        defaultTitle="Care Points"
+        defaultSubtitle="Personalized care for every need"
+        defaultDescription="Comprehensive care services tailored to each resident's unique requirements"
+      />
 
       {/* What Are Care Points */}
       <section className="py-16 bg-white">

@@ -26,6 +26,7 @@ import {
   Keyboard,
   MousePointer
 } from "lucide-react";
+import { PageHero } from "@/components/PageHero";
 
 export default function AccessibilityStatement() {
   useEffect(() => {
@@ -64,26 +65,12 @@ export default function AccessibilityStatement() {
         </div>
       </div>
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-background to-primary/5 py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-              <Accessibility className="w-8 h-8 text-primary" />
-            </div>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4" data-testid="page-title">
-            Accessibility Statement
-          </h1>
-          <p className="text-xl text-muted-foreground mb-6" data-testid="page-description">
-            Stage Senior is committed to ensuring digital and physical accessibility for all residents, families, and website visitors.
-          </p>
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="w-4 h-4" />
-            <span data-testid="last-updated">Last Updated: September 24, 2025</span>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        pagePath="/accessibility"
+        defaultTitle="Accessibility Statement"
+        defaultSubtitle="Committed to inclusive design"
+        defaultDescription="Our commitment to making our communities and website accessible to everyone"
+      />
 
       {/* Main Content */}
       <section className="py-16">

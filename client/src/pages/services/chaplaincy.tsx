@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageHero } from "@/components/PageHero";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
 import type { Community } from "@shared/schema";
 
@@ -55,17 +56,12 @@ export default function Chaplaincy() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative py-32 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6" data-testid="hero-title">
-            Chaplain Program
-          </h1>
-          <p className="text-xl md:text-2xl text-white/90" data-testid="hero-subtitle">
-            Compassionate Spiritual Support
-          </p>
-        </div>
-      </section>
+      <PageHero
+        pagePath="/services/chaplaincy"
+        defaultTitle="Chaplaincy Services"
+        defaultSubtitle="Spiritual care and support"
+        defaultDescription="Interfaith spiritual support and pastoral care for all residents"
+      />
 
       {/* Our Vision for Spiritual Care Section */}
       <section className="py-20 bg-white">

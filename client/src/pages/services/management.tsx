@@ -3,6 +3,7 @@ import { CheckCircle, Building2, TrendingUp, Heart, Users, BarChart3, Briefcase 
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
+import { PageHero } from "@/components/PageHero";
 import type { Community } from "@shared/schema";
 
 export default function ProfessionalManagement() {
@@ -64,18 +65,12 @@ export default function ProfessionalManagement() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative py-32 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6" data-testid="hero-title">
-            Professional Management Services
-          </h1>
-          <p className="text-xl md:text-2xl text-white/90" data-testid="hero-subtitle">
-            Local Leadership, Proven Excellence
-          </p>
-        </div>
-      </section>
+      <PageHero
+        pagePath="/services/management"
+        defaultTitle="Professional Management Services"
+        defaultSubtitle="Local Leadership, Proven Excellence"
+        defaultDescription="Expert operational excellence, personalized care, and proven results across Colorado"
+      />
 
       {/* Main Content Sections */}
       <div className="py-16">

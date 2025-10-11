@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Search, Building2, Home, HelpCircle } from "lucide-react";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
+import { PageHero } from "@/components/PageHero";
 import type { Faq, Community } from "@shared/schema";
 
 export default function FAQs() {
@@ -86,20 +87,14 @@ export default function FAQs() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <PageHero
+        pagePath="/faqs"
+        defaultTitle="Frequently Asked Questions"
+        defaultSubtitle="Find answers to common questions"
+        defaultDescription="Get answers about our senior living communities and services"
+      />
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-5xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6">
-              <HelpCircle className="w-8 h-8 text-blue-600" />
-            </div>
-            <h1 className="text-5xl font-bold mb-4 text-gray-900" data-testid="page-title">
-              Frequently Asked Questions
-            </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Find answers to common questions about our senior living communities and services.
-            </p>
-          </div>
 
           {/* Search Bar */}
           <div className="mb-8">

@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
+import { PageHero } from "@/components/PageHero";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
 import type { Community } from "@shared/schema";
 
@@ -62,17 +63,12 @@ export default function LongTermCare() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative py-32 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6" data-testid="hero-title">
-            Long Term Care Insurance Services
-          </h1>
-          <p className="text-xl md:text-2xl text-white/90" data-testid="hero-subtitle">
-            Maximizing Your Insurance Benefits
-          </p>
-        </div>
-      </section>
+      <PageHero
+        pagePath="/services/long-term-care"
+        defaultTitle="Long-Term Care Services"
+        defaultSubtitle="Skilled nursing and extended care"
+        defaultDescription="Professional long-term care services with compassion and expertise"
+      />
 
       {/* Service Highlights Bar */}
       <section className="py-8 bg-gray-50 border-b">
