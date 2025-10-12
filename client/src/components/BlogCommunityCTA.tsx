@@ -52,36 +52,24 @@ export default function BlogCommunityCTA({ community }: BlogCommunityCTAProps) {
         borderColor: 'hsl(220, 53%, 53%, 0.4)',
       };
 
-  // Determine text color based on background brightness for accessibility
-  const getContrastColor = (hexColor: string): string => {
-    // Remove # if present
-    const hex = hexColor.replace('#', '');
-    
-    // Convert to RGB
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    
-    // Calculate relative luminance (WCAG formula)
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    
-    // Return white for dark backgrounds, black for light backgrounds
-    return luminance > 0.5 ? '#000000' : '#FFFFFF';
-  };
-
-  // CTA button style using ctaColorHex with proper contrast, fallback to primary
+  // CTA button style using ctaColorHex with white text for maximum impact
   const buttonStyle = community.ctaColorHex
     ? {
         backgroundColor: community.ctaColorHex,
-        color: getContrastColor(community.ctaColorHex),
+        color: '#FFFFFF',
         borderColor: community.ctaColorHex,
       }
     : {}; // Will use default button styling
 
+  // Card border style using community color
+  const cardBorderStyle = community.ctaColorHex
+    ? { borderColor: community.ctaColorHex }
+    : {};
+
   return (
     <Card 
-      className="border-2 overflow-hidden mt-8 md:mt-12 shadow-lg" 
-      style={gradientStyle}
+      className="border-2 overflow-hidden mt-8 md:mt-12 shadow-xl bg-white" 
+      style={cardBorderStyle}
       data-testid="blog-community-cta"
     >
       <CardContent className="p-6 sm:p-8 lg:p-12">
