@@ -1,0 +1,11 @@
+node_modules
+dist
+build
+.replit
+replit.nix
+*.config.ts
+*.config.js
+vite.config.ts
+tailwind.config.ts
+drizzle.config.ts
+postcss.config.cjs
