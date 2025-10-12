@@ -7,7 +7,11 @@ import { useToast } from "@/hooks/use-toast";
 import logoWhiteUrl from "@assets/stagesenior-logo-wht_1758726884711.webp";
 import ashaLogoUrl from "@assets/68af28185bce7fea2a2d6c03_ASHA_ASHA_WHITE_RGB-ezgif.com-resize_1758727665004.webp";
 
-export default function Footer() {
+interface FooterProps {
+  hideNewsletter?: boolean;
+}
+
+export default function Footer({ hideNewsletter = false }: FooterProps) {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -68,48 +72,50 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#282e34] text-[var(--mist-white)]" data-testid="footer">
-      {/* Newsletter Section - Blue Background for CTA Emphasis */}
-      <div className="bg-gradient-to-br from-[var(--bright-blue)] via-[var(--deep-blue)] to-[var(--deep-blue)] py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="flex justify-center mb-4">
-            <Heart className="w-8 h-8 text-white/90" />
+      {/* Newsletter Section - Blue Background for CTA Emphasis - Hidden on blog posts */}
+      {!hideNewsletter && (
+        <div className="bg-gradient-to-br from-[var(--bright-blue)] via-[var(--deep-blue)] to-[var(--deep-blue)] py-20 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <div className="flex justify-center mb-4">
+              <Heart className="w-8 h-8 text-white/90" />
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-6" data-testid="newsletter-title">
+              Stay Connected with Our Community
+            </h2>
+            <p className="text-white/95 text-lg mb-10 max-w-2xl mx-auto leading-relaxed" data-testid="newsletter-description">
+              Get the latest updates on events, wellness tips, and community news delivered to your inbox.
+            </p>
+            <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 justify-center items-stretch max-w-md mx-auto">
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email address"
+                className="bg-white text-[var(--midnight-slate)] border-0 flex-1 h-14 text-base shadow-lg"
+                disabled={isSubmitting}
+                required
+                inputMode="email"
+                data-testid="newsletter-input"
+                aria-label="Email address for newsletter"
+              />
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-[var(--deep-blue)] text-white hover:bg-gradient-to-r hover:from-[var(--deep-blue)] hover:to-[var(--bright-blue)] h-14 px-10 group shadow-lg font-semibold transition-all duration-300 w-full sm:w-auto"
+                data-testid="newsletter-submit"
+              >
+                {isSubmitting ? "Subscribing..." : "Subscribe"}
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+              </Button>
+            </form>
+            <p className="text-white/70 text-sm mt-4">
+              <CheckCircle className="w-4 h-4 inline mr-1" />
+              No spam, unsubscribe at any time
+            </p>
           </div>
-          <h2 className="text-2xl font-bold text-white mb-6" data-testid="newsletter-title">
-            Stay Connected with Our Community
-          </h2>
-          <p className="text-white/95 text-lg mb-10 max-w-2xl mx-auto leading-relaxed" data-testid="newsletter-description">
-            Get the latest updates on events, wellness tips, and community news delivered to your inbox.
-          </p>
-          <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 justify-center items-stretch max-w-md mx-auto">
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email address"
-              className="bg-white text-[var(--midnight-slate)] border-0 flex-1 h-14 text-base shadow-lg"
-              disabled={isSubmitting}
-              required
-              inputMode="email"
-              data-testid="newsletter-input"
-              aria-label="Email address for newsletter"
-            />
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-[var(--deep-blue)] text-white hover:bg-gradient-to-r hover:from-[var(--deep-blue)] hover:to-[var(--bright-blue)] h-14 px-10 group shadow-lg font-semibold transition-all duration-300 w-full sm:w-auto"
-              data-testid="newsletter-submit"
-            >
-              {isSubmitting ? "Subscribing..." : "Subscribe"}
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
-            </Button>
-          </form>
-          <p className="text-white/70 text-sm mt-4">
-            <CheckCircle className="w-4 h-4 inline mr-1" />
-            No spam, unsubscribe at any time
-          </p>
         </div>
-      </div>
+      )}
 
       {/* Main Footer Content */}
       <div className="bg-gradient-to-b from-[#282e34] to-[#282e34]/98 py-20">

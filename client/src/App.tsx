@@ -46,6 +46,8 @@ function Router() {
   const [isCommunityDetail] = useRoute("/communities/:slug");
   // Check if we're on the in-home care page
   const [isInHomeCare] = useRoute("/in-home-care");
+  // Check if we're on a blog post detail page
+  const [isBlogPost] = useRoute("/blog/:slug");
   
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -94,7 +96,7 @@ function Router() {
         </Switch>
       </main>
       {/* Don't show main footer on in-home care page */}
-      {!isInHomeCare && <Footer />}
+      {!isInHomeCare && <Footer hideNewsletter={isBlogPost} />}
       <ScrollToTop />
     </div>
   );
