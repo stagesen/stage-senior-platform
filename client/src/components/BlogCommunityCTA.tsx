@@ -12,11 +12,39 @@ interface BlogCommunityCTAProps {
 export default function BlogCommunityCTA({ community }: BlogCommunityCTAProps) {
   const logoUrl = useResolveImageUrl(community.logoImageId);
 
+  // Helper function to convert hex to rgba (handles both #rrggbb and rrggbb formats)
+  const hexToRgba = (hex: string, alpha: number): string | null => {
+    if (!hex) return null;
+    
+    // Remove '#' if present
+    const cleanHex = hex.startsWith('#') ? hex.slice(1) : hex;
+    
+    // Validate hex format (must be 6 characters)
+    if (cleanHex.length !== 6 || !/^[0-9A-Fa-f]{6}$/.test(cleanHex)) {
+      return null;
+    }
+    
+    const r = parseInt(cleanHex.slice(0, 2), 16);
+    const g = parseInt(cleanHex.slice(2, 4), 16);
+    const b = parseInt(cleanHex.slice(4, 6), 16);
+    
+    // Check for NaN values
+    if (isNaN(r) || isNaN(g) || isNaN(b)) {
+      return null;
+    }
+    
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
   // Create gradient background using mainColorHex
-  const gradientStyle = community.mainColorHex
+  const mainColorLight = community.mainColorHex ? hexToRgba(community.mainColorHex, 0.15) : null;
+  const mainColorLighter = community.mainColorHex ? hexToRgba(community.mainColorHex, 0.05) : null;
+  const borderColor = community.mainColorHex ? hexToRgba(community.mainColorHex, 0.3) : null;
+  
+  const gradientStyle = mainColorLight && mainColorLighter && borderColor
     ? {
-        background: `linear-gradient(135deg, ${community.mainColorHex}15 0%, ${community.mainColorHex}05 100%)`,
-        borderColor: community.mainColorHex + "30",
+        background: `linear-gradient(135deg, ${mainColorLight} 0%, ${mainColorLighter} 100%)`,
+        borderColor: borderColor,
       }
     : {};
 
