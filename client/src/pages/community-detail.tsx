@@ -826,7 +826,7 @@ const ActionPanel = ({ community, handleNavClick }: { community: any; handleNavC
                 className="w-full h-full object-cover"
               />
             </div>
-            <CardHeader className="bg-primary/5">
+            <CardHeader>
               <CardTitle className="text-xl">Monthly Pricing</CardTitle>
               <CardDescription className="text-2xl font-bold text-primary mt-2" data-testid="pricing-amount">
                 {community.startingPrice !== null && community.startingPrice !== undefined ? (
@@ -883,7 +883,7 @@ const ActionPanel = ({ community, handleNavClick }: { community: any; handleNavC
                   <User className="w-24 h-24 text-primary/40" />
                 )}
               </div>
-              <CardHeader className="bg-primary/5">
+              <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
                   <Users className="w-5 h-5 text-primary" />
                   A Message from Leadership
@@ -967,7 +967,7 @@ const ActionPanel = ({ community, handleNavClick }: { community: any; handleNavC
           </Card>
 
           {/* Download Brochure */}
-          <Card className="shadow-lg bg-primary/5 border-primary/20 overflow-hidden">
+          <Card className="shadow-lg border-primary/20 overflow-hidden">
             <div className="h-48 overflow-hidden">
               <img
                 src={resolvedBrochureUrl || defaultBrochureImage}
