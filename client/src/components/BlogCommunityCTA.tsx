@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Phone } from "lucide-react";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { useScheduleTour } from "@/hooks/useScheduleTour";
 import type { Community } from "@shared/schema";
 
 interface BlogCommunityCTAProps {
@@ -11,6 +12,7 @@ interface BlogCommunityCTAProps {
 
 export default function BlogCommunityCTA({ community }: BlogCommunityCTAProps) {
   const logoUrl = useResolveImageUrl(community.logoImageId);
+  const { openScheduleTour } = useScheduleTour();
 
   // Helper function to convert hex to rgba (handles both #rrggbb and rrggbb formats)
   const hexToRgba = (hex: string, alpha: number): string | null => {
@@ -106,16 +108,19 @@ export default function BlogCommunityCTA({ community }: BlogCommunityCTAProps) {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-6 lg:mb-0">
               <Button
-                asChild
                 size="lg"
                 className="group hover:brightness-110 transition-all text-base sm:text-lg font-semibold shadow-md hover:shadow-xl w-full sm:w-auto"
                 style={buttonStyle}
+                onClick={() => openScheduleTour({
+                  communityId: community.id,
+                  communityName: community.name,
+                  title: `Schedule a Tour at ${community.name}`,
+                  description: `Visit ${community.name} in ${community.city} to see our beautiful community and amenities in person.`
+                })}
                 data-testid="button-schedule-tour"
               >
-                <Link href={`/communities/${community.slug}`}>
-                  Schedule Your Tour
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
+                Schedule Your Tour
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               
               <Button
