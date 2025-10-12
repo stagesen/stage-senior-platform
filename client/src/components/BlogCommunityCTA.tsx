@@ -52,11 +52,28 @@ export default function BlogCommunityCTA({ community }: BlogCommunityCTAProps) {
         borderColor: 'hsl(220, 53%, 53%, 0.4)',
       };
 
-  // CTA button style using ctaColorHex with better contrast, fallback to primary
+  // Determine text color based on background brightness for accessibility
+  const getContrastColor = (hexColor: string): string => {
+    // Remove # if present
+    const hex = hexColor.replace('#', '');
+    
+    // Convert to RGB
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    
+    // Calculate relative luminance (WCAG formula)
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Return white for dark backgrounds, black for light backgrounds
+    return luminance > 0.5 ? '#000000' : '#FFFFFF';
+  };
+
+  // CTA button style using ctaColorHex with proper contrast, fallback to primary
   const buttonStyle = community.ctaColorHex
     ? {
         backgroundColor: community.ctaColorHex,
-        color: "#000",
+        color: getContrastColor(community.ctaColorHex),
         borderColor: community.ctaColorHex,
       }
     : {}; // Will use default button styling
@@ -103,7 +120,7 @@ export default function BlogCommunityCTA({ community }: BlogCommunityCTAProps) {
               <Button
                 asChild
                 size="lg"
-                className="group hover:opacity-90 transition-all text-base sm:text-lg font-semibold shadow-md hover:shadow-lg w-full sm:w-auto"
+                className="group hover:brightness-110 transition-all text-base sm:text-lg font-semibold shadow-md hover:shadow-xl w-full sm:w-auto"
                 style={buttonStyle}
                 data-testid="button-schedule-tour"
               >
