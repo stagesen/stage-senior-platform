@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Phone } from "lucide-react";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { Community } from "@shared/schema";
 
@@ -36,71 +36,79 @@ export default function BlogCommunityCTA({ community }: BlogCommunityCTAProps) {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
 
-  // Create gradient background using mainColorHex
-  const mainColorLight = community.mainColorHex ? hexToRgba(community.mainColorHex, 0.15) : null;
-  const mainColorLighter = community.mainColorHex ? hexToRgba(community.mainColorHex, 0.05) : null;
-  const borderColor = community.mainColorHex ? hexToRgba(community.mainColorHex, 0.3) : null;
+  // Create stronger gradient background using mainColorHex with better visibility
+  const mainColorMedium = community.mainColorHex ? hexToRgba(community.mainColorHex, 0.12) : null;
+  const mainColorLight = community.mainColorHex ? hexToRgba(community.mainColorHex, 0.03) : null;
+  const borderColor = community.mainColorHex ? hexToRgba(community.mainColorHex, 0.4) : null;
   
-  const gradientStyle = mainColorLight && mainColorLighter && borderColor
+  // Fallback to default gradient if no community colors
+  const gradientStyle = mainColorMedium && mainColorLight && borderColor
     ? {
-        background: `linear-gradient(135deg, ${mainColorLight} 0%, ${mainColorLighter} 100%)`,
+        background: `linear-gradient(135deg, ${mainColorMedium} 0%, ${mainColorLight} 100%)`,
         borderColor: borderColor,
       }
-    : {};
+    : {
+        background: 'linear-gradient(135deg, hsl(220, 53%, 53%, 0.12) 0%, hsl(220, 53%, 53%, 0.03) 100%)',
+        borderColor: 'hsl(220, 53%, 53%, 0.4)',
+      };
 
-  // CTA button style using ctaColorHex
+  // CTA button style using ctaColorHex with better contrast, fallback to primary
   const buttonStyle = community.ctaColorHex
     ? {
         backgroundColor: community.ctaColorHex,
         color: "#000",
+        borderColor: community.ctaColorHex,
       }
-    : {};
+    : {}; // Will use default button styling
 
   return (
     <Card 
-      className="border-2 overflow-hidden mt-12" 
+      className="border-2 overflow-hidden mt-8 md:mt-12 shadow-lg" 
       style={gradientStyle}
       data-testid="blog-community-cta"
     >
-      <CardContent className="p-8 md:p-12">
-        <div className="flex flex-col md:flex-row items-center gap-8">
+      <CardContent className="p-6 sm:p-8 lg:p-12">
+        <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6 lg:gap-10">
           {/* Community Logo */}
           {logoUrl && (
-            <div className="flex-shrink-0">
-              <img
-                src={logoUrl}
-                alt={`${community.name} logo`}
-                className="w-24 h-24 md:w-28 md:h-28 object-contain"
-                data-testid="community-logo"
-              />
+            <div className="flex-shrink-0 w-full lg:w-auto flex justify-center lg:justify-start">
+              <div className="bg-white rounded-xl p-4 shadow-md">
+                <img
+                  src={logoUrl}
+                  alt={`${community.name} logo`}
+                  className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 object-contain"
+                  data-testid="community-logo"
+                />
+              </div>
             </div>
           )}
 
           {/* CTA Content */}
-          <div className="flex-1 text-center md:text-left">
+          <div className="flex-1 text-center lg:text-left w-full">
             <h3 
-              className="text-2xl md:text-3xl font-bold text-foreground mb-3"
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-3 lg:mb-4"
               data-testid="cta-heading"
             >
               Interested in {community.name}?
             </h3>
             <p 
-              className="text-lg text-muted-foreground mb-6"
+              className="text-base sm:text-lg text-muted-foreground mb-6 lg:mb-8 max-w-2xl mx-auto lg:mx-0"
               data-testid="cta-subheading"
             >
-              Discover what makes {community.name} special and see why families choose us for their loved ones.
+              Discover what makes {community.name} special and see why families trust us with their loved ones' care.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-6 lg:mb-0">
               <Button
                 asChild
                 size="lg"
-                className="group hover:opacity-90 transition-opacity"
+                className="group hover:opacity-90 transition-all text-base sm:text-lg font-semibold shadow-md hover:shadow-lg w-full sm:w-auto"
                 style={buttonStyle}
                 data-testid="button-schedule-tour"
               >
                 <Link href={`/communities/${community.slug}`}>
-                  Schedule Your Personal Tour
+                  Schedule Your Tour
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
@@ -109,29 +117,35 @@ export default function BlogCommunityCTA({ community }: BlogCommunityCTAProps) {
                 asChild
                 variant="outline"
                 size="lg"
-                data-testid="button-learn-more"
+                className="border-2 hover:bg-accent text-base sm:text-lg font-semibold w-full sm:w-auto"
+                data-testid="button-contact"
               >
-                <Link href={`/communities/${community.slug}`}>
-                  Learn More About {community.name}
+                <Link href="/contact">
+                  Contact Us
                 </Link>
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Additional Info */}
+        {/* Contact Info Bar */}
         {community.phoneDisplay && (
-          <div className="mt-8 pt-8 border-t border-border text-center md:text-left">
-            <p className="text-sm text-muted-foreground" data-testid="cta-contact-info">
-              Questions? Call us at{" "}
+          <div className="mt-6 lg:mt-8 pt-6 lg:pt-8 border-t-2 border-border">
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-between gap-4">
+              <p className="text-sm sm:text-base text-muted-foreground text-center lg:text-left" data-testid="cta-contact-info">
+                Have questions? We're here to help!
+              </p>
               <a 
                 href={`tel:${community.phoneDial || community.phoneDisplay}`}
-                className="font-semibold text-foreground hover:text-primary transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-accent/20 hover:bg-accent/30 rounded-lg transition-colors group border border-accent/40"
                 data-testid="link-phone"
               >
-                {community.phoneDisplay}
+                <Phone className="w-5 h-5 text-foreground" />
+                <span className="font-bold text-foreground text-base sm:text-lg">
+                  {community.phoneDisplay}
+                </span>
               </a>
-            </p>
+            </div>
           </div>
         )}
       </CardContent>
