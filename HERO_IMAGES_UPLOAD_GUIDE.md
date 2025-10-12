@@ -42,8 +42,8 @@ This guide contains all generated hero images for your Stage Senior website page
 
 #### 4. Team Directory Hero
 - **Page Path:** `/team`
-- **Image File:** `attached_assets/generated_images/Team_directory_hero_image_5e1b1474.png`
-- **Description:** Professional senior living team portrait with experienced healthcare professionals
+- **Image File:** `attached_assets/generated_images/Team_directory_grid_hero_2bded0e9.png`
+- **Description:** Team directory grid layout with diverse staff member headshots and profiles
 - **Suggested Title:** Meet Our Team
 - **Suggested Subtitle:** Experienced Professionals Dedicated to Your Well-Being
 
@@ -60,8 +60,8 @@ This guide contains all generated hero images for your Stage Senior website page
 
 #### 6. Events Page Hero
 - **Page Path:** `/events`
-- **Image File:** `attached_assets/generated_images/Community_events_hero_image_d4591b33.png`
-- **Description:** Seniors enjoying community event with active engagement and social gathering
+- **Image File:** `attached_assets/generated_images/Events_gathering_hero_image_f6022850.png`
+- **Description:** Outdoor community festival or gathering with large group of seniors celebrating together
 - **Suggested Title:** Community Events
 - **Suggested Subtitle:** Engage, Connect, and Enjoy Life Together
 
@@ -74,29 +74,29 @@ This guide contains all generated hero images for your Stage Senior website page
 
 #### 8. Reviews Page Hero
 - **Page Path:** `/reviews`
-- **Image File:** `attached_assets/generated_images/Reviews_testimonials_hero_image_ccb7deeb.png`
-- **Description:** Happy senior resident with family showing genuine joy and satisfaction
+- **Image File:** `attached_assets/generated_images/Reviews_rating_hero_image_792dd544.png`
+- **Description:** Senior writing positive online review on tablet with five-star ratings visible
 - **Suggested Title:** What Our Residents Say
 - **Suggested Subtitle:** Five-Star Care, Proven by Our Families
 
 #### 9. Careers Page Hero
 - **Page Path:** `/careers`
-- **Image File:** `attached_assets/generated_images/Careers_opportunities_hero_image_094deb76.png`
-- **Description:** Professional diverse healthcare team in collaborative work environment
+- **Image File:** `attached_assets/generated_images/Careers_hiring_hero_image_2f8f6354.png`
+- **Description:** Job interview or employee orientation with HR manager welcoming new hire
 - **Suggested Title:** Join Our Team
 - **Suggested Subtitle:** Build Your Career in Senior Care
 
 #### 10. Contact Page Hero
 - **Page Path:** `/contact`
-- **Image File:** `attached_assets/generated_images/Contact_us_hero_image_8463e5c8.png`
-- **Description:** Welcoming reception desk with friendly receptionist greeting visitor
+- **Image File:** `attached_assets/generated_images/Contact_reception_hero_image_d411c082.png`
+- **Description:** Customer service representative answering phone call at modern reception desk
 - **Suggested Title:** Get In Touch
 - **Suggested Subtitle:** We're Ready to Answer Your Questions
 
 #### 11. Stage Cares Page Hero
 - **Page Path:** `/stage-cares`
-- **Image File:** `attached_assets/generated_images/Stage_Cares_charity_hero_30f675c7.png`
-- **Description:** Caregiver helping senior with compassion showing community service atmosphere
+- **Image File:** `attached_assets/generated_images/Stage_Cares_volunteers_hero_f271772b.png`
+- **Description:** Volunteers serving meals at community outreach event showing philanthropy and social responsibility
 - **Suggested Title:** Stage Cares
 - **Suggested Subtitle:** Giving Back to Our Community
 
@@ -106,15 +106,15 @@ This guide contains all generated hero images for your Stage Senior website page
 
 #### 12. Services Overview Hero
 - **Page Path:** `/services`
-- **Image File:** `attached_assets/generated_images/Services_overview_hero_image_ff1f7954.png`
-- **Description:** Professional senior living services overview showcasing comprehensive care options
+- **Image File:** `attached_assets/generated_images/Services_catalog_hero_image_5dbb1c48.png`
+- **Description:** Infographic style display of senior care services with visual representation of different care levels
 - **Suggested Title:** Our Services
 - **Suggested Subtitle:** Comprehensive Care Tailored to Your Needs
 
 #### 13. Management Services Hero
 - **Page Path:** `/services/management`
-- **Image File:** `attached_assets/generated_images/Management_services_hero_image_6cc871ff.png`
-- **Description:** Executive management team in strategic planning session with professional leadership
+- **Image File:** `attached_assets/generated_images/Management_leadership_hero_image_01efa1cb.png`
+- **Description:** Business executive presenting to board of directors with charts and data showing strategic planning
 - **Suggested Title:** Management Services
 - **Suggested Subtitle:** Expert Leadership for Exceptional Communities
 
