@@ -1,6 +1,6 @@
-# Hero Images Upload Guide
+# Hero Images Upload Guide - Authentic Candid Style
 
-This guide contains all generated hero images for your Stage Senior website pages. Follow the instructions below to upload these images through the `/admin` page.
+This guide contains all **authentic, candid-style** hero images for your Stage Senior website pages. These images have a casual, cell phone photography feel (0/10 cheese factor) showing real moments in assisted living, memory care, and independent living communities.
 
 ## How to Upload Hero Images
 
@@ -9,9 +9,9 @@ This guide contains all generated hero images for your Stage Senior website page
 3. For each page below:
    - Click "Add New Page Hero" or edit existing hero
    - Set the **Page Path** (shown below for each image)
-   - Upload the corresponding image file
+   - Upload the corresponding image file from `attached_assets/generated_images/`
    - Add the suggested title and description
-   - Set overlay opacity and text alignment as desired
+   - Set overlay opacity (0.3-0.5 recommended) and text alignment
    - Mark as **Active**
    - Save changes
 
@@ -21,38 +21,38 @@ This guide contains all generated hero images for your Stage Senior website page
 
 #### 1. Home Page Hero
 - **Page Path:** `/`
-- **Image File:** `attached_assets/generated_images/Welcome_home_hero_image_95450f0c.png`
-- **Description:** Welcoming senior living community entrance with modern facility exterior, beautiful landscaping, and Colorado mountain backdrop
-- **Suggested Title:** Welcome to Stage Management
+- **Image File:** `attached_assets/generated_images/Home_entrance_candid_photo_45ad8565.png`
+- **Style:** Casual cell phone photo of facility entrance with seniors on porch
+- **Suggested Title:** Welcome Home
 - **Suggested Subtitle:** Locally Owned, Resident-Focused Senior Living
 
 #### 2. About Us Page Hero
 - **Page Path:** `/about-us`
-- **Image File:** `attached_assets/generated_images/About_us_team_hero_225db6b0.png`
-- **Description:** Professional diverse healthcare team showcasing caring staff members and caregivers
-- **Suggested Title:** Creating Vibrant Senior Communities in Colorado
-- **Suggested Subtitle:** Our Team is Dedicated to Your Care
+- **Image File:** `attached_assets/generated_images/About_us_staff_candid_55c3287c.png`
+- **Style:** Candid snapshot of staff members laughing together in hallway
+- **Suggested Title:** Our Story
+- **Suggested Subtitle:** Creating Vibrant Communities in Colorado
 
 #### 3. Communities Page Hero
 - **Page Path:** `/communities`
-- **Image File:** `attached_assets/generated_images/Communities_overview_hero_image_e684681e.png`
-- **Description:** Upscale senior living campus with multiple buildings and beautiful Colorado architecture
+- **Image File:** `attached_assets/generated_images/Communities_building_casual_shot_fe0edc9e.png`
+- **Style:** Cell phone photo of community building from parking lot view
 - **Suggested Title:** Our Communities
-- **Suggested Subtitle:** Discover Your Perfect Senior Living Home
+- **Suggested Subtitle:** Find Your Perfect Home
 
 #### 4. Team Directory Hero
 - **Page Path:** `/team`
-- **Image File:** `attached_assets/generated_images/Team_directory_grid_hero_2bded0e9.png`
-- **Description:** Team directory grid layout with diverse staff member headshots and profiles
+- **Image File:** `attached_assets/generated_images/Team_casual_group_photo_0e6e89f0.png`
+- **Style:** Informal team photo with staff in hallway or common area
 - **Suggested Title:** Meet Our Team
-- **Suggested Subtitle:** Experienced Professionals Dedicated to Your Well-Being
+- **Suggested Subtitle:** Caring Professionals You Can Trust
 
 #### 5. Blog Page Hero
 - **Page Path:** `/blog`
-- **Image File:** `attached_assets/generated_images/Blog_reading_hero_image_0b59c65b.png`
-- **Description:** Senior reading in comfortable modern library setting with educational atmosphere
-- **Suggested Title:** News & Insights
-- **Suggested Subtitle:** Stay Informed About Senior Living
+- **Image File:** `attached_assets/generated_images/Blog_reading_casual_moment_307d0bc0.png`
+- **Style:** Cell phone shot of senior reading in sunny common area
+- **Suggested Title:** News & Stories
+- **Suggested Subtitle:** Life at Stage Senior
 
 ---
 
@@ -60,43 +60,43 @@ This guide contains all generated hero images for your Stage Senior website page
 
 #### 6. Events Page Hero
 - **Page Path:** `/events`
-- **Image File:** `attached_assets/generated_images/Events_gathering_hero_image_f6022850.png`
-- **Description:** Outdoor community festival or gathering with large group of seniors celebrating together
+- **Image File:** `attached_assets/generated_images/Events_bingo_casual_shot_8fc98b8c.png`
+- **Style:** Casual photo of residents at bingo or card game
 - **Suggested Title:** Community Events
-- **Suggested Subtitle:** Engage, Connect, and Enjoy Life Together
+- **Suggested Subtitle:** Connect and Celebrate Together
 
 #### 7. FAQs Page Hero
 - **Page Path:** `/faqs`
-- **Image File:** `attached_assets/generated_images/FAQ_help_center_hero_2cea3eb7.png`
-- **Description:** Senior consulting with friendly staff member in helpful guidance session
+- **Image File:** `attached_assets/generated_images/FAQ_help_desk_candid_3d813991.png`
+- **Style:** Candid moment of caregiver helping resident at front desk
 - **Suggested Title:** Frequently Asked Questions
-- **Suggested Subtitle:** We're Here to Help Answer Your Questions
+- **Suggested Subtitle:** We're Here to Help
 
 #### 8. Reviews Page Hero
 - **Page Path:** `/reviews`
-- **Image File:** `attached_assets/generated_images/Reviews_rating_hero_image_792dd544.png`
-- **Description:** Senior writing positive online review on tablet with five-star ratings visible
-- **Suggested Title:** What Our Residents Say
-- **Suggested Subtitle:** Five-Star Care, Proven by Our Families
+- **Image File:** `attached_assets/generated_images/Reviews_thumbs_up_candid_8b0aa974.png`
+- **Style:** Candid photo of senior giving thumbs up with family
+- **Suggested Title:** What Families Are Saying
+- **Suggested Subtitle:** Real Stories, Real Satisfaction
 
 #### 9. Careers Page Hero
 - **Page Path:** `/careers`
-- **Image File:** `attached_assets/generated_images/Careers_hiring_hero_image_2f8f6354.png`
-- **Description:** Job interview or employee orientation with HR manager welcoming new hire
+- **Image File:** `attached_assets/generated_images/Careers_orientation_casual_photo_9a6099b0.png`
+- **Style:** Cell phone photo of orientation or training session
 - **Suggested Title:** Join Our Team
-- **Suggested Subtitle:** Build Your Career in Senior Care
+- **Suggested Subtitle:** Build a Rewarding Career
 
 #### 10. Contact Page Hero
 - **Page Path:** `/contact`
-- **Image File:** `attached_assets/generated_images/Contact_reception_hero_image_d411c082.png`
-- **Description:** Customer service representative answering phone call at modern reception desk
+- **Image File:** `attached_assets/generated_images/Contact_lobby_casual_view_e9f1dce9.png`
+- **Style:** Casual reception area shot from visitor perspective
 - **Suggested Title:** Get In Touch
-- **Suggested Subtitle:** We're Ready to Answer Your Questions
+- **Suggested Subtitle:** We're Ready to Help
 
 #### 11. Stage Cares Page Hero
 - **Page Path:** `/stage-cares`
-- **Image File:** `attached_assets/generated_images/Stage_Cares_volunteers_hero_f271772b.png`
-- **Description:** Volunteers serving meals at community outreach event showing philanthropy and social responsibility
+- **Image File:** `attached_assets/generated_images/Stage_Cares_volunteer_candid_23ef5a96.png`
+- **Style:** Cell phone photo of volunteer event or community service
 - **Suggested Title:** Stage Cares
 - **Suggested Subtitle:** Giving Back to Our Community
 
@@ -106,31 +106,31 @@ This guide contains all generated hero images for your Stage Senior website page
 
 #### 12. Services Overview Hero
 - **Page Path:** `/services`
-- **Image File:** `attached_assets/generated_images/Services_catalog_hero_image_5dbb1c48.png`
-- **Description:** Infographic style display of senior care services with visual representation of different care levels
+- **Image File:** `attached_assets/generated_images/Services_info_board_casual_71b5f155.png`
+- **Style:** Casual photo of activities schedule or service menu board
 - **Suggested Title:** Our Services
-- **Suggested Subtitle:** Comprehensive Care Tailored to Your Needs
+- **Suggested Subtitle:** Comprehensive Care Options
 
 #### 13. Management Services Hero
 - **Page Path:** `/services/management`
-- **Image File:** `attached_assets/generated_images/Management_leadership_hero_image_01efa1cb.png`
-- **Description:** Business executive presenting to board of directors with charts and data showing strategic planning
+- **Image File:** `attached_assets/generated_images/Management_casual_interaction_photo_3d1e3586.png`
+- **Style:** Candid shot of director chatting with residents
 - **Suggested Title:** Management Services
-- **Suggested Subtitle:** Expert Leadership for Exceptional Communities
+- **Suggested Subtitle:** Expert Leadership, Personal Touch
 
 #### 14. Long-Term Care Hero
 - **Page Path:** `/services/long-term-care`
-- **Image File:** `attached_assets/generated_images/Long_term_care_hero_5bfe14d3.png`
-- **Description:** Skilled nursing care in professional healthcare environment with dignity and quality
-- **Suggested Title:** Long-Term Care
-- **Suggested Subtitle:** Compassionate Medical Care When You Need It Most
+- **Image File:** `attached_assets/generated_images/Long_term_care_casual_moment_6153771a.png`
+- **Style:** Respectful candid of caregiver assisting with daily routine
+- **Suggested Title:** Assisted Living Care
+- **Suggested Subtitle:** Support When You Need It
 
 #### 15. Chaplaincy Services Hero
 - **Page Path:** `/services/chaplaincy`
-- **Image File:** `attached_assets/generated_images/Chaplaincy_services_hero_image_09b482fc.png`
-- **Description:** Peaceful chapel setting with chaplain providing spiritual comfort
-- **Suggested Title:** Chaplaincy Services
-- **Suggested Subtitle:** Spiritual Care and Comfort for All Faiths
+- **Image File:** `attached_assets/generated_images/Chaplaincy_group_casual_photo_666d0bee.png`
+- **Style:** Cell phone photo of spiritual or meditation group gathering
+- **Suggested Title:** Spiritual Care
+- **Suggested Subtitle:** Faith and Comfort for All
 
 ---
 
@@ -138,58 +138,58 @@ This guide contains all generated hero images for your Stage Senior website page
 
 #### 16. In-Home Care Hero
 - **Page Path:** `/in-home-care`
-- **Image File:** `attached_assets/generated_images/In_home_care_hero_50017058.png`
-- **Description:** Home healthcare caregiver assisting senior in comfortable home setting
+- **Image File:** `attached_assets/generated_images/In_home_care_casual_visit_4faa38e4.png`
+- **Style:** Casual snapshot of home health aide visit
 - **Suggested Title:** In-Home Care
-- **Suggested Subtitle:** Professional Care in the Comfort of Your Home
+- **Suggested Subtitle:** Professional Care at Home
 
 #### 17. Safety with Dignity Hero
 - **Page Path:** `/safety-with-dignity`
-- **Image File:** `attached_assets/generated_images/Safety_with_dignity_hero_531ab1cc.png`
-- **Description:** Senior walking safely with supportive caregiver showing fall prevention and mobility assistance
+- **Image File:** `attached_assets/generated_images/Safety_walking_casual_moment_d97ba69a.png`
+- **Style:** Cell phone photo of senior walking with mobility support
 - **Suggested Title:** Safety with Dignity
-- **Suggested Subtitle:** Independence and Security Go Hand in Hand
+- **Suggested Subtitle:** Independence and Security
 
 #### 18. Care Points Hero
 - **Page Path:** `/care-points`
-- **Image File:** `attached_assets/generated_images/Care_points_hero_image_fee865e0.png`
-- **Description:** Nurse taking vital signs showing personalized care assessment and monitoring
-- **Suggested Title:** Care Points
-- **Suggested Subtitle:** Individualized Attention for Every Resident
+- **Image File:** `attached_assets/generated_images/Care_points_wellness_casual_photo_abb24202.png`
+- **Style:** Candid wellness check or friendly staff chat
+- **Suggested Title:** Personalized Care
+- **Suggested Subtitle:** Individual Attention Matters
 
 #### 19. Dining Services Hero
 - **Page Path:** `/dining`
-- **Image File:** `attached_assets/generated_images/Dining_services_hero_image_4dafacdb.png`
-- **Description:** Elegant senior living dining room with upscale restaurant-style setting and gourmet meal
-- **Suggested Title:** Dining Excellence
-- **Suggested Subtitle:** Chef-Prepared Meals That Nourish Body and Soul
+- **Image File:** `attached_assets/generated_images/Dining_room_casual_mealtime_64c8f329.png`
+- **Style:** Cell phone photo of dining room during mealtime
+- **Suggested Title:** Dining Services
+- **Suggested Subtitle:** Delicious Meals, Good Company
 
 #### 20. Beauty Salon Hero
 - **Page Path:** `/beauty-salon`
-- **Image File:** `attached_assets/generated_images/Beauty_salon_hero_image_3d6c6348.png`
-- **Description:** Senior receiving professional hair styling service in spa-like salon atmosphere
-- **Suggested Title:** Beauty & Barber Shop
-- **Suggested Subtitle:** Look and Feel Your Best Every Day
+- **Image File:** `attached_assets/generated_images/Beauty_salon_casual_haircut_6e70952a.png`
+- **Style:** Casual snapshot of senior getting haircut in on-site salon
+- **Suggested Title:** Beauty & Barber Services
+- **Suggested Subtitle:** Look and Feel Your Best
 
 #### 21. Fitness & Therapy Hero
 - **Page Path:** `/fitness-therapy`
-- **Image File:** `attached_assets/generated_images/Fitness_therapy_hero_image_3b8eb425.png`
-- **Description:** Senior exercising with physical therapist in modern fitness center
-- **Suggested Title:** Fitness & Therapy Center
-- **Suggested Subtitle:** Stay Active, Strong, and Independent
+- **Image File:** `attached_assets/generated_images/Fitness_exercise_casual_moment_7bb3bcb6.png`
+- **Style:** Cell phone photo of gentle exercise or stretching class
+- **Suggested Title:** Fitness & Wellness
+- **Suggested Subtitle:** Stay Active and Healthy
 
 #### 22. Courtyards & Patios Hero
 - **Page Path:** `/courtyards-patios`
-- **Image File:** `attached_assets/generated_images/Courtyards_patios_hero_image_2edf295f.png`
-- **Description:** Beautiful outdoor courtyard with lush gardens, comfortable seating, and Colorado mountains
-- **Suggested Title:** Courtyards & Patios
-- **Suggested Subtitle:** Enjoy the Beauty of Colorado Outdoors
+- **Image File:** `attached_assets/generated_images/Courtyards_patio_casual_gathering_7c4b7eb6.png`
+- **Style:** Casual photo of outdoor patio with residents chatting
+- **Suggested Title:** Outdoor Spaces
+- **Suggested Subtitle:** Enjoy Colorado's Beauty
 
 ---
 
 ## Image Files Location
 
-All generated hero images are located in:
+All candid-style hero images are located in:
 ```
 attached_assets/generated_images/
 ```
@@ -221,11 +221,36 @@ attached_assets/generated_images/
 
 ## Tips for Best Results
 
-1. **Overlay Opacity:** Set between 0.3-0.5 for best text readability
-2. **Text Alignment:** Center alignment works best for most hero images
-3. **Active Status:** Make sure to mark each hero as "Active" after uploading
-4. **CTA Buttons:** Add appropriate call-to-action buttons where relevant (e.g., "Schedule a Tour", "Contact Us", "Learn More")
+1. **Overlay Opacity:** Set between 0.3-0.5 for text readability while maintaining the authentic photo feel
+2. **Text Alignment:** Center alignment works best for most candid hero images
+3. **Active Status:** Mark each hero as "Active" after uploading to display on the site
+4. **CTA Buttons:** Add relevant calls-to-action like "Schedule a Tour" or "Learn More"
+5. **Image Style:** These images intentionally look casual and authentic - not overly polished or staged
 
-## Need Help?
+## Key Differences from Stock Photos
 
-If you need assistance uploading these images or have questions about the admin interface, please reach out to your web administrator.
+✅ **What You'll See:**
+- Natural, everyday moments
+- Casual cell phone photography style
+- Real assisted living/memory care environments
+- Active, independent seniors (not clinical settings)
+- Authentic interactions and activities
+
+❌ **What You Won't See:**
+- Overly posed or staged shots
+- Professional studio lighting
+- Corporate stock photo feel
+- Clinical nursing imagery
+- Cheesy or artificial moments
+
+---
+
+## Testing Note
+
+The admin page requires authentication. Once logged in:
+1. Navigate to `/admin`
+2. Click the **Page Heroes** tab (highlighted in the tab list)
+3. You'll see the Page Heroes management interface powered by AdminDashboard
+4. Use the interface to add/edit hero sections for each page path listed above
+
+All images are ready to upload through the admin interface!
