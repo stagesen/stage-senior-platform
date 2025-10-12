@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Search, Filter, Calendar, User, ArrowLeft } from "lucide-react";
 import BlogCard from "@/components/BlogCard";
+import BlogCommunityCTA from "@/components/BlogCommunityCTA";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 import { PageHero } from "@/components/PageHero";
@@ -180,6 +181,11 @@ export default function Blog() {
               className="prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-a:text-primary hover:prose-a:text-primary/80"
             />
           </article>
+
+          {/* Community CTA - Only show if post is associated with a community */}
+          {currentPost.communityId && community && (
+            <BlogCommunityCTA community={community} />
+          )}
         </main>
       </div>
     );
@@ -192,7 +198,6 @@ export default function Blog() {
         pagePath="/blog"
         defaultTitle="Blog & News"
         defaultSubtitle="Stories from Our Communities"
-        defaultDescription="Stay connected with the latest news, stories, and insights from Stage Senior communities across Colorado."
         defaultBackgroundImage="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=2000&q=80"
       />
       {/* Hero Section */}
