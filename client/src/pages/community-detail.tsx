@@ -1105,6 +1105,7 @@ export default function CommunityDetail() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [activeSection, setActiveSection] = useState<string | null>("overview");
   const [showNav, setShowNav] = useState(false);
+  const [showAllAmenities, setShowAllAmenities] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -1736,83 +1737,106 @@ export default function CommunityDetail() {
                   <p className="text-lg text-gray-600 mb-8">
                     Step into a lifestyle where every day feels like a retreat. Our community is packed with thoughtful amenities designed to make life easier and more enjoyable.
                   </p>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                    {((community as any).amenities || 
-                      community.amenities?.map(name => ({ name })) || []
-                    ).map((amenity: any, index: number) => {
-                      const amenityName = typeof amenity === 'string' ? amenity : amenity.name;
-                      const IconComponent = typeof amenity === 'string' ? 
-                        getAmenityIcon(amenity) :
-                        (amenity.icon ? 
-                          (amenity.icon === 'Utensils' ? Coffee : 
-                           amenity.icon === 'Coffee' ? Coffee :
-                           amenity.icon === 'Car' ? Car :
-                           amenity.icon === 'Activity' ? Activity :
-                           amenity.icon === 'BookOpen' ? BookOpen :
-                           amenity.icon === 'Heart' ? Heart :
-                           amenity.icon === 'Users' ? Users :
-                           amenity.icon === 'Wifi' ? Wifi :
-                           Sparkles) : 
-                          getAmenityIcon(amenityName));
+                  <div className="flex flex-col gap-3">
+                    {(() => {
+                      const amenitiesList = (community as any).amenities || 
+                        community.amenities?.map(name => ({ name })) || [];
+                      const displayedAmenities = showAllAmenities ? amenitiesList : amenitiesList.slice(0, 5);
+                      
+                      return displayedAmenities.map((amenity: any, index: number) => {
+                        const amenityName = typeof amenity === 'string' ? amenity : amenity.name;
+                        const IconComponent = typeof amenity === 'string' ? 
+                          getAmenityIcon(amenity) :
+                          (amenity.icon ? 
+                            (amenity.icon === 'Utensils' ? Coffee : 
+                             amenity.icon === 'Coffee' ? Coffee :
+                             amenity.icon === 'Car' ? Car :
+                             amenity.icon === 'Activity' ? Activity :
+                             amenity.icon === 'BookOpen' ? BookOpen :
+                             amenity.icon === 'Heart' ? Heart :
+                             amenity.icon === 'Users' ? Users :
+                             amenity.icon === 'Wifi' ? Wifi :
+                             Sparkles) : 
+                            getAmenityIcon(amenityName));
 
-                      // Helper function to determine amenity linking
-                      const getAmenityLink = (name: string): { href: string; testIdPrefix: string } | null => {
-                        if (!name) return null;
-                        const lowerName = name.toLowerCase();
-                        
-                        // Check for dining-related amenities
-                        const isRestaurantDining = lowerName.includes('restaurant') && lowerName.includes('dining');
-                        const isPrivateFamilyDining = lowerName.includes('private') && lowerName.includes('family') && lowerName.includes('dining');
-                        if (isRestaurantDining || isPrivateFamilyDining) {
-                          return { href: `/dining?from=${community.slug}`, testIdPrefix: 'dining' };
-                        }
-                        
-                        // Check for beauty salon/barber amenities
-                        if (lowerName.includes('beauty salon') || lowerName.includes('barber')) {
-                          return { href: `/beauty-salon?from=${community.slug}`, testIdPrefix: 'beauty-salon' };
-                        }
-                        
-                        // Check for fitness/therapy amenities
-                        if (lowerName.includes('fitness') || lowerName.includes('therapy')) {
-                          return { href: `/fitness-therapy?from=${community.slug}`, testIdPrefix: 'fitness-therapy' };
-                        }
-                        
-                        // Check for courtyard/patio amenities
-                        if (lowerName.includes('courtyard') || lowerName.includes('patio') || 
-                            lowerName.includes('garden') || lowerName.includes('outdoor')) {
-                          return { href: `/courtyards-patios?from=${community.slug}`, testIdPrefix: 'courtyards-patios' };
-                        }
-                        
-                        return null;
-                      };
+                        // Helper function to determine amenity linking
+                        const getAmenityLink = (name: string): { href: string; testIdPrefix: string } | null => {
+                          if (!name) return null;
+                          const lowerName = name.toLowerCase();
+                          
+                          // Check for dining-related amenities
+                          const isRestaurantDining = lowerName.includes('restaurant') && lowerName.includes('dining');
+                          const isPrivateFamilyDining = lowerName.includes('private') && lowerName.includes('family') && lowerName.includes('dining');
+                          if (isRestaurantDining || isPrivateFamilyDining) {
+                            return { href: `/dining?from=${community.slug}`, testIdPrefix: 'dining' };
+                          }
+                          
+                          // Check for beauty salon/barber amenities
+                          if (lowerName.includes('beauty salon') || lowerName.includes('barber')) {
+                            return { href: `/beauty-salon?from=${community.slug}`, testIdPrefix: 'beauty-salon' };
+                          }
+                          
+                          // Check for fitness/therapy amenities
+                          if (lowerName.includes('fitness') || lowerName.includes('therapy')) {
+                            return { href: `/fitness-therapy?from=${community.slug}`, testIdPrefix: 'fitness-therapy' };
+                          }
+                          
+                          // Check for courtyard/patio amenities
+                          if (lowerName.includes('courtyard') || lowerName.includes('patio') || 
+                              lowerName.includes('garden') || lowerName.includes('outdoor')) {
+                            return { href: `/courtyards-patios?from=${community.slug}`, testIdPrefix: 'courtyards-patios' };
+                          }
+                          
+                          return null;
+                        };
 
-                      const amenityLink = getAmenityLink(amenityName);
+                        const amenityLink = getAmenityLink(amenityName);
 
-                      return amenityLink ? (
-                        <Link 
-                          key={`amenity-${index}`}
-                          href={amenityLink.href}
-                          className="flex items-center justify-between bg-white rounded-lg p-4 hover:bg-primary/5 hover:shadow-md transition-all duration-200 cursor-pointer group"
-                          data-testid={`amenity-link-${amenityLink.testIdPrefix}-${index}`}
-                        >
-                          <div className="flex items-center space-x-3">
+                        return amenityLink ? (
+                          <Link 
+                            key={`amenity-${index}`}
+                            href={amenityLink.href}
+                            className="flex items-center justify-between bg-white rounded-lg p-4 hover:bg-primary/5 hover:shadow-md transition-all duration-200 cursor-pointer group"
+                            data-testid={`amenity-link-${amenityLink.testIdPrefix}-${index}`}
+                          >
+                            <div className="flex items-center space-x-3">
+                              <IconComponent className="w-8 h-8 text-primary flex-shrink-0" />
+                              <span className="text-sm font-medium text-primary group-hover:text-primary/80 transition-colors">{amenityName}</span>
+                            </div>
+                            <ChevronRight className="w-4 h-4 text-primary group-hover:translate-x-0.5 transition-all" />
+                          </Link>
+                        ) : (
+                          <div 
+                            key={`amenity-${index}`}
+                            className="flex items-center space-x-3 bg-white rounded-lg p-4"
+                            data-testid={`amenity-${index}`}
+                          >
                             <IconComponent className="w-8 h-8 text-primary flex-shrink-0" />
-                            <span className="text-sm font-medium text-primary group-hover:text-primary/80 transition-colors">{amenityName}</span>
+                            <span className="text-sm font-medium">{amenityName}</span>
                           </div>
-                          <ChevronRight className="w-4 h-4 text-primary group-hover:translate-x-0.5 transition-all" />
-                        </Link>
-                      ) : (
-                        <div 
-                          key={`amenity-${index}`}
-                          className="flex items-center space-x-3 bg-white rounded-lg p-4"
-                          data-testid={`amenity-${index}`}
-                        >
-                          <IconComponent className="w-8 h-8 text-primary flex-shrink-0" />
-                          <span className="text-sm font-medium">{amenityName}</span>
-                        </div>
-                      );
-                    })}
+                        );
+                      });
+                    })()}
                   </div>
+                  {(() => {
+                    const amenitiesList = (community as any).amenities || 
+                      community.amenities?.map(name => ({ name })) || [];
+                    const hasMoreAmenities = amenitiesList.length > 5;
+                    
+                    return hasMoreAmenities && (
+                      <div className="mt-6 text-center">
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowAllAmenities(!showAllAmenities)}
+                          className="px-6"
+                          data-testid="toggle-amenities-button"
+                        >
+                          {showAllAmenities ? 'Show Less' : `Show All ${amenitiesList.length} Amenities`}
+                          <ChevronRight className={`ml-2 w-4 h-4 transition-transform ${showAllAmenities ? 'rotate-90' : ''}`} />
+                        </Button>
+                      </div>
+                    );
+                  })()}
                 </div>
               </section>
             )}
