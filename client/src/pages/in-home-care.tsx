@@ -230,18 +230,7 @@ export default function InHomeCare() {
         pagePath="/in-home-care"
         defaultTitle="Healthy at Home"
         defaultSubtitle="Denver Metro In-Home Caregiving"
-        defaultDescription="Trusted non-medical homecare support from bathing assistance to grocery shopping. Locally owned, background checked caregivers."
       />
-
-      {/* Visual Break - Decorative Section */}
-      <section className="relative h-48 overflow-hidden">
-        <img 
-          src="https://images.unsplash.com/photo-1543333995-a78aea2eee50?q=80&w=2070&auto=format&fit=crop"
-          alt="Hands holding with care"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-transparent to-white/80"></div>
-      </section>
 
       {/* Services Section with Images */}
       <section className="py-20 bg-gradient-to-b from-white to-green-50/30">
