@@ -4709,9 +4709,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         <SelectItem value="/beauty-salon">Beauty Salon & Barber</SelectItem>
                         <SelectItem value="/fitness-therapy">Fitness & Therapy Center</SelectItem>
                         <SelectItem value="/courtyards-patios">Courtyards & Patios</SelectItem>
+                        <SelectItem value="/safety-with-dignity">Safety with Dignity</SelectItem>
                         <SelectItem value="/in-home-care">In-Home Care</SelectItem>
                         <SelectItem value="/faqs">FAQs</SelectItem>
-                        <SelectItem value="/Reviews">Reviews</SelectItem>
+                        <SelectItem value="/reviews">Reviews</SelectItem>
                         <SelectItem value="/accessibility">Accessibility</SelectItem>
                         <SelectItem value="/privacy">Privacy Policy</SelectItem>
                         <SelectItem value="/terms">Terms of Service</SelectItem>

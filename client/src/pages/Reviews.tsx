@@ -59,7 +59,7 @@ export default function Reviews() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <PageHero
-        pagePath="/Reviews"
+        pagePath="/reviews"
         defaultTitle="Resident & Family Reviews"
         defaultSubtitle="Hear from our community"
         defaultDescription="Read testimonials from residents and their families about life at Stage Senior communities"
