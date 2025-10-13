@@ -1040,7 +1040,7 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
           alt="Community background"
           className={`w-full h-full object-cover transition-opacity duration-300 ${heroImageUrl === null ? 'opacity-0' : 'opacity-100'}`}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/75 to-black/70" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/88 to-black/85" />
       </div>
 
       {/* Content */}
@@ -1446,7 +1446,7 @@ export default function CommunityDetail() {
           className={`w-full h-full object-cover transition-opacity duration-300 ${heroImageUrl === null ? 'opacity-0' : 'opacity-100'}`}
           data-testid="hero-image"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/85 to-black/80" />
 
         {/* Hero Logo Overlay */}
         {heroLogoSrc && (

@@ -99,7 +99,7 @@ export function PageHero({
           />
           {/* Blue Overlay */}
           <div
-            className="absolute inset-0 z-10 bg-gradient-to-t from-blue-900/80 to-blue-600/50"
+            className="absolute inset-0 z-10 bg-gradient-to-t from-blue-900/90 to-blue-600/80"
             data-testid={`hero-overlay-${pagePath.replace(/\//g, "-") || "home"}`}
           />
         </>
@@ -115,7 +115,7 @@ export function PageHero({
           />
           {/* Subtle blue overlay effect for gradient */}
           <div
-            className="absolute inset-0 z-10 bg-gradient-to-t from-blue-800/50 to-blue-500/20"
+            className="absolute inset-0 z-10 bg-gradient-to-t from-blue-800/70 to-blue-500/50"
             data-testid={`hero-gradient-overlay-${pagePath.replace(/\//g, "-") || "home"}`}
           />
         </>
