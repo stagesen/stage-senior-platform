@@ -1031,16 +1031,30 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
   const { openScheduleTour } = useScheduleTour();
   const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
   
+  // Check if we're resolving an image ID (UUID pattern)
+  const isHeroImageId = community?.heroImageUrl && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(community.heroImageUrl);
+  
+  // Only use resolved URL when ready (prevents flash), otherwise use fallback or show gradient
+  const finalHeroImageUrl = (isHeroImageId && heroImageUrl === null) 
+    ? undefined // Still loading - show gradient instead
+    : (heroImageUrl || 'https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=2000');
+  
   return (
     <section className="relative py-24 overflow-hidden">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
-        <img
-          src={heroImageUrl === null ? '' : (heroImageUrl || 'https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=2000')}
-          alt="Community background"
-          className={`w-full h-full object-cover transition-opacity duration-300 ${heroImageUrl === null ? 'opacity-0' : 'opacity-100'}`}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/88 to-black/85" />
+        {finalHeroImageUrl ? (
+          <>
+            <img
+              src={finalHeroImageUrl}
+              alt="Community background"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/88 to-black/85" />
+          </>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600" />
+        )}
       </div>
 
       {/* Content */}
@@ -1436,17 +1450,31 @@ export default function CommunityDetail() {
     );
   }
 
+  // Check if we're resolving an image ID (UUID pattern)
+  const isHeroImageId = community?.heroImageUrl && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(community.heroImageUrl);
+  
+  // Only use resolved URL when ready (prevents flash), otherwise use fallback or show gradient
+  const finalHeroImageUrl = (isHeroImageId && heroImageUrl === null) 
+    ? undefined // Still loading - show gradient instead
+    : (heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600`);
+
   return (
     <div className="min-h-screen bg-white" style={communityStyles}>
       {/* Hero Section */}
       <section className="relative h-[500px] md:h-[600px] overflow-hidden">
-        <img
-          src={heroImageUrl === null ? '' : (heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600`)}
-          alt={`${community.name} - Senior Living Community`}
-          className={`w-full h-full object-cover transition-opacity duration-300 ${heroImageUrl === null ? 'opacity-0' : 'opacity-100'}`}
-          data-testid="hero-image"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/85 to-black/80" />
+        {finalHeroImageUrl ? (
+          <>
+            <img
+              src={finalHeroImageUrl}
+              alt={`${community.name} - Senior Living Community`}
+              className="w-full h-full object-cover"
+              data-testid="hero-image"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/85 to-black/80" />
+          </>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600" />
+        )}
 
         {/* Hero Logo Overlay */}
         {heroLogoSrc && (

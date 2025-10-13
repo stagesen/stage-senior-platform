@@ -46,7 +46,7 @@ export function PageHero({
   const isActive = hero?.active !== false; // Default to true if no hero or not specified
   
   // Resolve background image URL
-  const backgroundImage = useResolveImageUrl(backgroundImageRaw) || backgroundImageRaw;
+  const backgroundImage = useResolveImageUrl(backgroundImageRaw);
   
   // Determine gradient background based on page
   const getGradientBackground = () => {
@@ -69,6 +69,13 @@ export function PageHero({
   if (isLoading && !defaultTitle && !defaultBackgroundImage) {
     return null;
   }
+  
+  // Check if we're resolving an image ID (UUID pattern)
+  const isImageId = backgroundImageRaw && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(backgroundImageRaw);
+  
+  // Final resolved image: only use resolved URL when ready (prevents flash), otherwise show gradient
+  // If it's an image ID and still loading (null), don't show the fallback URL yet
+  const finalBackgroundImage = (isImageId && backgroundImage === null) ? undefined : (backgroundImage || defaultBackgroundImage);
 
   const alignmentClasses = {
     left: "text-left items-start",
@@ -85,12 +92,12 @@ export function PageHero({
       data-testid={`hero-${pagePath.replace(/\//g, "-") || "home"}`}
     >
       {/* Background - Image or Gradient */}
-      {backgroundImage ? (
+      {finalBackgroundImage ? (
         <>
           <div
             className="absolute inset-0 z-0"
             style={{
-              backgroundImage: `url(${backgroundImage})`,
+              backgroundImage: `url(${finalBackgroundImage})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
