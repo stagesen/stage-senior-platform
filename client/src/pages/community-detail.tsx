@@ -698,21 +698,33 @@ const CommunityFeatures = ({ community }: { community: Community }) => {
       {displayFeatures
         .filter((feature: any) => feature.active !== false) // Show all features if active is undefined or true
         .sort((a: any, b: any) => (a.sortOrder || 0) - (b.sortOrder || 0))
-        .map((feature: any, index: number) => (
-          <FeatureSection
-            key={feature.id || index}
-            eyebrow={feature.eyebrow}
-            title={feature.title}
-            body={feature.body}
-            imageUrl={feature.imageUrl || feature.imageId || ""}
-            imageAlt={feature.imageAlt || `${feature.title} image`}
-            cta={feature.ctaLabel && feature.ctaHref ? {
-              label: feature.ctaLabel,
-              href: feature.ctaHref
-            } : undefined}
-            imageLeft={feature.imageLeft}
-          />
-        ))}
+        .map((feature: any, index: number) => {
+          // Fallback chain: feature image -> community experience images -> default unsplash images
+          const fallbackCommunityImages = [experienceImage1Url, experienceImage2Url, experienceImage3Url, experienceImage4Url];
+          const defaultPlaceholders = [
+            "https://images.unsplash.com/photo-1577308856961-1d3371de3c2b?q=80&w=800&auto=format&fit=crop", // Dining
+            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop", // Activities
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800&auto=format&fit=crop", // Location
+            "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=800&auto=format&fit=crop"  // Care
+          ];
+          const imageUrl = feature.imageUrl || feature.imageId || fallbackCommunityImages[index] || defaultPlaceholders[index] || "";
+
+          return (
+            <FeatureSection
+              key={feature.id || index}
+              eyebrow={feature.eyebrow}
+              title={feature.title}
+              body={feature.body}
+              imageUrl={imageUrl}
+              imageAlt={feature.imageAlt || `${feature.title} image`}
+              cta={feature.ctaLabel && feature.ctaHref ? {
+                label: feature.ctaLabel,
+                href: feature.ctaHref
+              } : undefined}
+              imageLeft={feature.imageLeft}
+            />
+          );
+        })}
     </>
   );
 };
