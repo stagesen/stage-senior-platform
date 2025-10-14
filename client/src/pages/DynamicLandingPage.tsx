@@ -113,14 +113,20 @@ export default function DynamicLandingPage() {
     enabled: !!template,
   });
 
-  // Filter communities based on template settings
+  // Filter communities based on template settings and URL parameters
+  // Priority: 1) template.communityId, 2) URL city param, 3) template.cities array, 4) all communities
   const targetCommunities = template?.communityId
     ? allCommunities.filter(c => c.id === template.communityId)
+    : urlParams.city
+    ? allCommunities.filter(c => c.city.toLowerCase() === urlParams.city.toLowerCase())
     : template?.cities?.length
     ? allCommunities.filter(c => template.cities?.includes(c.city))
     : allCommunities;
 
-  const primaryCommunity = targetCommunities[0];
+  // For Arvada URLs without a specific community template, prefer Gardens on Quail (flagship)
+  const primaryCommunity = urlParams.city?.toLowerCase() === 'arvada' && targetCommunities.length > 1
+    ? targetCommunities.find(c => c.slug === 'the-gardens-on-quail') || targetCommunities[0]
+    : targetCommunities[0];
 
   // Simple care type name mapping for token replacement (fallback to URL params)
   const getCareTypeName = () => {
