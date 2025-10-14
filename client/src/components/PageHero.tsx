@@ -11,6 +11,8 @@ interface PageHeroProps {
   defaultSubtitle?: string;
   defaultBackgroundImage?: string;
   className?: string;
+  logoUrl?: string;
+  logoAlt?: string;
 }
 
 export function PageHero({
@@ -19,6 +21,8 @@ export function PageHero({
   defaultSubtitle,
   defaultBackgroundImage,
   className,
+  logoUrl,
+  logoAlt,
 }: PageHeroProps) {
   const { data: hero, isLoading } = useQuery({
     queryKey: ["/api/page-heroes", pagePath],
@@ -126,6 +130,20 @@ export function PageHero({
             data-testid={`hero-gradient-overlay-${pagePath.replace(/\//g, "-") || "home"}`}
           />
         </>
+      )}
+
+      {/* Logo Overlay - Top Right */}
+      {logoUrl && (
+        <div className="absolute top-6 right-6 md:top-10 md:right-10 z-20">
+          <div className="bg-white rounded-2xl shadow-lg px-4 py-3 md:px-6 md:py-4 border border-gray-300">
+            <img
+              src={logoUrl}
+              alt={logoAlt || "Community logo"}
+              className="h-12 md:h-16 w-auto object-contain"
+              data-testid="hero-logo"
+            />
+          </div>
+        </div>
       )}
 
       {/* Content */}

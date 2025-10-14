@@ -794,23 +794,9 @@ export default function DynamicLandingPage() {
         defaultTitle={replaceTokens(pageTitle, tokens)}
         defaultSubtitle={pageSubtitle ? replaceTokens(pageSubtitle, tokens) : undefined}
         defaultBackgroundImage={heroImageUrl || undefined}
+        logoUrl={communityLogoUrl || undefined}
+        logoAlt={`${primaryCommunity?.name} logo`}
       />
-
-      {/* 1b. Community Logo - Display community branding */}
-      {communityLogoUrl && (
-        <section className="py-8 md:py-6 bg-white border-b" data-testid="section-community-logo">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-center">
-              <img
-                src={communityLogoUrl}
-                alt={`${primaryCommunity?.name} logo`}
-                className="h-16 md:h-20 w-auto object-contain"
-                data-testid="community-logo"
-              />
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* 1a. Care Type Focus - Show specific care type if landing page is for a specific care type */}
       {careTypeSlug && getCareTypeName() !== "Senior Living" && (
