@@ -37,6 +37,7 @@ import {
   TrendingUp,
   Download,
   MessageCircle,
+  Navigation,
 } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import type {
@@ -848,40 +849,7 @@ export default function DynamicLandingPage() {
         </section>
       )}
 
-      {/* 10. FAQs - Answer concerns */}
-      {template.showFaqs && faqs.length > 0 && (
-        <section className="py-12 md:py-16 bg-gray-50" data-testid="section-faqs">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 md:mb-12">
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
-                <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="text-sm md:text-base font-semibold">Frequently Asked Questions</span>
-              </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
-                Your Questions Answered
-              </h2>
-              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-                Get clarity on everything you need to know about {primaryCommunity?.name || 'our community'}
-              </p>
-            </div>
-
-            <Accordion type="single" collapsible className="w-full">
-              {faqs.slice(0, 10).map((faq, index) => (
-                <AccordionItem key={faq.id} value={`faq-${index}`} data-testid={`faq-item-${faq.id}`}>
-                  <AccordionTrigger className="text-left font-semibold text-base md:text-lg hover:text-primary transition-colors">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-sm md:text-base text-muted-foreground">
-                    <div dangerouslySetInnerHTML={{ __html: faq.answerHtml || faq.answer || '' }} />
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-        </section>
-      )}
-
-      {/* 11. Single Strong CTA - Primary conversion point */}
+      {/* 10. Single Strong CTA - Primary conversion point */}
       <CTASection
         variant="primary"
         heading="Ready to Experience the Difference?"
@@ -955,7 +923,136 @@ export default function DynamicLandingPage() {
         </section>
       )}
 
-      {/* 12. FAQs - Address common concerns */}
+      {/* 12. Location & Map - Find and visit us */}
+      {primaryCommunity && (primaryCommunity.street || primaryCommunity.lat) && (
+        <section className="py-12 md:py-16" data-testid="section-location">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8 md:mb-12">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
+                <MapPin className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="text-sm md:text-base font-semibold">Visit Us</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                Find {primaryCommunity.name}
+              </h2>
+              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+                Conveniently located in {primaryCommunity.city}, {primaryCommunity.state}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+              {/* Map */}
+              <div className="order-2 lg:order-1">
+                <Card className="overflow-hidden h-full min-h-[400px]">
+                  {primaryCommunity.lat && primaryCommunity.lng ? (
+                    <iframe
+                      src={`https://www.google.com/maps?q=${primaryCommunity.lat},${primaryCommunity.lng}&hl=es;z=14&output=embed`}
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0, minHeight: "400px" }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title={`Map of ${primaryCommunity.name}`}
+                      data-testid="location-map"
+                    />
+                  ) : (
+                    <div className="w-full h-full min-h-[400px] bg-gray-100 flex items-center justify-center">
+                      <MapPin className="w-12 h-12 text-gray-400" />
+                    </div>
+                  )}
+                </Card>
+              </div>
+
+              {/* Contact Information */}
+              <div className="order-1 lg:order-2 flex flex-col justify-center">
+                <Card className="p-6 md:p-8">
+                  <CardContent className="p-0 space-y-6">
+                    {/* Address */}
+                    {primaryCommunity.street && (
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                          <MapPin className="w-6 h-6 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-lg mb-2">Address</h3>
+                          <p className="text-muted-foreground">
+                            {primaryCommunity.street}
+                            <br />
+                            {primaryCommunity.city}, {primaryCommunity.state} {primaryCommunity.zip || primaryCommunity.zipCode}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Phone */}
+                    {primaryCommunity.phoneDisplay && (
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                          <Phone className="w-6 h-6 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-lg mb-2">Phone</h3>
+                          <a
+                            href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}
+                            className="text-muted-foreground hover:text-primary transition-colors text-lg"
+                            data-testid="phone-link"
+                          >
+                            {primaryCommunity.phoneDisplay}
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Get Directions Button */}
+                    {primaryCommunity.lat && primaryCommunity.lng && (
+                      <div className="pt-4">
+                        <Button
+                          asChild
+                          size="lg"
+                          className="w-full min-h-[44px]"
+                          data-testid="button-get-directions"
+                        >
+                          <a
+                            href={`https://www.google.com/maps/dir/?api=1&destination=${primaryCommunity.lat},${primaryCommunity.lng}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Navigation className="w-5 h-5 mr-2" />
+                            Get Directions
+                          </a>
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* Schedule Tour CTA */}
+                    <div className="pt-2">
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="w-full min-h-[44px]"
+                        onClick={() =>
+                          openScheduleTour({
+                            communityId: primaryCommunity?.id,
+                            communityName: primaryCommunity?.name,
+                            title: `Schedule a Tour at ${primaryCommunity?.name}`,
+                          })
+                        }
+                        data-testid="button-schedule-tour-location"
+                      >
+                        <Calendar className="w-5 h-5 mr-2" />
+                        Schedule a Tour
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 13. FAQs - Address common concerns */}
       {template.showFaqs && faqs.length > 0 && (
         <section className="py-12 md:py-16 bg-gray-50" data-testid="section-faqs">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -995,7 +1092,7 @@ export default function DynamicLandingPage() {
         </section>
       )}
 
-      {/* 13. Final CTA Section - Last conversion opportunity */}
+      {/* 14. Final CTA Section - Last conversion opportunity */}
       <section className="py-12 md:py-20 bg-primary text-white" data-testid="section-cta">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
