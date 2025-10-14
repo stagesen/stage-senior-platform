@@ -2065,13 +2065,6 @@ export default function CommunityDetail() {
                     setIsFloorPlanModalOpen(true);
                   }}
                 />
-                {floorPlans.length > 8 && (
-                  <div className="text-center mt-8">
-                    <Button variant="outline" size="lg" data-testid="button-view-all-floor-plans">
-                      View All {floorPlans.length} Floor Plans
-                    </Button>
-                  </div>
-                )}
               </section>
             )}
 
