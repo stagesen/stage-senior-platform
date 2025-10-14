@@ -1302,6 +1302,11 @@ function CommunityHighlightsManager({ communityId, communityName }: { communityI
   });
 
   const handleSubmit = (values: InsertCommunityHighlight) => {
+    // Convert empty string imageId to null for foreign key constraints
+    if (values.imageId === '' || values.imageId === undefined) {
+      values.imageId = null;
+    }
+
     if (editingHighlight) {
       updateHighlightMutation.mutate({ id: editingHighlight.id, data: values });
     } else {
@@ -8212,6 +8217,11 @@ function CommunityFeaturesDialog({ isOpen, onClose, communityId, communities }: 
   });
   
   const handleSubmit = (data: InsertCommunityFeature) => {
+    // Convert empty string imageId to null for foreign key constraints
+    if (data.imageId === '' || data.imageId === undefined) {
+      data.imageId = null;
+    }
+
     if (editingFeature) {
       updateMutation.mutate({ id: editingFeature.id, data });
     } else {
