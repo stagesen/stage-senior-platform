@@ -48,6 +48,9 @@ import type {
   Faq,
   FloorPlan,
   GalleryImageWithDetails,
+  CommunityHighlight,
+  Amenity,
+  CareType,
 } from "@shared/schema";
 
 // Helper function to replace tokens in text
@@ -73,6 +76,46 @@ const formatPrice = (price: number | undefined | null): string => {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price);
+};
+
+// Highlight Card component - Separated to properly use hooks
+const HighlightCard = ({ highlight }: { highlight: CommunityHighlight }) => {
+  const highlightImageUrl = useResolveImageUrl(highlight.imageId);
+  
+  return (
+    <Card
+      className="overflow-hidden hover:shadow-xl transition-all duration-300"
+      data-testid={`highlight-card-${highlight.id}`}
+    >
+      {highlightImageUrl && (
+        <AspectRatio ratio={16 / 9}>
+          <img
+            src={highlightImageUrl}
+            alt={highlight.title}
+            className="w-full h-full object-cover"
+          />
+        </AspectRatio>
+      )}
+      <CardContent className="p-4 md:p-6">
+        <h3 className="text-lg md:text-xl font-bold mb-3">{highlight.title}</h3>
+        <p className="text-sm md:text-base text-muted-foreground mb-4">
+          {highlight.description}
+        </p>
+        {highlight.ctaLabel && highlight.ctaHref && (
+          <Button
+            variant="outline"
+            asChild
+            className="w-full min-h-[44px]"
+          >
+            <a href={highlight.ctaHref}>
+              {highlight.ctaLabel}
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </a>
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
 };
 
 export default function DynamicLandingPage() {
@@ -181,6 +224,24 @@ export default function DynamicLandingPage() {
   const { data: floorPlans = [] } = useQuery<FloorPlan[]>({
     queryKey: [`/api/floor-plans?communityId=${primaryCommunity?.id}&active=true`],
     enabled: !!template?.showFloorPlans && !!primaryCommunity,
+  });
+
+  // Fetch community highlights (if available)
+  const { data: communityHighlights = [] } = useQuery<CommunityHighlight[]>({
+    queryKey: [`/api/community-highlights?communityId=${primaryCommunity?.id}&active=true`],
+    enabled: !!primaryCommunity,
+  });
+
+  // Fetch community amenities with details
+  const { data: communityAmenities = [] } = useQuery<Amenity[]>({
+    queryKey: [`/api/communities/${primaryCommunity?.id}/amenities`],
+    enabled: !!primaryCommunity,
+  });
+
+  // Fetch community care types
+  const { data: communityCareTypes = [] } = useQuery<CareType[]>({
+    queryKey: [`/api/communities/${primaryCommunity?.id}/care-types`],
+    enabled: !!primaryCommunity,
   });
 
   // Build tokens for replacement
@@ -449,6 +510,32 @@ export default function DynamicLandingPage() {
         defaultBackgroundImage={heroImageUrl || undefined}
       />
 
+      {/* 1a. Care Types - Services offered */}
+      {communityCareTypes.length > 0 && (
+        <section className="py-8 md:py-12 bg-primary/5" data-testid="section-care-types">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-6 md:mb-8">
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3">
+                Care Services Available
+              </h2>
+            </div>
+            <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+              {communityCareTypes.map((careType) => (
+                <Badge
+                  key={careType.id}
+                  variant="secondary"
+                  className="px-4 py-2 text-sm md:text-base font-semibold"
+                  data-testid={`care-type-badge-${careType.id}`}
+                >
+                  <Heart className="w-4 h-4 mr-2" />
+                  {careType.name}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* 2. Trust Badge Bar - Builds credibility immediately */}
       <TrustBadgeBar />
 
@@ -539,6 +626,32 @@ export default function DynamicLandingPage() {
         </section>
       )}
 
+      {/* 7a. Community Highlights - Specific features of this community */}
+      {communityHighlights.length > 0 && (
+        <section className="py-12 md:py-16 bg-gradient-to-br from-primary/5 via-white to-primary/5" data-testid="section-highlights">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8 md:mb-12">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
+                <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="text-sm md:text-base font-semibold">Community Highlights</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                What Makes {primaryCommunity?.name} Special
+              </h2>
+              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+                Discover the unique features that set our community apart
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {communityHighlights.map((highlight) => (
+                <HighlightCard key={highlight.id} highlight={highlight} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* 8. Second CTA - Phone call option */}
       <CTASection
         variant="secondary"
@@ -598,6 +711,48 @@ export default function DynamicLandingPage() {
                   </Card>
                 );
               })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 9a. Community Amenities - Services and features */}
+      {communityAmenities.length > 0 && (
+        <section className="py-12 md:py-16 bg-gray-50" data-testid="section-amenities">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8 md:mb-12">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
+                <CheckCircle className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="text-sm md:text-base font-semibold">Amenities & Services</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                Exceptional Care & Comfort
+              </h2>
+              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+                Experience our comprehensive amenities designed for your wellbeing
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {communityAmenities.map((amenity) => (
+                <div
+                  key={amenity.id}
+                  className="flex items-start gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-shadow"
+                  data-testid={`amenity-item-${amenity.id}`}
+                >
+                  <div className="flex-shrink-0">
+                    <CheckCircle className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-sm md:text-base mb-1">{amenity.name}</h3>
+                    {amenity.description && (
+                      <p className="text-xs md:text-sm text-muted-foreground">
+                        {amenity.description}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>

@@ -1269,13 +1269,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Community highlights routes
   
-  // Get all highlights (for admin)
+  // Get highlights with optional filtering by communityId and active status
   app.get("/api/community-highlights", async (req, res) => {
     try {
-      const highlights = await storage.getAllCommunityHighlights();
-      res.json(highlights);
+      const { communityId, active } = req.query;
+      
+      if (communityId) {
+        // Filter by community
+        let highlights = await storage.getCommunityHighlights(communityId as string);
+        
+        // Further filter by active status if specified
+        if (active !== undefined) {
+          const isActive = active === 'true';
+          highlights = highlights.filter(h => h.active === isActive);
+        }
+        
+        res.json(highlights);
+      } else {
+        // Get all highlights (for admin)
+        const highlights = await storage.getAllCommunityHighlights();
+        res.json(highlights);
+      }
     } catch (error) {
-      console.error("Error fetching all community highlights:", error);
+      console.error("Error fetching community highlights:", error);
       res.status(500).json({ message: "Failed to fetch community highlights" });
     }
   });
@@ -1388,6 +1404,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting community feature:", error);
       res.status(500).json({ message: "Failed to delete community feature" });
+    }
+  });
+
+  // Community amenities endpoint - returns full amenity objects for a community
+  app.get("/api/communities/:id/amenities", async (req, res) => {
+    try {
+      const communityId = req.params.id;
+      const amenityIds = await storage.getCommunityAmenities(communityId);
+      
+      // Fetch full amenity objects for each ID
+      const amenities = await Promise.all(
+        amenityIds.map(async (id) => {
+          const amenity = await storage.getAmenityById(id);
+          return amenity;
+        })
+      );
+      
+      // Filter out any undefined results and return only active amenities
+      const validAmenities = amenities.filter(a => a && a.active);
+      res.json(validAmenities);
+    } catch (error) {
+      console.error("Error fetching community amenities:", error);
+      res.status(500).json({ message: "Failed to fetch community amenities" });
+    }
+  });
+
+  // Community care types endpoint - returns full care type objects for a community
+  app.get("/api/communities/:id/care-types", async (req, res) => {
+    try {
+      const communityId = req.params.id;
+      const careTypeIds = await storage.getCommunityCareTypes(communityId);
+      
+      // Fetch full care type objects for each ID
+      const careTypes = await Promise.all(
+        careTypeIds.map(async (id) => {
+          const careType = await storage.getCareTypeById(id);
+          return careType;
+        })
+      );
+      
+      // Filter out any undefined results and return only active care types
+      const validCareTypes = careTypes.filter(ct => ct && ct.active);
+      res.json(validCareTypes);
+    } catch (error) {
+      console.error("Error fetching community care types:", error);
+      res.status(500).json({ message: "Failed to fetch community care types" });
     }
   });
 
