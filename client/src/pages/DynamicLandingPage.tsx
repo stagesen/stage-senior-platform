@@ -315,10 +315,40 @@ export default function DynamicLandingPage() {
   });
 
   // Fetch FAQs (if showFaqs is true)
-  const { data: faqs = [] } = useQuery<Faq[]>({
+  const { data: allFaqs = [] } = useQuery<Faq[]>({
     queryKey: [`/api/faqs?communityId=${primaryCommunity?.id}&active=true`],
     enabled: !!template?.showFaqs && !!primaryCommunity,
   });
+
+  // Filter FAQs by care type if specified in the template
+  // Exclude FAQs that mention ONLY irrelevant care types
+  const faqs = careTypeSlug
+    ? allFaqs.filter(faq => {
+        const currentCareType = getCareTypeName().toLowerCase();
+        const questionAndAnswer = (faq.question + ' ' + faq.answer).toLowerCase();
+        
+        // List of care types to check
+        const careTypes = [
+          'independent living',
+          'assisted living', 
+          'memory care',
+          'skilled nursing'
+        ];
+        
+        // If FAQ mentions the current care type, include it
+        if (questionAndAnswer.includes(currentCareType)) {
+          return true;
+        }
+        
+        // If FAQ mentions other care types but not the current one, exclude it
+        const mentionsOtherCareTypes = careTypes
+          .filter(type => type !== currentCareType)
+          .some(type => questionAndAnswer.includes(type));
+        
+        // Exclude FAQs that mention other care types but not current one
+        return !mentionsOtherCareTypes;
+      })
+    : allFaqs;
 
   // Fetch floor plans (if showFloorPlans is true)
   const { data: allFloorPlans = [] } = useQuery<FloorPlan[]>({
@@ -391,7 +421,8 @@ export default function DynamicLandingPage() {
   }, []);
 
   // Resolve hero image - prioritize community's hero image over template's
-  const heroImageUrl = useResolveImageUrl(primaryCommunity?.imageId || template?.heroImageId);
+  // Note: heroImageUrl can contain either image IDs or direct URLs, useResolveImageUrl handles both
+  const heroImageUrl = useResolveImageUrl(primaryCommunity?.heroImageUrl || template?.heroImageId);
 
   // Loading state
   if (templateLoading) {
