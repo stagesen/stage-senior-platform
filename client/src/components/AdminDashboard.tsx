@@ -1639,10 +1639,6 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       experienceImageId: "",
       fitnessImageId: "",
       privateDiningImageId: "",
-      experienceImage1Id: "",
-      experienceImage2Id: "",
-      experienceImage3Id: "",
-      experienceImage4Id: "",
       calendarFile1Id: "",
       calendarFile1ButtonText: "",
       calendarFile2Id: "",
@@ -2927,86 +2923,6 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   </FormItem>
                 )}
               />
-              
-              {/* Experience the Difference Images Section */}
-              <div className="space-y-4 border-t pt-4 mt-4">
-                <h3 className="text-lg font-semibold">Experience the Difference Images</h3>
-                <p className="text-sm text-muted-foreground">Upload up to 4 images that showcase what makes your community special. These will be displayed in the "Experience the Difference" section.</p>
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={communityForm.control}
-                    name="experienceImage1Id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Experience Image 1</FormLabel>
-                        <FormControl>
-                          <ImageUploader
-                            value={field.value || undefined}
-                            onChange={field.onChange}
-                            label="Upload first experience image"
-                            maxSize={10 * 1024 * 1024}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={communityForm.control}
-                    name="experienceImage2Id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Experience Image 2</FormLabel>
-                        <FormControl>
-                          <ImageUploader
-                            value={field.value || undefined}
-                            onChange={field.onChange}
-                            label="Upload second experience image"
-                            maxSize={10 * 1024 * 1024}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={communityForm.control}
-                    name="experienceImage3Id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Experience Image 3</FormLabel>
-                        <FormControl>
-                          <ImageUploader
-                            value={field.value || undefined}
-                            onChange={field.onChange}
-                            label="Upload third experience image"
-                            maxSize={10 * 1024 * 1024}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={communityForm.control}
-                    name="experienceImage4Id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Experience Image 4</FormLabel>
-                        <FormControl>
-                          <ImageUploader
-                            value={field.value || undefined}
-                            onChange={field.onChange}
-                            label="Upload fourth experience image"
-                            maxSize={10 * 1024 * 1024}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
               
               {/* Calendar Downloads Section */}
               <div className="space-y-4 border-t pt-4 mt-4">
