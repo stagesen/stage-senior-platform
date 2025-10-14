@@ -118,6 +118,66 @@ const HighlightCard = ({ highlight }: { highlight: CommunityHighlight }) => {
   );
 };
 
+// Floor Plan Card component - Properly resolves images using hook
+const FloorPlanCard = ({ plan, onClick }: { plan: FloorPlan; onClick: () => void }) => {
+  const planImageUrl = useResolveImageUrl(plan.imageId) || plan.imageUrl || plan.planImageUrl || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80";
+  
+  return (
+    <Card
+      className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
+      onClick={onClick}
+      data-testid={`floor-plan-card-${plan.id}`}
+    >
+      <AspectRatio ratio={4 / 3}>
+        <img
+          src={planImageUrl}
+          alt={plan.name}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+      </AspectRatio>
+      <CardContent className="p-4 md:p-6">
+        <h3 className="text-lg md:text-xl font-bold mb-3">{plan.name}</h3>
+        <div className="flex flex-wrap gap-3 mb-4">
+          {plan.bedrooms > 0 && (
+            <div className="flex items-center gap-1 text-sm md:text-base text-muted-foreground">
+              <Bed className="w-4 h-4" />
+              <span>{plan.bedrooms} Bed</span>
+            </div>
+          )}
+          {plan.bathrooms && Number(plan.bathrooms) > 0 && (
+            <div className="flex items-center gap-1 text-sm md:text-base text-muted-foreground">
+              <Bath className="w-4 h-4" />
+              <span>{plan.bathrooms} Bath</span>
+            </div>
+          )}
+          {plan.squareFeet && (
+            <div className="flex items-center gap-1 text-sm md:text-base text-muted-foreground">
+              <Square className="w-4 h-4" />
+              <span>{plan.squareFeet} sq ft</span>
+            </div>
+          )}
+        </div>
+        {plan.startingPrice && (
+          <div className="mb-4">
+            <p className="text-xs md:text-sm text-muted-foreground">Starting at</p>
+            <p className="text-xl md:text-2xl font-bold text-primary">
+              {formatPrice(plan.startingPrice)}/mo
+            </p>
+          </div>
+        )}
+        <Button
+          variant="outline"
+          className="w-full min-h-[44px] group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+          data-testid={`button-view-floor-plan-${plan.id}`}
+        >
+          View Details
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </Button>
+      </CardContent>
+    </Card>
+  );
+};
+
 export default function DynamicLandingPage() {
   const params = useParams();
   const [location] = useLocation();
@@ -581,26 +641,225 @@ export default function DynamicLandingPage() {
       {/* 3. Stats Strip - Social proof numbers */}
       <StatsStrip />
 
-      {/* 4. First CTA - Primary conversion opportunity */}
-      <CTASection
-        variant="primary"
-        heading="Schedule Your Tour Today"
-        subheading="Experience our community firsthand. Book a personalized tour and see why families choose us."
-        ctaText="Schedule Your Tour"
-      />
+      {/* 4. Community Highlights - What makes this community special (moved up for better flow) */}
+      {communityHighlights.length > 0 && (
+        <section className="py-12 md:py-16 bg-gradient-to-br from-primary/5 via-white to-primary/5" data-testid="section-highlights">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8 md:mb-12">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
+                <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="text-sm md:text-base font-semibold">Why Choose Us</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                What Makes {primaryCommunity?.name} Special
+              </h2>
+              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+                Discover the unique features that set our community apart
+              </p>
+            </div>
 
-      {/* 5. Testimonials - Social proof from satisfied families */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {communityHighlights.map((highlight) => (
+                <HighlightCard key={highlight.id} highlight={highlight} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 5. Floor Plans & Pricing - Show what they'll get (filtered by care type) */}
+      {(template.showPricing || template.showFloorPlans) && floorPlans.length > 0 && (
+        <section className="py-12 md:py-16" data-testid="section-floor-plans">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8 md:mb-12">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
+                <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="text-sm md:text-base font-semibold">
+                  {careTypeSlug ? `${getCareTypeName()} Floor Plans` : 'Floor Plans & Pricing'}
+                </span>
+              </div>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                Choose Your Ideal Living Space
+              </h2>
+              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+                {careTypeSlug 
+                  ? `Explore our ${getCareTypeName().toLowerCase()} floor plans with transparent pricing`
+                  : 'Explore our thoughtfully designed floor plans with transparent pricing'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {floorPlans.map((plan) => (
+                <FloorPlanCard
+                  key={plan.id}
+                  plan={plan}
+                  onClick={() => setSelectedFloorPlan(plan)}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 6. Photo Gallery - Visual engagement */}
+      {template.showGallery && galleries.length > 0 && (
+        <section className="py-12 md:py-16 bg-gray-50" data-testid="section-gallery">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8 md:mb-12">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
+                <ImageIcon className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="text-sm md:text-base font-semibold">Photo Gallery</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                See Our Beautiful Community
+              </h2>
+              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+                Take a virtual tour through our welcoming spaces and vibrant community life
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {galleries.slice(0, 6).map((gallery) => {
+                const thumbnail = gallery.images?.[0];
+                const thumbnailUrl = thumbnail?.url || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80";
+                
+                return (
+                  <Card
+                    key={gallery.id}
+                    className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                    onClick={() => setSelectedGallery(gallery)}
+                    data-testid={`gallery-card-${gallery.id}`}
+                  >
+                    <AspectRatio ratio={16 / 9}>
+                      <img
+                        src={thumbnailUrl}
+                        alt={gallery.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    </AspectRatio>
+                    <CardContent className="p-3 md:p-4">
+                      <h3 className="font-semibold text-base md:text-lg mb-1">{gallery.title}</h3>
+                      {gallery.description && (
+                        <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
+                          {gallery.description}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-2 mt-2 md:mt-3 text-primary">
+                        <span className="text-xs md:text-sm font-medium">View Gallery</span>
+                        <ArrowRight className="w-3 h-3 md:w-4 md:h-4" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 7. Testimonials - Social proof from satisfied families */}
       {template.showTestimonials && testimonials.length > 0 && (
-        <section className="py-12 md:py-16 bg-gray-50" data-testid="section-testimonials">
+        <section className="py-12 md:py-16" data-testid="section-testimonials">
           <TestimonialSection />
         </section>
       )}
 
-      {/* 6. Scarcity Notice - Create urgency */}
-      <ScarcityNotice />
+      {/* 8. Community Amenities - Comprehensive details */}
+      {communityAmenities.length > 0 && (
+        <section className="py-12 md:py-16 bg-gray-50" data-testid="section-amenities">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8 md:mb-12">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
+                <CheckCircle className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="text-sm md:text-base font-semibold">Amenities & Services</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                Exceptional Care & Comfort
+              </h2>
+              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+                Experience our comprehensive amenities designed for your wellbeing
+              </p>
+            </div>
 
-      {/* 7. Community Highlights - Show available communities */}
-      {targetCommunities.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {communityAmenities.map((amenity) => (
+                <div
+                  key={amenity.id}
+                  className="flex items-start gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-shadow"
+                  data-testid={`amenity-item-${amenity.id}`}
+                >
+                  <div className="flex-shrink-0">
+                    <CheckCircle className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-sm md:text-base mb-1">{amenity.name}</h3>
+                    {amenity.description && (
+                      <p className="text-xs md:text-sm text-muted-foreground">
+                        {amenity.description}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 9. Team Members - Meet the caring professionals */}
+      {template.showTeamMembers && teamMembers.length > 0 && (
+        <section className="py-12 md:py-16" data-testid="section-team">
+          <TeamCarousel
+            filterTag={primaryCommunity?.slug || "Stage Management"}
+            title="Meet Our Team"
+            subtitle="Dedicated professionals committed to exceptional care"
+          />
+        </section>
+      )}
+
+      {/* 10. FAQs - Answer concerns */}
+      {template.showFaqs && faqs.length > 0 && (
+        <section className="py-12 md:py-16 bg-gray-50" data-testid="section-faqs">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8 md:mb-12">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
+                <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="text-sm md:text-base font-semibold">Frequently Asked Questions</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                Your Questions Answered
+              </h2>
+              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+                Get clarity on everything you need to know about {primaryCommunity?.name || 'our community'}
+              </p>
+            </div>
+
+            <Accordion type="single" collapsible className="w-full">
+              {faqs.slice(0, 10).map((faq, index) => (
+                <AccordionItem key={faq.id} value={`faq-${index}`} data-testid={`faq-item-${faq.id}`}>
+                  <AccordionTrigger className="text-left font-semibold text-base md:text-lg hover:text-primary transition-colors">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm md:text-base text-muted-foreground">
+                    <div dangerouslySetInnerHTML={{ __html: faq.answerHtml || faq.answer || '' }} />
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </section>
+      )}
+
+      {/* 11. Single Strong CTA - Primary conversion point */}
+      <CTASection
+        variant="primary"
+        heading="Ready to Experience the Difference?"
+        subheading={`Schedule your personalized tour of ${primaryCommunity?.name || 'our community'} today. See firsthand why families choose us for their loved ones.`}
+        ctaText="Schedule Your Tour"
+      />
+
+      {/* 12. Alternative Communities - Only show if multiple communities match */}
+      {targetCommunities.length > 1 && (
         <section className="py-12 md:py-16" data-testid="section-communities">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 md:mb-12">
@@ -656,229 +915,6 @@ export default function DynamicLandingPage() {
                           <ArrowRight className="w-4 h-4 ml-2" />
                         </a>
                       </Button>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 7a. Community Highlights - Specific features of this community */}
-      {communityHighlights.length > 0 && (
-        <section className="py-12 md:py-16 bg-gradient-to-br from-primary/5 via-white to-primary/5" data-testid="section-highlights">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 md:mb-12">
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
-                <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="text-sm md:text-base font-semibold">Community Highlights</span>
-              </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
-                What Makes {primaryCommunity?.name} Special
-              </h2>
-              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-                Discover the unique features that set our community apart
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {communityHighlights.map((highlight) => (
-                <HighlightCard key={highlight.id} highlight={highlight} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 8. Second CTA - Phone call option */}
-      <CTASection
-        variant="secondary"
-        heading="Questions? We're Here to Help"
-        subheading="Our friendly team is ready to answer your questions and provide personalized guidance."
-        ctaText="Call Us Today"
-      />
-
-      {/* 9. Photo Gallery - Visual engagement */}
-      {template.showGallery && galleries.length > 0 && (
-        <section className="py-12 md:py-16" data-testid="section-gallery">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 md:mb-12">
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
-                <ImageIcon className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="text-sm md:text-base font-semibold">Photo Gallery</span>
-              </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
-                See Our Beautiful Community
-              </h2>
-              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-                Take a virtual tour through our welcoming spaces and vibrant community life
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-              {galleries.slice(0, 6).map((gallery) => {
-                const thumbnail = gallery.images?.[0];
-                const thumbnailUrl = thumbnail?.url || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80";
-                
-                return (
-                  <Card
-                    key={gallery.id}
-                    className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                    onClick={() => setSelectedGallery(gallery)}
-                    data-testid={`gallery-card-${gallery.id}`}
-                  >
-                    <AspectRatio ratio={16 / 9}>
-                      <img
-                        src={thumbnailUrl}
-                        alt={gallery.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                    </AspectRatio>
-                    <CardContent className="p-3 md:p-4">
-                      <h3 className="font-semibold text-base md:text-lg mb-1">{gallery.title}</h3>
-                      {gallery.description && (
-                        <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
-                          {gallery.description}
-                        </p>
-                      )}
-                      <div className="flex items-center gap-2 mt-2 md:mt-3 text-primary">
-                        <span className="text-xs md:text-sm font-medium">View Gallery</span>
-                        <ArrowRight className="w-3 h-3 md:w-4 md:h-4" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 9a. Community Amenities - Services and features */}
-      {communityAmenities.length > 0 && (
-        <section className="py-12 md:py-16 bg-gray-50" data-testid="section-amenities">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 md:mb-12">
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
-                <CheckCircle className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="text-sm md:text-base font-semibold">Amenities & Services</span>
-              </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
-                Exceptional Care & Comfort
-              </h2>
-              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-                Experience our comprehensive amenities designed for your wellbeing
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-              {communityAmenities.map((amenity) => (
-                <div
-                  key={amenity.id}
-                  className="flex items-start gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-shadow"
-                  data-testid={`amenity-item-${amenity.id}`}
-                >
-                  <div className="flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-sm md:text-base mb-1">{amenity.name}</h3>
-                    {amenity.description && (
-                      <p className="text-xs md:text-sm text-muted-foreground">
-                        {amenity.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 10. Team Members - Meet the caring professionals */}
-      {template.showTeamMembers && teamMembers.length > 0 && (
-        <section className="py-12 md:py-16 bg-gray-50" data-testid="section-team">
-          <TeamCarousel
-            filterTag={primaryCommunity?.slug || "Stage Management"}
-            title="Meet Our Team"
-            subtitle="Dedicated professionals committed to exceptional care"
-          />
-        </section>
-      )}
-
-      {/* 11. Floor Plans & Pricing - Detailed living options */}
-      {(template.showPricing || template.showFloorPlans) && floorPlans.length > 0 && (
-        <section className="py-12 md:py-16" data-testid="section-floor-plans">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 md:mb-12">
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
-                <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="text-sm md:text-base font-semibold">Floor Plans & Pricing</span>
-              </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
-                Choose Your Ideal Living Space
-              </h2>
-              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-                Explore our thoughtfully designed floor plans with transparent pricing
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {floorPlans.map((plan) => {
-                const planImageUrl = plan.imageUrl || plan.imageId;
-                
-                return (
-                  <Card
-                    key={plan.id}
-                    className="overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer group"
-                    onClick={() => setSelectedFloorPlan(plan)}
-                    data-testid={`floor-plan-card-${plan.id}`}
-                  >
-                    {planImageUrl && (
-                      <AspectRatio ratio={16 / 10}>
-                        <img
-                          src={planImageUrl}
-                          alt={`${plan.name} floor plan`}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
-                      </AspectRatio>
-                    )}
-                    <CardContent className="p-4 md:p-6">
-                      <h3 className="font-bold text-lg md:text-xl mb-3">{plan.name}</h3>
-                      {template.showPricing && plan.startingPrice && (
-                        <p className="text-2xl md:text-3xl font-bold text-primary mb-4">
-                          {formatPrice(plan.startingPrice)}
-                          <span className="text-sm md:text-base font-normal text-gray-600">/mo</span>
-                        </p>
-                      )}
-                      <div className="flex flex-wrap gap-3 md:gap-4 text-sm md:text-base text-gray-700 mb-4">
-                        {plan.bedrooms !== null && (
-                          <span className="flex items-center gap-1.5 md:gap-2">
-                            <Bed className="w-4 h-4 md:w-5 md:h-5 text-primary" />
-                            <span className="font-medium">{plan.bedrooms}</span>{" "}
-                            {plan.bedrooms === 1 ? "Bed" : "Beds"}
-                          </span>
-                        )}
-                        {plan.bathrooms !== null && (
-                          <span className="flex items-center gap-1.5 md:gap-2">
-                            <Bath className="w-4 h-4 md:w-5 md:h-5 text-primary" />
-                            <span className="font-medium">{Number(plan.bathrooms)}</span>{" "}
-                            {Number(plan.bathrooms) === 1 ? "Bath" : "Baths"}
-                          </span>
-                        )}
-                        {plan.squareFeet && (
-                          <span className="flex items-center gap-1.5 md:gap-2">
-                            <Square className="w-4 h-4 md:w-5 md:h-5 text-primary" />
-                            <span className="font-medium">{plan.squareFeet}</span> sq ft
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center justify-between pt-4 border-t">
-                        <span className="text-sm md:text-base font-semibold text-primary">View Floor Plan</span>
-                        <ArrowRight className="w-4 h-4 md:w-5 md:h-5 text-primary group-hover:translate-x-1 transition-transform" />
-                      </div>
                     </CardContent>
                   </Card>
                 );
