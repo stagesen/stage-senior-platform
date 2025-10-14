@@ -482,6 +482,55 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
   );
 };
 
+// Local subcomponent: Testimonial Carousel Item
+const TestimonialCarouselItem = ({ testimonial }: { testimonial: any }) => {
+  const resolvedAvatarUrl = useResolveImageUrl(testimonial.imageId);
+
+  return (
+    <div className="px-8 py-12 text-center">
+      <blockquote className="text-xl md:text-2xl font-bold text-gray-900 mb-8 leading-tight" data-testid={`testimonial-quote-${testimonial.id}`}>
+        "{testimonial.content}"
+      </blockquote>
+      <div className="flex flex-col items-center space-y-3">
+        {/* Avatar */}
+        {resolvedAvatarUrl ? (
+          <img
+            src={resolvedAvatarUrl}
+            alt={testimonial.authorName}
+            className="w-16 h-16 rounded-full object-cover ring-2 ring-primary/30"
+          />
+        ) : (
+          <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center ring-2 ring-primary/30">
+            <span className="text-primary font-bold text-xl">
+              {testimonial.authorName?.charAt(0) || 'R'}
+            </span>
+          </div>
+        )}
+        <div>
+          <p className="text-lg font-semibold text-gray-800" data-testid={`testimonial-author-${testimonial.id}`}>
+            {testimonial.authorName}
+          </p>
+          {testimonial.authorRelation && (
+            <p className="text-lg text-gray-600" data-testid={`testimonial-relation-${testimonial.id}`}>
+              {testimonial.authorRelation}
+            </p>
+          )}
+        </div>
+        {testimonial.rating && (
+          <div className="flex items-center justify-center gap-1 mt-2" data-testid={`testimonial-rating-${testimonial.id}`}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className={`w-6 h-6 ${i < (testimonial.rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // Local subcomponent: Testimonials Carousel
 const TestimonialsCarousel = ({ testimonials }: { testimonials: any[] }) => {
   const [api, setApi] = useState<CarouselApi>();
@@ -520,31 +569,7 @@ const TestimonialsCarousel = ({ testimonials }: { testimonials: any[] }) => {
         <CarouselContent>
           {testimonials.map((testimonial) => (
             <CarouselItem key={testimonial.id}>
-              <div className="px-8 py-12 text-center">
-                <blockquote className="text-xl md:text-2xl font-bold text-gray-900 mb-8 leading-tight" data-testid={`testimonial-quote-${testimonial.id}`}>
-                  "{testimonial.content}"
-                </blockquote>
-                <div className="space-y-2">
-                  <p className="text-lg font-semibold text-gray-800" data-testid={`testimonial-author-${testimonial.id}`}>
-                    {testimonial.authorName}
-                  </p>
-                  {testimonial.authorRelation && (
-                    <p className="text-lg text-gray-600" data-testid={`testimonial-relation-${testimonial.id}`}>
-                      {testimonial.authorRelation}
-                    </p>
-                  )}
-                  {testimonial.rating && (
-                    <div className="flex items-center justify-center gap-1 mt-4" data-testid={`testimonial-rating-${testimonial.id}`}>
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`w-6 h-6 ${i < (testimonial.rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
+              <TestimonialCarouselItem testimonial={testimonial} />
             </CarouselItem>
           ))}
         </CarouselContent>

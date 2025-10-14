@@ -42,7 +42,6 @@ import type {
   Faq,
   FloorPlan,
   GalleryImageWithDetails,
-  CareType,
 } from "@shared/schema";
 
 // Helper function to replace tokens in text
@@ -101,73 +100,80 @@ export default function DynamicLandingPage() {
   const template = resolveData?.template;
   const urlParams = resolveData?.params || {};
 
-  // Fetch community if template has a specific communityId
-  const { data: community } = useQuery<Community>({
-    queryKey: ["/api/communities", template?.communityId],
-    enabled: !!template?.communityId,
+  // Fetch all communities
+  const { data: allCommunities = [] } = useQuery<Community[]>({
+    queryKey: ["/api/communities"],
+    enabled: !!template,
   });
 
-  // Fetch communities if template doesn't have a specific communityId
-  const { data: communities = [] } = useQuery<Community[]>({
-    queryKey: ["/api/communities", { careTypeId: template?.careTypeId, cities: template?.cities }],
-    enabled: !template?.communityId && !!template,
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      if (template?.careTypeId) params.append("careTypeId", template.careTypeId);
-      if (template?.cities?.length) {
-        template.cities.forEach(city => params.append("city", city));
-      }
-      
-      const response = await fetch(`/api/communities?${params}`);
-      if (!response.ok) throw new Error("Failed to fetch communities");
-      return response.json();
-    },
-  });
+  // Filter communities based on template settings
+  const targetCommunities = template?.communityId
+    ? allCommunities.filter(c => c.id === template.communityId)
+    : template?.cities?.length
+    ? allCommunities.filter(c => template.cities?.includes(c.city))
+    : allCommunities;
 
-  // Fetch care type for token replacement
-  const { data: careType } = useQuery<CareType>({
-    queryKey: ["/api/care-types", template?.careTypeId],
-    enabled: !!template?.careTypeId,
-  });
-
-  // Determine which community/communities to use for content
-  const targetCommunities = community ? [community] : communities;
   const primaryCommunity = targetCommunities[0];
+
+  // Simple care type name mapping for token replacement (fallback to URL params)
+  const getCareTypeName = () => {
+    // First try URL params
+    if (urlParams.careType) {
+      return urlParams.careType.charAt(0).toUpperCase() + urlParams.careType.slice(1);
+    }
+    
+    // Then try to infer from URL pattern
+    if (template?.urlPattern) {
+      if (template.urlPattern.includes('assisted-living')) return "Assisted Living";
+      if (template.urlPattern.includes('memory-care')) return "Memory Care";
+      if (template.urlPattern.includes('independent-living')) return "Independent Living";
+      if (template.urlPattern.includes('skilled-nursing')) return "Skilled Nursing";
+    }
+    
+    // Fallback based on care type ID mapping (known UUIDs from database)
+    const careTypeIdMap: Record<string, string> = {
+      "f7f9f6c3-5500-4f5f-b6eb-66e322b44cbd": "Assisted Living",
+      "1c08656d-0383-4eed-8bf5-4c3c4673ea33": "Memory Care",
+      "35e9d6a3-5444-4a66-a2a3-a9c8b728f4ea": "Independent Living",
+    };
+    
+    return template?.careTypeId ? careTypeIdMap[template.careTypeId] || "Senior Living" : "Senior Living";
+  };
 
   // Fetch galleries (if showGallery is true)
   const { data: galleries = [] } = useQuery<Gallery[]>({
-    queryKey: ["/api/galleries", { communityId: primaryCommunity?.id, active: true }],
+    queryKey: [`/api/galleries?communityId=${primaryCommunity?.id}&active=true`],
     enabled: !!template?.showGallery && !!primaryCommunity,
   });
 
   // Fetch testimonials (if showTestimonials is true)
   const { data: testimonials = [] } = useQuery<Testimonial[]>({
-    queryKey: ["/api/testimonials", { communityId: primaryCommunity?.id, approved: true, featured: true }],
+    queryKey: [`/api/testimonials?communityId=${primaryCommunity?.id}&approved=true&featured=true`],
     enabled: !!template?.showTestimonials && !!primaryCommunity,
   });
 
   // Fetch team members (if showTeamMembers is true)
   const { data: teamMembers = [] } = useQuery<TeamMember[]>({
-    queryKey: ["/api/team-members", { active: true }],
+    queryKey: ["/api/team-members?active=true"],
     enabled: !!template?.showTeamMembers,
   });
 
   // Fetch FAQs (if showFaqs is true)
   const { data: faqs = [] } = useQuery<Faq[]>({
-    queryKey: ["/api/faqs", { communityId: primaryCommunity?.id, active: true }],
+    queryKey: [`/api/faqs?communityId=${primaryCommunity?.id}&active=true`],
     enabled: !!template?.showFaqs && !!primaryCommunity,
   });
 
   // Fetch floor plans (if showFloorPlans is true)
   const { data: floorPlans = [] } = useQuery<FloorPlan[]>({
-    queryKey: ["/api/floor-plans", { communityId: primaryCommunity?.id, active: true }],
+    queryKey: [`/api/floor-plans?communityId=${primaryCommunity?.id}&active=true`],
     enabled: !!template?.showFloorPlans && !!primaryCommunity,
   });
 
   // Build tokens for replacement
   const tokens = {
     city: urlParams.city || primaryCommunity?.city || "",
-    careType: careType?.name || urlParams.careType || "",
+    careType: getCareTypeName(),
     communityName: primaryCommunity?.name || "",
     location: urlParams.location || primaryCommunity?.city || "",
   };
@@ -227,7 +233,7 @@ export default function DynamicLandingPage() {
     <div className="min-h-screen bg-white" data-testid="dynamic-landing-page">
       {/* Hero Section - Always shown */}
       <PageHero
-        pagePath={location}
+        pagePath={pathname}
         defaultTitle={replaceTokens(pageTitle, tokens)}
         defaultSubtitle={pageSubtitle ? replaceTokens(pageSubtitle, tokens) : undefined}
         defaultBackgroundImage={heroImageUrl || undefined}
@@ -331,7 +337,7 @@ export default function DynamicLandingPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {targetCommunities.map((comm) => {
-                const communityImageUrl = useResolveImageUrl(comm.imageId || comm.heroImageUrl);
+                const communityImageUrl = comm.heroImageUrl || comm.imageId || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80";
                 
                 return (
                   <Card
@@ -341,7 +347,7 @@ export default function DynamicLandingPage() {
                   >
                     <AspectRatio ratio={16 / 9}>
                       <img
-                        src={communityImageUrl || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"}
+                        src={communityImageUrl}
                         alt={comm.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
@@ -405,7 +411,7 @@ export default function DynamicLandingPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {floorPlans.map((plan) => {
-                const planImageUrl = useResolveImageUrl(plan.imageId || plan.imageUrl);
+                const planImageUrl = plan.imageUrl || plan.imageId;
                 
                 return (
                   <Card
