@@ -38,6 +38,8 @@ import {
   Download,
   MessageCircle,
   Navigation,
+  ChevronRight,
+  Trees,
 } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import type {
@@ -176,6 +178,148 @@ const FloorPlanCard = ({ plan, onClick }: { plan: FloorPlan; onClick: () => void
         </Button>
       </CardContent>
     </Card>
+  );
+};
+
+// Gallery Overview component - Shows galleries with preview grids
+const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: Gallery[], onGallerySelect: (gallery: Gallery) => void }) => {
+  // Map our gallery categories to icons
+  const categoryConfig: Record<string, { icon: typeof Users; displayName: string }> = {
+    'life-activities': { icon: Users, displayName: 'Life & Activities' },
+    'apartments-spaces': { icon: Home, displayName: 'Apartments & Spaces' },
+    'care-team': { icon: Heart, displayName: 'Care & Team' },
+    'outdoors-colorado': { icon: Trees, displayName: 'Outdoors & Colorado' },
+  };
+
+  // Ensure galleries is always an array
+  const items = galleries ?? [];
+
+  // Get galleries with images for the main grid (show first 4 galleries)
+  const galleriesWithImages = items.filter(g => g.images && g.images.length > 0);
+  const mainGalleries = galleriesWithImages.slice(0, 4);
+
+  return (
+    <div className="space-y-8">
+      {/* Gallery Cards Grid - Show first 4 galleries as cards */}
+      {mainGalleries.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+          {mainGalleries.map((gallery) => {
+            const images = gallery.images || [];
+            const totalImages = images.length;
+            const previewImages = images.slice(0, 4);
+
+            return (
+              <Card 
+                key={gallery.id}
+                className="overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer group bg-gradient-to-br from-gray-50 to-white border-gray-200"
+                onClick={() => onGallerySelect(gallery)}
+                data-testid={`gallery-card-${gallery.id}`}
+              >
+                {/* Gallery Preview Grid */}
+                <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
+                  {previewImages.length > 0 && (
+                    <div className={`grid ${previewImages.length === 1 ? 'grid-cols-1' : previewImages.length === 2 ? 'grid-cols-2' : 'grid-cols-2'} gap-0.5 h-full`}>
+                      {previewImages.map((image: { url: string; alt?: string }, idx: number) => (
+                        <div 
+                          key={idx}
+                          className={`relative overflow-hidden ${
+                            previewImages.length === 3 && idx === 0 ? 'col-span-2' : ''
+                          } ${previewImages.length === 4 ? '' : ''}`}
+                        >
+                          <img
+                            src={image.url}
+                            alt={image.alt || `${gallery.title} image ${idx + 1}`}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            loading="lazy"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Overlay with fade effect */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                  {/* View Gallery Text on Hover */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="bg-white/95 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                      <span className="text-gray-900 font-semibold flex items-center gap-2">
+                        <ImageIcon className="w-5 h-5" />
+                        View Gallery
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Image Count Badge */}
+                  <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5 shadow-lg">
+                    <ImageIcon className="w-4 h-4" />
+                    <span>{totalImages} {totalImages === 1 ? 'Photo' : 'Photos'}</span>
+                  </div>
+                </div>
+
+                {/* Gallery Info */}
+                <CardContent className="p-5 bg-white">
+                  <h3 className="font-bold text-xl text-gray-900 mb-1.5 group-hover:text-primary transition-colors" data-testid={`gallery-title-${gallery.id}`}>
+                    {gallery.title}
+                  </h3>
+                  {gallery.description && (
+                    <p className="text-sm text-gray-600 line-clamp-2">
+                      {gallery.description}
+                    </p>
+                  )}
+                  <div className="flex items-center mt-3 text-primary group-hover:translate-x-1 transition-transform">
+                    <span className="text-sm font-medium">Explore Gallery</span>
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Gallery Category Cards - Additional galleries or categories */}
+      {items.length > 4 && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {items.slice(4, 8).map((gallery) => {
+            const config = gallery.category ? (categoryConfig[gallery.category] || { icon: ImageIcon, displayName: gallery.title }) : { icon: ImageIcon, displayName: gallery.title };
+            const IconComponent = config.icon;
+            const coverImage = gallery.images?.[0];
+            const totalImages = gallery.images?.length || 0;
+
+            return (
+              <Card 
+                key={gallery.id} 
+                className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
+                onClick={() => onGallerySelect(gallery)}
+                data-testid={`gallery-category-${gallery.category}`}
+              >
+                <AspectRatio ratio={4/3}>
+                  {coverImage ? (
+                    <img
+                      src={coverImage.url}
+                      alt={coverImage.alt || `${gallery.title} gallery`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
+                      <IconComponent className="w-12 h-12 text-primary/30" />
+                    </div>
+                  )}
+                </AspectRatio>
+                <CardContent className="p-3">
+                  <h4 className="font-semibold text-sm mb-1">{config.displayName}</h4>
+                  <div className="flex items-center text-xs text-muted-foreground">
+                    <ImageIcon className="w-3 h-3 mr-1" />
+                    <span>{totalImages} {totalImages === 1 ? 'Photo' : 'Photos'}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -424,6 +568,9 @@ export default function DynamicLandingPage() {
   // Resolve hero image - prioritize community's hero image over template's
   // Note: heroImageUrl can contain either image IDs or direct URLs, useResolveImageUrl handles both
   const heroImageUrl = useResolveImageUrl(primaryCommunity?.heroImageUrl || template?.heroImageId);
+  
+  // Resolve community logo image
+  const communityLogoUrl = useResolveImageUrl(primaryCommunity?.logoImageId);
 
   // Loading state
   if (templateLoading) {
@@ -649,6 +796,22 @@ export default function DynamicLandingPage() {
         defaultBackgroundImage={heroImageUrl || undefined}
       />
 
+      {/* 1b. Community Logo - Display community branding */}
+      {communityLogoUrl && (
+        <section className="py-8 md:py-6 bg-white border-b" data-testid="section-community-logo">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-center">
+              <img
+                src={communityLogoUrl}
+                alt={`${primaryCommunity?.name} logo`}
+                className="h-16 md:h-20 w-auto object-contain"
+                data-testid="community-logo"
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* 1a. Care Type Focus - Show specific care type if landing page is for a specific care type */}
       {careTypeSlug && getCareTypeName() !== "Senior Living" && (
         <section className="py-8 md:py-12 bg-primary/5" data-testid="section-care-type-focus">
@@ -746,45 +909,14 @@ export default function DynamicLandingPage() {
                 See Our Beautiful Community
               </h2>
               <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-                Take a virtual tour through our welcoming spaces and vibrant community life
+                Explore our vibrant community life, comfortable living spaces, and beautiful surroundings
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-              {galleries.slice(0, 6).map((gallery) => {
-                const thumbnail = gallery.images?.[0];
-                const thumbnailUrl = thumbnail?.url || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80";
-                
-                return (
-                  <Card
-                    key={gallery.id}
-                    className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                    onClick={() => setSelectedGallery(gallery)}
-                    data-testid={`gallery-card-${gallery.id}`}
-                  >
-                    <AspectRatio ratio={16 / 9}>
-                      <img
-                        src={thumbnailUrl}
-                        alt={gallery.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                    </AspectRatio>
-                    <CardContent className="p-3 md:p-4">
-                      <h3 className="font-semibold text-base md:text-lg mb-1">{gallery.title}</h3>
-                      {gallery.description && (
-                        <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
-                          {gallery.description}
-                        </p>
-                      )}
-                      <div className="flex items-center gap-2 mt-2 md:mt-3 text-primary">
-                        <span className="text-xs md:text-sm font-medium">View Gallery</span>
-                        <ArrowRight className="w-3 h-3 md:w-4 md:h-4" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
+            <GalleryOverview 
+              galleries={galleries}
+              onGallerySelect={(gallery) => setSelectedGallery(gallery)}
+            />
           </div>
         </section>
       )}
