@@ -1959,9 +1959,12 @@ export default function CommunityDetail() {
                       <Mail className="w-4 h-4 text-muted-foreground mt-1" />
                       <div className="text-sm">
                         <p className="font-medium">Email</p>
-                        <p className="text-muted-foreground">
+                        <a 
+                          href={`mailto:${community.email || 'info@example.com'}`}
+                          className="text-primary hover:underline"
+                        >
                           {community.email || 'info@example.com'}
-                        </p>
+                        </a>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
