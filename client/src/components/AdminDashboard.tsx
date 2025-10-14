@@ -2012,6 +2012,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   });
 
   const handleSubmit = (data: any) => {
+    console.log('handleSubmit called with data:', data);
+    console.log('editingItem:', editingItem);
+    console.log('type:', type);
+    
     // For care types, generate slug if not provided
     if (type === "care-types") {
       if (!data.slug && data.name) {
@@ -2393,7 +2397,14 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "communities":
         return (
           <Form {...communityForm}>
-            <form onSubmit={communityForm.handleSubmit(handleSubmit)} className="space-y-4">
+            <form onSubmit={communityForm.handleSubmit(handleSubmit, (errors) => {
+              console.error('Form validation errors:', errors);
+              toast({
+                title: "Validation Error",
+                description: "Please check all required fields",
+                variant: "destructive",
+              });
+            })} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={communityForm.control}
