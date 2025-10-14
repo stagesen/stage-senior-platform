@@ -1958,9 +1958,13 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   // Update mutation
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
-      return await apiRequest("PUT", `/api/${apiEndpoint}/${id}`, data);
+      console.log('updateMutation: sending request to', `/api/${apiEndpoint}/${id}`, 'with data:', data);
+      const response = await apiRequest("PUT", `/api/${apiEndpoint}/${id}`, data);
+      console.log('updateMutation: response received:', response);
+      return response;
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      console.log('updateMutation: success!', response);
       queryClient.invalidateQueries({ queryKey: [`/api/${apiEndpoint}`] });
       setIsDialogOpen(false);
       setEditingItem(null);
@@ -2225,8 +2229,10 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     }
 
     if (editingItem) {
+      console.log('Calling updateMutation with:', { id: editingItem.id, data });
       updateMutation.mutate({ id: editingItem.id, data });
     } else {
+      console.log('Calling createMutation with:', data);
       createMutation.mutate(data);
     }
   };

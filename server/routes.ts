@@ -179,9 +179,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/communities/:id", requireAuth, async (req, res) => {
     try {
+      console.log('PUT /api/communities/:id - Received data:', JSON.stringify(req.body, null, 2));
       const { careTypeIds, amenityIds, ...communityData } = req.body;
       const validatedData = insertCommunitySchema.partial().parse(communityData);
+      console.log('PUT /api/communities/:id - Validated data:', JSON.stringify(validatedData, null, 2));
       const community = await storage.updateCommunity(req.params.id, validatedData);
+      console.log('PUT /api/communities/:id - Updated community:', JSON.stringify(community, null, 2));
       
       // Update care types and amenities if provided
       if (careTypeIds !== undefined && Array.isArray(careTypeIds)) {
