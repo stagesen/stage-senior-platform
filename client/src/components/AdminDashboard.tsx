@@ -2026,6 +2026,20 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       // Add care type and amenity relationships
       data.careTypeIds = selectedCareTypes;
       data.amenityIds = selectedAmenities;
+      
+      // Convert empty string image IDs to null (for foreign key constraints)
+      const imageFields = [
+        'logoImageId', 'contactImageId', 'pricingImageId', 'brochureImageId',
+        'experienceImageId', 'fitnessImageId', 'privateDiningImageId',
+        'experienceImage1Id', 'experienceImage2Id', 'experienceImage3Id', 'experienceImage4Id',
+        'calendarFile1Id', 'calendarFile2Id'
+      ];
+      imageFields.forEach(field => {
+        if (data[field] === '') {
+          data[field] = null;
+        }
+      });
+      
       // If lat/lng are provided but not latitude/longitude, copy them
       if (data.lat !== null && data.lat !== undefined && !data.latitude) {
         data.latitude = data.lat;
