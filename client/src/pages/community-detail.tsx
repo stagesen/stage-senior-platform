@@ -89,27 +89,29 @@ const formatPrice = (price: number | undefined | null): string => {
 };
 
 // Local subcomponent: Highlight Card
-const HighlightCard = ({ highlight }: { highlight: { title: string; description: string; imageUrl?: string; imageId?: string; ctaLabel?: string; ctaHref?: string } }) => {
+const HighlightCard = ({ highlight, imageOnRight = false }: { highlight: { title: string; description: string; imageUrl?: string; imageId?: string; ctaLabel?: string; ctaHref?: string }; imageOnRight?: boolean }) => {
   // Pass imageId directly - useResolveImageUrl handles the API path internally
   const resolvedImageUrl = useResolveImageUrl(highlight.imageId || highlight.imageUrl);
-  
+
   return (
-    <Card className="overflow-hidden">
-      <AspectRatio ratio={16 / 9}>
-        <img
-          src={resolvedImageUrl || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"}
-          alt={highlight.title}
-          className="w-full h-full object-cover"
-          data-testid={`highlight-${highlight.title.toLowerCase().replace(/\s+/g, '-')}`}
-        />
-      </AspectRatio>
-      <CardContent className="p-6">
+    <Card className={cn("overflow-hidden flex flex-col md:flex-row", imageOnRight && "md:flex-row-reverse")}>
+      <div className="w-full md:w-1/2">
+        <AspectRatio ratio={16 / 9} className="md:h-full">
+          <img
+            src={resolvedImageUrl || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"}
+            alt={highlight.title}
+            className="w-full h-full object-cover"
+            data-testid={`highlight-${highlight.title.toLowerCase().replace(/\s+/g, '-')}`}
+          />
+        </AspectRatio>
+      </div>
+      <CardContent className="p-6 w-full md:w-1/2 flex flex-col justify-center">
         <h3 className="text-xl font-semibold mb-2 text-primary">{highlight.title}</h3>
         <p className="text-gray-600 mb-4">{highlight.description}</p>
         {highlight.ctaLabel && highlight.ctaHref && (
-          <Button 
-            asChild 
-            variant="default" 
+          <Button
+            asChild
+            variant="default"
             size="sm"
             data-testid={`highlight-cta-${highlight.title.toLowerCase().replace(/\s+/g, '-')}`}
           >
@@ -1706,14 +1708,18 @@ export default function CommunityDetail() {
             {highlights.length > 0 && (
               <section id="highlights" className="scroll-mt-24">
                 <h2 className="text-2xl md:text-3xl font-bold mb-8">Community Highlights</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {highlights.map((highlight) => (
-                    <HighlightCard key={highlight.id} highlight={{
-                      ...highlight,
-                      imageId: highlight.imageId ?? undefined,
-                      ctaLabel: highlight.ctaLabel ?? undefined,
-                      ctaHref: highlight.ctaHref ?? undefined
-                    }} />
+                <div className="flex flex-col gap-6">
+                  {highlights.map((highlight, index) => (
+                    <HighlightCard
+                      key={highlight.id}
+                      highlight={{
+                        ...highlight,
+                        imageId: highlight.imageId ?? undefined,
+                        ctaLabel: highlight.ctaLabel ?? undefined,
+                        ctaHref: highlight.ctaHref ?? undefined
+                      }}
+                      imageOnRight={index % 2 !== 0}
+                    />
                   ))}
                 </div>
               </section>

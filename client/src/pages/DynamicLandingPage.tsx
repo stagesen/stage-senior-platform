@@ -14,6 +14,7 @@ import FloorPlanModal from "@/components/FloorPlanModal";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import NotFound from "@/pages/not-found";
 import {
   Calendar,
   MapPin,
@@ -76,30 +77,29 @@ export default function DynamicLandingPage() {
   const [selectedGallery, setSelectedGallery] = useState<Gallery | null>(null);
   const [selectedFloorPlan, setSelectedFloorPlan] = useState<FloorPlan | null>(null);
 
-  // Extract URL params (city, careType, location, etc.)
-  const urlParams = {
-    city: params.city || "",
-    careType: params.careType || "",
-    location: params.location || "",
-  };
+  // Strip query params from location for efficient caching
+  // This ensures URLs with different UTM parameters use the same cache entry
+  const pathname = location.split('?')[0];
 
-  // Fetch landing page template based on URL
-  const { data: template, isLoading: templateLoading } = useQuery<LandingPageTemplate>({
-    queryKey: ["/api/landing-page-templates", location],
+  // Fetch landing page template and extract params from URL using the resolve endpoint
+  const { data: resolveData, isLoading: templateLoading, error: templateError } = useQuery<{
+    template: LandingPageTemplate;
+    params: Record<string, string>;
+  }>({
+    queryKey: ["/api/landing-page-templates/resolve", pathname],
     queryFn: async () => {
-      // Try to fetch by slug first (constructed from URL)
-      const slug = location.replace(/^\//, "").replace(/\//g, "-");
-      const response = await fetch(`/api/landing-page-templates/${slug}`);
+      const response = await fetch(`/api/landing-page-templates/resolve?url=${encodeURIComponent(pathname)}`);
       
-      if (response.ok) {
-        return response.json();
+      if (!response.ok) {
+        throw new Error("Template not found");
       }
       
-      // If not found by slug, try to match by pattern
-      // This would require a new endpoint or different approach
-      throw new Error("Template not found");
+      return response.json();
     },
   });
+
+  const template = resolveData?.template;
+  const urlParams = resolveData?.params || {};
 
   // Fetch community if template has a specific communityId
   const { data: community } = useQuery<Community>({
@@ -210,25 +210,14 @@ export default function DynamicLandingPage() {
     );
   }
 
-  // Template not found
+  // Template not found - show NotFound component
+  if (!templateLoading && (!template || templateError)) {
+    return <NotFound />;
+  }
+
+  // Guard to ensure template is defined (TypeScript type narrowing)
   if (!template) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="w-full max-w-md mx-4">
-          <CardContent className="pt-6 text-center">
-            <h1 className="text-2xl font-bold mb-4" data-testid="template-not-found">
-              Page Not Found
-            </h1>
-            <p className="text-muted-foreground mb-6">
-              The page you're looking for doesn't exist.
-            </p>
-            <Button asChild data-testid="button-back-home">
-              <a href="/">Back to Home</a>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return null;
   }
 
   const pageTitle = template.heroTitle || template.h1Headline || template.title;

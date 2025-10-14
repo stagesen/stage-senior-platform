@@ -952,6 +952,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/landing-page-templates/resolve", async (req, res) => {
+    try {
+      const url = (req.query.url as string) || '/';
+      
+      if (!url) {
+        return res.status(400).json({ message: "URL parameter is required" });
+      }
+      
+      // Normalize URL: strip query params, decode URI, and remove trailing slashes
+      // This ensures URLs with UTM tracking, encoded characters, and trailing slashes match correctly
+      const cleanUrl = decodeURIComponent(url.split('?')[0]).replace(/\/+$/, '') || '/';
+      
+      // Fetch all active templates
+      const templates = await storage.getLandingPageTemplates({ active: true });
+      
+      // Helper function to match URL against pattern and extract params
+      const matchUrlPattern = (actualUrl: string, pattern: string): { match: boolean; params: Record<string, string> } => {
+        const params: Record<string, string> = {};
+        
+        // Normalize pattern by removing trailing slashes
+        const normalizedPattern = pattern.replace(/\/+$/, '') || '/';
+        
+        // Extract parameter names from pattern (e.g., :city, :careType)
+        const paramNames: string[] = [];
+        const regexPattern = normalizedPattern.replace(/:([^\/]+)/g, (_, paramName) => {
+          paramNames.push(paramName);
+          return '([^/]+)';
+        });
+        
+        // Create regex from pattern
+        const regex = new RegExp(`^${regexPattern}$`);
+        const match = actualUrl.match(regex);
+        
+        if (!match) {
+          return { match: false, params: {} };
+        }
+        
+        // Extract parameter values
+        paramNames.forEach((name, index) => {
+          params[name] = match[index + 1];
+        });
+        
+        return { match: true, params };
+      };
+      
+      // Try to match URL against each template's pattern using the cleaned URL
+      for (const template of templates) {
+        if (!template.urlPattern) continue;
+        
+        const { match, params } = matchUrlPattern(cleanUrl, template.urlPattern);
+        
+        if (match) {
+          // Use the storage method to get the final template considering city matching
+          const finalTemplate = await storage.getLandingPageTemplateByPattern(template.urlPattern, params);
+          
+          if (finalTemplate) {
+            return res.json({ template: finalTemplate, params });
+          }
+        }
+      }
+      
+      // No matching template found
+      res.status(404).json({ message: "No matching template found for this URL" });
+    } catch (error) {
+      console.error("Error resolving landing page template:", error);
+      res.status(500).json({ message: "Failed to resolve landing page template" });
+    }
+  });
+
   app.get("/api/landing-page-templates/:slug", async (req, res) => {
     try {
       const template = await storage.getLandingPageTemplate(req.params.slug);
