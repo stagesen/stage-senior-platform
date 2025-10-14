@@ -1374,6 +1374,7 @@ function CommunityHighlightsManager({ communityId, communityName }: { communityI
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
+                      type="button"
                       size="sm"
                       variant="ghost"
                       onClick={() => handleEdit(highlight)}
@@ -1382,6 +1383,7 @@ function CommunityHighlightsManager({ communityId, communityName }: { communityI
                       <Edit className="w-4 h-4" />
                     </Button>
                     <Button
+                      type="button"
                       size="sm"
                       variant="ghost"
                       onClick={() => handleDelete(highlight.id)}
@@ -1395,6 +1397,7 @@ function CommunityHighlightsManager({ communityId, communityName }: { communityI
             </div>
           )}
           <Button
+            type="button"
             onClick={handleAddNew}
             variant="outline"
             className="w-full"
