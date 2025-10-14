@@ -34,6 +34,7 @@ import ProfessionalManagement from "@/pages/services/management";
 import LongTermCare from "@/pages/services/long-term-care";
 import Chaplaincy from "@/pages/services/chaplaincy";
 import NotFound from "@/pages/not-found";
+import DynamicLandingPage from "@/pages/DynamicLandingPage";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ScrollRestoration from "@/components/ScrollRestoration";
@@ -90,6 +91,9 @@ function Router() {
               <Admin />
             </RequireAuth>
           </Route>
+          <Route path="/care/:careType/:city" component={DynamicLandingPage} />
+          <Route path="/communities/:location" component={DynamicLandingPage} />
+          <Route path="/:careType/:city" component={DynamicLandingPage} />
           <Route component={NotFound} />
         </Switch>
       </main>

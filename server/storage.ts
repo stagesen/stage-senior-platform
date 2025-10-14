@@ -74,6 +74,9 @@ import {
   pageContentSections,
   type PageContentSection,
   type InsertPageContentSection,
+  landingPageTemplates,
+  type LandingPageTemplate,
+  type InsertLandingPageTemplate,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm";
@@ -346,6 +349,15 @@ export interface IStorage {
   createPageContentSection(section: InsertPageContentSection): Promise<PageContentSection>;
   updatePageContentSection(id: string, section: Partial<InsertPageContentSection>): Promise<PageContentSection>;
   deletePageContentSection(id: string): Promise<void>;
+
+  // Landing page template operations
+  getLandingPageTemplates(filters?: { active?: boolean; templateType?: string; communityId?: string }): Promise<LandingPageTemplate[]>;
+  getLandingPageTemplate(slug: string): Promise<LandingPageTemplate | undefined>;
+  getLandingPageTemplateById(id: string): Promise<LandingPageTemplate | undefined>;
+  getLandingPageTemplateByPattern(urlPattern: string, params: Record<string, string>): Promise<LandingPageTemplate | undefined>;
+  createLandingPageTemplate(template: InsertLandingPageTemplate): Promise<LandingPageTemplate>;
+  updateLandingPageTemplate(id: string, template: Partial<InsertLandingPageTemplate>): Promise<LandingPageTemplate>;
+  deleteLandingPageTemplate(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -2353,6 +2365,119 @@ export class DatabaseStorage implements IStorage {
 
   async deletePageContentSection(id: string): Promise<void> {
     await db.delete(pageContentSections).where(eq(pageContentSections.id, id));
+  }
+
+  // Landing page template operations
+  async getLandingPageTemplates(filters?: { 
+    active?: boolean; 
+    templateType?: string; 
+    communityId?: string 
+  }): Promise<LandingPageTemplate[]> {
+    let query = db.select().from(landingPageTemplates);
+    
+    const conditions = [];
+    if (filters?.active !== undefined) {
+      conditions.push(eq(landingPageTemplates.active, filters.active));
+    }
+    if (filters?.templateType) {
+      conditions.push(eq(landingPageTemplates.templateType, filters.templateType));
+    }
+    if (filters?.communityId) {
+      conditions.push(eq(landingPageTemplates.communityId, filters.communityId));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions)) as any;
+    }
+    
+    const templates = await query.orderBy(
+      desc(landingPageTemplates.active),
+      asc(landingPageTemplates.sortOrder)
+    );
+    
+    return templates;
+  }
+
+  async getLandingPageTemplate(slug: string): Promise<LandingPageTemplate | undefined> {
+    const [template] = await db
+      .select()
+      .from(landingPageTemplates)
+      .where(eq(landingPageTemplates.slug, slug));
+    
+    return template;
+  }
+
+  async getLandingPageTemplateById(id: string): Promise<LandingPageTemplate | undefined> {
+    const [template] = await db
+      .select()
+      .from(landingPageTemplates)
+      .where(eq(landingPageTemplates.id, id));
+    
+    return template;
+  }
+
+  async getLandingPageTemplateByPattern(
+    urlPattern: string, 
+    params: Record<string, string>
+  ): Promise<LandingPageTemplate | undefined> {
+    const templates = await db
+      .select()
+      .from(landingPageTemplates)
+      .where(
+        and(
+          eq(landingPageTemplates.urlPattern, urlPattern),
+          eq(landingPageTemplates.active, true)
+        )
+      )
+      .orderBy(asc(landingPageTemplates.sortOrder));
+    
+    if (templates.length === 0) {
+      return undefined;
+    }
+    
+    for (const template of templates) {
+      if (template.cities && template.cities.length > 0 && params.city) {
+        const cityMatch = template.cities.some(
+          city => city.toLowerCase() === params.city.toLowerCase()
+        );
+        if (cityMatch) {
+          return template;
+        }
+      } else if (!template.cities || template.cities.length === 0) {
+        return template;
+      }
+    }
+    
+    return templates[0];
+  }
+
+  async createLandingPageTemplate(template: InsertLandingPageTemplate): Promise<LandingPageTemplate> {
+    const [created] = await db
+      .insert(landingPageTemplates)
+      .values(template)
+      .returning();
+    
+    return created;
+  }
+
+  async updateLandingPageTemplate(
+    id: string, 
+    template: Partial<InsertLandingPageTemplate>
+  ): Promise<LandingPageTemplate> {
+    const [updated] = await db
+      .update(landingPageTemplates)
+      .set({
+        ...template,
+        updatedAt: new Date()
+      })
+      .where(eq(landingPageTemplates.id, id))
+      .returning();
+    
+    return updated;
+  }
+
+  async deleteLandingPageTemplate(id: string): Promise<void> {
+    await db.delete(landingPageTemplates).where(eq(landingPageTemplates.id, id));
   }
 }
 

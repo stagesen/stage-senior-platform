@@ -304,6 +304,53 @@ export const tourRequests = pgTable("tour_requests", {
   notes: text("notes"),
   lastContactedAt: timestamp("last_contacted_at"),
   scheduledDate: timestamp("scheduled_date"),
+  // UTM tracking fields for campaign attribution
+  utmSource: varchar("utm_source", { length: 255 }),
+  utmMedium: varchar("utm_medium", { length: 255 }),
+  utmCampaign: varchar("utm_campaign", { length: 255 }),
+  utmTerm: varchar("utm_term", { length: 255 }),
+  utmContent: varchar("utm_content", { length: 255 }),
+  landingPageUrl: text("landing_page_url"), // Track which landing page they came from
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Landing page templates for dynamic marketing pages
+export const landingPageTemplates = pgTable("landing_page_templates", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  slug: varchar("slug", { length: 255 }).notNull().unique(), // e.g., 'assisted-living-golden-co'
+  urlPattern: varchar("url_pattern", { length: 255 }).notNull(), // e.g., '/assisted-living/:city', '/care/:careType/:location'
+  templateType: varchar("template_type", { length: 100 }).notNull(), // 'location-specific', 'care-type-specific', 'hybrid'
+  
+  // SEO & Content
+  title: varchar("title", { length: 255 }).notNull(), // Page title (can use tokens like {city}, {careType}, {communityName})
+  metaDescription: text("meta_description"),
+  h1Headline: varchar("h1_headline", { length: 500 }), // Main headline (supports tokens)
+  subheadline: text("subheadline"),
+  
+  // Community & Care Type Associations
+  communityId: uuid("community_id").references(() => communities.id, { onDelete: "cascade" }), // Specific community or null for multi-community
+  careTypeId: uuid("care_type_id").references(() => careTypes.id), // Specific care type or null
+  cities: text("cities").array().default(sql`ARRAY[]::text[]`), // List of cities this template targets
+  
+  // Content Configuration
+  showGallery: boolean("show_gallery").default(true),
+  showTestimonials: boolean("show_testimonials").default(true),
+  showTeamMembers: boolean("show_team_members").default(true),
+  showPricing: boolean("show_pricing").default(true),
+  showFloorPlans: boolean("show_floor_plans").default(false),
+  showFaqs: boolean("show_faqs").default(true),
+  
+  // Hero/PageHero settings
+  heroImageId: varchar("hero_image_id", { length: 255 }).references(() => images.id),
+  heroTitle: varchar("hero_title", { length: 500 }), // Override hero title (supports tokens)
+  heroSubtitle: text("hero_subtitle"),
+  heroCtaText: varchar("hero_cta_text", { length: 100 }),
+  
+  // Additional settings
+  customContent: jsonb("custom_content").$type<Record<string, any>>(), // Flexible content sections
+  active: boolean("active").default(true),
+  sortOrder: integer("sort_order").default(0),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -495,6 +542,21 @@ export const tourRequestsRelations = relations(tourRequests, ({ one }) => ({
   }),
 }));
 
+export const landingPageTemplatesRelations = relations(landingPageTemplates, ({ one }) => ({
+  community: one(communities, {
+    fields: [landingPageTemplates.communityId],
+    references: [communities.id],
+  }),
+  careType: one(careTypes, {
+    fields: [landingPageTemplates.careTypeId],
+    references: [careTypes.id],
+  }),
+  heroImage: one(images, {
+    fields: [landingPageTemplates.heroImageId],
+    references: [images.id],
+  }),
+}));
+
 export const floorPlansRelations = relations(floorPlans, ({ one, many }) => ({
   community: one(communities, {
     fields: [floorPlans.communityId],
@@ -662,6 +724,18 @@ export const insertTourRequestSchema = createInsertSchema(tourRequests).omit({
   scheduledDate: z.coerce.date().optional(),
 });
 
+export const insertLandingPageTemplateSchema = createInsertSchema(landingPageTemplates).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  slug: z.string().min(1, "Slug is required").regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens only"),
+  urlPattern: z.string().min(1, "URL pattern is required"),
+  templateType: z.enum(["location-specific", "care-type-specific", "hybrid"]),
+  title: z.string().min(1, "Title is required"),
+  cities: z.array(z.string()).optional().default([]),
+});
+
 export const insertFloorPlanSchema = createInsertSchema(floorPlans).omit({
   id: true,
   createdAt: true,
@@ -785,6 +859,8 @@ export type Gallery = typeof galleries.$inferSelect;
 export type InsertGallery = z.infer<typeof insertGallerySchema>;
 export type TourRequest = typeof tourRequests.$inferSelect;
 export type InsertTourRequest = z.infer<typeof insertTourRequestSchema>;
+export type LandingPageTemplate = typeof landingPageTemplates.$inferSelect;
+export type InsertLandingPageTemplate = z.infer<typeof insertLandingPageTemplateSchema>;
 export type FloorPlan = typeof floorPlans.$inferSelect;
 export type InsertFloorPlan = z.infer<typeof insertFloorPlanSchema>;
 export type Testimonial = typeof testimonials.$inferSelect;

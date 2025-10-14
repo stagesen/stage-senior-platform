@@ -1928,7 +1928,11 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       return await apiRequest("POST", `/api/${apiEndpoint}`, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/${apiEndpoint}`] });
+      queryClient.invalidateQueries({ queryKey });
+      // For communities, also invalidate the communities list used in dropdowns
+      if (type === "communities") {
+        queryClient.invalidateQueries({ queryKey: ["/api/communities?active=all"] });
+      }
       setIsDialogOpen(false);
       getCurrentForm().reset();
       toast({
@@ -1966,7 +1970,11 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     },
     onSuccess: (response) => {
       console.log('updateMutation: success!', response);
-      queryClient.invalidateQueries({ queryKey: [`/api/${apiEndpoint}`] });
+      queryClient.invalidateQueries({ queryKey });
+      // For communities, also invalidate the communities list used in dropdowns
+      if (type === "communities") {
+        queryClient.invalidateQueries({ queryKey: ["/api/communities?active=all"] });
+      }
       setIsDialogOpen(false);
       setEditingItem(null);
       getCurrentForm().reset();
@@ -2001,7 +2009,11 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       return await apiRequest("DELETE", `/api/${apiEndpoint}/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/${apiEndpoint}`] });
+      queryClient.invalidateQueries({ queryKey });
+      // For communities, also invalidate the communities list used in dropdowns
+      if (type === "communities") {
+        queryClient.invalidateQueries({ queryKey: ["/api/communities?active=all"] });
+      }
       toast({
         title: "Success",
         description: `${type.slice(0, -1)} deleted successfully.`,

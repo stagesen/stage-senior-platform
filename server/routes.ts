@@ -2,6 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
+import { utmTrackingMiddleware } from "./utm-tracking";
 import { sendTourRequestNotification } from "./email";
 import {
   uploadSingle,
@@ -36,6 +37,7 @@ import {
   insertHomepageSectionSchema,
   insertHomepageConfigSchema,
   insertPageContentSectionSchema,
+  insertLandingPageTemplateSchema,
 } from "@shared/schema";
 
 // Middleware to protect admin routes - referenced by javascript_auth_all_persistance integration
@@ -49,6 +51,9 @@ function requireAuth(req: Request, res: Response, next: NextFunction) {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication - referenced by javascript_auth_all_persistance integration
   setupAuth(app);
+  
+  // UTM tracking middleware - captures campaign data from query parameters
+  app.use(utmTrackingMiddleware);
   
   // Root health check endpoint for deployment health checks
   app.get("/", (_req, res) => {
@@ -756,7 +761,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/tour-requests", async (req, res) => {
     try {
       const validatedData = insertTourRequestSchema.parse(req.body);
-      const tourRequest = await storage.createTourRequest(validatedData);
+      
+      // Add UTM tracking data from session
+      const tourRequestData = {
+        ...validatedData,
+        utmSource: req.session.utm?.utm_source,
+        utmMedium: req.session.utm?.utm_medium,
+        utmCampaign: req.session.utm?.utm_campaign,
+        utmTerm: req.session.utm?.utm_term,
+        utmContent: req.session.utm?.utm_content,
+        landingPageUrl: req.session.utm?.landing_page_url,
+      };
+      
+      const tourRequest = await storage.createTourRequest(tourRequestData);
       
       // Send email notification to all active recipients
       try {
@@ -908,6 +925,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting page content section:", error);
       res.status(500).json({ message: "Failed to delete page content section" });
+    }
+  });
+
+  // Landing page template routes
+  app.get("/api/landing-page-templates", async (req, res) => {
+    try {
+      const { active, templateType, communityId } = req.query;
+      const filters: any = {};
+      
+      if (active !== undefined) {
+        filters.active = active === 'true';
+      }
+      if (templateType) {
+        filters.templateType = templateType as string;
+      }
+      if (communityId) {
+        filters.communityId = communityId as string;
+      }
+      
+      const templates = await storage.getLandingPageTemplates(filters);
+      res.json(templates);
+    } catch (error) {
+      console.error("Error fetching landing page templates:", error);
+      res.status(500).json({ message: "Failed to fetch landing page templates" });
+    }
+  });
+
+  app.get("/api/landing-page-templates/:slug", async (req, res) => {
+    try {
+      const template = await storage.getLandingPageTemplate(req.params.slug);
+      if (!template) {
+        return res.status(404).json({ message: "Landing page template not found" });
+      }
+      res.json(template);
+    } catch (error) {
+      console.error("Error fetching landing page template:", error);
+      res.status(500).json({ message: "Failed to fetch landing page template" });
+    }
+  });
+
+  app.post("/api/landing-page-templates", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertLandingPageTemplateSchema.parse(req.body);
+      const template = await storage.createLandingPageTemplate(validatedData);
+      res.status(201).json(template);
+    } catch (error) {
+      console.error("Error creating landing page template:", error);
+      res.status(400).json({ message: "Failed to create landing page template" });
+    }
+  });
+
+  app.put("/api/landing-page-templates/:id", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertLandingPageTemplateSchema.partial().parse(req.body);
+      const template = await storage.updateLandingPageTemplate(req.params.id, validatedData);
+      if (!template) {
+        return res.status(404).json({ message: "Landing page template not found" });
+      }
+      res.json(template);
+    } catch (error) {
+      console.error("Error updating landing page template:", error);
+      res.status(400).json({ message: "Failed to update landing page template" });
+    }
+  });
+
+  app.delete("/api/landing-page-templates/:id", requireAuth, async (req, res) => {
+    try {
+      await storage.deleteLandingPageTemplate(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting landing page template:", error);
+      res.status(500).json({ message: "Failed to delete landing page template" });
     }
   });
 
