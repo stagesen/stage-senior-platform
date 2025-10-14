@@ -2726,7 +2726,11 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   <FormItem>
                     <FormLabel>Full Description</FormLabel>
                     <FormControl>
-                      <Textarea {...field} rows={6} data-testid="textarea-community-description" />
+                      <RichTextEditor
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                        placeholder="Enter detailed community description with formatting..."
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

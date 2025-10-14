@@ -1672,10 +1672,14 @@ export default function CommunityDetail() {
             <h2 className="text-2xl md:text-3xl font-bold mb-6" data-testid="overview-title">
               Welcome to {community.name}
             </h2>
-            <p className="text-lg text-gray-600 leading-relaxed mb-6" data-testid="community-description">
-              {community.description || community.shortDescription ||
-                "Experience exceptional senior living in a warm, welcoming community designed with your comfort and well-being in mind. Our dedicated team provides personalized care and support, ensuring every resident enjoys a fulfilling lifestyle."}
-            </p>
+            <div 
+              className="text-lg text-gray-600 leading-relaxed mb-6 prose prose-lg max-w-none" 
+              data-testid="community-description"
+              dangerouslySetInnerHTML={{
+                __html: community.description || community.shortDescription ||
+                  "Experience exceptional senior living in a warm, welcoming community designed with your comfort and well-being in mind. Our dedicated team provides personalized care and support, ensuring every resident enjoys a fulfilling lifestyle."
+              }}
+            />
           </div>
 
           {/* Newsletter Card */}
