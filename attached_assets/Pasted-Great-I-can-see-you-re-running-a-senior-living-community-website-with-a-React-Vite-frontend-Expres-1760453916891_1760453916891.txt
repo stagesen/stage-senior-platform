@@ -1,0 +1,179 @@
+Great! I can see you're running a senior living community website with a React/Vite frontend, Express backend, and PostgreSQL database. You have
+  multiple communities (Golden Pond, Gardens at Columbine, Gardens on Quail, Stonebridge, etc.) and are looking to create a dynamic landing page
+  system that integrates with Google Ads API.
+
+  Let me brainstorm a comprehensive strategy for you:
+
+  Google Ads + Dynamic Landing Page System: Strategic Approach
+
+  1. Architecture Overview
+
+  The system would work in three layers:
+
+  A. Google Ads Integration Layer
+  - Connect to Google Ads API to pull campaign data, keywords, ad groups, and geo-targeting info
+  - Track Quality Score, expected CTR, and landing page experience metrics
+  - Monitor search terms that trigger your ads
+
+  B. Dynamic Landing Page Generation
+  - Create template-based pages that auto-populate based on:
+    - Location (Golden, Denver, Aurora, etc.)
+    - Intent ("Assisted Living Near Me", "Memory Care", "Independent Living")
+    - Community (Golden Pond, Gardens at Columbine, etc.)
+    - Care Type (from your existing careTypes table)
+
+  C. Optimization & Tracking Layer
+  - A/B testing different layouts, headlines, and CTAs
+  - Heatmaps and conversion tracking
+  - Quality Score monitoring and automated suggestions
+
+  2. Database Schema Additions
+
+  You'd need new tables:
+
+  // Landing page templates
+  landingPageTemplates
+  - id, slug, intent_keyword, care_type_id
+  - template_type (location-specific, care-type-specific, hybrid)
+  - hero_headline_template (e.g., "{care_type} in {city} - {community_name}")
+  - cta_text, conversion_tracking_id
+
+  // Google Ads campaign mapping
+  googleAdsCampaigns
+  - id, campaign_id, ad_group_id, landing_page_template_id
+  - target_keywords, geo_targets, quality_score
+  - tracking_url_template
+
+  // Landing page performance
+  landingPageMetrics
+  - id, landing_page_url, campaign_id
+  - visits, conversions, bounce_rate, quality_score
+  - avg_time_on_page, tour_requests
+
+  3. URL Structure Strategy
+
+  I'd recommend SEO-friendly, intent-matching URLs:
+
+  /assisted-living/golden-co          → Generic location page
+  /assisted-living/golden-pond        → Specific community page
+  /memory-care-near-me/golden         → Intent + location page
+  /senior-living/golden/compare       → Comparison page
+
+  4. Content Personalization Strategy
+
+  Dynamic Elements to Match Ad Copy:
+
+  1. Hero Section
+    - Headline mirrors ad text: "Assisted Living in Golden, CO"
+    - Subheadline addresses search intent
+    - Background image from the relevant community
+  2. Social Proof Positioning
+    - Show reviews/testimonials filtered by community
+    - Display your 4.8 rating prominently
+    - "Licensed & Insured" badge
+  3. Geographic Relevance
+    - Map showing proximity to searcher
+    - "Only 5 minutes from Golden" type messaging
+    - Local landmarks and neighborhood info
+  4. Price Transparency
+    - Match starting price from your communities.startingPrice
+    - Clear pricing CTA that addresses "how much" intent
+  5. Urgency Elements
+    - "Same-day tours available"
+    - "Limited availability" (if true)
+    - Live calendar integration
+
+  5. Google Ads API Integration
+
+  Key API Endpoints to Use:
+
+  // Fetch campaign performance
+  GoogleAdsService.searchStream({
+    customerId: 'YOUR_CUSTOMER_ID',
+    query: `
+      SELECT
+        campaign.id,
+        ad_group.id,
+        ad_group_ad.ad.final_urls,
+        metrics.search_impression_share,
+        metrics.quality_score,
+        search_terms_view.search_term
+      FROM search_term_view
+    `
+  })
+
+  // Get keyword Quality Scores
+  AdGroupAdService.getKeywordQualityScore()
+
+  // Track conversions
+  ConversionActionService.mutate()
+
+  6. Optimization Workflow
+
+  Step 1: Ad → Landing Page Matching
+  - Parse UTM parameters: ?utm_campaign=assisted-living-golden&utm_term=assisted+living+near+me
+  - Route to appropriate template
+  - Log impression in your database
+
+  Step 2: Content Optimization
+  - Match headline exactly to ad headline (Google rewards this)
+  - Use keyword in first 100 words
+  - Include location in meta title and H1
+
+  Step 3: Conversion Tracking
+  - Fire Google Ads conversion pixel on tour request form submit
+  - Track phone clicks as conversions
+  - Send data back to Google Ads API
+
+  Step 4: Automated Quality Score Improvement
+  - Monitor pages with QS < 7
+  - Auto-suggest content improvements
+  - Flag slow-loading pages
+
+  7. Technical Implementation Roadmap
+
+  Phase 1: Foundation (Week 1-2)
+  1. Add new database tables for landing pages & campaigns
+  2. Create dynamic routing system in your router
+  3. Build template component architecture
+  4. Set up Google Ads API credentials
+
+  Phase 2: Integration (Week 3-4)
+  5. Connect Google Ads API
+  6. Build campaign → landing page mapper
+  7. Implement UTM parameter parsing
+  8. Create admin UI for managing templates
+
+  Phase 3: Optimization (Week 5-6)
+  9. Add conversion tracking pixels
+  10. Build A/B testing framework
+  11. Create quality score dashboard
+  12. Implement auto-optimization rules
+
+  8. Conversion Rate Optimization Tactics
+
+  For "Assisted Living Near Me" in Golden specifically:
+
+  1. Headline: "Assisted Living in Golden, CO | Golden Pond Senior Living"
+  2. Subheadline: "5-Star Care, Same-Day Tours Available. Starting at $3,500/month"
+  3. Hero Image: Beautiful exterior shot of Golden Pond with mountains
+  4. Trust Signals: "Locally owned since [year]", "Licensed & Insured", Reviews
+  5. Prominent CTA: "Schedule Your Free Tour Today" (phone + form)
+  6. Social Proof: "Join 200+ families who trust us" + testimonials
+  7. FAQ Section: Address objections (cost, care quality, location)
+  8. Exit Intent Popup: Capture emails before they bounce
+
+  9. Measuring Success
+
+  Key Metrics to Track:
+  - Quality Score by landing page
+  - Conversion rate (tour requests per click)
+  - Cost per conversion
+  - Bounce rate vs. engagement time
+  - Phone calls generated
+  - Form submissions
+
+  Google Ads API can track:
+  - Expected CTR
+  - Ad relevance
+  - Landing page experience score
