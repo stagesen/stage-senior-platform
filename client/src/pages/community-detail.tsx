@@ -937,8 +937,8 @@ const ActionPanel = ({ community, handleNavClick }: { community: any; handleNavC
                   <Phone className="w-5 h-5 text-primary mt-0.5" />
                   <div>
                     <p className="font-medium">Call Us</p>
-                    <a href={`tel:${community.phone || '+1-970-444-4689'}`} className="text-primary hover:underline">
-                      {community.phone || "(970) 444-4689"}
+                    <a href={`tel:${community.phoneDial || community.phone || '+1-970-444-4689'}`} className="text-primary hover:underline">
+                      {community.phoneDisplay || community.phone || "(970) 444-4689"}
                     </a>
                   </div>
                 </div>
@@ -1097,9 +1097,9 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
             asChild
             data-testid="button-call-hero"
           >
-            <a href={`tel:${community.phone || '+1-970-444-4689'}`}>
+            <a href={`tel:${community.phoneDial || community.phone || '+1-970-444-4689'}`}>
               <Phone className="w-5 h-5 mr-2" />
-              Call {community.phone || "(970) 444-4689"}
+              Call {community.phoneDisplay || community.phone || "(970) 444-4689"}
             </a>
           </Button>
         </div>
