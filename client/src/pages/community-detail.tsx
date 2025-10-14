@@ -1496,9 +1496,13 @@ export default function CommunityDetail() {
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4" data-testid="community-name">
               {community.name}
             </h1>
-            <div className="flex items-center text-white/90 text-lg mb-4" data-testid="community-location">
-              <MapPin className="w-5 h-5 mr-2" />
-              {community.address || `${community.city}, ${community.state} ${community.zipCode}`}
+            <div className="flex items-start text-white/90 text-lg mb-4" data-testid="community-location">
+              <MapPin className="w-5 h-5 mr-2 mt-1" />
+              <div>
+                {community.street || community.address}
+                {(community.street || community.address) && <br />}
+                {community.city}, {community.state} {community.zipCode}
+              </div>
             </div>
             {community.careTypes && community.careTypes.length > 0 && (
               <div className="flex flex-wrap gap-2">
