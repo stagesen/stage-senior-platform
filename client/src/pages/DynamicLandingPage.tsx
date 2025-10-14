@@ -157,14 +157,52 @@ export default function DynamicLandingPage() {
   });
 
   // Filter communities based on template settings and URL parameters
-  // Priority: 1) template.communityId, 2) URL city param, 3) template.cities array, 4) all communities
-  const targetCommunities = template?.communityId
-    ? allCommunities.filter(c => c.id === template.communityId)
-    : urlParams.city
-    ? allCommunities.filter(c => c.city.toLowerCase() === urlParams.city.toLowerCase())
-    : template?.cities?.length
-    ? allCommunities.filter(c => template.cities?.includes(c.city))
-    : allCommunities;
+  // Priority: 1) template.communityId, 2) URL city param (city or slug), 3) template.cities array, 4) all communities
+  let targetCommunities: Community[] = [];
+  
+  if (template?.communityId) {
+    // Explicit community ID in template
+    targetCommunities = allCommunities.filter(c => c.id === template.communityId);
+  } else if (urlParams.city) {
+    // Try to match by city name first
+    const cityMatches = allCommunities.filter(c => 
+      c.city.toLowerCase() === urlParams.city.toLowerCase()
+    );
+    
+    if (cityMatches.length > 0) {
+      targetCommunities = cityMatches;
+    } else {
+      // If no city match, try matching by slug (e.g., "arvada-stonebridge" → "stonebridge-senior")
+      // Split both the URL param and slugs by hyphens and look for common significant words
+      const urlWords = urlParams.city.toLowerCase().split('-');
+      const slugMatch = allCommunities.find(c => {
+        const slugWords = c.slug.toLowerCase().split('-');
+        // Check if they share at least one significant word (excluding common words like "the", "at", "on")
+        const commonWords = ['the', 'at', 'on', 'in'];
+        const significantUrlWords = urlWords.filter(w => !commonWords.includes(w));
+        const significantSlugWords = slugWords.filter(w => !commonWords.includes(w));
+        
+        return significantUrlWords.some(urlWord => 
+          significantSlugWords.some(slugWord => 
+            urlWord.includes(slugWord) || slugWord.includes(urlWord)
+          )
+        );
+      });
+      
+      if (slugMatch) {
+        targetCommunities = [slugMatch];
+      } else {
+        // Still no match, fall back to template cities or all communities
+        targetCommunities = template?.cities?.length
+          ? allCommunities.filter(c => template.cities?.includes(c.city))
+          : allCommunities;
+      }
+    }
+  } else if (template?.cities?.length) {
+    targetCommunities = allCommunities.filter(c => template.cities?.includes(c.city));
+  } else {
+    targetCommunities = allCommunities;
+  }
 
   // For Arvada URLs without a specific community template, prefer Gardens on Quail (flagship)
   const primaryCommunity = urlParams.city?.toLowerCase() === 'arvada' && targetCommunities.length > 1
