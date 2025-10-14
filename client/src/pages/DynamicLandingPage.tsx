@@ -209,29 +209,31 @@ export default function DynamicLandingPage() {
     ? targetCommunities.find(c => c.slug === 'the-gardens-on-quail') || targetCommunities[0]
     : targetCommunities[0];
 
-  // Simple care type name mapping for token replacement (fallback to URL params)
-  const getCareTypeName = () => {
-    // First try URL params
-    if (urlParams.careType) {
-      return urlParams.careType.charAt(0).toUpperCase() + urlParams.careType.slice(1);
-    }
-    
-    // Then try to infer from URL pattern
+  // Extract care type from URL pattern and params
+  const getCareTypeSlug = (): string | null => {
+    // Try URL pattern first
     if (template?.urlPattern) {
-      if (template.urlPattern.includes('assisted-living')) return "Assisted Living";
-      if (template.urlPattern.includes('memory-care')) return "Memory Care";
-      if (template.urlPattern.includes('independent-living')) return "Independent Living";
-      if (template.urlPattern.includes('skilled-nursing')) return "Skilled Nursing";
+      if (template.urlPattern.includes('assisted-living')) return 'assisted-living';
+      if (template.urlPattern.includes('memory-care')) return 'memory-care';
+      if (template.urlPattern.includes('independent-living')) return 'independent-living';
+      if (template.urlPattern.includes('skilled-nursing')) return 'skilled-nursing';
     }
     
-    // Fallback based on care type ID mapping (known UUIDs from database)
-    const careTypeIdMap: Record<string, string> = {
-      "f7f9f6c3-5500-4f5f-b6eb-66e322b44cbd": "Assisted Living",
-      "1c08656d-0383-4eed-8bf5-4c3c4673ea33": "Memory Care",
-      "35e9d6a3-5444-4a66-a2a3-a9c8b728f4ea": "Independent Living",
-    };
+    // Try URL params
+    if (urlParams.careType) return urlParams.careType.toLowerCase();
     
-    return template?.careTypeId ? careTypeIdMap[template.careTypeId] || "Senior Living" : "Senior Living";
+    return null;
+  };
+
+  const careTypeSlug = getCareTypeSlug();
+
+  // Simple care type name mapping for token replacement
+  const getCareTypeName = () => {
+    if (careTypeSlug === 'assisted-living') return "Assisted Living";
+    if (careTypeSlug === 'memory-care') return "Memory Care";
+    if (careTypeSlug === 'independent-living') return "Independent Living";
+    if (careTypeSlug === 'skilled-nursing') return "Skilled Nursing";
+    return "Senior Living";
   };
 
   // Fetch galleries (if showGallery is true)
@@ -259,10 +261,17 @@ export default function DynamicLandingPage() {
   });
 
   // Fetch floor plans (if showFloorPlans is true)
-  const { data: floorPlans = [] } = useQuery<FloorPlan[]>({
+  const { data: allFloorPlans = [] } = useQuery<FloorPlan[]>({
     queryKey: [`/api/floor-plans?communityId=${primaryCommunity?.id}&active=true`],
     enabled: !!template?.showFloorPlans && !!primaryCommunity,
   });
+
+  // Filter floor plans by care type if specified in the template
+  const floorPlans = careTypeSlug
+    ? allFloorPlans.filter(fp => 
+        fp.name.toLowerCase().includes(getCareTypeName().toLowerCase())
+      )
+    : allFloorPlans;
 
   // Fetch community highlights (if available)
   const { data: communityHighlights = [] } = useQuery<CommunityHighlight[]>({
@@ -321,8 +330,8 @@ export default function DynamicLandingPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Resolve hero image
-  const heroImageUrl = useResolveImageUrl(template?.heroImageId);
+  // Resolve hero image - prioritize community's hero image over template's
+  const heroImageUrl = useResolveImageUrl(primaryCommunity?.imageId || template?.heroImageId);
 
   // Loading state
   if (templateLoading) {
@@ -548,27 +557,19 @@ export default function DynamicLandingPage() {
         defaultBackgroundImage={heroImageUrl || undefined}
       />
 
-      {/* 1a. Care Types - Services offered */}
-      {communityCareTypes.length > 0 && (
-        <section className="py-8 md:py-12 bg-primary/5" data-testid="section-care-types">
+      {/* 1a. Care Type Focus - Show specific care type if landing page is for a specific care type */}
+      {careTypeSlug && getCareTypeName() !== "Senior Living" && (
+        <section className="py-8 md:py-12 bg-primary/5" data-testid="section-care-type-focus">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-6 md:mb-8">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3">
-                Care Services Available
-              </h2>
-            </div>
-            <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-              {communityCareTypes.map((careType) => (
-                <Badge
-                  key={careType.id}
-                  variant="secondary"
-                  className="px-4 py-2 text-sm md:text-base font-semibold"
-                  data-testid={`care-type-badge-${careType.id}`}
-                >
-                  <Heart className="w-4 h-4 mr-2" />
-                  {careType.name}
-                </Badge>
-              ))}
+            <div className="text-center">
+              <Badge
+                variant="secondary"
+                className="px-6 py-3 text-base md:text-lg font-semibold inline-flex items-center gap-2"
+                data-testid="care-type-focus-badge"
+              >
+                <Heart className="w-5 h-5" />
+                Specializing in {getCareTypeName()}
+              </Badge>
             </div>
           </div>
         </section>
