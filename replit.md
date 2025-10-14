@@ -111,6 +111,15 @@ The platform includes a comprehensive admin interface for content management:
   - Beauty/barber amenities → /beauty-salon page
   - Fitness/therapy amenities → /fitness-therapy page
   - Outdoor/garden/courtyard amenities → /courtyards-patios page
+- **Google Ads Landing Page System** (Phase 1): Template-based dynamic landing pages for marketing campaigns with UTM tracking capabilities
+  - **Landing Page Templates**: Pattern-based URL templates (e.g., /assisted-living/:city, /memory-care/:city) with token replacement for {city}, {careType}, {communityName}
+  - **UTM Parameter Tracking**: Automatic capture of UTM parameters (source, medium, campaign, term, content) from URL query strings
+  - **Attribution System**: UTM data stored in session and automatically attached to tour requests for campaign attribution
+  - **Dynamic Content**: Templates reuse existing components (PageHero, galleries, testimonials, team members, FAQs, floor plans) based on community associations
+  - **URL Normalization**: Pattern matching handles query parameters, trailing slashes, and URI encoding for reliable template resolution
+  - **Efficient Caching**: Frontend uses pathname-based query keys to prevent redundant fetches across different UTM parameters
+  - **Admin Management**: Full CRUD interface for managing landing page templates with SEO settings, content section toggles, and community associations
+  - **Pattern Resolution**: Backend endpoint (/api/landing-page-templates/resolve) matches incoming URLs to templates and extracts dynamic parameters
 
 ### Image Management System
 The platform features a comprehensive image management system integrated with Replit's object storage:
