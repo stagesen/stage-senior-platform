@@ -122,16 +122,6 @@ export default function FloorPlanModal({
                 )}
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 shrink-0 rounded-full hover:bg-muted"
-              onClick={() => onOpenChange(false)}
-              data-testid="button-close-modal"
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </Button>
           </div>
         </DialogHeader>
 
