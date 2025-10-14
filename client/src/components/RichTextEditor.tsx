@@ -38,7 +38,7 @@ import {
   Eye,
   Edit3,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface RichTextEditorProps {
@@ -85,6 +85,13 @@ export default function RichTextEditor({
       onChange(editor.getHTML());
     },
   });
+
+  // Update editor content when value prop changes
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value);
+    }
+  }, [value, editor]);
 
   if (!editor) {
     return null;
