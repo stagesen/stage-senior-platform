@@ -50,6 +50,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication - referenced by javascript_auth_all_persistance integration
   setupAuth(app);
   
+  // Root health check endpoint for deployment health checks
+  app.get("/", (_req, res) => {
+    res.status(200).json({ status: "ok" });
+  });
+  
   // Diagnostic endpoint for debugging production issues
   app.get("/api/health", async (_req, res) => {
     try {
