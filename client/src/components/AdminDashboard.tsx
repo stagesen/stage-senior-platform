@@ -61,6 +61,7 @@ import {
   insertTeamMemberSchema,
   insertHomepageSectionSchema,
   insertEmailRecipientSchema,
+  insertLandingPageTemplateSchema,
   type Community,
   type CommunityHighlight,
   type InsertCommunityHighlight,
@@ -96,13 +97,15 @@ import {
   type HomepageConfig,
   type EmailRecipient,
   type InsertEmailRecipient,
+  type LandingPageTemplate,
+  type InsertLandingPageTemplate,
   insertPageContentSectionSchema,
   type PageContentSection,
   type InsertPageContentSection,
 } from "@shared/schema";
 
 interface AdminDashboardProps {
-  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "homepage" | "email-recipients" | "database-sync" | "page-content";
+  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "homepage" | "email-recipients" | "database-sync" | "page-content" | "landing-pages";
 }
 
 // Helper function to generate slug from title
@@ -1571,6 +1574,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     if (type === "homepage") return "homepage-sections";
     if (type === "email-recipients") return "email-recipients";
     if (type === "page-content") return "page-content";
+    if (type === "landing-pages") return "landing-page-templates";
     return type;
   };
 
@@ -1588,13 +1592,13 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
 
   const { data: communities = [] } = useQuery<Community[]>({
     queryKey: ["/api/communities?active=all"],
-    enabled: type === "communities" || type === "tours" || type === "galleries" || type === "events" || type === "faqs" || type === "blog-posts" || type === "posts" || type === "testimonials" || type === "floor-plans" || type === "team",
+    enabled: type === "communities" || type === "tours" || type === "galleries" || type === "events" || type === "faqs" || type === "blog-posts" || type === "posts" || type === "testimonials" || type === "floor-plans" || type === "team" || type === "landing-pages",
   });
 
   // Fetch care types and amenities for multi-select
   const { data: allCareTypes = [] } = useQuery<CareType[]>({
     queryKey: ["/api/care-types"],
-    enabled: type === "communities",
+    enabled: type === "communities" || type === "landing-pages" || type === "floor-plans",
   });
 
   const { data: allAmenities = [] } = useQuery<Amenity[]>({
@@ -1900,6 +1904,34 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     },
   });
 
+  const landingPageTemplateForm = useForm<InsertLandingPageTemplate>({
+    resolver: zodResolver(insertLandingPageTemplateSchema),
+    defaultValues: {
+      slug: "",
+      urlPattern: "",
+      templateType: "location-specific",
+      title: "",
+      metaDescription: "",
+      h1Headline: "",
+      subheadline: "",
+      communityId: undefined,
+      careTypeId: undefined,
+      cities: [],
+      showGallery: true,
+      showTestimonials: true,
+      showTeamMembers: true,
+      showPricing: true,
+      showFloorPlans: false,
+      showFaqs: true,
+      heroImageId: undefined,
+      heroTitle: "",
+      heroSubtitle: "",
+      heroCtaText: "",
+      active: true,
+      sortOrder: 0,
+    },
+  });
+
   // Get current form based on type
   const getCurrentForm = () => {
     switch (type) {
@@ -1918,6 +1950,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "homepage": return homepageSectionForm;
       case "email-recipients": return emailRecipientForm;
       case "page-content": return pageContentForm;
+      case "landing-pages": return landingPageTemplateForm;
       default: return communityForm;
     }
   };
@@ -3265,7 +3298,31 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
               {editingItem && (
                 <CommunityHighlightsManager communityId={editingItem.id} communityName={editingItem.name} />
               )}
-              
+
+              {/* Experience Features Section */}
+              {editingItem && (
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Experience Features (Experience the Difference Section)</h3>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedCommunityForFeatures(editingItem.id);
+                        setIsFeaturesDialogOpen(true);
+                      }}
+                      data-testid="button-manage-features"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Manage Features
+                    </Button>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Manage the feature sections that appear in the "Experience the Difference" area of the community page.
+                  </p>
+                </div>
+              )}
+
               <div className="flex justify-end space-x-2">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
                   Cancel
@@ -6138,6 +6195,464 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
           </Form>
         );
 
+      case "landing-pages":
+        return (
+          <Form {...landingPageTemplateForm}>
+            <form onSubmit={landingPageTemplateForm.handleSubmit(handleSubmit)} className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={landingPageTemplateForm.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          placeholder="e.g., Assisted Living in {city}"
+                          onChange={(e) => {
+                            field.onChange(e);
+                            // Auto-generate slug from title if slug is empty
+                            const slugField = landingPageTemplateForm.getValues("slug");
+                            if (!slugField || slugField === generateSlug(landingPageTemplateForm.getValues("title"))) {
+                              landingPageTemplateForm.setValue("slug", generateSlug(e.target.value));
+                            }
+                          }}
+                          data-testid="input-template-title" 
+                        />
+                      </FormControl>
+                      <FormDescription>Supports tokens: {"{city}"}, {"{careType}"}, {"{communityName}"}</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={landingPageTemplateForm.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          placeholder="assisted-living-golden-co"
+                          data-testid="input-template-slug" 
+                        />
+                      </FormControl>
+                      <FormDescription>URL-friendly identifier (auto-generated)</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={landingPageTemplateForm.control}
+                  name="urlPattern"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>URL Pattern *</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          placeholder="/assisted-living/:city"
+                          data-testid="input-template-url-pattern" 
+                        />
+                      </FormControl>
+                      <FormDescription>Use :city, :careType for dynamic segments</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={landingPageTemplateForm.control}
+                  name="templateType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Template Type *</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger data-testid="select-template-type">
+                            <SelectValue placeholder="Select template type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="location-specific">Location-Specific</SelectItem>
+                          <SelectItem value="care-type-specific">Care Type-Specific</SelectItem>
+                          <SelectItem value="hybrid">Hybrid</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={landingPageTemplateForm.control}
+                name="h1Headline"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>H1 Headline</FormLabel>
+                    <FormControl>
+                      <Input 
+                        {...field} 
+                        value={field.value || ""}
+                        placeholder="Find Quality {careType} in {city}"
+                        data-testid="input-template-h1" 
+                      />
+                    </FormControl>
+                    <FormDescription>Main page headline (supports tokens)</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={landingPageTemplateForm.control}
+                name="subheadline"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Subheadline</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        {...field} 
+                        value={field.value || ""}
+                        rows={2}
+                        placeholder="Discover compassionate care close to home"
+                        data-testid="textarea-template-subheadline" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={landingPageTemplateForm.control}
+                name="metaDescription"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Meta Description</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        {...field} 
+                        value={field.value || ""}
+                        rows={2}
+                        placeholder="Looking for {careType} in {city}? Learn about our services..."
+                        data-testid="textarea-template-meta-description" 
+                      />
+                    </FormControl>
+                    <FormDescription>SEO description (supports tokens)</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={landingPageTemplateForm.control}
+                  name="communityId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Community</FormLabel>
+                      <Select 
+                        onValueChange={(value) => field.onChange(value === "none" ? undefined : value)} 
+                        value={field.value || "none"}
+                      >
+                        <FormControl>
+                          <SelectTrigger data-testid="select-template-community">
+                            <SelectValue placeholder="Select community" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="none">All Communities</SelectItem>
+                          {communities.map((community) => (
+                            <SelectItem key={community.id} value={community.id}>
+                              {community.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>Optional: specific community</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={landingPageTemplateForm.control}
+                  name="careTypeId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Care Type</FormLabel>
+                      <Select 
+                        onValueChange={(value) => field.onChange(value === "none" ? undefined : value)} 
+                        value={field.value || "none"}
+                      >
+                        <FormControl>
+                          <SelectTrigger data-testid="select-template-care-type">
+                            <SelectValue placeholder="Select care type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="none">All Care Types</SelectItem>
+                          {allCareTypes.map((careType) => (
+                            <SelectItem key={careType.id} value={careType.id}>
+                              {careType.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>Optional: specific care type</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={landingPageTemplateForm.control}
+                name="cities"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Target Cities</FormLabel>
+                    <FormControl>
+                      <Input 
+                        value={field.value?.join(", ") || ""}
+                        onChange={(e) => {
+                          const cities = e.target.value.split(",").map(c => c.trim()).filter(Boolean);
+                          field.onChange(cities);
+                        }}
+                        placeholder="Denver, Boulder, Golden (comma-separated)"
+                        data-testid="input-template-cities" 
+                      />
+                    </FormControl>
+                    <FormDescription>Cities this template targets</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="space-y-3">
+                <FormLabel>Content Sections</FormLabel>
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField
+                    control={landingPageTemplateForm.control}
+                    name="showGallery"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-show-gallery" />
+                        </FormControl>
+                        <FormLabel className="!mt-0">Show Gallery</FormLabel>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={landingPageTemplateForm.control}
+                    name="showTestimonials"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-show-testimonials" />
+                        </FormControl>
+                        <FormLabel className="!mt-0">Show Testimonials</FormLabel>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={landingPageTemplateForm.control}
+                    name="showTeamMembers"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-show-team" />
+                        </FormControl>
+                        <FormLabel className="!mt-0">Show Team Members</FormLabel>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={landingPageTemplateForm.control}
+                    name="showPricing"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-show-pricing" />
+                        </FormControl>
+                        <FormLabel className="!mt-0">Show Pricing</FormLabel>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={landingPageTemplateForm.control}
+                    name="showFloorPlans"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-show-floor-plans" />
+                        </FormControl>
+                        <FormLabel className="!mt-0">Show Floor Plans</FormLabel>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={landingPageTemplateForm.control}
+                    name="showFaqs"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-show-faqs" />
+                        </FormControl>
+                        <FormLabel className="!mt-0">Show FAQs</FormLabel>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <FormLabel>Hero Section (Optional)</FormLabel>
+                
+                <FormField
+                  control={landingPageTemplateForm.control}
+                  name="heroImageId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hero Image</FormLabel>
+                      <FormControl>
+                        <ImageUploader 
+                          onImageUploaded={(imageId) => field.onChange(imageId)}
+                          existingImageId={field.value}
+                          data-testid="uploader-hero-image"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={landingPageTemplateForm.control}
+                  name="heroTitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hero Title</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          value={field.value || ""}
+                          placeholder="Welcome to {communityName}"
+                          data-testid="input-hero-title" 
+                        />
+                      </FormControl>
+                      <FormDescription>Supports tokens</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={landingPageTemplateForm.control}
+                  name="heroSubtitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hero Subtitle</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          {...field} 
+                          value={field.value || ""}
+                          rows={2}
+                          placeholder="Discover exceptional senior living"
+                          data-testid="textarea-hero-subtitle" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={landingPageTemplateForm.control}
+                  name="heroCtaText"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hero CTA Text</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          value={field.value || ""}
+                          placeholder="Schedule Your Tour"
+                          data-testid="input-hero-cta" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <Separator />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={landingPageTemplateForm.control}
+                  name="sortOrder"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sort Order</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || 0} 
+                          onChange={(e) => field.onChange(Number(e.target.value))} 
+                          data-testid="input-template-sort" 
+                        />
+                      </FormControl>
+                      <FormDescription>Lower numbers appear first</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={landingPageTemplateForm.control}
+                  name="active"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2 pt-8">
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-template-active" />
+                      </FormControl>
+                      <FormLabel className="!mt-0">Active</FormLabel>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="button-submit">
+                  {editingItem ? "Update" : "Create"} Template
+                </Button>
+              </div>
+            </form>
+          </Form>
+        );
+
       default:
         return <div>Form not implemented for {type}</div>;
     }
@@ -7317,6 +7832,105 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       );
     }
 
+    // Landing page templates table
+    if (type === "landing-pages") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Slug</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>URL Pattern</TableHead>
+              <TableHead>Template Type</TableHead>
+              <TableHead>Community</TableHead>
+              <TableHead>Care Type</TableHead>
+              <TableHead>Active</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: LandingPageTemplate) => {
+              const community = communities.find(c => c.id === item.communityId);
+              const careType = allCareTypes.find(ct => ct.id === item.careTypeId);
+              
+              return (
+                <TableRow key={item.id} data-testid={`template-row-${item.id}`}>
+                  <TableCell className="font-medium">
+                    <div className="space-y-1">
+                      <div className="font-mono text-sm">{item.slug}</div>
+                      {item.cities && item.cities.length > 0 && (
+                        <div className="text-xs text-muted-foreground">
+                          {item.cities.slice(0, 2).join(", ")}
+                          {item.cities.length > 2 && ` +${item.cities.length - 2}`}
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="max-w-[200px]">
+                      <div className="font-medium truncate">{item.title}</div>
+                      {item.h1Headline && (
+                        <div className="text-xs text-muted-foreground truncate">{item.h1Headline}</div>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <code className="text-xs bg-muted px-2 py-1 rounded">{item.urlPattern}</code>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">
+                      {item.templateType === "location-specific" && "📍 Location"}
+                      {item.templateType === "care-type-specific" && "🏥 Care Type"}
+                      {item.templateType === "hybrid" && "🔀 Hybrid"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {community ? (
+                      <span className="text-sm">{community.name}</span>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">All</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {careType ? (
+                      <span className="text-sm">{careType.name}</span>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">All</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={item.active ? "default" : "secondary"}>
+                      {item.active ? "Active" : "Inactive"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleEdit(item)}
+                        data-testid={`button-edit-${item.id}`}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={() => handleDelete(item.id)}
+                        data-testid={`button-delete-${item.id}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      );
+    }
+
     // Page content sections - two-step interface
     if (type === "page-content") {
       // Define all available pages with metadata
@@ -7479,6 +8093,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "email-recipients": return "Email Recipients";
       case "homepage": return "Homepage Sections";
       case "page-content": return "Page Content";
+      case "landing-pages": return "Landing Page Templates";
       default: return type;
     }
   };

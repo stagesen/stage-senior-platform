@@ -140,6 +140,7 @@ export default function Admin() {
             <TabsTrigger value="page-content" data-testid="tab-page-content" className="bg-primary text-primary-foreground hover:bg-primary/90">Page Content</TabsTrigger>
             <TabsTrigger value="homepage" data-testid="tab-homepage">Homepage</TabsTrigger>
             <TabsTrigger value="email-recipients" data-testid="tab-email-recipients">Email Recipients</TabsTrigger>
+            <TabsTrigger value="landing-pages" data-testid="tab-landing-pages" className="bg-primary text-primary-foreground hover:bg-primary/90">Landing Pages</TabsTrigger>
             <TabsTrigger value="image-gallery" data-testid="tab-image-gallery">
               <Image className="h-4 w-4 mr-1" />
               Image Gallery
@@ -389,6 +390,10 @@ export default function Admin() {
 
           <TabsContent value="email-recipients">
             <AdminDashboard type="email-recipients" />
+          </TabsContent>
+
+          <TabsContent value="landing-pages">
+            <AdminDashboard type="landing-pages" />
           </TabsContent>
 
           <TabsContent value="image-gallery">
