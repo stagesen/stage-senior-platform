@@ -370,20 +370,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/posts/latest-newsletter/:communityId", async (req, res) => {
     try {
       const { communityId } = req.params;
-      
+
       // First get the community to get its name
       const community = await storage.getCommunityById(communityId);
       if (!community) {
         return res.status(404).json({ message: "Community not found" });
       }
-      
-      // Find the latest blog post with "newsletter" tag and matching community
-      const posts = await storage.getBlogPosts({
+
+      // Find the latest post with "newsletter" tag and matching community
+      // NOTE: Using Posts table (not BlogPosts) because newsletters are stored there
+      const posts = await storage.getPosts({
         published: true,
         communityId: communityId,
         tags: ["newsletter"],
       });
-      
+
       // Get the most recent newsletter post
       const latestPost = posts
         .sort((a, b) => {
@@ -391,16 +392,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const dateB = new Date(b.publishedAt || b.createdAt || 0).getTime();
           return dateB - dateA;
         })[0];
-      
+
       if (!latestPost) {
         return res.status(404).json({ message: "No newsletter found for this community" });
       }
-      
-      // Blog posts don't have attachments through postAttachments table
-      // They use mainImage, thumbnailImage, and galleryImages fields instead
-      
+
+      // Get post attachments
+      const attachments = await storage.getPostAttachments(latestPost.id);
+
       res.json({
         ...latestPost,
+        attachments,
         community,
       });
     } catch (error) {

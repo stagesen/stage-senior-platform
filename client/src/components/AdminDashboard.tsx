@@ -6280,9 +6280,9 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="location-specific">Location-Specific</SelectItem>
-                          <SelectItem value="care-type-specific">Care Type-Specific</SelectItem>
-                          <SelectItem value="hybrid">Hybrid</SelectItem>
+                          <SelectItem value="location">Location</SelectItem>
+                          <SelectItem value="community">Community</SelectItem>
+                          <SelectItem value="general">General</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
