@@ -134,29 +134,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/communities/:slug", async (req, res) => {
-    try {
-      const community = await storage.getCommunity(req.params.slug);
-      if (!community) {
-        return res.status(404).json({ message: "Community not found" });
-      }
-      
-      // Include care type and amenity IDs from junction tables
-      const careTypeIds = await storage.getCommunityCareTypes(community.id);
-      const amenityIds = await storage.getCommunityAmenities(community.id);
-      
-      res.json({
-        ...community,
-        careTypeIds,
-        amenityIds,
-      });
-    } catch (error) {
-      console.error("Error fetching community:", error);
-      res.status(500).json({ message: "Failed to fetch community" });
-    }
-  });
-
   // Composite endpoint for community detail page - fetches all data in one request
+  // IMPORTANT: This must come BEFORE /api/communities/:slug to match correctly
   app.get("/api/communities/:slug/full", async (req, res) => {
     try {
       const community = await storage.getCommunity(req.params.slug);
@@ -218,6 +197,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching community full data:", error);
       res.status(500).json({ message: "Failed to fetch community data" });
+    }
+  });
+
+  app.get("/api/communities/:slug", async (req, res) => {
+    try {
+      const community = await storage.getCommunity(req.params.slug);
+      if (!community) {
+        return res.status(404).json({ message: "Community not found" });
+      }
+      
+      // Include care type and amenity IDs from junction tables
+      const careTypeIds = await storage.getCommunityCareTypes(community.id);
+      const amenityIds = await storage.getCommunityAmenities(community.id);
+      
+      res.json({
+        ...community,
+        careTypeIds,
+        amenityIds,
+      });
+    } catch (error) {
+      console.error("Error fetching community:", error);
+      res.status(500).json({ message: "Failed to fetch community" });
     }
   });
 
