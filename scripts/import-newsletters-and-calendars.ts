@@ -248,7 +248,7 @@ async function main() {
     );
 
     await importNewslettersFromCSV(
-      'attached_assets/Gardens at Columbine - Newsletters_1760066657005.csv',
+      'attached_assets/Gardens at Columbine - Newsletters (1)_1760542767988.csv',
       'Gardens at Columbine - Newsletters'
     );
 
