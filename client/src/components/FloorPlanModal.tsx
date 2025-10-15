@@ -45,7 +45,7 @@ export default function FloorPlanModal({
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   
   // Fetch floor plan gallery images
-  const { data: floorPlanImages = [], isLoading: loadingImages } = useQuery<FloorPlanImageWithDetails[]>({
+  const { data: floorPlanImages = [], isLoading: loadingImages, isError: galleryError } = useQuery<FloorPlanImageWithDetails[]>({
     queryKey: ["/api/floor-plans", floorPlan.id, "images"],
     enabled: isOpen && !!floorPlan.id,
   });
@@ -126,7 +126,7 @@ export default function FloorPlanModal({
         </DialogHeader>
 
         {/* Main Image Display with Carousel */}
-        {isLoadingMainImage || loadingImages ? (
+        {(isLoadingMainImage || loadingImages) && images.length === 0 ? (
           <div className="aspect-video bg-muted rounded-lg flex flex-col items-center justify-center p-8">
             <div className="animate-pulse space-y-2 text-center">
               <Square className="h-12 w-12 text-muted-foreground mx-auto mb-2" />

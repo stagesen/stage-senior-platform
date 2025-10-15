@@ -11,7 +11,7 @@ export function useResolveImageUrl(value: string | undefined | null) {
   const isImageId = value && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
   
   // Fetch image data if it's an image ID
-  const { data: imageData, isLoading } = useQuery<Image>({
+  const { data: imageData, isLoading, isError } = useQuery<Image>({
     queryKey: ['/api/images', value],
     enabled: !!isImageId,
   });
@@ -19,6 +19,11 @@ export function useResolveImageUrl(value: string | undefined | null) {
   // Return null if loading (to distinguish from undefined which means no value)
   if (isImageId && isLoading) {
     return null;
+  }
+  
+  // If there was an error fetching the image, return undefined
+  if (isImageId && isError) {
+    return undefined;
   }
   
   // No value provided
