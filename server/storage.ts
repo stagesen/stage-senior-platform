@@ -603,9 +603,9 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(posts.communityId, filters.communityId));
     }
     if (filters?.tags && filters.tags.length > 0) {
-      // For jsonb array tags, we need to check if any of the filter tags exist in the array
+      // For text array tags, we need to check if any of the filter tags exist in the array
       const tagConditions = filters.tags.map(tag => 
-        sql`${posts.tags}::jsonb @> ${JSON.stringify([tag])}::jsonb`
+        sql`${posts.tags} @> ARRAY[${tag}]::text[]`
       );
       conditions.push(or(...tagConditions));
     }
