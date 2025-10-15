@@ -351,6 +351,17 @@ export const landingPageTemplates = pgTable("landing_page_templates", {
   customContent: jsonb("custom_content").$type<Record<string, any>>(), // Flexible content sections
   active: boolean("active").default(true),
   sortOrder: integer("sort_order").default(0),
+
+  // Optimization & Tracking fields
+  schemaOrgJson: jsonb("schema_org_json").$type<Record<string, any>>(), // Structured data for rich snippets
+  testimonialVideoUrl: varchar("testimonial_video_url", { length: 500 }), // Embedded testimonial video
+  heroVideoUrl: varchar("hero_video_url", { length: 500 }), // Hero background video
+  customScripts: text("custom_scripts"), // Custom JS/tracking scripts (A/B testing, analytics)
+  conversionRate: decimal("conversion_rate", { precision: 5, scale: 2 }).default("0"), // Conversion rate percentage
+  impressions: integer("impressions").default(0), // Total page views/impressions
+  conversions: integer("conversions").default(0), // Total conversions (tours scheduled)
+  lastOptimizedAt: timestamp("last_optimized_at").defaultNow(), // Last optimization date
+
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -731,7 +742,7 @@ export const insertLandingPageTemplateSchema = createInsertSchema(landingPageTem
 }).extend({
   slug: z.string().min(1, "Slug is required").regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens only"),
   urlPattern: z.string().min(1, "URL pattern is required"),
-  templateType: z.enum(["location-specific", "care-type-specific", "hybrid"]),
+  templateType: z.enum(["location", "community", "general", "location-specific", "care-type-specific", "hybrid"]),
   title: z.string().min(1, "Title is required"),
   cities: z.array(z.string()).optional().default([]),
 });

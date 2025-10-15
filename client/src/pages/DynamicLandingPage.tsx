@@ -15,6 +15,7 @@ import LeadCaptureForm from "@/components/LeadCaptureForm";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import NotFound from "@/pages/not-found";
+import { generateSchemaOrgData } from "@/lib/schemaOrg";
 import {
   Calendar,
   MapPin,
@@ -538,7 +539,8 @@ export default function DynamicLandingPage() {
   useEffect(() => {
     if (template) {
       const title = replaceTokens(template.title, tokens);
-      document.title = title;
+      // Add " | Stage Senior" to title for branding (not in database to save SEO space)
+      document.title = title.includes('Stage Senior') ? title : `${title} | Stage Senior`;
 
       if (template.metaDescription) {
         let metaTag = document.querySelector('meta[name="description"]');
@@ -554,6 +556,40 @@ export default function DynamicLandingPage() {
       }
     }
   }, [template, tokens]);
+
+  // Inject Schema.org structured data for SEO
+  useEffect(() => {
+    if (!template) return;
+
+    // Generate Schema.org data
+    const schemas = generateSchemaOrgData({
+      community: primaryCommunity,
+      careType: careTypeSlug || undefined,
+      template,
+      pathname,
+    });
+
+    // Create script tags for each schema
+    const scriptTags: HTMLScriptElement[] = [];
+
+    schemas.forEach((schema, index) => {
+      const script = document.createElement("script");
+      script.type = "application/ld+json";
+      script.id = `schema-org-${index}`;
+      script.textContent = JSON.stringify(schema);
+      document.head.appendChild(script);
+      scriptTags.push(script);
+    });
+
+    // Cleanup function to remove script tags when component unmounts or dependencies change
+    return () => {
+      scriptTags.forEach((script) => {
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+      });
+    };
+  }, [template, primaryCommunity, careTypeSlug, pathname]);
 
   // Scroll tracking for sticky mobile CTA
   useEffect(() => {
@@ -797,6 +833,47 @@ export default function DynamicLandingPage() {
         logoUrl={communityLogoUrl || undefined}
         logoAlt={`${primaryCommunity?.name} logo`}
       />
+
+      {/* 1b. Hero CTA Section - Immediate conversion opportunity */}
+      <section className="bg-white py-8 md:py-12 border-b border-gray-100" data-testid="hero-cta-section">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
+            <Button
+              size="lg"
+              onClick={() =>
+                openScheduleTour({
+                  communityId: primaryCommunity?.id,
+                  communityName: primaryCommunity?.name,
+                  title: `Schedule a Tour${primaryCommunity?.name ? ` at ${primaryCommunity.name}` : ""}`,
+                })
+              }
+              className="min-h-[56px] px-8 text-lg w-full md:w-auto shadow-lg hover:shadow-xl transition-shadow"
+              data-testid="button-hero-cta-schedule"
+            >
+              <Calendar className="w-5 h-5 mr-2" />
+              {template.heroCtaText || "Schedule Your Free Tour"}
+            </Button>
+            {primaryCommunity?.phoneDisplay && (
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="min-h-[56px] px-8 text-lg w-full md:w-auto border-2 hover:bg-gray-50"
+                data-testid="button-hero-cta-phone"
+              >
+                <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
+                  <Phone className="w-5 h-5 mr-2" />
+                  {primaryCommunity.phoneDisplay}
+                </a>
+              </Button>
+            )}
+          </div>
+          <p className="text-center text-sm text-muted-foreground mt-4">
+            <Clock className="w-4 h-4 inline mr-1" />
+            Same-day tours available • No obligation • Free parking
+          </p>
+        </div>
+      </section>
 
       {/* 1a. Care Type Focus - Show specific care type if landing page is for a specific care type */}
       {careTypeSlug && getCareTypeName() !== "Senior Living" && (

@@ -7879,7 +7879,9 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline">
-                      {item.templateType === "location-specific" && "📍 Location"}
+                      {item.templateType === "location" && "📍 Location"}
+                      {item.templateType === "community" && "🏘️ Community"}
+                      {item.templateType === "general" && "🌐 General"}
                       {item.templateType === "care-type-specific" && "🏥 Care Type"}
                       {item.templateType === "hybrid" && "🔀 Hybrid"}
                     </Badge>

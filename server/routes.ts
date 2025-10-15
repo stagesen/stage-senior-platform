@@ -377,11 +377,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Community not found" });
       }
       
-      // Find the latest blog post with "Newsletter" tag and matching community
+      // Find the latest blog post with "newsletter" tag and matching community
       const posts = await storage.getBlogPosts({
         published: true,
         communityId: communityId,
-        tags: ["Newsletter"],
+        tags: ["newsletter"],
       });
       
       // Get the most recent newsletter post
