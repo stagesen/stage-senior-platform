@@ -102,6 +102,7 @@ const HighlightCard = ({ highlight, imageOnRight = false }: { highlight: { title
             alt={highlight.title}
             className="w-full h-full object-cover"
             data-testid={`highlight-${highlight.title.toLowerCase().replace(/\s+/g, '-')}`}
+            loading="lazy"
           />
         </AspectRatio>
       </div>
@@ -151,6 +152,7 @@ const FloorPlanCard = ({ plan, onOpen }: { plan: any, onOpen: (plan: any) => voi
               alt={`${plan.name} floor plan`}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               data-testid={`floor-plan-image-${plan.id}`}
+              loading="lazy"
             />
           </AspectRatio>
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -461,6 +463,7 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
                       src={coverImage.url}
                       alt={coverImage.alt || `${gallery.title} gallery`}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
@@ -497,6 +500,7 @@ const TestimonialCarouselItem = ({ testimonial }: { testimonial: any }) => {
           <img
             src={resolvedAvatarUrl}
             alt={testimonial.authorName}
+            loading="lazy"
             className="w-16 h-16 rounded-full object-cover ring-2 ring-primary/30"
           />
         ) : (
@@ -637,6 +641,7 @@ const FeatureSection = ({
             src={resolvedImageUrl || imageUrl}
             alt={imageAlt}
             className="w-full h-full object-cover rounded-2xl shadow-xl"
+            loading="lazy"
           />
         </AspectRatio>
       </div>
@@ -777,6 +782,7 @@ const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: an
                 src={resolvedPricingUrl || "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2000"}
                 alt="Comfortable senior living apartment"
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
             </div>
             <CardHeader>
@@ -831,6 +837,7 @@ const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: an
                     src={avatarImageUrl}
                     alt={primaryContact.name}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 ) : (
                   <User className="w-24 h-24 text-primary/40" />
@@ -878,6 +885,7 @@ const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: an
                 src={resolvedContactUrl || "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=2000"}
                 alt="Friendly staff ready to help"
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
             </div>
             <CardHeader>
@@ -926,6 +934,7 @@ const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: an
                 src={resolvedBrochureUrl || defaultBrochureImage}
                 alt="Community brochure preview"
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
             </div>
             <CardHeader>
@@ -2021,6 +2030,7 @@ export default function CommunityDetail() {
                     alt={`Experience ${community.name}`}
                     className="w-full h-[400px] object-cover"
                     data-testid="experience-image"
+                    loading="lazy"
                   />
                 </div>
               )}
