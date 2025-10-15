@@ -644,31 +644,8 @@ const FeatureSection = ({
   );
 };
 
-// Component to fetch and display community features
-const CommunityFeatures = ({ community }: { community: Community }) => {
-  // Fetch features from database
-  const { data: features = [], isLoading } = useQuery<any[]>({
-    queryKey: [`/api/communities/${community.id}/features`],
-  });
-
-  if (isLoading) {
-    return (
-      <div className="space-y-20">
-        {[1, 2, 3, 4].map(i => (
-          <div key={i} className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-            <Skeleton className="h-64" />
-            <div className="space-y-4">
-              <Skeleton className="h-8 w-24" />
-              <Skeleton className="h-10 w-3/4" />
-              <Skeleton className="h-24" />
-              <Skeleton className="h-10 w-32" />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
+// Component to display community features (now receives data as props)
+const CommunityFeatures = ({ features }: { features: any[] }) => {
   // Filter active features and sort by sortOrder
   const activeFeatures = features
     .filter((feature: any) => feature.active !== false)
@@ -774,13 +751,7 @@ const BlogPostCard = ({ post }: { post: BlogPost }) => {
 };
 
 // Local subcomponent: Action Panel
-const ActionPanel = ({ community, handleNavClick }: { community: any; handleNavClick: (sectionId: string) => void }) => {
-  // Fetch team members for this community
-  const { data: teamMembers = [], isLoading: teamMembersLoading } = useQuery<TeamMember[]>({
-    queryKey: [`/api/communities/${community.id}/team-members`],
-    enabled: !!community?.id,
-  });
-
+const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: any; teamMembers: TeamMember[]; handleNavClick: (sectionId: string) => void }) => {
   // Get the primary contact (first team member)
   const primaryContact = teamMembers[0];
   
@@ -1125,55 +1096,37 @@ export default function CommunityDetail() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const { data: community, isLoading: communityLoading } = useQuery<Community>({
-    queryKey: [`/api/communities/${slug}`],
+  // Use composite endpoint for better performance - fetches all data in one request
+  const { data: fullData, isLoading: communityLoading } = useQuery<{
+    community: Community;
+    events: Event[];
+    faqs: Faq[];
+    galleries: Gallery[];
+    floorPlans: FloorPlan[];
+    testimonials: Testimonial[];
+    galleryImages: GalleryImageWithDetails[];
+    posts: Post[];
+    blogPosts: BlogPost[];
+    highlights: CommunityHighlight[];
+    features: any[];
+    teamMembers: TeamMember[];
+  }>({
+    queryKey: [`/api/communities/${slug}/full`],
     enabled: !!slug,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const { data: events = [] } = useQuery<Event[]>({
-    queryKey: [`/api/events?communityId=${community?.id || ''}&upcoming=true`],
-    enabled: !!slug && !!community?.id,
-  });
-
-  const { data: faqs = [] } = useQuery<Faq[]>({
-    queryKey: [`/api/faqs?communityId=${community?.id || ''}&active=true`],
-    enabled: !!slug && !!community?.id,
-  });
-
-  const { data: galleries = [] } = useQuery<Gallery[]>({
-    queryKey: [`/api/galleries?communityId=${community?.id || ''}&active=true`],
-    enabled: !!slug && !!community?.id,
-  });
-
-  const { data: floorPlans = [] } = useQuery<FloorPlan[]>({
-    queryKey: [`/api/floor-plans?communityId=${community?.id || ''}&active=true`],
-    enabled: !!slug && !!community?.id,
-  });
-
-  const { data: testimonials = [] } = useQuery<Testimonial[]>({
-    queryKey: [`/api/testimonials?communityId=${community?.id || ''}&approved=true`],
-    enabled: !!slug && !!community?.id,
-  });
-
-  const { data: galleryImages = [] } = useQuery<GalleryImageWithDetails[]>({
-    queryKey: [`/api/gallery-images?communityId=${community?.id || ''}&active=true`],
-    enabled: !!slug && !!community?.id,
-  });
-
-  const { data: posts = [] } = useQuery<Post[]>({
-    queryKey: [`/api/posts?communityId=${community?.id || ''}&published=true`],
-    enabled: !!slug && !!community?.id,
-  });
-
-  const { data: blogPosts = [] } = useQuery<BlogPost[]>({
-    queryKey: [`/api/blog-posts?communityId=${community?.id || ''}&published=true`],
-    enabled: !!slug && !!community?.id,
-  });
-
-  const { data: highlights = [] } = useQuery<CommunityHighlight[]>({
-    queryKey: [`/api/communities/${community?.id || ''}/highlights`],
-    enabled: !!slug && !!community?.id,
-  });
+  // Extract data from composite response
+  const community = fullData?.community;
+  const events = fullData?.events || [];
+  const faqs = fullData?.faqs || [];
+  const galleries = fullData?.galleries || [];
+  const floorPlans = fullData?.floorPlans || [];
+  const testimonials = fullData?.testimonials || [];
+  const galleryImages = fullData?.galleryImages || [];
+  const posts = fullData?.posts || [];
+  const blogPosts = fullData?.blogPosts || [];
+  const highlights = fullData?.highlights || [];
 
   // Resolve hero image URL (handle both image ID and full URL)
   const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
@@ -2038,7 +1991,7 @@ export default function CommunityDetail() {
             </p>
           </div>
 
-          <CommunityFeatures community={community} />
+          <CommunityFeatures features={fullData?.features || []} />
         </section>
 
             {/* Floor Plans Section */}
@@ -2296,7 +2249,7 @@ export default function CommunityDetail() {
             </section>
 
             {/* Action Panel - Contact, Pricing, and Resources */}
-            <ActionPanel community={community} handleNavClick={handleNavClick} />
+            <ActionPanel community={community} teamMembers={fullData?.teamMembers || []} handleNavClick={handleNavClick} />
 
             {/* Enhanced Bottom CTA */}
             <EnhancedBottomCTA community={community} />

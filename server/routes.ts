@@ -156,6 +156,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Composite endpoint for community detail page - fetches all data in one request
+  app.get("/api/communities/:slug/full", async (req, res) => {
+    try {
+      const community = await storage.getCommunity(req.params.slug);
+      if (!community) {
+        return res.status(404).json({ message: "Community not found" });
+      }
+
+      // Fetch all related data in parallel for better performance
+      const [
+        careTypeIds,
+        amenityIds,
+        events,
+        faqs,
+        galleries,
+        floorPlans,
+        testimonials,
+        galleryImages,
+        posts,
+        blogPosts,
+        highlights,
+        features,
+        teamMembers
+      ] = await Promise.all([
+        storage.getCommunityCareTypes(community.id),
+        storage.getCommunityAmenities(community.id),
+        storage.getEvents({ communityId: community.id, upcoming: true }),
+        storage.getFaqs({ communityId: community.id, active: true }),
+        storage.getGalleries({ communityId: community.id, active: true }),
+        storage.getFloorPlans({ communityId: community.id, active: true }),
+        storage.getTestimonials({ communityId: community.id, approved: true }),
+        storage.getFilteredGalleryImages({ communityId: community.id, active: true }),
+        storage.getPosts({ communityId: community.id, published: true }),
+        storage.getBlogPosts({ communityId: community.id, published: true }),
+        storage.getCommunityHighlights(community.id),
+        storage.getCommunityFeatures(community.id),
+        storage.getTeamMembersByCommunity(community.id)
+      ]);
+
+      // Return all data in one response with cache headers
+      res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+      res.json({
+        community: {
+          ...community,
+          careTypeIds,
+          amenityIds,
+        },
+        events,
+        faqs,
+        galleries,
+        floorPlans,
+        testimonials,
+        galleryImages,
+        posts,
+        blogPosts,
+        highlights,
+        features,
+        teamMembers
+      });
+    } catch (error) {
+      console.error("Error fetching community full data:", error);
+      res.status(500).json({ message: "Failed to fetch community data" });
+    }
+  });
+
   app.post("/api/communities", requireAuth, async (req, res) => {
     try {
       const { careTypeIds, amenityIds, ...communityData } = req.body;
