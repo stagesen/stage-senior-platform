@@ -1,0 +1,9 @@
+UPDATE floor_plans SET image_id = '4d37bdf3-4e32-4dae-8d18-6124ac23317b' WHERE id = '83123daa-06eb-4a5e-9e38-448440715156';
+UPDATE floor_plans SET image_id = 'b0c24574-b310-4fa1-adde-259cb621d1ed' WHERE id = '60eaa268-c69e-4187-b137-1e20f7f9679c';
+UPDATE floor_plans SET image_id = '9f3df6b5-7347-4ae1-acc9-1c6d36bb9736' WHERE id = '58cc3b8b-beda-45c4-a500-845e2ff8eff6';
+UPDATE floor_plans SET image_id = 'bf7b7be6-771a-4477-9395-9754f929e4a6' WHERE id = '91b96b85-2a76-43d8-93a7-ae054a411b91';
+UPDATE floor_plans SET image_id = '76b4854e-48e5-4c9b-b8e0-b0bb06a7d22b' WHERE id = '3de8f03e-7539-4bed-bcf7-4ecb37ab699a';
+UPDATE floor_plans SET image_id = 'b012def6-9412-47e8-b21f-f37d05cc97f0' WHERE id = '59db1971-ea0d-4294-beef-5d8ae9292249';
+UPDATE floor_plans SET image_id = 'edb5a266-5c49-4959-bc96-7fa06af59e14' WHERE id = '00897111-b545-46fd-986d-150cfc58e5e1';
+UPDATE floor_plans SET image_id = '005d1241-280b-486a-adc9-f7a07055af55' WHERE id = '4ef9cb1b-ce17-4ed5-9598-a200f7d8fcc5';
+UPDATE floor_plans SET image_id = '56390600-6dae-4ce4-b5b7-61a55c7c4bc4' WHERE id = '8f556971-20f2-4459-b802-71d5d7ae052a';

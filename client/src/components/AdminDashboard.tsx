@@ -7470,17 +7470,17 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
+                    <Button
+                      size="sm"
+                      variant="outline"
                       onClick={() => handleEdit(item)}
                       data-testid={`button-edit-${item.id}`}
                     >
                       <Edit className="w-4 h-4" />
                     </Button>
-                    <Button 
-                      size="sm" 
-                      variant="destructive" 
+                    <Button
+                      size="sm"
+                      variant="destructive"
                       onClick={() => handleDelete(item.id)}
                       data-testid={`button-delete-${item.id}`}
                     >

@@ -138,17 +138,21 @@ const HighlightCard = ({ highlight, imageOnRight = false }: { highlight: { title
 const FloorPlanCard = ({ plan, onOpen }: { plan: any, onOpen: (plan: any) => void }) => {
   const resolvedImageUrl = useResolveImageUrl(plan.imageId || plan.imageUrl);
 
+  // Fallback: if imageId resolution failed, try imageUrl directly as a UUID
+  const imageUrlFromUuid = useResolveImageUrl(plan.imageUrl);
+  const finalImageUrl = resolvedImageUrl || imageUrlFromUuid;
+
   return (
     <Card
       className="overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer group border-gray-200 h-full flex flex-col"
       onClick={() => onOpen(plan)}
       data-testid={`floor-plan-${plan.id}`}
     >
-      {resolvedImageUrl && (
+      {finalImageUrl && (
         <div className="relative overflow-hidden bg-gray-100">
           <AspectRatio ratio={16/10}>
             <img
-              src={resolvedImageUrl}
+              src={finalImageUrl}
               alt={`${plan.name} floor plan`}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               data-testid={`floor-plan-image-${plan.id}`}
