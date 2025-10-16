@@ -25,9 +25,9 @@ import {
   Copy,
 } from "lucide-react";
 import type { PageContentSection, InsertPageContentSection } from "@shared/schema";
-import { 
-  AVAILABLE_PAGES, 
-  getAllSectionTypes, 
+import {
+  AVAILABLE_PAGES,
+  getAllSectionTypes,
   getSectionTypeMetadata,
   parseContent,
   textBlockContentSchema,
@@ -37,6 +37,7 @@ import {
   featureGridContentSchema,
   sectionHeaderContentSchema,
   ctaContentSchema,
+  heroSectionContentSchema,
 } from "@/lib/pageContentSections";
 
 export default function PageContentManager() {
@@ -516,6 +517,10 @@ function SectionForm({
 
         {sectionType === "cta" && (
           <CTAEditor value={contentData} onChange={setContentData} />
+        )}
+
+        {sectionType === "hero_section" && (
+          <HeroSectionEditor value={contentData} onChange={setContentData} />
         )}
 
         <div className="grid grid-cols-2 gap-4">

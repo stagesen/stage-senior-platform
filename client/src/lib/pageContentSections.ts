@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { LucideIcon } from "lucide-react";
-import { FileText, Grid3x3, List, Snowflake, Layout, Heading, Megaphone } from "lucide-react";
+import { FileText, Grid3x3, List, Snowflake, Layout, Heading, Megaphone, Image } from "lucide-react";
 
 // Define the content structure for each section type
 export const textBlockContentSchema = z.object({
@@ -50,6 +50,12 @@ export const ctaContentSchema = z.object({
   description: z.string().optional(),
   buttonText: z.string(),
   buttonLink: z.string(),
+});
+
+export const heroSectionContentSchema = z.object({
+  heading: z.string(),
+  description: z.string(),
+  imageUrl: z.string(),
 });
 
 // Section type metadata
@@ -154,6 +160,19 @@ export const SECTION_TYPES: Record<string, SectionTypeMetadata> = {
     },
     category: "interactive",
   },
+  hero_section: {
+    type: "hero_section",
+    name: "Hero Section",
+    description: "Hero section with heading, description, and image",
+    icon: Image,
+    contentSchema: heroSectionContentSchema,
+    defaultContent: {
+      heading: "",
+      description: "",
+      imageUrl: "",
+    },
+    category: "layout",
+  },
 };
 
 // Get section type metadata by type string
@@ -185,6 +204,7 @@ export function parseContent(type: string, content: string | null): any {
 
 // Available pages configuration
 export const AVAILABLE_PAGES = [
+  { path: '/about-us', name: 'About Us', emoji: '👥', description: 'Company information and team' },
   { path: '/courtyards-patios', name: 'Courtyards & Patios', emoji: '🌳', description: 'Outdoor spaces and garden areas' },
   { path: '/dining', name: 'Dining Services', emoji: '🍽️', description: 'Restaurant-style dining and menus' },
   { path: '/beauty-salon', name: 'Beauty Salon & Barber', emoji: '💇', description: 'On-site beauty and barber services' },
