@@ -400,7 +400,7 @@ export async function processDocumentUpload(
     originalName: savedAttachment.originalName,
     url: savedAttachment.url,
     mimeType: savedAttachment.mimeType,
-    sizeBytes: savedAttachment.sizeBytes,
+    sizeBytes: savedAttachment.sizeBytes || 0,
   };
 }
 
