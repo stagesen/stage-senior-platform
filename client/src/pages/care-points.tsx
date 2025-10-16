@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
@@ -20,10 +22,17 @@ import {
   Calculator
 } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
+import PageSectionRenderer from "@/components/PageSectionRenderer";
+import type { PageContentSection } from "@shared/schema";
 
 export default function CarePoints() {
   const [selectedCareType, setSelectedCareType] = useState<"assisted-living" | "memory-care">("assisted-living");
   const [selectedSuiteType, setSelectedSuiteType] = useState<"private" | "one-bedroom" | "two-bedroom">("private");
+  
+  // Fetch page content sections from database
+  const { data: pageSections = [], isLoading: sectionsLoading } = useQuery<PageContentSection[]>({
+    queryKey: ['/api/page-content', { pagePath: '/care-points', active: true }],
+  });
 
   useEffect(() => {
     document.title = "Care Points vs Tiered Pricing | Stage Senior";
@@ -256,30 +265,23 @@ export default function CarePoints() {
         defaultDescription="Comprehensive care services tailored to each resident's unique requirements"
       />
 
-      {/* What Are Care Points */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-12" data-testid="what-are-care-points-title">
-            What Are Care Points?
-          </h2>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div>
-              <h3 className="text-xl font-bold text-foreground mb-4">Plain-English definition</h3>
-              <p className="text-muted-foreground leading-relaxed mb-6">
-                Care Points are a simple way to price only the services your loved one actually receives. Each service (like medication management, bathing, or mobility support) is assigned a small point value. Points add up to a daily total, which translates into your monthly care cost.
-              </p>
-            </div>
-            
-            <div>
-              <h3 className="text-xl font-bold text-foreground mb-4">Why this matters</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                You're never pushed into a broad "tier" that includes services you don't need. Your plan can move up or down with your loved one's needs—and you'll always see exactly why.
-              </p>
-            </div>
+      {/* Render Database Content Sections */}
+      {sectionsLoading ? (
+        <div className="py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Skeleton className="h-64 w-full" />
           </div>
         </div>
-      </section>
+      ) : (
+        <>
+          {pageSections
+            .filter(section => section.active && section.sortOrder && section.sortOrder < 25)
+            .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+            .map((section) => (
+              <PageSectionRenderer key={section.id} section={section} />
+            ))}
+        </>
+      )}
 
       {/* Comparison Table */}
       <section className="py-16 bg-gray-50">
@@ -431,78 +433,17 @@ export default function CarePoints() {
         </div>
       </section>
 
-      {/* Why Points Beat Tiers */}
-      <section className="py-16 bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12" data-testid="why-points-beat-tiers-title">
-            Why points beat tiers
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center" data-testid="beat-tiers-0">
-              <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
-              <h3 className="text-xl font-bold mb-2">No cliff pricing</h3>
-              <p className="text-white/90">
-                Care changes in $20 steps, not $500–$1,000 tier jumps.
-              </p>
-            </div>
-            
-            <div className="text-center" data-testid="beat-tiers-1">
-              <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
-              <h3 className="text-xl font-bold mb-2">Resident-centered</h3>
-              <p className="text-white/90">
-                Points follow recurring needs and can adjust up or down.
-              </p>
-            </div>
-            
-            <div className="text-center" data-testid="beat-tiers-2">
-              <CheckCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
-              <h3 className="text-xl font-bold mb-2">Transparent math</h3>
-              <p className="text-white/90">
-                Total = Base Rent + (Points × $20). That's it.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
-            <Button size="lg" className="bg-white text-[var(--deep-blue)] hover:bg-gray-100" data-testid="button-schedule-visit">
-              <Calendar className="w-5 h-5 mr-2" />
-              Schedule a Visit
-            </Button>
-            <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-[var(--deep-blue)]" data-testid="button-pricing-guide">
-              <FileText className="w-5 h-5 mr-2" />
-              Open Pricing Guide
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Not Nickel-and-Diming */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-4" data-testid="prevention-title">
-            Not Nickel-and-Diming—Here's How We Prevent It
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
-            {preventionPrinciples.map((principle, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow" data-testid={`prevention-principle-${index}`}>
-                <CardContent className="pt-6">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 text-primary rounded-full mb-4">
-                    {principle.icon}
-                  </div>
-                  <h3 className="font-bold text-foreground mb-2" data-testid={`prevention-title-${index}`}>
-                    {principle.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground" data-testid={`prevention-description-${index}`}>
-                    {principle.description}
-                  </p>
-                </CardContent>
-              </Card>
+      {/* Render Additional Database Sections */}
+      {!sectionsLoading && (
+        <>
+          {pageSections
+            .filter(section => section.active && section.sortOrder && section.sortOrder >= 25)
+            .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+            .map((section) => (
+              <PageSectionRenderer key={section.id} section={section} />
             ))}
-          </div>
-        </div>
-      </section>
+        </>
+      )}
 
       {/* FAQ Section */}
       <section className="py-16 bg-gray-50">

@@ -9,7 +9,8 @@ import { PageHero } from "@/components/PageHero";
 import { useQuery } from "@tanstack/react-query";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Community } from "@shared/schema";
+import PageSectionRenderer from "@/components/PageSectionRenderer";
+import type { Community, PageContentSection } from "@shared/schema";
 
 export default function StageCares() {
   useEffect(() => {
@@ -26,6 +27,11 @@ export default function StageCares() {
       document.head.appendChild(meta);
     }
   }, []);
+
+  // Fetch page content sections from database
+  const { data: pageSections = [], isLoading: sectionsLoading } = useQuery<PageContentSection[]>({
+    queryKey: ['/api/page-content', { pagePath: '/stage-cares', active: true }],
+  });
 
   // Fetch communities for the bottom section
   const { data: communities, isLoading: communitiesLoading } = useQuery<Community[]>({
@@ -134,125 +140,26 @@ export default function StageCares() {
         </div>
       </section>
 
-      {/* Making a Global Impact Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8" data-testid="global-impact-title">
-              Making a Global Impact
-            </h2>
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 md:p-12">
-              <Globe className="w-16 h-16 text-blue-600 mx-auto mb-6" />
-              <p className="text-lg text-gray-700 leading-relaxed" data-testid="global-impact-text">
-                Stage Cares embodies our commitment to creating positive change both within our communities and around the world. 
-                Through employee participation and company matching, we build a powerful foundation for supporting those in need 
-                and making meaningful impacts in diverse communities.
-              </p>
-            </div>
+      {/* Render Database Content Sections */}
+      {sectionsLoading ? (
+        <div className="py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Skeleton className="h-64 w-full" />
           </div>
         </div>
-      </section>
+      ) : (
+        <>
+          {pageSections
+            .filter(section => section.active)
+            .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+            .map((section) => (
+              <PageSectionRenderer key={section.id} section={section} />
+            ))}
+        </>
+      )}
 
-      {/* How Stage Cares Works Section */}
-      <section id="how-it-works" className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="how-it-works-title">
-              How Stage Cares Works
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-            <Card className="border-2 border-blue-100 hover:border-blue-200 transition-colors">
-              <CardHeader className="text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-8 h-8 text-blue-600" />
-                </div>
-                <CardTitle>Employee Contribution</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-2xl font-bold text-blue-600 mb-2">$5.00</p>
-                <p className="text-muted-foreground">per paycheck</p>
-                <p className="text-sm text-muted-foreground mt-2">($10 monthly)</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 border-indigo-100 hover:border-indigo-200 transition-colors">
-              <CardHeader className="text-center">
-                <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <HandHeart className="w-8 h-8 text-indigo-600" />
-                </div>
-                <CardTitle>Company Matching</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-2xl font-bold text-indigo-600 mb-2">100%</p>
-                <p className="text-muted-foreground">Dollar-for-dollar match</p>
-                <p className="text-sm text-muted-foreground mt-2">Doubling the impact</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 border-purple-100 hover:border-purple-200 transition-colors">
-              <CardHeader className="text-center">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Target className="w-8 h-8 text-purple-600" />
-                </div>
-                <CardTitle>Total Impact</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-2xl font-bold text-purple-600 mb-2">2X</p>
-                <p className="text-muted-foreground">The giving power</p>
-                <p className="text-sm text-muted-foreground mt-2">Supporting vital causes</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="bg-white rounded-xl p-8 shadow-lg">
-            <p className="text-lg text-gray-700 text-center" data-testid="how-it-works-text">
-              Our innovative giving program unites the power of employee generosity with corporate commitment. 
-              Employees contribute $5.00 per paycheck ($10 monthly), and Stage Management matches every dollar, 
-              creating a sustainable fund for supporting vital causes and responding to urgent needs.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Community - Helping Hands Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <Card className="bg-gradient-to-br from-orange-50 to-amber-50 border-orange-200">
-              <CardHeader>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                    <HandHeart className="w-6 h-6 text-orange-600" />
-                  </div>
-                  <CardTitle className="text-2xl" data-testid="helping-hands-title">
-                    Our Community - Helping Hands
-                  </CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-lg text-gray-700 leading-relaxed" data-testid="helping-hands-text">
-                  Helping Hands is a non-profit organization formed to help individuals with unexpected life challenges. 
-                  Stage Cares will have resources available for our own staff to apply for support via Helping Hands 
-                  when unexpected circumstances arise.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-4">
-                  <Badge className="bg-orange-100 text-orange-800 px-3 py-1">
-                    Employee Support
-                  </Badge>
-                  <Badge className="bg-amber-100 text-amber-800 px-3 py-1">
-                    Emergency Assistance
-                  </Badge>
-                  <Badge className="bg-yellow-100 text-yellow-800 px-3 py-1">
-                    Community Care
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
+      {/* Keep this section for navigation anchor */}
+      <div id="how-it-works" className="py-0"></div>
 
       {/* Current Projects Section */}
       <section className="py-16 bg-gradient-to-br from-gray-50 to-blue-50">

@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Shield, 
   AlertCircle, 
@@ -35,8 +37,15 @@ import {
   Info
 } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
+import PageSectionRenderer from "@/components/PageSectionRenderer";
+import type { PageContentSection } from "@shared/schema";
 
 export default function SafetyWithDignity() {
+  // Fetch page content sections from database
+  const { data: pageSections = [], isLoading: sectionsLoading } = useQuery<PageContentSection[]>({
+    queryKey: ['/api/page-content', { pagePath: '/safety-with-dignity', active: true }],
+  });
+
   useEffect(() => {
     document.title = "Safety with Dignity - Fall Detection Program | The Gardens on Quail";
     
@@ -305,112 +314,23 @@ export default function SafetyWithDignity() {
         </div>
       </section>
 
-      {/* Statistics Showcase */}
-      <section className="py-16 bg-gradient-to-br from-blue-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <Badge className="mb-4" variant="outline">Proven Results</Badge>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="why-matters-title">
-              Why this matters
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Overnight and bedroom falls are common; speed and clarity change outcomes.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {benefits.map((benefit, index) => (
-              <Card key={index} className="relative overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" data-testid={`benefit-card-${index}`}>
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
-                <CardContent className="p-8 text-center relative">
-                  <div className={`text-5xl font-bold ${benefit.color} mb-3`} data-testid={`benefit-stat-${index}`}>
-                    {benefit.stat}
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2" data-testid={`benefit-title-${index}`}>
-                    {benefit.title}
-                  </h3>
-                  <p className="text-muted-foreground" data-testid={`benefit-description-${index}`}>
-                    {benefit.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          
-          {/* Impact Statement */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <Award className="w-8 h-8 text-yellow-600" />
-              <h3 className="text-2xl font-bold">Industry-Leading Safety Technology</h3>
-            </div>
-            <p className="text-center text-muted-foreground max-w-3xl mx-auto">
-              Our Safety with Dignity program represents the gold standard in fall prevention technology. 
-              By combining advanced detection with respect for privacy, we're setting new benchmarks for senior care safety.
-            </p>
+      {/* Render Database Content Sections */}
+      {sectionsLoading ? (
+        <div className="py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Skeleton className="h-64 w-full" />
           </div>
         </div>
-      </section>
-
-      {/* How It Works Section - Enhanced */}
-      <section id="how-it-works" className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <Badge className="mb-4" variant="secondary">5-Step Process</Badge>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="how-it-works-title">
-              How it works
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              A simple process designed to maximize safety while preserving dignity and privacy
-            </p>
-          </div>
-          
-          {/* Desktop Timeline */}
-          <div className="hidden lg:block relative mb-16">
-            <div className="absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-primary/20 via-primary to-primary/20 transform -translate-y-1/2"></div>
-            <div className="grid grid-cols-5 gap-4 relative">
-              {processSteps.map((step, index) => (
-                <div key={index} className="relative" data-testid={`process-step-${index}`}>
-                  <div className="bg-white rounded-2xl border-2 border-primary/20 hover:border-primary transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2">
-                    <CardContent className="p-6 text-center">
-                      <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl mx-auto mb-4">
-                        {index + 1}
-                      </div>
-                      <h3 className="text-xl font-bold mb-2" data-testid={`step-title-${index}`}>
-                        {step.step}
-                      </h3>
-                      <p className="text-sm font-medium text-foreground mb-2" data-testid={`step-description-${index}`}>
-                        {step.description}
-                      </p>
-                      <p className="text-sm text-muted-foreground" data-testid={`step-detail-${index}`}>
-                        {step.detail}
-                      </p>
-                    </CardContent>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Mobile Steps */}
-          <div className="lg:hidden space-y-4">
-            {processSteps.map((step, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow" data-testid={`mobile-step-${index}`}>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold shrink-0">
-                      {index + 1}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold mb-1">{step.step}</h3>
-                      <p className="text-sm font-medium text-foreground mb-1">{step.description}</p>
-                      <p className="text-sm text-muted-foreground">{step.detail}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+      ) : (
+        <>
+          {pageSections
+            .filter(section => section.active)
+            .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+            .map((section) => (
+              <PageSectionRenderer key={section.id} section={section} />
             ))}
-          </div>
-        </div>
-      </section>
+        </>
+      )}
 
       {/* Comparison Section */}
       <section className="py-16 bg-gray-50">

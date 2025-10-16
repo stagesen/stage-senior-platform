@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { Phone, Mail, FileText, Shield, CheckCircle, Calendar, Briefcase, ClipboardCheck } from "lucide-react";
+import { Phone, Mail, Briefcase } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 import { PageHero } from "@/components/PageHero";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
+import PageSectionRenderer from "@/components/PageSectionRenderer";
 import type { Community, PageContentSection } from "@shared/schema";
 
 export default function LongTermCare() {
@@ -35,41 +35,14 @@ export default function LongTermCare() {
     queryKey: ["/api/page-content"],
   });
 
-  // Get hero section content
-  const heroSection = pageSections.find(
-    (section) => section.pagePath === "/services/long-term-care" && section.sectionType === "hero_section" && section.active
-  );
+  // Get active sections for this page, sorted by sortOrder
+  const activeSections = pageSections
+    .filter(section => section.pagePath === "/services/long-term-care" && section.active)
+    .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+  // Get hero section for the button
+  const heroSection = activeSections.find(s => s.sectionKey === "comprehensive_support_process");
   const heroContent = heroSection?.content as { heading?: string; description?: string; imageUrl?: string } | undefined;
-
-  const serviceHighlights = [
-    "Expert Policy Review",
-    "Streamlined Claims Processing",
-    "Clinical Certification Support",
-    "Monthly Claims Management"
-  ];
-
-  const serviceDetails = [
-    {
-      icon: <FileText className="w-8 h-8" />,
-      title: "Expert Policy Review",
-      description: "We thoroughly analyze your policy to identify all available benefits and coverage options, helping you make informed decisions about your care."
-    },
-    {
-      icon: <ClipboardCheck className="w-8 h-8" />,
-      title: "Streamlined Claims Processing",
-      description: "From initial filing through ongoing management, we handle all documentation and submissions to ensure prompt, accurate processing of your claims."
-    },
-    {
-      icon: <Shield className="w-8 h-8" />,
-      title: "Clinical Certification Support",
-      description: "Our clinical team works directly with insurance providers to facilitate initial certification and maintain ongoing coverage eligibility."
-    },
-    {
-      icon: <Calendar className="w-8 h-8" />,
-      title: "Monthly Claims Management",
-      description: "We process all required monthly documentation, coordinating directly with insurance companies to ensure consistent, timely payments."
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-white">
@@ -78,122 +51,98 @@ export default function LongTermCare() {
         pagePath="/services/long-term-care"
         defaultTitle="Long-Term Care Services"
         defaultSubtitle="Skilled nursing and extended care"
-        defaultDescription="Professional long-term care services with compassion and expertise"
       />
 
-      {/* Service Highlights Bar */}
-      <section className="py-8 bg-gray-50 border-b">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {serviceHighlights.map((highlight, index) => (
-              <div 
-                key={index}
-                className="bg-white px-4 py-3 rounded-lg shadow-sm text-center"
-                data-testid={`highlight-${index}`}
-              >
-                <p className="text-sm font-semibold text-foreground">{highlight}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Comprehensive Support Process Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="support-process-title">
-                {heroContent?.heading || "Our Comprehensive Support Process"}
-              </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-6" data-testid="support-process-description">
-                {heroContent?.description || "Our experienced team provides comprehensive support to help you maximize your long-term care insurance benefits. From initial policy review through ongoing claims management, we handle all aspects of the insurance process so you can focus on what matters most."}
-              </p>
-              <Link href="/about-us">
-                <Button
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3"
-                  data-testid="about-us-button"
-                >
-                  ABOUT US
-                </Button>
-              </Link>
-            </div>
-            <div className="relative rounded-2xl shadow-xl h-80 overflow-hidden">
-              <img
-                src={heroContent?.imageUrl || "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&q=80"}
-                alt="Long-term care insurance services"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Service Details Grid */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {serviceDetails.map((service, index) => (
-              <div 
-                key={index}
-                className="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-                data-testid={`service-detail-${index}`}
-              >
-                <div className="text-primary mb-4">{service.icon}</div>
-                <h3 className="text-xl font-bold text-foreground mb-4">{service.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{service.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl p-12 text-white">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center" data-testid="contact-title">
-              Contact Our Claims Team
-            </h2>
-            <p className="text-lg text-white/90 mb-8 text-center max-w-3xl mx-auto" data-testid="contact-description">
-              Let our experienced team help you navigate your long-term care insurance benefits. 
-              Contact us today to learn how we can assist you.
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-              <div className="flex items-center justify-center space-x-3">
-                <Phone className="w-5 h-5 text-white/80" />
-                <div>
-                  <p className="text-sm text-white/80">Phone</p>
-                  <a href="tel:3036473914" className="text-white font-semibold hover:underline" data-testid="contact-phone">
-                    (303) 647-3914
-                  </a>
+      {/* Dynamic Content Sections from Database */}
+      {activeSections.map((section) => {
+        // Special handling for comprehensive support section with button
+        if (section.sectionKey === "comprehensive_support_process") {
+          return (
+            <section key={section.id} className="py-20 bg-white">
+              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                  <div>
+                    <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="comprehensive_support_process-title">
+                      {heroContent?.heading}
+                    </h2>
+                    <p className="text-lg text-muted-foreground leading-relaxed mb-6" data-testid="comprehensive_support_process-description">
+                      {heroContent?.description}
+                    </p>
+                    <Link href="/about-us">
+                      <Button
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3"
+                        data-testid="about-us-button"
+                      >
+                        ABOUT US
+                      </Button>
+                    </Link>
+                  </div>
+                  <div className="relative rounded-2xl shadow-xl h-80 overflow-hidden">
+                    <img
+                      src={heroContent?.imageUrl}
+                      alt={heroContent?.heading}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </div>
               </div>
-              
-              <div className="flex items-center justify-center space-x-3">
-                <Briefcase className="w-5 h-5 text-white/80" />
-                <div>
-                  <p className="text-sm text-white/80">Fax</p>
-                  <span className="text-white font-semibold" data-testid="contact-fax">
-                    (303) 648-6763
-                  </span>
+            </section>
+          );
+        }
+
+        // Special handling for contact section with contact details
+        if (section.sectionKey === "contact_section") {
+          return (
+            <section key={section.id} className="py-20 bg-white">
+              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl p-12 text-white">
+                  <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center" data-testid="contact-title">
+                    Contact Our Claims Team
+                  </h2>
+                  <p className="text-lg text-white/90 mb-8 text-center max-w-3xl mx-auto" data-testid="contact-description">
+                    Let our experienced team help you navigate your long-term care insurance benefits. 
+                    Contact us today to learn how we can assist you.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                    <div className="flex items-center justify-center space-x-3">
+                      <Phone className="w-5 h-5 text-white/80" />
+                      <div>
+                        <p className="text-sm text-white/80">Phone</p>
+                        <a href="tel:3036473914" className="text-white font-semibold hover:underline" data-testid="contact-phone">
+                          (303) 647-3914
+                        </a>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-center space-x-3">
+                      <Briefcase className="w-5 h-5 text-white/80" />
+                      <div>
+                        <p className="text-sm text-white/80">Fax</p>
+                        <span className="text-white font-semibold" data-testid="contact-fax">
+                          (303) 648-6763
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-center space-x-3">
+                      <Mail className="w-5 h-5 text-white/80" />
+                      <div>
+                        <p className="text-sm text-white/80">Email</p>
+                        <a href="mailto:ltc@stagesenior.com" className="text-white font-semibold hover:underline" data-testid="contact-email">
+                          ltc@stagesenior.com
+                        </a>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              
-              <div className="flex items-center justify-center space-x-3">
-                <Mail className="w-5 h-5 text-white/80" />
-                <div>
-                  <p className="text-sm text-white/80">Email</p>
-                  <a href="mailto:ltc@stagesenior.com" className="text-white font-semibold hover:underline" data-testid="contact-email">
-                    ltc@stagesenior.com
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+            </section>
+          );
+        }
+
+        return <PageSectionRenderer key={section.id} section={section} />;
+      })}
 
       {/* Communities Section */}
       <section className="py-20 bg-gray-50">

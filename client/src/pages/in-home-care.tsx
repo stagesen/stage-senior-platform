@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Heart, 
   Home, 
@@ -28,9 +30,16 @@ import {
   BookOpen
 } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
+import PageSectionRenderer from "@/components/PageSectionRenderer";
+import type { PageContentSection } from "@shared/schema";
 
 export default function InHomeCare() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Fetch page content sections from database
+  const { data: pageSections = [], isLoading: sectionsLoading } = useQuery<PageContentSection[]>({
+    queryKey: ['/api/page-content', { pagePath: '/in-home-care', active: true }],
+  });
   
   useEffect(() => {
     document.title = "Denver Metro In-Home Caregiving | Healthy at Home - Stage Senior";
@@ -232,8 +241,26 @@ export default function InHomeCare() {
         defaultSubtitle="Denver Metro In-Home Caregiving"
       />
 
-      {/* Services Section with Images */}
-      <section className="py-20 bg-gradient-to-b from-white to-green-50/30">
+      {/* Render Database Content Sections */}
+      {sectionsLoading ? (
+        <div className="py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Skeleton className="h-64 w-full" />
+          </div>
+        </div>
+      ) : (
+        <>
+          {pageSections
+            .filter(section => section.active)
+            .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+            .map((section) => (
+              <PageSectionRenderer key={section.id} section={section} />
+            ))}
+        </>
+      )}
+
+      {/* Services Section with Images - Keep original for now */}
+      <section className="py-20 bg-gradient-to-b from-white to-green-50/30" style={{display: 'none'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6" data-testid="services-title">
