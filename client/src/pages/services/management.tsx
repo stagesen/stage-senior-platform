@@ -4,12 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
 import { PageHero } from "@/components/PageHero";
-import type { Community } from "@shared/schema";
+import type { Community, PageContentSection } from "@shared/schema";
 
 export default function ProfessionalManagement() {
   useEffect(() => {
     document.title = "Professional Management Services | Stage Senior";
-    
+
     // Add meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
@@ -27,6 +27,17 @@ export default function ProfessionalManagement() {
     queryKey: ["/api/communities"],
     staleTime: 5 * 60 * 1000,
   });
+
+  // Fetch page content sections
+  const { data: pageSections = [] } = useQuery<PageContentSection[]>({
+    queryKey: ["/api/page-content"],
+  });
+
+  // Get hero section content
+  const heroSection = pageSections.find(
+    (section) => section.pagePath === "/services/management" && section.sectionType === "hero_section" && section.active
+  );
+  const heroContent = heroSection?.content as { heading?: string; description?: string; imageUrl?: string } | undefined;
 
   const serviceAreas = [
     {
@@ -80,16 +91,18 @@ export default function ProfessionalManagement() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="philosophy-title">
-                  Our Management Philosophy
+                  {heroContent?.heading || "Our Management Philosophy"}
                 </h2>
                 <p className="text-lg text-muted-foreground leading-relaxed" data-testid="philosophy-description">
-                  We believe that senior living should be a chapter of life marked by dignity, purpose, and joy. 
-                  Our management approach focuses on creating environments where residents thrive, families find 
-                  peace of mind, and staff members grow professionally.
+                  {heroContent?.description || "We believe that senior living should be a chapter of life marked by dignity, purpose, and joy. Our management approach focuses on creating environments where residents thrive, families find peace of mind, and staff members grow professionally."}
                 </p>
               </div>
-              <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl h-80 flex items-center justify-center">
-                <div className="text-white/20 text-6xl font-bold">1</div>
+              <div className="relative rounded-2xl shadow-xl h-80 overflow-hidden">
+                <img
+                  src={heroContent?.imageUrl || "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80"}
+                  alt="Professional management services"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>

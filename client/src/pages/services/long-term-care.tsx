@@ -6,12 +6,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 import { PageHero } from "@/components/PageHero";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
-import type { Community } from "@shared/schema";
+import type { Community, PageContentSection } from "@shared/schema";
 
 export default function LongTermCare() {
   useEffect(() => {
     document.title = "Long Term Care Insurance Services | Stage Senior";
-    
+
     // Add meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
@@ -29,6 +29,17 @@ export default function LongTermCare() {
     queryKey: ["/api/communities"],
     staleTime: 5 * 60 * 1000,
   });
+
+  // Fetch page content sections
+  const { data: pageSections = [] } = useQuery<PageContentSection[]>({
+    queryKey: ["/api/page-content"],
+  });
+
+  // Get hero section content
+  const heroSection = pageSections.find(
+    (section) => section.pagePath === "/services/long-term-care" && section.sectionType === "hero_section" && section.active
+  );
+  const heroContent = heroSection?.content as { heading?: string; description?: string; imageUrl?: string } | undefined;
 
   const serviceHighlights = [
     "Expert Policy Review",
@@ -88,19 +99,33 @@ export default function LongTermCare() {
       </section>
 
       {/* Comprehensive Support Process Section */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8" data-testid="support-process-title">
-            Our Comprehensive Support Process
-          </h2>
-          <Link href="/about-us">
-            <Button 
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3"
-              data-testid="about-us-button"
-            >
-              ABOUT US
-            </Button>
-          </Link>
+      <section className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="support-process-title">
+                {heroContent?.heading || "Our Comprehensive Support Process"}
+              </h2>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-6" data-testid="support-process-description">
+                {heroContent?.description || "Our experienced team provides comprehensive support to help you maximize your long-term care insurance benefits. From initial policy review through ongoing claims management, we handle all aspects of the insurance process so you can focus on what matters most."}
+              </p>
+              <Link href="/about-us">
+                <Button
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3"
+                  data-testid="about-us-button"
+                >
+                  ABOUT US
+                </Button>
+              </Link>
+            </div>
+            <div className="relative rounded-2xl shadow-xl h-80 overflow-hidden">
+              <img
+                src={heroContent?.imageUrl || "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&q=80"}
+                alt="Long-term care insurance services"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
         </div>
       </section>
 

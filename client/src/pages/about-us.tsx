@@ -97,12 +97,10 @@ export default function AboutUs() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6" data-testid="page-title">
-                About Stage Senior
+                {heroContent?.heading || "About Stage Senior"}
               </h1>
               <p className="text-xl text-muted-foreground mb-8 leading-relaxed" data-testid="hero-description">
-                Since 2016, we've been transforming senior living communities into vibrant homes where dignity, 
-                comfort, and joy come first. As a locally owned Colorado company, we bring authentic hometown 
-                values to sophisticated senior care.
+                {heroContent?.description || "Since 2016, we've been transforming senior living communities into vibrant homes where dignity, comfort, and joy come first. As a locally owned Colorado company, we bring authentic hometown values to sophisticated senior care."}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button asChild size="lg" data-testid="button-tour-communities">
@@ -120,8 +118,8 @@ export default function AboutUs() {
               </div>
             </div>
             <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1559628233-0fb74da9d96b?q=80&w=800&auto=format&fit=crop"
+              <img
+                src={heroContent?.imageUrl || "https://images.unsplash.com/photo-1559628233-0fb74da9d96b?q=80&w=800&auto=format&fit=crop"}
                 alt="Stage Senior team providing compassionate care to residents"
                 className="rounded-lg shadow-xl w-full"
                 data-testid="hero-image"

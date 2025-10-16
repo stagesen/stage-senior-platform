@@ -6,12 +6,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHero } from "@/components/PageHero";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
-import type { Community } from "@shared/schema";
+import type { Community, PageContentSection } from "@shared/schema";
 
 export default function Chaplaincy() {
   useEffect(() => {
     document.title = "Chaplain Program | Stage Senior";
-    
+
     // Add meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
@@ -29,6 +29,17 @@ export default function Chaplaincy() {
     queryKey: ["/api/communities"],
     staleTime: 5 * 60 * 1000,
   });
+
+  // Fetch page content sections
+  const { data: pageSections = [] } = useQuery<PageContentSection[]>({
+    queryKey: ["/api/page-content"],
+  });
+
+  // Get hero section content
+  const heroSection = pageSections.find(
+    (section) => section.pagePath === "/services/chaplaincy" && section.sectionType === "hero_section" && section.active
+  );
+  const heroContent = heroSection?.content as { heading?: string; description?: string; imageUrl?: string } | undefined;
 
   const chaplainServices = [
     {
@@ -65,20 +76,23 @@ export default function Chaplaincy() {
 
       {/* Our Vision for Spiritual Care Section */}
       <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8 text-center" data-testid="vision-title">
-            Our Vision for Spiritual Care
-          </h2>
-          <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
-            <p data-testid="vision-text-1">
-              At Stage Management, we believe that genuine care extends beyond physical comfort to embrace emotional and spiritual well-being.
-            </p>
-            <p data-testid="vision-text-2">
-              Through our partnership with Senior Living Chaplains, a division of Marketplace Chaplains, we provide dedicated spiritual support that welcomes and nurtures residents of all faiths and backgrounds.
-            </p>
-            <p data-testid="vision-text-3">
-              Our chaplains are specially trained in senior care, bringing both professional expertise and heartfelt dedication to their role in our communities.
-            </p>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="vision-title">
+                {heroContent?.heading || "Our Vision for Spiritual Care"}
+              </h2>
+              <p className="text-lg text-muted-foreground leading-relaxed" data-testid="vision-description">
+                {heroContent?.description || "At Stage Management, we believe that genuine care extends beyond physical comfort to embrace emotional and spiritual well-being. Through our partnership with Senior Living Chaplains, a division of Marketplace Chaplains, we provide dedicated spiritual support that welcomes and nurtures residents of all faiths and backgrounds."}
+              </p>
+            </div>
+            <div className="relative rounded-2xl shadow-xl h-80 overflow-hidden">
+              <img
+                src={heroContent?.imageUrl || "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80"}
+                alt="Chaplaincy services"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>
