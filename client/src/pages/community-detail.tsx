@@ -1133,7 +1133,7 @@ export default function CommunityDetail() {
   const community = fullData?.community;
   const events = fullData?.events || [];
   const faqs = fullData?.faqs || [];
-  const galleries = fullData?.galleries || [];
+  const rawGalleries = fullData?.galleries || [];
   const floorPlans = fullData?.floorPlans || [];
   const testimonials = fullData?.testimonials || [];
   const galleryImages = fullData?.galleryImages || [];
@@ -1141,12 +1141,20 @@ export default function CommunityDetail() {
   const blogPosts = fullData?.blogPosts || [];
   const highlights = fullData?.highlights || [];
 
+  // Merge gallery images into galleries
+  const galleries = useMemo(() => {
+    return rawGalleries.map(gallery => ({
+      ...gallery,
+      images: galleryImages.filter(img => img.galleryId === gallery.id)
+    }));
+  }, [rawGalleries, galleryImages]);
+
   // Resolve hero image URL (handle both image ID and full URL)
   const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
-  
+
   // Resolve experience image URL from experienceImageId field
   const experienceImageUrl = useResolveImageUrl(community?.experienceImageId);
-  
+
   // Resolve private dining image URL from privateDiningImageId field
   const privateDiningImageUrl = useResolveImageUrl(community?.privateDiningImageId);
 
