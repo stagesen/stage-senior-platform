@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
@@ -7,9 +8,21 @@ import { Shield, Heart, Users, Award, Phone, Mail, MapPin, Calendar, Star } from
 import { PageHero } from "@/components/PageHero";
 import { TeamCarousel } from "@/components/TeamCarousel";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
+import type { PageContentSection } from "@shared/schema";
 
 export default function AboutUs() {
   const { openScheduleTour } = useScheduleTour();
+
+  // Fetch page content sections
+  const { data: pageSections = [] } = useQuery<PageContentSection[]>({
+    queryKey: ["/api/page-content"],
+  });
+
+  // Get hero section content
+  const heroSection = pageSections.find(
+    (section) => section.pagePath === "/about-us" && section.sectionType === "hero_section" && section.active
+  );
+  const heroContent = heroSection?.content as { heading?: string; description?: string; imageUrl?: string } | undefined;
   useEffect(() => {
     document.title = "About Us | Stage Senior";
     

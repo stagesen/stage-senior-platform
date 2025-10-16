@@ -783,3 +783,38 @@ function CTAEditor({ value, onChange }: { value: any; onChange: (v: any) => void
     </div>
   );
 }
+
+function HeroSectionEditor({ value, onChange }: { value: any; onChange: (v: any) => void }) {
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="text-sm font-medium mb-2 block">Heading *</label>
+        <Input
+          value={value.heading || ""}
+          onChange={(e) => onChange({ ...value, heading: e.target.value })}
+          placeholder="Hero section heading"
+          data-testid="input-hero-heading"
+        />
+      </div>
+      <div>
+        <label className="text-sm font-medium mb-2 block">Description *</label>
+        <Textarea
+          value={value.description || ""}
+          onChange={(e) => onChange({ ...value, description: e.target.value })}
+          placeholder="Hero section description text"
+          rows={4}
+          data-testid="textarea-hero-description"
+        />
+      </div>
+      <div>
+        <label className="text-sm font-medium mb-2 block">Image URL *</label>
+        <Input
+          value={value.imageUrl || ""}
+          onChange={(e) => onChange({ ...value, imageUrl: e.target.value })}
+          placeholder="https://images.unsplash.com/..."
+          data-testid="input-hero-image-url"
+        />
+      </div>
+    </div>
+  );
+}
