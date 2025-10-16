@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Loader2, DollarSign, Users, Shield } from "lucide-react";
-import { ImageUploader } from "@/components/ImageUploader";
+import ImageUploader from "@/components/ImageUploader";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { HomepageSection } from "@shared/schema";
@@ -204,7 +204,7 @@ function SectionEditor({ slug, title, description, icon, section }: SectionEdito
                   <FormControl>
                     <ImageUploader
                       value={field.value || undefined}
-                      onChange={(value) => field.onChange(value || null)}
+                      onChange={(value: string | string[] | undefined) => field.onChange(value || null)}
                       multiple={false}
                       label="Upload section image"
                       accept="image/*"

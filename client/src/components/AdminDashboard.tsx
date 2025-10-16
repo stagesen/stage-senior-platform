@@ -19,6 +19,7 @@ import { apiRequest } from "@/lib/queryClient";
 import ImageUploader from "@/components/ImageUploader";
 import DocumentUploader from "@/components/DocumentUploader";
 import RichTextEditor from "@/components/RichTextEditor";
+import { HomepageHighlightsManager } from "@/components/HomepageHighlightsManager";
 import { 
   Plus, 
   Edit, 
@@ -7710,71 +7711,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
           {/* Homepage Section Config (heading/subheading) */}
           <HomepageConfigManager />
           
-          {/* Homepage Feature Sections Table */}
-          <div>
-            <h3 className="text-lg font-semibold mb-3">Feature Sections</h3>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Slug</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Subtitle</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Sort Order</TableHead>
-                  <TableHead>Visibility</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {items.map((item: HomepageSection) => (
-                  <TableRow key={item.id} data-testid={`homepage-section-row-${item.id}`}>
-                    <TableCell className="font-medium">
-                      {item.slug}
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {item.title}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {item.subtitle || "-"}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {item.sectionType}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {item.sortOrder}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={item.visible ? "default" : "secondary"}>
-                        {item.visible ? "Visible" : "Hidden"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          onClick={() => handleEdit(item)}
-                          data-testid={`button-edit-${item.id}`}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="destructive" 
-                          onClick={() => handleDelete(item.id)}
-                          data-testid={`button-delete-${item.id}`}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          {/* Homepage Feature Sections - Card-based Editors */}
+          <HomepageHighlightsManager />
         </div>
       );
     }
