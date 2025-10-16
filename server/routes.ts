@@ -174,6 +174,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         storage.getTeamMembersByCommunity(community.id)
       ]);
 
+      // Combine galleries with their images
+      const galleriesWithImages = galleries.map(gallery => {
+        const images = galleryImages
+          .filter(img => img.galleryId === gallery.id)
+          .map(img => ({
+            id: img.imageId,
+            url: img.url,
+            alt: img.caption || img.alt || gallery.title,
+            caption: img.caption,
+            sortOrder: img.sortOrder
+          }))
+          .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+        
+        return {
+          ...gallery,
+          images
+        };
+      });
+
       // Return all data in one response with cache headers
       res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
       res.json({
@@ -184,7 +203,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         events,
         faqs,
-        galleries,
+        galleries: galleriesWithImages,
         floorPlans,
         testimonials,
         galleryImages,
