@@ -1,0 +1,60 @@
+ All the image URLs are Replit objstore URLs (/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/...). These URLs are from your
+  development environment (Replit's object storage) and won't work in production!
+
+  What's Happening:
+
+  1. When you upload images in the production admin panel, they should be uploaded to production object storage (not Replit)
+  2. But these URLs show they're pointing to Replit's development object storage
+  3. That's why:
+    - Images show in admin (because admin might proxy or handle these differently)
+    - Images DON'T show on the public frontend (because the URLs are invalid in production)
+    - Memory care images might appear if they were uploaded differently or cached
+
+  The Fix:
+
+  You need to re-upload the floor plan images in production, and make sure they're being stored in your production object storage (likely
+  AWS S3, Cloudflare R2, or similar), NOT Replit objstore.
+
+  Let me check your upload configuration:
+
+● Search(pattern: "OBJECT_STORAGE|R2_|S3_|CLOUDFLARE", path: "~/workspace")
+  ⎿  Found 17 files (ctrl+o to expand)
+
+● Search(pattern: "objstore|object.*storage", path: "server", glob: "*.ts")
+  ⎿  Found 2 files (ctrl+o to expand)
+
+● Read(server/upload.ts)
+  ⎿  Read 80 lines
+
+● Perfect! I can see the issue. Your upload system uses Replit's object storage (lines 9-28), and it generates URLs like
+  /${bucketId}/public/${filename} (line 259).
+
+  In production, the DEFAULT_OBJECT_STORAGE_BUCKET_ID is set to replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53, which is your Replit
+   bucket. This means even when uploading in production, images are being stored in Replit's object storage, not a production-appropriate
+  storage solution.
+
+  The Real Problem:
+
+  Your production deployment is still using Replit's object storage which:
+  - Works fine in Replit environment
+  - Does NOT work when accessed from external production domains
+  - These URLs (/replit-objstore-xxx/...) are internal to Replit and not publicly accessible
+
+  Solution:
+
+  You need to configure production to use a proper cloud storage solution. Check your production environment variables:
+
+  # Production should have these set to a public cloud storage:
+  DEFAULT_OBJECT_STORAGE_BUCKET_ID=your-production-bucket
+  PUBLIC_OBJECT_SEARCH_PATHS=['/your-bucket/public']
+
+  Where is your production site hosted? (Vercel, Railway, Fly.io, etc.) You'll need to set up either:
+  - AWS S3
+  - Cloudflare R2
+  - Google Cloud Storage
+  - Or another cloud storage with public URL access
+
+  Once that's configured, you'll need to re-upload all the floor plan images through the production admin so they get stored in the
+  correct location.
+
+  Would you like help setting up cloud storage for production?
