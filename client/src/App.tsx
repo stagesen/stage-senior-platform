@@ -91,9 +91,28 @@ function Router() {
               <Admin />
             </RequireAuth>
           </Route>
+          
+          {/* Landing page routes - specific routes first, then general patterns */}
+          {/* Exact care type matches (no city) */}
+          <Route path="/assisted-living" component={DynamicLandingPage} />
+          <Route path="/memory-care" component={DynamicLandingPage} />
+          <Route path="/independent-living" component={DynamicLandingPage} />
+          <Route path="/senior-living" component={DynamicLandingPage} />
+          
+          {/* Care type with city routes */}
+          <Route path="/assisted-living/:city" component={DynamicLandingPage} />
+          <Route path="/memory-care/:city" component={DynamicLandingPage} />
+          <Route path="/independent-living/:city" component={DynamicLandingPage} />
+          <Route path="/senior-living/:city" component={DynamicLandingPage} />
+          
+          {/* Three-segment pattern for /care/:careType/:city */}
           <Route path="/care/:careType/:city" component={DynamicLandingPage} />
-          <Route path="/communities/:location" component={DynamicLandingPage} />
+          
+          {/* Catch-all patterns - order matters! */}
           <Route path="/:careType/:city" component={DynamicLandingPage} />
+          <Route path="/:slug" component={DynamicLandingPage} />
+          
+          {/* NotFound must be absolute last */}
           <Route component={NotFound} />
         </Switch>
       </main>
