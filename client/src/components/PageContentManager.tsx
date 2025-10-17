@@ -44,6 +44,7 @@ export default function PageContentManager() {
   const [selectedPagePath, setSelectedPagePath] = useState<string | null>(null);
   const [editingSection, setEditingSection] = useState<PageContentSection | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showInactive, setShowInactive] = useState(true);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -60,10 +61,21 @@ export default function PageContentManager() {
 
   // Get sections for selected page
   const pageSections = selectedPagePath 
-    ? allSections.filter(s => s.pagePath === selectedPagePath).sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+    ? allSections
+        .filter(s => s.pagePath === selectedPagePath)
+        .filter(s => showInactive || s.active)
+        .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
     : [];
 
   const selectedPage = AVAILABLE_PAGES.find(p => p.path === selectedPagePath);
+  
+  // Count active and inactive sections
+  const activeSectionCount = selectedPagePath 
+    ? allSections.filter(s => s.pagePath === selectedPagePath && s.active).length
+    : 0;
+  const inactiveSectionCount = selectedPagePath 
+    ? allSections.filter(s => s.pagePath === selectedPagePath && !s.active).length
+    : 0;
 
   // Create mutation
   const createMutation = useMutation({
@@ -189,6 +201,56 @@ export default function PageContentManager() {
     });
   };
 
+  // Generate content preview for a section
+  const getContentPreview = (section: PageContentSection): string => {
+    const content = section.content;
+    if (!content || typeof content !== 'object') return "No content";
+
+    switch (section.sectionType) {
+      case 'benefit_cards':
+        const cards = content.cards || [];
+        if (cards.length === 0) return "No cards added";
+        if (cards.length === 1) return cards[0].title || "1 card";
+        return `${cards.length} cards: ${cards[0].title || 'Untitled'}${cards[1] ? ', ' + cards[1].title : ''}...`;
+      
+      case 'text_block':
+        const text = content.text || "";
+        const strippedText = text.replace(/<[^>]*>/g, '').trim();
+        if (!strippedText) return "Empty text block";
+        return strippedText.length > 100 ? strippedText.substring(0, 100) + '...' : strippedText;
+      
+      case 'hero_section':
+        return content.heading || "No heading set";
+      
+      case 'section_header':
+        const heading = content.heading || "";
+        const subheading = content.subheading || "";
+        return heading + (subheading ? ` — ${subheading.substring(0, 50)}${subheading.length > 50 ? '...' : ''}` : '');
+      
+      case 'cta':
+        const buttonText = content.buttonText || "";
+        const ctaHeading = content.heading || "";
+        return `"${buttonText}" → ${content.buttonLink || '#'}` + (ctaHeading ? ` — ${ctaHeading}` : '');
+      
+      case 'feature_list':
+        const items = content.items || [];
+        if (items.length === 0) return "No features added";
+        return `${items.length} feature${items.length !== 1 ? 's' : ''}: ${items[0]?.title || 'Untitled'}${items[1] ? ', ' + items[1].title : ''}${items.length > 2 ? '...' : ''}`;
+      
+      case 'feature_grid':
+        const gridItems = content.items || [];
+        if (gridItems.length === 0) return "No grid items";
+        return `${gridItems.length} item${gridItems.length !== 1 ? 's' : ''} in grid`;
+      
+      case 'seasonal_cards':
+        const seasonalCards = content.cards || [];
+        return `${seasonalCards.length} seasonal card${seasonalCards.length !== 1 ? 's' : ''}`;
+      
+      default:
+        return "Content configured";
+    }
+  };
+
   // Page selection view
   if (!selectedPagePath) {
     return (
@@ -249,13 +311,27 @@ export default function PageContentManager() {
                   <span className="text-2xl">{selectedPage?.emoji}</span>
                   {selectedPage?.name}
                 </CardTitle>
-                <CardDescription>{selectedPage?.description}</CardDescription>
+                <CardDescription>
+                  {selectedPage?.description} · {activeSectionCount} active, {inactiveSectionCount} inactive
+                </CardDescription>
               </div>
             </div>
-            <Button onClick={handleOpenCreate} data-testid="button-add-section">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Section
-            </Button>
+            <div className="flex items-center gap-2">
+              {inactiveSectionCount > 0 && (
+                <div className="flex items-center gap-2 mr-2">
+                  <Switch 
+                    checked={showInactive} 
+                    onCheckedChange={setShowInactive}
+                    data-testid="switch-show-inactive"
+                  />
+                  <label className="text-sm text-muted-foreground">Show inactive</label>
+                </div>
+              )}
+              <Button onClick={handleOpenCreate} data-testid="button-add-section">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Section
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -271,7 +347,13 @@ export default function PageContentManager() {
                 const Icon = metadata?.icon;
                 
                 return (
-                  <Card key={section.id} className={!section.active ? "opacity-60" : ""}>
+                  <Card 
+                    key={section.id} 
+                    className={!section.active 
+                      ? "border-dashed border-muted bg-muted/30" 
+                      : "border-l-4 border-l-primary/50"
+                    }
+                  >
                     <CardContent className="p-4">
                       <div className="flex items-start gap-3">
                         <div className="mt-1 text-muted-foreground cursor-move">
@@ -283,12 +365,17 @@ export default function PageContentManager() {
                             <Badge variant="outline">{metadata?.name || section.sectionType}</Badge>
                             <span className="text-xs text-muted-foreground">Order: {section.sortOrder}</span>
                             {!section.active && (
-                              <Badge variant="secondary">Inactive</Badge>
+                              <Badge variant="secondary" className="bg-muted">Inactive</Badge>
+                            )}
+                            {section.active && (
+                              <Badge variant="default" className="bg-green-500/10 text-green-700 border-green-200">Active</Badge>
                             )}
                           </div>
-                          <h4 className="font-semibold truncate">{section.title || "Untitled Section"}</h4>
-                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                            {metadata?.description}
+                          <h4 className={`font-semibold truncate ${!section.active ? 'text-muted-foreground' : ''}`}>
+                            {section.title || "Untitled Section"}
+                          </h4>
+                          <p className="text-sm font-medium text-foreground/80 mt-2 line-clamp-2 bg-muted/50 rounded p-2">
+                            {getContentPreview(section)}
                           </p>
                         </div>
                         <div className="flex items-center gap-1">
