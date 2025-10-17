@@ -182,6 +182,51 @@ const FloorPlanCard = ({ plan, onClick }: { plan: FloorPlan; onClick: () => void
   );
 };
 
+// Community Card component - Properly resolves images using hook
+const CommunityCardLP = ({ community }: { community: Community }) => {
+  // Use useResolveImageUrl to handle both UUIDs and direct URLs
+  const communityImageUrl = useResolveImageUrl(community.heroImageUrl || community.imageId) || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80";
+  
+  return (
+    <Card
+      className="overflow-hidden hover:shadow-2xl transition-all duration-300 group"
+      data-testid={`community-card-${community.id}`}
+    >
+      <AspectRatio ratio={16 / 9}>
+        <img
+          src={communityImageUrl}
+          alt={community.name}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+      </AspectRatio>
+      <CardContent className="p-4 md:p-6">
+        <h3 className="text-lg md:text-xl font-bold mb-2">{community.name}</h3>
+        <div className="flex items-center gap-2 text-muted-foreground mb-3">
+          <MapPin className="w-4 h-4" />
+          <span className="text-sm">
+            {community.city}, {community.state}
+          </span>
+        </div>
+        {community.shortDescription && (
+          <p className="text-sm md:text-base text-muted-foreground mb-4 line-clamp-3">
+            {community.shortDescription}
+          </p>
+        )}
+        <Button
+          asChild
+          className="w-full min-h-[44px]"
+          data-testid={`button-view-community-${community.id}`}
+        >
+          <a href={`/communities/${community.slug}`}>
+            Learn More
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </a>
+        </Button>
+      </CardContent>
+    </Card>
+  );
+};
+
 // Gallery Overview component - Shows galleries with preview grids
 const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: Gallery[], onGallerySelect: (gallery: Gallery) => void }) => {
   // Map our gallery categories to icons
@@ -1070,49 +1115,9 @@ export default function DynamicLandingPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {targetCommunities.map((comm) => {
-                const communityImageUrl = comm.heroImageUrl || comm.imageId || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80";
-                
-                return (
-                  <Card
-                    key={comm.id}
-                    className="overflow-hidden hover:shadow-2xl transition-all duration-300 group"
-                    data-testid={`community-card-${comm.id}`}
-                  >
-                    <AspectRatio ratio={16 / 9}>
-                      <img
-                        src={communityImageUrl}
-                        alt={comm.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                    </AspectRatio>
-                    <CardContent className="p-4 md:p-6">
-                      <h3 className="text-lg md:text-xl font-bold mb-2">{comm.name}</h3>
-                      <div className="flex items-center gap-2 text-muted-foreground mb-3">
-                        <MapPin className="w-4 h-4" />
-                        <span className="text-sm">
-                          {comm.city}, {comm.state}
-                        </span>
-                      </div>
-                      {comm.shortDescription && (
-                        <p className="text-sm md:text-base text-muted-foreground mb-4 line-clamp-3">
-                          {comm.shortDescription}
-                        </p>
-                      )}
-                      <Button
-                        asChild
-                        className="w-full min-h-[44px]"
-                        data-testid={`button-view-community-${comm.id}`}
-                      >
-                        <a href={`/communities/${comm.slug}`}>
-                          Learn More
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </a>
-                      </Button>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+              {targetCommunities.map((comm) => (
+                <CommunityCardLP key={comm.id} community={comm} />
+              ))}
             </div>
           </div>
         </section>
