@@ -361,9 +361,12 @@ export default function PageContentManager() {
                           <GripVertical className="w-5 h-5" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-2">
+                          <div className="flex items-center gap-2 mb-2 flex-wrap">
                             {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
                             <Badge variant="outline">{metadata?.name || section.sectionType}</Badge>
+                            <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200">
+                              {section.pagePath}
+                            </Badge>
                             <span className="text-xs text-muted-foreground">Order: {section.sortOrder}</span>
                             {!section.active && (
                               <Badge variant="secondary" className="bg-muted">Inactive</Badge>
