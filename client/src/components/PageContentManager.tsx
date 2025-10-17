@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -550,6 +550,21 @@ function SectionForm({
   });
 
   const [contentData, setContentData] = useState(parsedContent || {});
+  
+  // Update contentData and form when section changes
+  useEffect(() => {
+    const newContent = section 
+      ? (section.content && typeof section.content === 'object' ? section.content : parseContent(section.sectionType, JSON.stringify(section.content)))
+      : metadata?.defaultContent;
+    setContentData(newContent || {});
+    
+    // Reset form with new section data
+    form.reset({
+      title: section?.title || "",
+      sortOrder: section?.sortOrder || 0,
+      active: section?.active ?? true,
+    });
+  }, [section?.id, section?.title, section?.sortOrder, section?.active, section?.content, metadata?.defaultContent, section?.sectionType, form]);
 
   const handleSubmit = (values: z.infer<typeof baseSchema>) => {
     // Generate sectionKey from type and timestamp if creating new
