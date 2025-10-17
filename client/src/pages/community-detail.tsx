@@ -1016,7 +1016,7 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
               alt="Community background"
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/30 via-blue-800/25 to-blue-600/20" />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/60 via-blue-800/60 to-blue-600/60" />
           </>
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600" />
@@ -1426,7 +1426,7 @@ export default function CommunityDetail() {
               className="w-full h-full object-cover"
               data-testid="hero-image"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-blue-900/30 via-blue-800/25 to-blue-600/20" />
+            <div className="absolute inset-0 bg-gradient-to-t from-blue-900/60 via-blue-800/60 to-blue-600/60" />
           </>
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600" />
