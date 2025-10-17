@@ -178,12 +178,14 @@ export default function PageSectionRenderer({ section }: PageSectionRendererProp
   if (section.sectionType === "feature_grid") {
     const columns = content.columns || 3;
     const gridClass = columns === 2 ? "md:grid-cols-2" : columns === 3 ? "md:grid-cols-3" : "md:grid-cols-4";
+    // Support both 'features' (correct) and 'items' (legacy) for backward compatibility
+    const features = content.features || content.items || [];
     
     return (
       <section className="py-20 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={`grid grid-cols-1 ${gridClass} gap-6`}>
-            {content.features?.map((feature: any, index: number) => {
+            {features.map((feature: any, index: number) => {
               const IconComponent = feature.icon ? iconMap[feature.icon] : null;
               return (
                 <div 
