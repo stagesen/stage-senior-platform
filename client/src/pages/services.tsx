@@ -25,7 +25,7 @@ export default function Services() {
 
   // Fetch content sections from API
   const { data: sections, isLoading: sectionsLoading } = useQuery<PageContentSection[]>({
-    queryKey: ["/api/page-content-sections", "/services"],
+    queryKey: ["/api/page-content?pagePath=/services"],
     staleTime: 5 * 60 * 1000,
   });
 
