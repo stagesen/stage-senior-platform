@@ -11,6 +11,7 @@ import {
 import { PageHero } from "@/components/PageHero";
 import { TeamCarousel } from "@/components/TeamCarousel";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { PageContentSection } from "@shared/schema";
 
 // Icon mapping helper
@@ -227,6 +228,9 @@ export default function AboutUs() {
   const heroSection = pageSections.find(s => s.sectionType === "hero_section");
   const heroContent = heroSection?.content as { heading?: string; description?: string; imageUrl?: string } | undefined;
   
+  // Resolve hero image URL (handles both UUIDs and direct URLs)
+  const resolvedHeroImage = useResolveImageUrl(heroContent?.imageUrl);
+  
   useEffect(() => {
     document.title = "About Us | Stage Senior";
     
@@ -298,18 +302,11 @@ export default function AboutUs() {
             </div>
             <div className="relative">
               <img
-                src={heroContent?.imageUrl || "https://images.unsplash.com/photo-1559628233-0fb74da9d96b?q=80&w=800&auto=format&fit=crop"}
+                src={resolvedHeroImage || "https://images.unsplash.com/photo-1559628233-0fb74da9d96b?q=80&w=800&auto=format&fit=crop"}
                 alt="Stage Senior team providing compassionate care to residents"
                 className="rounded-lg shadow-xl w-full"
                 data-testid="hero-image"
               />
-              <div className="absolute -bottom-6 -left-6 bg-primary text-primary-foreground p-6 rounded-lg shadow-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <Star className="w-5 h-5 fill-current" />
-                  <span className="font-bold text-lg">4.8/5</span>
-                </div>
-                <p className="text-sm">Resident Satisfaction</p>
-              </div>
             </div>
           </div>
         </div>

@@ -168,10 +168,23 @@ export default function ImageUploader({
         url: singleImage.url,
         name: singleImage.alt || "Uploaded image",
       }]);
+    } else if (!multiple && imageIds.length === 1 && imageIds[0]) {
+      // Handle direct URLs/paths (not UUIDs)
+      const imageValue = imageIds[0];
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(imageValue);
+      
+      if (!isUUID) {
+        // It's a direct URL or path - use it directly
+        setPreviewImages([{
+          id: undefined,
+          url: imageValue,
+          name: "Uploaded image",
+        }]);
+      }
     } else if (imageIds.length === 0) {
       setPreviewImages([]);
     }
-  }, [multiple, existingImages, singleImage, imageIds.length]);
+  }, [multiple, existingImages, singleImage, imageIds.length, imageIds]);
 
   // Validate file
   const validateFile = (file: File): string | null => {
