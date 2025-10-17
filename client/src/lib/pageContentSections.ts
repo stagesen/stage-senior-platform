@@ -205,6 +205,7 @@ export function parseContent(type: string, content: string | null): any {
 // Available pages configuration
 export const AVAILABLE_PAGES = [
   { path: '/about-us', name: 'About Us', emoji: '👥', description: 'Company information and team' },
+  { path: '/services', name: 'Our Services', emoji: '⚙️', description: 'Senior living management solutions' },
   { path: '/courtyards-patios', name: 'Courtyards & Patios', emoji: '🌳', description: 'Outdoor spaces and garden areas' },
   { path: '/dining', name: 'Dining Services', emoji: '🍽️', description: 'Restaurant-style dining and menus' },
   { path: '/beauty-salon', name: 'Beauty Salon & Barber', emoji: '💇', description: 'On-site beauty and barber services' },
