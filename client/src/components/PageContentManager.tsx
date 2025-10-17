@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import RichTextEditor from "@/components/RichTextEditor";
+import ImageUploader from "@/components/ImageUploader";
 import { 
   Plus, 
   Edit, 
@@ -459,6 +460,11 @@ function SectionEditorDialog({
 }) {
   const [selectedType, setSelectedType] = useState(section?.sectionType || "text_block");
   const sectionTypes = getAllSectionTypes();
+
+  // Update selectedType when section changes
+  useEffect(() => {
+    setSelectedType(section?.sectionType || "text_block");
+  }, [section?.id, section?.sectionType]);
 
   const metadata = getSectionTypeMetadata(selectedType);
 
@@ -909,13 +915,42 @@ function HeroSectionEditor({ value, onChange }: { value: any; onChange: (v: any)
         />
       </div>
       <div>
-        <label className="text-sm font-medium mb-2 block">Image URL *</label>
+        <ImageUploader
+          label="Hero Background Image *"
+          value={value.imageUrl || ""}
+          onChange={(url) => onChange({ ...value, imageUrl: url || "" })}
+          multiple={false}
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Or enter an image URL directly:
+        </p>
         <Input
           value={value.imageUrl || ""}
           onChange={(e) => onChange({ ...value, imageUrl: e.target.value })}
-          placeholder="https://images.unsplash.com/..."
+          placeholder="https://images.unsplash.com/... or /attached_assets/..."
+          className="mt-1"
           data-testid="input-hero-image-url"
         />
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="text-sm font-medium mb-2 block">Button Text (Optional)</label>
+          <Input
+            value={value.buttonText || ""}
+            onChange={(e) => onChange({ ...value, buttonText: e.target.value })}
+            placeholder="e.g., Tour Our Communities"
+            data-testid="input-hero-button-text"
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium mb-2 block">Button Link (Optional)</label>
+          <Input
+            value={value.buttonLink || ""}
+            onChange={(e) => onChange({ ...value, buttonLink: e.target.value })}
+            placeholder="e.g., /communities"
+            data-testid="input-hero-button-link"
+          />
+        </div>
       </div>
     </div>
   );
