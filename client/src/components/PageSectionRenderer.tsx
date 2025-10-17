@@ -4,6 +4,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { PageContentSection } from "@shared/schema";
 
 const iconMap: Record<string, any> = {
@@ -27,6 +28,9 @@ interface PageSectionRendererProps {
 
 export default function PageSectionRenderer({ section }: PageSectionRendererProps) {
   const content = section.content as any;
+  
+  // Resolve image URLs (converts UUIDs to actual URLs)
+  const heroImageUrl = useResolveImageUrl(content.imageUrl);
 
   // Text Block
   if (section.sectionType === "text_block") {
@@ -43,26 +47,52 @@ export default function PageSectionRenderer({ section }: PageSectionRendererProp
     );
   }
 
-  // Hero Section (with image on right)
+  // Hero Section (with image on right, supports buttons and alternating layout)
   if (section.sectionType === "hero_section") {
+    // Check if this should alternate (based on sort order being even/odd)
+    const shouldAlternate = (section.sortOrder || 0) % 2 === 0;
+    
     return (
       <section className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
+            {/* Content */}
+            <div className={shouldAlternate ? 'lg:order-2' : ''}>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid={`${section.sectionKey}-title`}>
                 {content.heading}
               </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed" data-testid={`${section.sectionKey}-description`}>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-6" data-testid={`${section.sectionKey}-description`}>
                 {content.description}
               </p>
+              {content.buttonText && content.buttonLink && (
+                <Button
+                  size="lg"
+                  asChild
+                  className="group"
+                  data-testid={`${section.sectionKey}-button`}
+                >
+                  <Link href={content.buttonLink}>
+                    {content.buttonText}
+                  </Link>
+                </Button>
+              )}
             </div>
-            <div className="relative rounded-2xl shadow-xl h-80 overflow-hidden">
-              <img
-                src={content.imageUrl}
-                alt={content.heading}
-                className="w-full h-full object-cover"
-              />
+            
+            {/* Image */}
+            <div className={shouldAlternate ? 'lg:order-1' : ''}>
+              {heroImageUrl ? (
+                <div className="relative rounded-2xl shadow-xl h-80 lg:h-96 overflow-hidden">
+                  <img
+                    src={heroImageUrl}
+                    alt={content.heading}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="relative rounded-2xl shadow-xl h-80 lg:h-96 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                  <div className="text-white/20 text-6xl font-bold">{section.sortOrder || 0}</div>
+                </div>
+              )}
             </div>
           </div>
         </div>

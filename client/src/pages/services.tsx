@@ -1,13 +1,11 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { PageHero } from "@/components/PageHero";
-import { ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Skeleton } from "@/components/ui/skeleton";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
-import type { Community } from "@shared/schema";
+import PageSectionRenderer from "@/components/PageSectionRenderer";
+import type { Community, PageContentSection } from "@shared/schema";
 
 export default function Services() {
   useEffect(() => {
@@ -25,32 +23,14 @@ export default function Services() {
     }
   }, []);
 
-  const services = [
-    {
-      title: "Expert Management Services",
-      description: "Transform your senior living community with our proven management expertise. From independent living to memory care, we optimize operations while maintaining the highest standards of resident care and satisfaction.",
-      buttonText: "LEARN MORE",
-      href: "/services/management",
-      gradient: "bg-gradient-to-br from-blue-500 to-blue-600"
-    },
-    {
-      title: "Spiritual Care & Support",
-      description: "Our dedicated chaplaincy program provides essential spiritual and emotional support throughout your community. We build meaningful relationships that enhance the well-being of residents, families, and staff alike.",
-      buttonText: "EXPLORE",
-      href: "/services/chaplaincy",
-      gradient: "bg-gradient-to-br from-purple-500 to-purple-600"
-    },
-    {
-      title: "Long-Term Care Insurance Excellence",
-      description: "Navigate the complexities of long-term care insurance with confidence. Our specialized team handles everything from policy review to claims processing, ensuring maximum benefits and full compliance.",
-      buttonText: "LEARN MORE",
-      href: "/services/long-term-care",
-      gradient: "bg-gradient-to-br from-green-500 to-green-600"
-    }
-  ];
+  // Fetch content sections from API
+  const { data: sections, isLoading: sectionsLoading } = useQuery<PageContentSection[]>({
+    queryKey: ["/api/page-content-sections", "/services"],
+    staleTime: 5 * 60 * 1000,
+  });
 
   // Fetch communities from API
-  const { data: communities, isLoading } = useQuery<Community[]>({
+  const { data: communities, isLoading: communitiesLoading } = useQuery<Community[]>({
     queryKey: ["/api/communities"],
     staleTime: 5 * 60 * 1000,
   });
@@ -83,65 +63,26 @@ export default function Services() {
         </div>
       </div>
 
-      {/* Three Service Sections with Alternating Layout */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-24">
-            {services.map((service, index) => (
-              <div 
-                key={index} 
-                className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${
-                  index % 2 === 1 ? 'lg:flex-row-reverse' : ''
-                }`}
-                data-testid={`service-section-${index}`}
-              >
-                {/* Image Placeholder */}
-                <div className={`${index % 2 === 1 ? 'lg:order-2' : ''}`}>
-                  <div 
-                    className={`${service.gradient} rounded-2xl shadow-xl h-80 lg:h-96 w-full flex items-center justify-center`}
-                    data-testid={`service-image-${index}`}
-                  >
-                    {/* Placeholder for image - using gradient for now */}
-                    <div className="text-white/20 text-6xl font-bold">
-                      {index + 1}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className={`${index % 2 === 1 ? 'lg:order-1' : ''}`}>
-                  <div className="space-y-6">
-                    <h2 className="text-3xl md:text-4xl font-bold text-foreground" data-testid={`service-title-${index}`}>
-                      {service.title}
-                    </h2>
-                    <p className="text-lg text-muted-foreground leading-relaxed" data-testid={`service-description-${index}`}>
-                      {service.description}
-                    </p>
-                    <Button 
-                      variant="default"
-                      size="lg"
-                      asChild
-                      className="group"
-                      data-testid={`service-button-${index}`}
-                    >
-                      <a href={service.href}>
-                        <span className="font-semibold">{service.buttonText}</span>
-                        <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                      </a>
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
+      {/* Service Sections from Database */}
+      {sectionsLoading ? (
+        <div className="py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div className="h-80 bg-gray-200 rounded-2xl animate-pulse" />
+            <div className="h-80 bg-gray-200 rounded-2xl animate-pulse" />
+            <div className="h-80 bg-gray-200 rounded-2xl animate-pulse" />
           </div>
         </div>
-      </section>
+      ) : (
+        sections?.filter(s => s.active).map((section) => (
+          <PageSectionRenderer key={section.id} section={section} />
+        ))
+      )}
 
       {/* Bottom Section - Communities */}
       <section className="py-20 bg-gray-50">
         <CommunitiesCarousel
           communities={communities || []}
-          isLoading={isLoading}
+          isLoading={communitiesLoading}
           title="Our Communities"
           subtitle="Experience senior living across Colorado"
         />
