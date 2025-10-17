@@ -548,7 +548,7 @@ export default function Home() {
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <div className="text-2xl font-bold text-primary mb-2">$3,855+</div>
+                    <div className="text-2xl font-bold text-primary mb-2">$4,600+</div>
                     <div className="text-sm text-muted-foreground">Starting Monthly Rate</div>
                   </div>
                   <div className="bg-white p-6 rounded-lg shadow-sm">

@@ -76,10 +76,13 @@ export function PageHero({
   
   // Check if we're resolving an image ID (UUID pattern)
   const isImageId = backgroundImageRaw && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(backgroundImageRaw);
-  
+
   // Final resolved image: only use resolved URL when ready (prevents flash), otherwise show gradient
   // If it's an image ID and still loading (null), don't show the fallback URL yet
-  const finalBackgroundImage = (isImageId && backgroundImage === null) ? undefined : (backgroundImage || defaultBackgroundImage);
+  // Also wait for hero query to complete before showing default image to prevent flash
+  const finalBackgroundImage = (isImageId && backgroundImage === null) || isLoading
+    ? undefined
+    : (backgroundImage || defaultBackgroundImage);
 
   const alignmentClasses = {
     left: "text-left items-start",
