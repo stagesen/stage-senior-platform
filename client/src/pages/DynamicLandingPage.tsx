@@ -16,6 +16,7 @@ import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import NotFound from "@/pages/not-found";
 import { generateSchemaOrgData } from "@/lib/schemaOrg";
+import { toTitleCase } from "@/lib/utils";
 import {
   Calendar,
   MapPin,
@@ -677,7 +678,7 @@ export default function DynamicLandingPage() {
     return null;
   }
 
-  const pageTitle = template.heroTitle || template.h1Headline || template.title;
+  const pageTitle = toTitleCase(template.heroTitle || template.h1Headline || template.title);
   const pageSubtitle = template.heroSubtitle || template.subheadline;
 
   // Inline Components
