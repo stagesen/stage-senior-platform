@@ -22,7 +22,7 @@ This is a comprehensive senior living community platform built for Stage Senior,
 
 3. **Golden Pond** (Golden, CO)
    - IL + AL + MC (~114 units)
-   - 20+ years locally owned, 98%+ resident satisfaction
+   - 20+ years locally owned
    - Range: ~$3,855–$8,285/mo by unit & care level
 
 4. **Stonebridge Senior** (Arvada, CO)
@@ -85,7 +85,7 @@ The current implementation appears to use session-based authentication:
 ### Content Management
 The platform includes a comprehensive admin interface for content management:
 
-- **Community Management**: CRUD operations for community information, amenities, and care types with integrated image uploads. Includes metadata fields for rating (4.8 default), review count, license status ("Licensed & Insured"), and trust indicators (same-day tours, no obligation) - all displayed dynamically in CommunityCard components
+- **Community Management**: CRUD operations for community information, amenities, and care types with integrated image uploads. Each community has a `rating` field (numeric, 0-5 scale) stored in the database that can be displayed when needed. The platform does not hardcode satisfaction percentages - any displayed ratings must be pulled from the community's actual rating field in the database
   - **Active/Inactive Filtering**: Public-facing pages default to showing only active communities. Admin dashboard shows all communities (both active and inactive) for management. The GET /api/communities endpoint supports: `active='all'` (all communities), `active='true'` (active only), `active='false'` (inactive only), or no parameter (defaults to active only)
   - **Cascade Delete**: All foreign key constraints properly configured with ON DELETE CASCADE to allow safe community deletion with all associated data (posts, events, FAQs, galleries, tour requests, floor plans, testimonials, etc.)
 - **Blog System**: Full blog management with categories, tags, featured content, hero image uploads, and team member author integration
