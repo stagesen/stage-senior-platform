@@ -573,12 +573,12 @@ export default function DynamicLandingPage() {
     enabled: !!primaryCommunity,
   });
 
-  // Build tokens for replacement
+  // Build tokens for replacement (apply Title Case to all token values)
   const tokens = {
-    city: urlParams.city || primaryCommunity?.city || "",
-    careType: getCareTypeName(),
-    communityName: primaryCommunity?.name || "",
-    location: urlParams.location || primaryCommunity?.city || "",
+    city: toTitleCase(urlParams.city || primaryCommunity?.city || ""),
+    careType: toTitleCase(getCareTypeName()),
+    communityName: primaryCommunity?.name || "", // Community names are already properly cased
+    location: toTitleCase(urlParams.location || primaryCommunity?.city || ""),
   };
 
   // Set page title and meta description
