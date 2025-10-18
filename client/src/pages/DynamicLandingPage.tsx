@@ -685,14 +685,10 @@ export default function DynamicLandingPage() {
   const TrustBadgeBar = () => (
     <section className="bg-primary/5 border-y border-primary/10 py-6 md:py-4" data-testid="trust-badge-bar">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-4 text-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 text-center">
           <div className="flex flex-col items-center gap-2">
             <Shield className="w-8 h-8 md:w-6 md:h-6 text-primary" />
             <span className="text-sm md:text-base font-semibold">Licensed & Insured</span>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <Award className="w-8 h-8 md:w-6 md:h-6 text-primary" />
-            <span className="text-sm md:text-base font-semibold">98%+ Satisfaction</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <TrendingUp className="w-8 h-8 md:w-6 md:h-6 text-primary" />
