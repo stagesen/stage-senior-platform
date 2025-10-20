@@ -139,7 +139,7 @@ export default function Contact() {
                   Visit our communities and see the difference
                 </p>
                 <Button 
-                  className="w-full" 
+                  className="w-full talkfurther-schedule-tour" 
                   variant="secondary"
                   onClick={() => setShowCommunityModal(true)}
                   data-testid="button-schedule-tour"

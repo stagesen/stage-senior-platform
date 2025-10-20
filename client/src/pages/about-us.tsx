@@ -163,7 +163,7 @@ function renderCTA(section: PageContentSection, openScheduleTour: () => void) {
           <Button 
             size="lg" 
             variant="secondary"
-            className="px-8 py-6 text-lg"
+            className="px-8 py-6 text-lg talkfurther-schedule-tour"
             onClick={() => openScheduleTour()}
             data-testid="button-schedule-tour"
           >

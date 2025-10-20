@@ -799,7 +799,10 @@ export default function DynamicLandingPage() {
                   title: `Schedule a Tour${primaryCommunity?.name ? ` at ${primaryCommunity.name}` : ""}`,
                 })
               }
-              className={`min-h-[44px] w-full sm:w-auto ${variant === "primary" ? "bg-white text-primary hover:bg-white/90" : ""}`}
+              className={`min-h-[44px] w-full sm:w-auto talkfurther-schedule-tour ${primaryCommunity?.slug ? `community-${primaryCommunity.slug}` : ''} ${variant === "primary" ? "bg-white text-primary hover:bg-white/90" : ""}`}
+              data-community-id={primaryCommunity?.id}
+              data-community-slug={primaryCommunity?.slug}
+              data-community-name={primaryCommunity?.name}
               data-testid={`button-cta-${variant}`}
             >
               <Calendar className="w-5 h-5 mr-2" />
@@ -842,7 +845,10 @@ export default function DynamicLandingPage() {
                 title: `Schedule a Tour${primaryCommunity?.name ? ` at ${primaryCommunity.name}` : ""}`,
               })
             }
-            className="min-h-[44px] w-full"
+            className={`min-h-[44px] w-full talkfurther-schedule-tour ${primaryCommunity?.slug ? `community-${primaryCommunity.slug}` : ''}`}
+            data-community-id={primaryCommunity?.id}
+            data-community-slug={primaryCommunity?.slug}
+            data-community-name={primaryCommunity?.name}
             data-testid="button-sticky-schedule-tour"
           >
             <Calendar className="w-4 h-4 mr-2" />
@@ -892,7 +898,10 @@ export default function DynamicLandingPage() {
                   title: `Schedule a Tour${primaryCommunity?.name ? ` at ${primaryCommunity.name}` : ""}`,
                 })
               }
-              className="min-h-[56px] px-8 text-lg w-full md:w-auto shadow-lg hover:shadow-xl transition-shadow"
+              className={`min-h-[56px] px-8 text-lg w-full md:w-auto shadow-lg hover:shadow-xl transition-shadow talkfurther-schedule-tour ${primaryCommunity?.slug ? `community-${primaryCommunity.slug}` : ''}`}
+              data-community-id={primaryCommunity?.id}
+              data-community-slug={primaryCommunity?.slug}
+              data-community-name={primaryCommunity?.name}
               data-testid="button-hero-cta-schedule"
             >
               <Calendar className="w-5 h-5 mr-2" />
@@ -1030,7 +1039,11 @@ export default function DynamicLandingPage() {
       {/* 7. Testimonials - Social proof from satisfied families */}
       {template.showTestimonials && testimonials.length > 0 && (
         <section className="py-12 md:py-16" data-testid="section-testimonials">
-          <TestimonialSection />
+          <TestimonialSection 
+            communityId={primaryCommunity?.id}
+            communityName={primaryCommunity?.name}
+            communitySlug={primaryCommunity?.slug}
+          />
         </section>
       )}
 
@@ -1228,7 +1241,7 @@ export default function DynamicLandingPage() {
                       <Button
                         variant="outline"
                         size="lg"
-                        className="w-full min-h-[44px]"
+                        className={`w-full min-h-[44px] talkfurther-schedule-tour ${primaryCommunity?.slug ? `community-${primaryCommunity.slug}` : ''}`}
                         onClick={() =>
                           openScheduleTour({
                             communityId: primaryCommunity?.id,
@@ -1236,6 +1249,9 @@ export default function DynamicLandingPage() {
                             title: `Schedule a Tour at ${primaryCommunity?.name}`,
                           })
                         }
+                        data-community-id={primaryCommunity?.id}
+                        data-community-slug={primaryCommunity?.slug}
+                        data-community-name={primaryCommunity?.name}
                         data-testid="button-schedule-tour-location"
                       >
                         <Calendar className="w-5 h-5 mr-2" />
@@ -1314,7 +1330,10 @@ export default function DynamicLandingPage() {
                       }`,
                     })
                   }
-                  className="bg-white text-primary hover:bg-white/90 min-h-[44px] w-full sm:w-auto"
+                  className={`bg-white text-primary hover:bg-white/90 min-h-[44px] w-full sm:w-auto talkfurther-schedule-tour ${primaryCommunity?.slug ? `community-${primaryCommunity.slug}` : ''}`}
+                  data-community-id={primaryCommunity?.id}
+                  data-community-slug={primaryCommunity?.slug}
+                  data-community-name={primaryCommunity?.name}
                   data-testid="button-schedule-tour-cta"
                 >
                   <Calendar className="w-5 h-5 mr-2" />
@@ -1369,6 +1388,7 @@ export default function DynamicLandingPage() {
           floorPlan={selectedFloorPlan}
           communityName={primaryCommunity?.name || ""}
           communityId={primaryCommunity?.id}
+          communitySlug={primaryCommunity?.slug}
         />
       )}
 

@@ -340,7 +340,7 @@ export default function Communities() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
             <Button
               size="lg"
-              className="w-full sm:w-auto px-8 sm:px-10 py-5 sm:py-6 text-base sm:text-lg bg-white text-[var(--deep-blue)] hover:bg-gray-100 shadow-xl transform hover:scale-105 transition-all duration-200 font-semibold"
+              className="w-full sm:w-auto px-8 sm:px-10 py-5 sm:py-6 text-base sm:text-lg bg-white text-[var(--deep-blue)] hover:bg-gray-100 shadow-xl transform hover:scale-105 transition-all duration-200 font-semibold talkfurther-schedule-tour"
               onClick={() => setShowCommunityModal(true)}
               data-testid="button-schedule-tour-cta"
             >

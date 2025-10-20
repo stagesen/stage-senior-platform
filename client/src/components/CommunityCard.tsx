@@ -169,10 +169,14 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
                 <Button 
                   variant="default"
                   className={cn(
-                    "flex-1 h-11 font-semibold",
-                    getCommunityFurtherClass(community.slug)
+                    "flex-1 h-11 font-semibold talkfurther-schedule-tour",
+                    getCommunityFurtherClass(community.slug),
+                    community.slug ? `community-${community.slug}` : ''
                   )}
                   onClick={() => setShowLeadCapture(true)}
+                  data-community-id={community.id}
+                  data-community-slug={community.slug}
+                  data-community-name={community.name}
                   data-testid={`button-schedule-tour-${community.slug}`}
                 >
                   <Calendar className="w-4 h-4 mr-2" />

@@ -1044,13 +1044,16 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button 
             size="lg" 
-            className={cn("text-lg px-8 py-6 shadow-2xl bg-white text-primary hover:bg-gray-100", getCommunityFurtherClass(community.slug || ''))}
+            className={cn("text-lg px-8 py-6 shadow-2xl bg-white text-primary hover:bg-gray-100 talkfurther-schedule-tour", getCommunityFurtherClass(community.slug || ''), community.slug ? `community-${community.slug}` : '')}
             onClick={() => openScheduleTour({
               communityId: community.id,
               communityName: community.name,
               title: `Schedule a Tour at ${community.name}`,
               description: `Visit ${community.name} in ${community.city} to experience our exceptional community and amenities firsthand.`
             })}
+            data-community-id={community.id}
+            data-community-slug={community.slug}
+            data-community-name={community.name}
             data-testid="button-schedule-tour-hero"
           >
             <Calendar className="w-5 h-5 mr-2" />
@@ -1555,7 +1558,7 @@ export default function CommunityDetail() {
               )}
               <Button 
                 size="sm"
-                className={cn("shadow-sm", getCommunityFurtherClass(community.slug || ''))}
+                className={cn("shadow-sm talkfurther-schedule-tour", getCommunityFurtherClass(community.slug || ''), community.slug ? `community-${community.slug}` : '')}
                 style={{ 
                   backgroundColor: (community as any)?.ctaColorHex || '#f59e0b',
                   color: (community as any)?.ctaColorHex ? getAccessibleTextColor((community as any).ctaColorHex) : '#ffffff'
@@ -1566,6 +1569,9 @@ export default function CommunityDetail() {
                   title: `Schedule a Tour at ${community.name}`,
                   description: `Visit ${community.name} in ${community.city} to see our beautiful community and amenities in person.`
                 })}
+                data-community-id={community.id}
+                data-community-slug={community.slug}
+                data-community-name={community.name}
                 data-testid="nav-schedule-tour"
               >
                 <Calendar className="w-4 h-4 mr-1 md:mr-2" />
@@ -1884,13 +1890,16 @@ export default function CommunityDetail() {
                 </CardHeader>
                 <CardContent>
                   <Button 
-                    className={cn("w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white", getCommunityFurtherClass(community.slug || ''))} 
+                    className={cn("w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white talkfurther-schedule-tour", getCommunityFurtherClass(community.slug || ''), community.slug ? `community-${community.slug}` : '')} 
                     onClick={() => openScheduleTour({
                       communityId: community.id,
                       communityName: community.name,
                       title: `Schedule Your Visit to ${community.name}`,
                       description: `Tour our community in ${community.city} and meet our caring team.`
                     })}
+                    data-community-id={community.id}
+                    data-community-slug={community.slug}
+                    data-community-name={community.name}
                     data-testid="button-schedule-tour"
                   >
                     <Calendar className="w-4 h-4 mr-2" />
@@ -2282,6 +2291,8 @@ export default function CommunityDetail() {
         <FloorPlanModal
           floorPlan={selectedFloorPlan}
           communityName={community?.name || ''}
+          communityId={community?.id}
+          communitySlug={community?.slug}
           isOpen={isFloorPlanModalOpen}
           onOpenChange={(open) => {
             setIsFloorPlanModalOpen(open);

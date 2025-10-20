@@ -18,6 +18,12 @@ interface EnhancedTestimonial extends TestimonialType {
   resolvedImageUrl?: string | null;
 }
 
+interface TestimonialSectionProps {
+  communityId?: string;
+  communityName?: string;
+  communitySlug?: string;
+}
+
 // Component for individual testimonial with image resolution
 function TestimonialCard({ testimonial }: { testimonial: EnhancedTestimonial }) {
   const resolvedImageUrl = useResolveImageUrl(testimonial.imageId);
@@ -76,7 +82,11 @@ function TestimonialCard({ testimonial }: { testimonial: EnhancedTestimonial }) 
   );
 }
 
-export default function TestimonialSection() {
+export default function TestimonialSection({
+  communityId,
+  communityName,
+  communitySlug
+}: TestimonialSectionProps = {}) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
@@ -254,7 +264,13 @@ export default function TestimonialSection() {
             Experience the Stage Senior difference for yourself. Schedule a tour today and see why families trust us with their loved ones.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button 
+              size="lg" 
+              className="bg-primary text-primary-foreground hover:bg-primary/90 talkfurther-schedule-tour"
+              data-community-id={communityId}
+              data-community-slug={communitySlug}
+              data-community-name={communityName}
+            >
               Schedule a Tour
               <ChevronRight className="w-4 h-4 ml-2" />
             </Button>

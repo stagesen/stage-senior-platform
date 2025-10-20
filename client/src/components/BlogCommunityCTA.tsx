@@ -109,7 +109,7 @@ export default function BlogCommunityCTA({ community }: BlogCommunityCTAProps) {
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-6 lg:mb-0">
               <Button
                 size="lg"
-                className="group hover:brightness-110 transition-all text-base sm:text-lg font-semibold shadow-md hover:shadow-xl w-full sm:w-auto"
+                className={`group hover:brightness-110 transition-all text-base sm:text-lg font-semibold shadow-md hover:shadow-xl w-full sm:w-auto talkfurther-schedule-tour ${community.slug ? `community-${community.slug}` : ''}`}
                 style={buttonStyle}
                 onClick={() => openScheduleTour({
                   communityId: community.id,
@@ -117,6 +117,9 @@ export default function BlogCommunityCTA({ community }: BlogCommunityCTAProps) {
                   title: `Schedule a Tour at ${community.name}`,
                   description: `Visit ${community.name} in ${community.city} to see our beautiful community and amenities in person.`
                 })}
+                data-community-id={community.id}
+                data-community-slug={community.slug}
+                data-community-name={community.name}
                 data-testid="button-schedule-tour"
               >
                 Schedule Your Tour

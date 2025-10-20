@@ -82,8 +82,11 @@ export default function CommunitySelectionModal({
                 )}
                 
                 <Button
-                  className="w-full"
+                  className={`w-full talkfurther-schedule-tour ${community.slug ? `community-${community.slug}` : ''}`}
                   size="default"
+                  data-community-id={community.id}
+                  data-community-slug={community.slug}
+                  data-community-name={community.name}
                   data-testid={`button-schedule-tour-${community.slug}`}
                   onClick={() => {
                     if (onSelectCommunity) {

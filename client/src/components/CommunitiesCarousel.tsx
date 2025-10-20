@@ -92,8 +92,11 @@ const CarouselCommunityCard = ({
           <div className="space-y-2">
             <Button 
               variant="default"
-              className="w-full"
+              className={`w-full talkfurther-schedule-tour ${community.slug ? `community-${community.slug}` : ''}`}
               onClick={() => onScheduleTour(community)}
+              data-community-id={community.id}
+              data-community-slug={community.slug}
+              data-community-name={community.name}
               data-testid={`carousel-button-schedule-${community.id}`}
             >
               <Calendar className="w-4 h-4 mr-2" />

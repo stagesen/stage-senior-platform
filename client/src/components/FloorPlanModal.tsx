@@ -30,6 +30,7 @@ interface FloorPlanModalProps {
   floorPlan: FloorPlan;
   communityName: string;
   communityId?: string;
+  communitySlug?: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -38,6 +39,7 @@ export default function FloorPlanModal({
   floorPlan, 
   communityName,
   communityId,
+  communitySlug,
   isOpen, 
   onOpenChange 
 }: FloorPlanModalProps) {
@@ -302,8 +304,11 @@ export default function FloorPlanModal({
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <Button 
                 variant="default" 
-                className="flex-1 h-12 text-base font-semibold" 
+                className="flex-1 h-12 text-base font-semibold talkfurther-schedule-tour" 
                 onClick={() => setShowLeadCapture(true)}
+                data-community-id={communityId}
+                data-community-slug={communitySlug}
+                data-community-name={communityName}
                 data-testid={`button-schedule-tour-${floorPlan.id}`}
               >
                 <Calendar className="h-4 w-4 mr-2" />
