@@ -787,7 +787,6 @@ export default function DynamicLandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button
               size="lg"
-              variant={buttonVariants[variant]}
               onClick={() =>
                 openScheduleTour({
                   communityId: primaryCommunity?.id,
@@ -795,7 +794,7 @@ export default function DynamicLandingPage() {
                   title: `Schedule a Tour${primaryCommunity?.name ? ` at ${primaryCommunity.name}` : ""}`,
                 })
               }
-              className="min-h-[44px] w-full sm:w-auto"
+              className={`min-h-[44px] w-full sm:w-auto ${variant === "primary" ? "bg-white text-primary hover:bg-white/90" : ""}`}
               data-testid={`button-cta-${variant}`}
             >
               <Calendar className="w-5 h-5 mr-2" />
@@ -804,9 +803,8 @@ export default function DynamicLandingPage() {
             {primaryCommunity?.phoneDisplay && (
               <Button
                 size="lg"
-                variant="outline"
                 asChild
-                className={`min-h-[44px] w-full sm:w-auto ${variant === "primary" ? "bg-white/10 border-white/30 text-white hover:bg-white/20" : ""}`}
+                className={`min-h-[44px] w-full sm:w-auto ${variant === "primary" ? "bg-white text-primary hover:bg-white/90" : "variant-outline"}`}
                 data-testid={`button-phone-${variant}`}
               >
                 <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
