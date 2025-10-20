@@ -55,9 +55,12 @@ export async function sendGoogleAdsConversion(
     });
 
     // Prepare conversion data
+    // Note: conversion_date_time is mandatory for Google Ads API
+    const conversionDateTime = new Date().toISOString();
+    
     const conversion: any = {
       conversion_action: `customers/${GOOGLE_ADS_CUSTOMER_ID}/conversionActions/${GOOGLE_ADS_CONVERSION_ACTION_ID}`,
-      conversion_date_time: payload.eventSourceUrl ? new Date().toISOString() : undefined,
+      conversion_date_time: conversionDateTime,
       conversion_value: payload.value,
       currency_code: payload.currency,
       order_id: payload.transactionId,

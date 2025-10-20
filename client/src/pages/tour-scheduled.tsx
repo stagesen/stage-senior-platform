@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useSearch } from 'wouter';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { CheckCircle, Calendar, Phone, Mail, MapPin, ArrowRight, Download } from 'lucide-react';
-import { fireLead, getMetaCookies } from '@/lib/tracking';
+import { fireLead, getMetaCookies, getClickIdsFromUrl } from '@/lib/tracking';
+import { apiRequest } from '@/lib/queryClient';
 import type { Community } from '@shared/schema';
 
 export default function TourScheduled() {
@@ -27,16 +28,52 @@ export default function TourScheduled() {
     enabled: !!communitySlug,
   });
   
+  // Mutation to send Tier 2 conversion to server
+  const tier2Mutation = useMutation({
+    mutationFn: async (payload: any) => {
+      return apiRequest('POST', '/api/conversions', payload);
+    },
+    onSuccess: () => {
+      console.log('[Tier 2] Server-side conversion sent successfully');
+    },
+    onError: (error) => {
+      console.error('[Tier 2] Failed to send server-side conversion:', error);
+    },
+  });
+  
   // Fire Tier 2 conversion (booking_confirmed) once on page load
   useEffect(() => {
     if (!tier2Fired && transactionId) {
       const metaCookies = getMetaCookies();
+      const clickIds = getClickIdsFromUrl();
       
+      // Fire server-side Tier 2 conversion
+      const conversionPayload = {
+        transactionId,
+        leadType: 'booking_confirmed',
+        value: 100, // Tier 2 value
+        currency: 'USD',
+        communityId: community?.id,
+        communityName: community?.name,
+        gclid: clickIds.gclid,
+        gbraid: clickIds.gbraid,
+        wbraid: clickIds.wbraid,
+        fbclid: clickIds.fbclid,
+        fbp: metaCookies.fbp,
+        fbc: metaCookies.fbc,
+        clientUserAgent: navigator.userAgent,
+        eventSourceUrl: window.location.href,
+      };
+      
+      // Send to server
+      tier2Mutation.mutate(conversionPayload);
+      
+      // Also fire browser-side dataLayer event as backup
       fireLead({
         event: 'booking_confirmed',
         transactionId,
         leadType: 'booking_confirmed',
-        leadValue: 100, // Tier 2 value
+        leadValue: 100,
         community: community ? {
           id: community.id,
           name: community.name,
@@ -52,7 +89,7 @@ export default function TourScheduled() {
       
       setTier2Fired(true);
     }
-  }, [transactionId, community, tier2Fired]);
+  }, [transactionId, community, tier2Fired, tier2Mutation]);
   
   // Redirect to home if no transaction ID
   if (!transactionId) {
