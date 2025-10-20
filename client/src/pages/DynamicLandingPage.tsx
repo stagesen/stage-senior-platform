@@ -1304,7 +1304,6 @@ export default function DynamicLandingPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   size="lg"
-                  variant="secondary"
                   onClick={() =>
                     openScheduleTour({
                       communityId: primaryCommunity?.id,
@@ -1314,7 +1313,7 @@ export default function DynamicLandingPage() {
                       }`,
                     })
                   }
-                  className="min-h-[44px] w-full sm:w-auto"
+                  className="bg-white text-primary hover:bg-white/90 min-h-[44px] w-full sm:w-auto"
                   data-testid="button-schedule-tour-cta"
                 >
                   <Calendar className="w-5 h-5 mr-2" />
@@ -1323,9 +1322,8 @@ export default function DynamicLandingPage() {
                 {primaryCommunity?.phoneDisplay && (
                   <Button
                     size="lg"
-                    variant="secondary"
                     asChild
-                    className="min-h-[44px] w-full sm:w-auto"
+                    className="bg-white text-primary hover:bg-white/90 min-h-[44px] w-full sm:w-auto"
                     data-testid="button-call-cta"
                   >
                     <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
