@@ -62,7 +62,6 @@ export default function Reviews() {
         pagePath="/reviews"
         defaultTitle="Resident & Family Reviews"
         defaultSubtitle="Hear from our community"
-        defaultDescription="Read testimonials from residents and their families about life at Stage Senior communities"
       />
       <div className="container mx-auto px-4 py-20">
 
