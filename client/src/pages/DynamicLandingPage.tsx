@@ -1323,9 +1323,9 @@ export default function DynamicLandingPage() {
                 {primaryCommunity?.phoneDisplay && (
                   <Button
                     size="lg"
-                    variant="outline"
+                    variant="secondary"
                     asChild
-                    className="bg-white/10 border-white/30 text-white hover:bg-white/20 min-h-[44px] w-full sm:w-auto"
+                    className="min-h-[44px] w-full sm:w-auto"
                     data-testid="button-call-cta"
                   >
                     <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
