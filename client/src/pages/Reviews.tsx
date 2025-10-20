@@ -69,7 +69,7 @@ export default function Reviews() {
         {/* Statistics Bar */}
         {approvedTestimonials.length > 0 && (
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-primary/10 p-8 mb-12 max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
               <div>
                 <div className="text-3xl font-bold text-primary mb-2">
                   {approvedTestimonials.length}
@@ -81,10 +81,6 @@ export default function Reviews() {
                   {(approvedTestimonials.reduce((sum, t) => sum + (t.rating || 5), 0) / approvedTestimonials.length).toFixed(1)}
                 </div>
                 <div className="text-sm text-muted-foreground">Average Rating</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-primary mb-2">98%</div>
-                <div className="text-sm text-muted-foreground">Resident Satisfaction</div>
               </div>
             </div>
           </div>

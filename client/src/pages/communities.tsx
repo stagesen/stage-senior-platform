@@ -111,9 +111,6 @@ export default function Communities() {
               <Badge className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-white/10 text-white border border-white/20 backdrop-blur-sm hover:bg-white/20 transition-colors">
                 4 Communities
               </Badge>
-              <Badge className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-white/10 text-white border border-white/20 backdrop-blur-sm hover:bg-white/20 transition-colors">
-                98% Satisfaction
-              </Badge>
             </div>
           </div>
 
