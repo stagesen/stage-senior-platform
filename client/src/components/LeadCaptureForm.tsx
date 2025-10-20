@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { insertTourRequestSchema, type InsertTourRequest } from "@shared/schema";
+import { getMetaCookies, getClickIdsFromUrl, generateTransactionId, fireLead } from "@/lib/tracking";
 
 interface LeadCaptureFormProps {
   variant?: "inline" | "modal" | "sidebar" | "hero";
@@ -58,6 +60,7 @@ export default function LeadCaptureForm({
 }: LeadCaptureFormProps) {
   const [step, setStep] = useState(1);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -77,10 +80,22 @@ export default function LeadCaptureForm({
     mutationFn: async (data: FormData) => {
       return apiRequest("POST", "/api/tour-requests", data);
     },
-    onSuccess: () => {
+    onSuccess: (response: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/tour-requests"] });
       setIsSuccess(true);
       form.reset();
+      
+      // Redirect to success page with transaction ID and community info
+      const transactionId = response.transactionId || generateTransactionId();
+      const params = new URLSearchParams({
+        txn: transactionId,
+        ...(communityId && { community: communityId }),
+        ...(communityName && { name: form.getValues('name') }),
+      });
+      
+      // Navigate to success page
+      navigate(`/tour-scheduled?${params.toString()}`);
+      
       onSuccess?.();
     },
     onError: (error) => {
@@ -95,7 +110,42 @@ export default function LeadCaptureForm({
   });
 
   const onSubmit = async (data: FormData) => {
-    submitMutation.mutate(data);
+    // Collect tracking data
+    const metaCookies = getMetaCookies();
+    const clickIds = getClickIdsFromUrl();
+    const transactionId = generateTransactionId();
+    
+    // Add tracking data to form submission
+    const enrichedData = {
+      ...data,
+      transactionId,
+      fbp: metaCookies.fbp,
+      fbc: metaCookies.fbc,
+      gclid: clickIds.gclid,
+      gbraid: clickIds.gbraid,
+      wbraid: clickIds.wbraid,
+      fbclid: clickIds.fbclid,
+      clientUserAgent: navigator.userAgent,
+    };
+    
+    // Fire Tier 1 conversion event to dataLayer (browser-side backup)
+    fireLead({
+      event: 'lead_submit',
+      transactionId,
+      leadType: 'schedule_tour',
+      leadValue: 50,
+      community: communityId && communityName ? {
+        id: communityId,
+        name: communityName,
+      } : undefined,
+      identifiers: {
+        email: data.email,
+        phone: data.phone,
+        ...metaCookies,
+      },
+    });
+    
+    submitMutation.mutate(enrichedData);
   };
 
   const isLoading = submitMutation.isPending;

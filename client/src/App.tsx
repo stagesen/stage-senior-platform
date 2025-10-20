@@ -35,6 +35,7 @@ import LongTermCare from "@/pages/services/long-term-care";
 import Chaplaincy from "@/pages/services/chaplaincy";
 import NotFound from "@/pages/not-found";
 import DynamicLandingPage from "@/pages/DynamicLandingPage";
+import TourScheduled from "@/pages/tour-scheduled";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ScrollRestoration from "@/components/ScrollRestoration";
@@ -86,6 +87,7 @@ function Router() {
           <Route path="/terms" component={Terms} />
           <Route path="/accessibility" component={Accessibility} />
           <Route path="/login" component={Login} />
+          <Route path="/tour-scheduled" component={TourScheduled} />
           <Route path="/admin">
             <RequireAuth>
               <Admin />
