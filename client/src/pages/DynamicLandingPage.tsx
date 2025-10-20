@@ -83,34 +83,27 @@ const formatPrice = (price: number | undefined | null): string => {
   }).format(price);
 };
 
-// Highlight Card component - Separated to properly use hooks
-const HighlightCard = ({ highlight }: { highlight: CommunityHighlight }) => {
+// Feature Section component - Alternating left/right layout
+const FeatureSection = ({ 
+  highlight,
+  imageLeft = false
+}: { 
+  highlight: CommunityHighlight;
+  imageLeft?: boolean;
+}) => {
   const highlightImageUrl = useResolveImageUrl(highlight.imageId);
   
   return (
-    <Card
-      className="overflow-hidden hover:shadow-xl transition-all duration-300"
-      data-testid={`highlight-card-${highlight.id}`}
-    >
-      {highlightImageUrl && (
-        <AspectRatio ratio={16 / 9}>
-          <img
-            src={highlightImageUrl}
-            alt={highlight.title}
-            className="w-full h-full object-cover"
-          />
-        </AspectRatio>
-      )}
-      <CardContent className="p-4 md:p-6">
-        <h3 className="text-lg md:text-xl font-bold mb-3">{highlight.title}</h3>
-        <p className="text-sm md:text-base text-muted-foreground mb-4">
-          {highlight.description}
-        </p>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div className={`${imageLeft ? 'md:order-2' : ''}`}>
+        <h3 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4">{highlight.title}</h3>
+        <p className="text-base md:text-lg text-muted-foreground mb-6 leading-relaxed">{highlight.description}</p>
         {highlight.ctaLabel && highlight.ctaHref && (
-          <Button
-            variant="outline"
-            asChild
-            className="w-full min-h-[44px]"
+          <Button 
+            variant="outline" 
+            size="lg" 
+            asChild 
+            data-testid={`button-feature-${highlight.id}`}
           >
             <a href={highlight.ctaHref}>
               {highlight.ctaLabel}
@@ -118,8 +111,20 @@ const HighlightCard = ({ highlight }: { highlight: CommunityHighlight }) => {
             </a>
           </Button>
         )}
-      </CardContent>
-    </Card>
+      </div>
+      <div className={`${imageLeft ? 'md:order-1' : ''}`}>
+        {highlightImageUrl && (
+          <AspectRatio ratio={4/3}>
+            <img
+              src={highlightImageUrl}
+              alt={highlight.title}
+              className="w-full h-full object-cover rounded-2xl shadow-xl"
+              loading="lazy"
+            />
+          </AspectRatio>
+        )}
+      </div>
+    </div>
   );
 };
 
@@ -939,26 +944,24 @@ export default function DynamicLandingPage() {
       {/* 3. Stats Strip - Social proof numbers */}
       <StatsStrip />
 
-      {/* 4. Community Highlights - What makes this community special (moved up for better flow) */}
+      {/* 4. Community Highlights - What makes this community special (alternating feature sections) */}
       {communityHighlights.length > 0 && (
-        <section className="py-12 md:py-16 bg-gradient-to-br from-primary/5 via-white to-primary/5" data-testid="section-highlights">
+        <section className="py-12 md:py-16" data-testid="section-highlights">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 md:mb-12">
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
-                <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="text-sm md:text-base font-semibold">Why Choose Us</span>
-              </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
-                What Makes {primaryCommunity?.name} Special
-              </h2>
-              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-                Discover the unique features that set our community apart
+            <div className="text-center mb-12 md:mb-16">
+              <h2 className="text-2xl md:text-3xl font-bold mb-4">Experience the Difference</h2>
+              <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
+                Discover a community where every detail is designed for your comfort, enjoyment, and well-being.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {communityHighlights.map((highlight) => (
-                <HighlightCard key={highlight.id} highlight={highlight} />
+            <div className="space-y-16 md:space-y-20">
+              {communityHighlights.map((highlight, index) => (
+                <FeatureSection 
+                  key={highlight.id} 
+                  highlight={highlight}
+                  imageLeft={index % 2 === 1}
+                />
               ))}
             </div>
           </div>
