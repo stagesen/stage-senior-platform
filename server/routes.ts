@@ -3,7 +3,10 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import { utmTrackingMiddleware } from "./utm-tracking";
+import { clickIdCaptureMiddleware } from "./click-id-middleware";
 import { sendTourRequestNotification } from "./email";
+import { sendConversion } from "./conversion-service";
+import { validateConversionPayload, generateTransactionId, type ConversionPayload } from "./conversion-utils";
 import {
   uploadSingle,
   uploadMultiple,
@@ -55,6 +58,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // UTM tracking middleware - captures campaign data from query parameters
   app.use(utmTrackingMiddleware);
   
+  // Click ID capture middleware - captures Google Ads and Meta click IDs
+  app.use(clickIdCaptureMiddleware);
+  
   // Root health check endpoint for deployment health checks
   app.get("/", (_req, res) => {
     res.status(200).json({ status: "ok" });
@@ -79,6 +85,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         status: "error",
         message: "Health check failed"
+      });
+    }
+  });
+
+  // Conversion tracking endpoint - sends events to Google Ads and Meta
+  app.post("/api/conversions", async (req, res) => {
+    try {
+      const payload = req.body as Partial<ConversionPayload>;
+      
+      // Validate payload
+      const validation = validateConversionPayload(payload);
+      if (!validation.valid) {
+        return res.status(400).json({
+          success: false,
+          errors: validation.errors,
+        });
+      }
+      
+      // Send conversion to both Google Ads and Meta
+      const result = await sendConversion(payload as ConversionPayload);
+      
+      // Return results
+      res.json({
+        success: true,
+        google: result.google,
+        meta: result.meta,
+        transactionId: payload.transactionId,
+      });
+    } catch (error: any) {
+      console.error('[Conversion API] Error processing conversion:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to process conversion',
       });
     }
   });
@@ -849,15 +888,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertTourRequestSchema.parse(req.body);
       
-      // Add UTM tracking data from session
+      // Generate transaction ID if not provided
+      const transactionId = validatedData.transactionId || generateTransactionId();
+      
+      // Add UTM tracking data from session and click IDs
       const tourRequestData = {
         ...validatedData,
+        transactionId,
         utmSource: req.session.utm?.utm_source,
         utmMedium: req.session.utm?.utm_medium,
         utmCampaign: req.session.utm?.utm_campaign,
         utmTerm: req.session.utm?.utm_term,
         utmContent: req.session.utm?.utm_content,
         landingPageUrl: req.session.utm?.landing_page_url,
+        // Add click IDs from session
+        gclid: req.session.clickIds?.gclid || validatedData.gclid,
+        gbraid: req.session.clickIds?.gbraid || validatedData.gbraid,
+        wbraid: req.session.clickIds?.wbraid || validatedData.wbraid,
+        fbclid: req.session.clickIds?.fbclid || validatedData.fbclid,
+        // Client info for Meta CAPI
+        clientUserAgent: req.headers['user-agent'] || validatedData.clientUserAgent,
+        clientIpAddress: req.ip || req.connection.remoteAddress || validatedData.clientIpAddress,
+        conversionTier1SentAt: new Date(), // Mark that we're sending Tier 1 now
       };
       
       const tourRequest = await storage.createTourRequest(tourRequestData);
@@ -868,6 +920,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } catch (emailError) {
         console.error("Failed to send email notification:", emailError);
         // Don't fail the request if email fails
+      }
+      
+      // Prepare and send Tier 1 conversion (lead_submit) to Google Ads and Meta
+      try {
+        const conversionPayload: ConversionPayload = {
+          transactionId,
+          leadType: 'lead_submit',
+          value: 50, // Tier 1 value
+          currency: 'USD',
+          email: tourRequestData.email || undefined,
+          phone: tourRequestData.phone,
+          communityId: tourRequestData.communityId,
+          communityName: undefined, // Will be looked up by conversion service if needed
+          careType: undefined,
+          gclid: tourRequestData.gclid,
+          gbraid: tourRequestData.gbraid,
+          wbraid: tourRequestData.wbraid,
+          fbclid: tourRequestData.fbclid,
+          fbp: tourRequestData.fbp,
+          fbc: tourRequestData.fbc,
+          clientUserAgent: tourRequestData.clientUserAgent,
+          clientIpAddress: tourRequestData.clientIpAddress,
+          eventSourceUrl: req.headers.referer || tourRequestData.landingPageUrl,
+          utmSource: tourRequestData.utmSource,
+          utmMedium: tourRequestData.utmMedium,
+          utmCampaign: tourRequestData.utmCampaign,
+          utmTerm: tourRequestData.utmTerm,
+          utmContent: tourRequestData.utmContent,
+        };
+
+        // Send conversion asynchronously (don't block response)
+        sendConversion(conversionPayload).catch(err => {
+          console.error('[Tour Request] Failed to send Tier 1 conversion:', err);
+        });
+      } catch (conversionError) {
+        console.error("Failed to prepare Tier 1 conversion:", conversionError);
+        // Don't fail the request if conversion tracking fails
       }
       
       res.status(201).json(tourRequest);
