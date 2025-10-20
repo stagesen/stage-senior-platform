@@ -311,6 +311,18 @@ export const tourRequests = pgTable("tour_requests", {
   utmTerm: varchar("utm_term", { length: 255 }),
   utmContent: varchar("utm_content", { length: 255 }),
   landingPageUrl: text("landing_page_url"), // Track which landing page they came from
+  // Conversion tracking fields for Google Ads and Meta
+  transactionId: varchar("transaction_id", { length: 255 }), // Unique ID for deduplication across platforms
+  gclid: varchar("gclid", { length: 255 }), // Google Click ID
+  gbraid: varchar("gbraid", { length: 255 }), // Google Ads enhanced conversion ID (iOS)
+  wbraid: varchar("wbraid", { length: 255 }), // Google Ads enhanced conversion ID (Web)
+  fbp: varchar("fbp", { length: 255 }), // Meta _fbp cookie
+  fbc: varchar("fbc", { length: 255 }), // Meta _fbc cookie (click ID)
+  fbclid: varchar("fbclid", { length: 255 }), // Facebook Click ID
+  clientUserAgent: text("client_user_agent"), // Browser user agent for Meta CAPI
+  clientIpAddress: varchar("client_ip_address", { length: 45 }), // User IP address for Meta CAPI
+  conversionTier1SentAt: timestamp("conversion_tier_1_sent_at"), // When Tier 1 conversion was sent
+  conversionTier2SentAt: timestamp("conversion_tier_2_sent_at"), // When Tier 2 conversion was sent
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
