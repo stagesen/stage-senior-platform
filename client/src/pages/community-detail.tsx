@@ -693,70 +693,70 @@ const BlogPostCard = ({ post }: { post: BlogPost }) => {
   const resolvedMainImage = useResolveImageUrl(post.mainImage);
   
   return (
-    <Card className="group hover:shadow-2xl transition-all duration-300 border-0 overflow-hidden bg-white" data-testid={`blog-post-${post.id}`}>
-      <div className="relative">
-        {(resolvedThumbnail || resolvedMainImage) ? (
-          <div className="h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
-            <img
-              src={resolvedThumbnail || resolvedMainImage || ''}
-              alt={post.title}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              loading="lazy"
-            />
-          </div>
-        ) : (
-          <div className="h-56 bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center">
-            <Image className="w-16 h-16 text-primary/30" />
-          </div>
-        )}
-        {post.featured && (
-          <Badge className="absolute top-4 left-4 bg-yellow-500 text-white border-0">
-            <Star className="w-3 h-3 mr-1 fill-current" />
-            Featured
-          </Badge>
-        )}
-        {post.category && (
-          <Badge className="absolute top-4 right-4 bg-white/90 text-gray-700 backdrop-blur-sm">
-            {post.category}
-          </Badge>
-        )}
-      </div>
-      <CardContent className="p-6">
-        <div className="flex items-center gap-3 mb-3 text-sm text-gray-500">
-          <div className="flex items-center gap-1">
-            <Calendar className="w-3 h-3" />
-            <span>{new Date(post.publishedAt || post.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-          </div>
-          {post.author && (
-            <div className="flex items-center gap-1">
-              <Users className="w-3 h-3" />
-              <span className="capitalize">{post.author.replace(/-/g, ' ')}</span>
+    <Link href={`/blog/${post.slug}`}>
+      <Card className="group hover:shadow-2xl transition-all duration-300 border-0 overflow-hidden bg-white cursor-pointer" data-testid={`blog-post-${post.id}`}>
+        <div className="relative">
+          {(resolvedThumbnail || resolvedMainImage) ? (
+            <div className="h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+              <img
+                src={resolvedThumbnail || resolvedMainImage || ''}
+                alt={post.title}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
+              />
+            </div>
+          ) : (
+            <div className="h-56 bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center">
+              <Image className="w-16 h-16 text-primary/30" />
             </div>
           )}
+          {post.featured && (
+            <Badge className="absolute top-4 left-4 bg-yellow-500 text-white border-0">
+              <Star className="w-3 h-3 mr-1 fill-current" />
+              Featured
+            </Badge>
+          )}
+          {post.category && (
+            <Badge className="absolute top-4 right-4 bg-white/90 text-gray-700 backdrop-blur-sm">
+              {post.category}
+            </Badge>
+          )}
         </div>
-        <h3 className="text-lg font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors" data-testid={`blog-post-title-${post.id}`}>
-          {post.title}
-        </h3>
-        <p className="text-gray-600 text-sm line-clamp-3 mb-4" data-testid={`blog-post-summary-${post.id}`}>
-          {post.summary || post.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'}
-        </p>
-        <div className="flex items-center justify-between">
-          <div className="flex gap-1">
-            {post.tags && post.tags.slice(0, 2).map((tag, idx) => (
-              <Badge key={idx} variant="secondary" className="text-xs bg-gray-100 text-gray-600">
-                {tag}
-              </Badge>
-            ))}
+        <CardContent className="p-6">
+          <div className="flex items-center gap-3 mb-3 text-sm text-gray-500">
+            <div className="flex items-center gap-1">
+              <Calendar className="w-3 h-3" />
+              <span>{new Date(post.publishedAt || post.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+            </div>
+            {post.author && (
+              <div className="flex items-center gap-1">
+                <Users className="w-3 h-3" />
+                <span className="capitalize">{post.author.replace(/-/g, ' ')}</span>
+              </div>
+            )}
           </div>
-          <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/5 group/btn" asChild>
-            <Link href={`/blog/${post.slug}`}>
-              <span className="mr-1">Read</span>
-              <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
-            </Link>
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          <h3 className="text-lg font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors" data-testid={`blog-post-title-${post.id}`}>
+            {post.title}
+          </h3>
+          <p className="text-gray-600 text-sm line-clamp-3 mb-4" data-testid={`blog-post-summary-${post.id}`}>
+            {post.summary || post.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'}
+          </p>
+          <div className="flex items-center justify-between">
+            <div className="flex gap-1">
+              {post.tags && post.tags.slice(0, 2).map((tag, idx) => (
+                <Badge key={idx} variant="secondary" className="text-xs bg-gray-100 text-gray-600">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+            <div className="flex items-center text-primary text-sm font-medium group/btn">
+              <span className="mr-1">Read More</span>
+              <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 };
 
