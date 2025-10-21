@@ -101,9 +101,9 @@ export default function TestimonialSection({
     },
   });
 
-  // Fetch communities to get names
-  const { data: communities = [] } = useQuery<Community[]>({
-    queryKey: ["/api/communities"],
+  // Fetch communities to get names (using lightweight dropdown endpoint)
+  const { data: communities = [] } = useQuery<Array<{ id: string; name: string }>>({
+    queryKey: ["/api/communities/dropdown"],
   });
 
   // Enhance testimonials with community names

@@ -111,10 +111,14 @@ const galleryImageDetailsSelection = {
 export interface IStorage {
   // Community operations
   getCommunities(filters?: {
-    careTypes?: string[];
+    activeOnly?: boolean;
+    careType?: string;
     city?: string;
-    active?: boolean;
+    state?: string;
   }): Promise<Community[]>;
+  getCommunitiesMinimal(activeOnly?: boolean): Promise<Array<{ id: string; name: string; slug: string }>>;
+  getCommunitiesCards(activeOnly?: boolean): Promise<Array<{ id: string; name: string; slug: string; city: string; imageId: string | null }>>;
+  getCommunitiesDropdown(activeOnly?: boolean): Promise<Array<{ id: string; name: string }>>;
   getCommunity(slug: string): Promise<Community | undefined>;
   getCommunityById(id: string): Promise<Community | undefined>;
   createCommunity(community: InsertCommunity): Promise<Community>;
@@ -361,21 +365,129 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  // Community operations
-  async getCommunities(filters?: {
-    careTypes?: string[];
+  // Helper function to build base community query conditions
+  private buildCommunityConditions(filters?: {
+    activeOnly?: boolean;
     city?: string;
-    active?: boolean;
-  }): Promise<Community[]> {
-    let query = db.select().from(communities);
-    
+    state?: string;
+  }) {
     const conditions = [];
-    if (filters?.active !== undefined) {
-      conditions.push(eq(communities.active, filters.active));
+    
+    // Default activeOnly to true
+    const activeOnly = filters?.activeOnly !== undefined ? filters.activeOnly : true;
+    if (activeOnly) {
+      conditions.push(eq(communities.active, true));
     }
+    
     if (filters?.city) {
       conditions.push(like(communities.city, `%${filters.city}%`));
     }
+    
+    if (filters?.state) {
+      conditions.push(eq(communities.state, filters.state));
+    }
+    
+    return conditions;
+  }
+
+  // Lightweight method: returns only id, name, slug
+  async getCommunitiesMinimal(activeOnly = true): Promise<Array<{ id: string; name: string; slug: string }>> {
+    const conditions = this.buildCommunityConditions({ activeOnly });
+    
+    let query = db
+      .select({
+        id: communities.id,
+        name: communities.name,
+        slug: communities.slug,
+      })
+      .from(communities);
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions)) as any;
+    }
+    
+    return await query.orderBy(desc(communities.featured), asc(communities.name));
+  }
+
+  // Lightweight method: returns id, name, slug, city, imageId (heroImageId)
+  async getCommunitiesCards(activeOnly = true): Promise<Array<{ id: string; name: string; slug: string; city: string; imageId: string | null }>> {
+    const conditions = this.buildCommunityConditions({ activeOnly });
+    
+    let query = db
+      .select({
+        id: communities.id,
+        name: communities.name,
+        slug: communities.slug,
+        city: communities.city,
+        imageId: communities.imageId,
+      })
+      .from(communities);
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions)) as any;
+    }
+    
+    return await query.orderBy(desc(communities.featured), asc(communities.name));
+  }
+
+  // Lightweight method: returns only id, name for dropdowns
+  async getCommunitiesDropdown(activeOnly = true): Promise<Array<{ id: string; name: string }>> {
+    const conditions = this.buildCommunityConditions({ activeOnly });
+    
+    let query = db
+      .select({
+        id: communities.id,
+        name: communities.name,
+      })
+      .from(communities);
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions)) as any;
+    }
+    
+    return await query.orderBy(asc(communities.name));
+  }
+
+  // Community operations
+  async getCommunities(filters?: {
+    activeOnly?: boolean;
+    careType?: string;
+    city?: string;
+    state?: string;
+  }): Promise<Community[]> {
+    let communityIds: string[] | null = null;
+    
+    // If filtering by careType, first get matching community IDs via join
+    if (filters?.careType) {
+      const careTypeMatches = await db
+        .select({
+          communityId: communitiesCareTypes.communityId,
+        })
+        .from(communitiesCareTypes)
+        .leftJoin(careTypes, eq(communitiesCareTypes.careTypeId, careTypes.id))
+        .where(eq(careTypes.slug, filters.careType));
+      
+      communityIds = careTypeMatches.map(m => m.communityId);
+      
+      // If no communities match the care type, return empty array
+      if (communityIds.length === 0) {
+        return [];
+      }
+    }
+    
+    // Build base query with conditions
+    const conditions = this.buildCommunityConditions({
+      activeOnly: filters?.activeOnly,
+      city: filters?.city,
+      state: filters?.state,
+    });
+    
+    // Add careType filter if we have matching community IDs
+    if (communityIds !== null) {
+      conditions.push(inArray(communities.id, communityIds));
+    }
+    
+    let query = db.select().from(communities);
     
     if (conditions.length > 0) {
       query = query.where(and(...conditions));
@@ -384,8 +496,8 @@ export class DatabaseStorage implements IStorage {
     const communitiesData = await query.orderBy(desc(communities.featured), asc(communities.name));
     
     // Fetch care types and amenities for all communities from junction tables
-    const communityIds = communitiesData.map(c => c.id);
-    if (communityIds.length > 0) {
+    const fetchedCommunityIds = communitiesData.map(c => c.id);
+    if (fetchedCommunityIds.length > 0) {
       // Fetch care types
       const careTypesData = await db
         .select({
@@ -395,7 +507,7 @@ export class DatabaseStorage implements IStorage {
         })
         .from(communitiesCareTypes)
         .leftJoin(careTypes, eq(communitiesCareTypes.careTypeId, careTypes.id))
-        .where(inArray(communitiesCareTypes.communityId, communityIds));
+        .where(inArray(communitiesCareTypes.communityId, fetchedCommunityIds));
       
       // Group care types by community
       const careTypesByCommunity: Record<string, string[]> = {};
@@ -429,7 +541,7 @@ export class DatabaseStorage implements IStorage {
         .leftJoin(amenities, eq(communitiesAmenities.amenityId, amenities.id))
         .where(
           and(
-            inArray(communitiesAmenities.communityId, communityIds),
+            inArray(communitiesAmenities.communityId, fetchedCommunityIds),
             eq(amenities.active, true)
           )
         )
@@ -482,13 +594,6 @@ export class DatabaseStorage implements IStorage {
         }
         // Keep existing JSON data as fallback if no junction data exists
       }
-    }
-    
-    // Filter by care types if specified
-    if (filters?.careTypes && filters.careTypes.length > 0) {
-      return communitiesData.filter(community => {
-        return filters.careTypes!.some(ct => community.careTypes?.includes(ct));
-      });
     }
     
     return communitiesData;

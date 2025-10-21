@@ -1593,10 +1593,20 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
     queryKey,
   });
 
-  const { data: communities = [] } = useQuery<Community[]>({
+  // Fetch full community data for editing (only when type === "communities")
+  const { data: fullCommunities = [] } = useQuery<Community[]>({
     queryKey: ["/api/communities?active=all"],
-    enabled: type === "communities" || type === "tours" || type === "galleries" || type === "events" || type === "faqs" || type === "blog-posts" || type === "posts" || type === "testimonials" || type === "floor-plans" || type === "team" || type === "landing-pages",
+    enabled: type === "communities",
   });
+
+  // Fetch lightweight community data for dropdown selects (id and name only)
+  const { data: communitiesDropdown = [] } = useQuery<Array<{ id: string; name: string }>>({
+    queryKey: ["/api/communities/dropdown"],
+    enabled: type === "tours" || type === "galleries" || type === "events" || type === "faqs" || type === "blog-posts" || type === "posts" || type === "testimonials" || type === "floor-plans" || type === "team" || type === "landing-pages",
+  });
+
+  // Use the appropriate communities list based on context
+  const communities = type === "communities" ? fullCommunities : communitiesDropdown;
 
   // Fetch care types and amenities for multi-select
   const { data: allCareTypes = [] } = useQuery<CareType[]>({
@@ -1968,6 +1978,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       // For communities, also invalidate the communities list used in dropdowns
       if (type === "communities") {
         queryClient.invalidateQueries({ queryKey: ["/api/communities?active=all"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/communities/dropdown"] });
       }
       setIsDialogOpen(false);
       getCurrentForm().reset();
@@ -2010,6 +2021,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       // For communities, also invalidate the communities list used in dropdowns
       if (type === "communities") {
         queryClient.invalidateQueries({ queryKey: ["/api/communities?active=all"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/communities/dropdown"] });
       }
       setIsDialogOpen(false);
       setEditingItem(null);
@@ -2049,6 +2061,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       // For communities, also invalidate the communities list used in dropdowns
       if (type === "communities") {
         queryClient.invalidateQueries({ queryKey: ["/api/communities?active=all"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/communities/dropdown"] });
       }
       toast({
         title: "Success",

@@ -864,6 +864,13 @@ export type Amenity = typeof amenities.$inferSelect;
 export type InsertAmenity = z.infer<typeof insertAmenitySchema>;
 export type Community = typeof communities.$inferSelect;
 export type InsertCommunity = z.infer<typeof insertCommunitySchema>;
+export type CommunityCard = {
+  id: string;
+  name: string;
+  slug: string;
+  city: string;
+  imageId: string | null;
+};
 export type CommunityCareType = typeof communitiesCareTypes.$inferSelect;
 export type InsertCommunityCareType = z.infer<typeof insertCommunityCareTypeSchema>;
 export type CommunityAmenity = typeof communitiesAmenities.$inferSelect;

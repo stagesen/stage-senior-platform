@@ -387,84 +387,43 @@ export default function DynamicLandingPage() {
   // This ensures URLs with different UTM parameters use the same cache entry
   const pathname = location.split('?')[0];
 
-  // Fetch landing page template and extract params from URL using the resolve endpoint
-  const { data: resolveData, isLoading: templateLoading, error: templateError } = useQuery<{
+  // Fetch all landing page data in one consolidated request
+  // This replaces 10 separate API calls with a single request for better performance
+  const { data: pageData, isLoading: templateLoading, error: templateError } = useQuery<{
     template: LandingPageTemplate;
     params: Record<string, string>;
+    primaryCommunity: Community;
+    allCommunities: Community[];
+    highlights: CommunityHighlight[];
+    amenities: Amenity[];
+    careTypes: CareType[];
+    galleries?: Gallery[];
+    testimonials?: Testimonial[];
+    teamMembers?: TeamMember[];
+    faqs?: Faq[];
+    floorPlans?: FloorPlan[];
   }>({
-    queryKey: ["/api/landing-page-templates/resolve", pathname],
+    queryKey: ["/api/landing-page-templates/resolve/full", pathname],
     queryFn: async () => {
-      const response = await fetch(`/api/landing-page-templates/resolve?url=${encodeURIComponent(pathname)}`);
-      
+      const response = await fetch(`/api/landing-page-templates/resolve/full?url=${encodeURIComponent(pathname)}`);
+
       if (!response.ok) {
         throw new Error("Template not found");
       }
-      
+
       return response.json();
     },
   });
 
-  const template = resolveData?.template;
-  const urlParams = resolveData?.params || {};
-
-  // Fetch all communities
-  const { data: allCommunities = [] } = useQuery<Community[]>({
-    queryKey: ["/api/communities"],
-    enabled: !!template,
-  });
-
-  // Filter communities based on template settings and URL parameters
-  // Priority: 1) template.communityId, 2) URL city param (city or slug), 3) template.cities array, 4) all communities
-  let targetCommunities: Community[] = [];
-  
-  if (template?.communityId) {
-    // Explicit community ID in template
-    targetCommunities = allCommunities.filter(c => c.id === template.communityId);
-  } else if (urlParams.city) {
-    // Try to match by city name first
-    const cityMatches = allCommunities.filter(c => 
-      c.city.toLowerCase() === urlParams.city.toLowerCase()
-    );
-    
-    if (cityMatches.length > 0) {
-      targetCommunities = cityMatches;
-    } else {
-      // If no city match, try matching by slug (e.g., "arvada-stonebridge" → "stonebridge-senior")
-      // Split both the URL param and slugs by hyphens and look for common significant words
-      const urlWords = urlParams.city.toLowerCase().split('-');
-      const slugMatch = allCommunities.find(c => {
-        const slugWords = c.slug.toLowerCase().split('-');
-        // Check if they share at least one significant word (excluding common words like "the", "at", "on")
-        const commonWords = ['the', 'at', 'on', 'in'];
-        const significantUrlWords = urlWords.filter(w => !commonWords.includes(w));
-        const significantSlugWords = slugWords.filter(w => !commonWords.includes(w));
-        
-        return significantUrlWords.some(urlWord => 
-          significantSlugWords.some(slugWord => 
-            urlWord.includes(slugWord) || slugWord.includes(urlWord)
-          )
-        );
-      });
-      
-      if (slugMatch) {
-        targetCommunities = [slugMatch];
-      } else {
-        // Still no match, fall back to template cities or all communities
-        targetCommunities = template?.cities?.length
-          ? allCommunities.filter(c => template.cities?.includes(c.city))
-          : allCommunities;
-      }
-    }
-  } else if (template?.cities?.length) {
-    targetCommunities = allCommunities.filter(c => template.cities?.includes(c.city));
-  } else {
-    targetCommunities = allCommunities;
-  }
-
-  // For Arvada URLs without a specific community template, prefer Gardens on Quail (flagship)
-  const primaryCommunity = urlParams.city?.toLowerCase() === 'arvada' && targetCommunities.length > 1
-    ? targetCommunities.find(c => c.slug === 'the-gardens-on-quail') || targetCommunities[0]
-    : targetCommunities[0];
+  const template = pageData?.template;
+  const urlParams = pageData?.params || {};
+  const primaryCommunity = pageData?.primaryCommunity;
+  const communityHighlights = pageData?.highlights || [];
+  const communityAmenities = pageData?.amenities || [];
+  const communityCareTypes = pageData?.careTypes || [];
+  const galleries = pageData?.galleries || [];
+  const testimonials = pageData?.testimonials || [];
+  const teamMembers = pageData?.teamMembers || [];
 
   // Extract care type from URL pattern and params
   const getCareTypeSlug = (): string | null => {
@@ -475,14 +434,62 @@ export default function DynamicLandingPage() {
       if (template.urlPattern.includes('independent-living')) return 'independent-living';
       if (template.urlPattern.includes('skilled-nursing')) return 'skilled-nursing';
     }
-    
+
     // Try URL params
     if (urlParams.careType) return urlParams.careType.toLowerCase();
-    
+
     return null;
   };
 
   const careTypeSlug = getCareTypeSlug();
+
+  // Build query parameters for server-side filtering
+  // This replaces client-side filtering for better performance
+  const buildCommunityFilters = () => {
+    const filters: Record<string, string> = {
+      activeOnly: 'true',
+    };
+
+    // Add city filter if present
+    if (urlParams.city) {
+      filters.city = urlParams.city;
+    } else if (template?.cities && template.cities.length > 0) {
+      // If template specifies cities, use the first one
+      filters.city = template.cities[0];
+    }
+
+    // Add care type filter if present
+    if (careTypeSlug) {
+      filters.careType = careTypeSlug;
+    }
+
+    return filters;
+  };
+
+  const communityFilters = buildCommunityFilters();
+
+  // Fetch filtered communities from server - replaces client-side filtering
+  // Only fetch if we need to show alternative communities (when not showing a single community)
+  const shouldFetchCommunities = !template?.communityId;
+  const { data: filteredCommunities = [] } = useQuery<Community[]>({
+    queryKey: ['/api/communities', communityFilters],
+    queryFn: async () => {
+      const queryParams = new URLSearchParams(communityFilters);
+      const response = await fetch(`/api/communities?${queryParams}`);
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch communities");
+      }
+      
+      return response.json();
+    },
+    enabled: shouldFetchCommunities && !!template,
+  });
+
+  // Use server-filtered communities (no more client-side filtering needed!)
+  const targetCommunities = template?.communityId 
+    ? [primaryCommunity].filter(Boolean) as Community[]
+    : filteredCommunities;
 
   // Simple care type name mapping for token replacement
   const getCareTypeName = () => {
@@ -493,90 +500,44 @@ export default function DynamicLandingPage() {
     return "Senior Living";
   };
 
-  // Fetch galleries (if showGallery is true)
-  const { data: galleries = [] } = useQuery<Gallery[]>({
-    queryKey: [`/api/galleries?communityId=${primaryCommunity?.id}&active=true`],
-    enabled: !!template?.showGallery && !!primaryCommunity,
-  });
-
-  // Fetch testimonials (if showTestimonials is true)
-  const { data: testimonials = [] } = useQuery<Testimonial[]>({
-    queryKey: [`/api/testimonials?communityId=${primaryCommunity?.id}&approved=true&featured=true`],
-    enabled: !!template?.showTestimonials && !!primaryCommunity,
-  });
-
-  // Fetch team members (if showTeamMembers is true)
-  const { data: teamMembers = [] } = useQuery<TeamMember[]>({
-    queryKey: ["/api/team-members?active=true"],
-    enabled: !!template?.showTeamMembers,
-  });
-
-  // Fetch FAQs (if showFaqs is true)
-  const { data: allFaqs = [] } = useQuery<Faq[]>({
-    queryKey: [`/api/faqs?communityId=${primaryCommunity?.id}&active=true`],
-    enabled: !!template?.showFaqs && !!primaryCommunity,
-  });
-
   // Filter FAQs by care type if specified in the template
   // Exclude FAQs that mention ONLY irrelevant care types
+  const allFaqs = pageData?.faqs || [];
   const faqs = careTypeSlug
     ? allFaqs.filter(faq => {
         const currentCareType = getCareTypeName().toLowerCase();
         const questionAndAnswer = (faq.question + ' ' + faq.answer).toLowerCase();
-        
+
         // List of care types to check
         const careTypes = [
           'independent living',
-          'assisted living', 
+          'assisted living',
           'memory care',
           'skilled nursing'
         ];
-        
+
         // If FAQ mentions the current care type, include it
         if (questionAndAnswer.includes(currentCareType)) {
           return true;
         }
-        
+
         // If FAQ mentions other care types but not the current one, exclude it
         const mentionsOtherCareTypes = careTypes
           .filter(type => type !== currentCareType)
           .some(type => questionAndAnswer.includes(type));
-        
+
         // Exclude FAQs that mention other care types but not current one
         return !mentionsOtherCareTypes;
       })
     : allFaqs;
 
-  // Fetch floor plans (if showFloorPlans is true)
-  const { data: allFloorPlans = [] } = useQuery<FloorPlan[]>({
-    queryKey: [`/api/floor-plans?communityId=${primaryCommunity?.id}&active=true`],
-    enabled: !!template?.showFloorPlans && !!primaryCommunity,
-  });
-
   // Filter floor plans by care type if specified in the template
+  const allFloorPlans = pageData?.floorPlans || [];
   const floorPlans = careTypeSlug
-    ? allFloorPlans.filter(fp => 
+    ? allFloorPlans.filter(fp =>
         fp.name.toLowerCase().includes(getCareTypeName().toLowerCase())
       )
     : allFloorPlans;
-
-  // Fetch community highlights (if available)
-  const { data: communityHighlights = [] } = useQuery<CommunityHighlight[]>({
-    queryKey: [`/api/community-highlights?communityId=${primaryCommunity?.id}&active=true`],
-    enabled: !!primaryCommunity,
-  });
-
-  // Fetch community amenities with details
-  const { data: communityAmenities = [] } = useQuery<Amenity[]>({
-    queryKey: [`/api/communities/${primaryCommunity?.id}/amenities`],
-    enabled: !!primaryCommunity,
-  });
-
-  // Fetch community care types
-  const { data: communityCareTypes = [] } = useQuery<CareType[]>({
-    queryKey: [`/api/communities/${primaryCommunity?.id}/care-types`],
-    enabled: !!primaryCommunity,
-  });
 
   // Build tokens for replacement (apply Title Case to all token values)
   const tokens = {

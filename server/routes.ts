@@ -128,30 +128,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Community routes
   app.get("/api/communities", async (req, res) => {
     try {
-      const { careTypes, city, active } = req.query;
+      const { careTypes, careType, city, state, active, activeOnly } = req.query;
       const filters: any = {};
       
-      if (careTypes) {
-        filters.careTypes = Array.isArray(careTypes) ? careTypes : [careTypes];
+      // Support both careTypes (legacy, plural) and careType (new, singular)
+      if (careType) {
+        filters.careType = careType as string;
+      } else if (careTypes) {
+        // For backwards compatibility, if careTypes is provided, use the first one
+        const careTypesArray = Array.isArray(careTypes) ? careTypes : [careTypes];
+        if (careTypesArray.length > 0) {
+          filters.careType = careTypesArray[0] as string;
+        }
       }
+      
       if (city) {
         filters.city = city as string;
       }
       
-      // Handle active filter:
-      // - active='all': show all communities (no filter)
-      // - active='true': show only active communities
-      // - active='false': show only inactive communities
-      // - no active param: default to active communities only (for public access)
-      if (active === 'all') {
-        // Show all communities (don't set active filter)
-      } else if (active === 'true') {
-        filters.active = true;
-      } else if (active === 'false') {
-        filters.active = false;
-      } else if (active === undefined) {
+      if (state) {
+        filters.state = state as string;
+      }
+      
+      // Handle active filter with support for both 'active' and 'activeOnly' parameters
+      // Priority: activeOnly > active > default to true
+      if (activeOnly !== undefined) {
+        filters.activeOnly = activeOnly === 'true';
+      } else if (active !== undefined) {
+        // Legacy support for 'active' parameter
+        if (active === 'all') {
+          filters.activeOnly = false;
+        } else if (active === 'true') {
+          filters.activeOnly = true;
+        } else if (active === 'false') {
+          filters.activeOnly = false;
+        }
+      } else {
         // Default to active communities only for public access
-        filters.active = true;
+        filters.activeOnly = true;
       }
       
       const communities = await storage.getCommunities(filters);
@@ -162,6 +176,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching communities:", error);
       res.status(500).json({ message: "Failed to fetch communities" });
+    }
+  });
+
+  // Lightweight endpoint: returns only id, name, slug for all active communities
+  app.get("/api/communities/minimal", async (req, res) => {
+    try {
+      const communities = await storage.getCommunitiesMinimal(true);
+      res.json(communities);
+    } catch (error) {
+      console.error("Error fetching minimal communities:", error);
+      res.status(500).json({ message: "Failed to fetch communities" });
+    }
+  });
+
+  // Lightweight endpoint: returns id, name, slug, city, imageId for homepage carousel and cards
+  app.get("/api/communities/cards", async (req, res) => {
+    try {
+      const communities = await storage.getCommunitiesCards(true);
+      res.json(communities);
+    } catch (error) {
+      console.error("Error fetching community cards:", error);
+      res.status(500).json({ message: "Failed to fetch community cards" });
+    }
+  });
+
+  // Lightweight endpoint: returns only id, name for dropdowns and simple selects
+  app.get("/api/communities/dropdown", async (req, res) => {
+    try {
+      const communities = await storage.getCommunitiesDropdown(true);
+      res.json(communities);
+    } catch (error) {
+      console.error("Error fetching community dropdown:", error);
+      res.status(500).json({ message: "Failed to fetch community dropdown" });
     }
   });
 
@@ -1189,6 +1236,218 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Consolidated endpoint for landing pages - returns template + all required data in one request
+  // Mirrors /api/communities/:slug/full pattern to reduce network waterfalls
+  app.get("/api/landing-page-templates/resolve/full", async (req, res) => {
+    try {
+      const url = (req.query.url as string) || '/';
+
+      if (!url) {
+        return res.status(400).json({ message: "URL parameter is required" });
+      }
+
+      // Normalize URL: strip query params, decode URI, and remove trailing slashes
+      const cleanUrl = decodeURIComponent(url.split('?')[0]).replace(/\/+$/, '') || '/';
+
+      // Fetch all active templates
+      const templates = await storage.getLandingPageTemplates({ active: true });
+
+      // Helper function to match URL against pattern and extract params
+      const matchUrlPattern = (actualUrl: string, pattern: string): { match: boolean; params: Record<string, string> } => {
+        const params: Record<string, string> = {};
+
+        // Normalize pattern by removing trailing slashes
+        const normalizedPattern = pattern.replace(/\/+$/, '') || '/';
+
+        // Extract parameter names from pattern (e.g., :city, :careType)
+        const paramNames: string[] = [];
+        const regexPattern = normalizedPattern.replace(/:([^\/]+)/g, (_, paramName) => {
+          paramNames.push(paramName);
+          return '([^/]+)';
+        });
+
+        // Create regex from pattern
+        const regex = new RegExp(`^${regexPattern}$`);
+        const match = actualUrl.match(regex);
+
+        if (!match) {
+          return { match: false, params: {} };
+        }
+
+        // Extract parameter values
+        paramNames.forEach((name, index) => {
+          params[name] = match[index + 1];
+        });
+
+        return { match: true, params };
+      };
+
+      // Try to match URL against each template's pattern
+      let matchedTemplate = null;
+      let urlParams: Record<string, string> = {};
+
+      for (const template of templates) {
+        if (!template.urlPattern) continue;
+
+        const { match, params } = matchUrlPattern(cleanUrl, template.urlPattern);
+
+        if (match) {
+          matchedTemplate = await storage.getLandingPageTemplateByPattern(template.urlPattern, params);
+          urlParams = params;
+          break;
+        }
+      }
+
+      if (!matchedTemplate) {
+        return res.status(404).json({ message: "No matching template found for this URL" });
+      }
+
+      // Fetch all communities
+      const allCommunities = await storage.getCommunities({ activeOnly: true });
+
+      // Determine primary community using same logic as client (DynamicLandingPage.tsx:416-467)
+      let targetCommunities: any[] = [];
+
+      if (matchedTemplate.communityId) {
+        // Explicit community ID in template
+        targetCommunities = allCommunities.filter(c => c.id === matchedTemplate.communityId);
+      } else if (urlParams.city) {
+        // Try to match by city name first
+        const cityMatches = allCommunities.filter(c =>
+          c.city.toLowerCase() === urlParams.city.toLowerCase()
+        );
+
+        if (cityMatches.length > 0) {
+          targetCommunities = cityMatches;
+        } else {
+          // If no city match, try matching by slug
+          const urlWords = urlParams.city.toLowerCase().split('-');
+          const slugMatch = allCommunities.find(c => {
+            const slugWords = c.slug.toLowerCase().split('-');
+            const commonWords = ['the', 'at', 'on', 'in'];
+            const significantUrlWords = urlWords.filter(w => !commonWords.includes(w));
+            const significantSlugWords = slugWords.filter(w => !commonWords.includes(w));
+
+            return significantUrlWords.some(urlWord =>
+              significantSlugWords.some(slugWord =>
+                urlWord.includes(slugWord) || slugWord.includes(urlWord)
+              )
+            );
+          });
+
+          if (slugMatch) {
+            targetCommunities = [slugMatch];
+          } else {
+            // Fall back to template cities or all communities
+            targetCommunities = matchedTemplate.cities?.length
+              ? allCommunities.filter(c => matchedTemplate.cities?.includes(c.city))
+              : allCommunities;
+          }
+        }
+      } else if (matchedTemplate.cities?.length) {
+        targetCommunities = allCommunities.filter(c => matchedTemplate.cities?.includes(c.city));
+      } else {
+        targetCommunities = allCommunities;
+      }
+
+      // For Arvada URLs without specific community, prefer Gardens on Quail
+      const primaryCommunity = urlParams.city?.toLowerCase() === 'arvada' && targetCommunities.length > 1
+        ? targetCommunities.find(c => c.slug === 'the-gardens-on-quail') || targetCommunities[0]
+        : targetCommunities[0];
+
+      if (!primaryCommunity) {
+        return res.status(404).json({ message: "No community found for this landing page" });
+      }
+
+      // Conditionally fetch data based on template settings using Promise.all for parallel fetching
+      const dataFetches: Promise<any>[] = [
+        // Always fetch these
+        storage.getCommunityHighlights(primaryCommunity.id),
+        storage.getCommunityAmenities(primaryCommunity.id),
+        storage.getCommunityCareTypes(primaryCommunity.id),
+      ];
+
+      // Conditionally fetch based on template flags
+      if (matchedTemplate.showGallery) {
+        dataFetches.push(storage.getGalleries({ communityId: primaryCommunity.id, active: true }));
+      }
+      if (matchedTemplate.showTestimonials) {
+        dataFetches.push(storage.getTestimonials({ communityId: primaryCommunity.id, approved: true, featured: true }));
+      }
+      if (matchedTemplate.showTeamMembers) {
+        dataFetches.push(storage.getAllTeamMembers());
+      }
+      if (matchedTemplate.showFaqs) {
+        dataFetches.push(storage.getFaqs({ communityId: primaryCommunity.id, active: true }));
+      }
+      if (matchedTemplate.showFloorPlans) {
+        dataFetches.push(storage.getFloorPlans({ communityId: primaryCommunity.id, active: true }));
+      }
+
+      const results = await Promise.all(dataFetches);
+
+      // Map results to named properties
+      let resultIndex = 0;
+      const highlights = results[resultIndex++];
+      const amenityIds = results[resultIndex++];
+      const careTypeIds = results[resultIndex++];
+
+      // Fetch full amenity and care type objects (same logic as /api/communities/:id/amenities)
+      const [amenities, careTypes] = await Promise.all([
+        Promise.all(
+          amenityIds.map(async (id: string) => {
+            const amenity = await storage.getAmenityById(id);
+            return amenity;
+          })
+        ),
+        Promise.all(
+          careTypeIds.map(async (id: string) => {
+            const careType = await storage.getCareTypeById(id);
+            return careType;
+          })
+        ),
+      ]);
+
+      // Filter out undefined and inactive items
+      const validAmenities = amenities.filter(a => a && a.active);
+      const validCareTypes = careTypes.filter(ct => ct && ct.active);
+
+      const responseData: any = {
+        template: matchedTemplate,
+        params: urlParams,
+        primaryCommunity,
+        allCommunities,
+        highlights,
+        amenities: validAmenities,
+        careTypes: validCareTypes,
+      };
+
+      // Add optional data if it was fetched
+      if (matchedTemplate.showGallery) {
+        responseData.galleries = results[resultIndex++];
+      }
+      if (matchedTemplate.showTestimonials) {
+        responseData.testimonials = results[resultIndex++];
+      }
+      if (matchedTemplate.showTeamMembers) {
+        responseData.teamMembers = results[resultIndex++];
+      }
+      if (matchedTemplate.showFaqs) {
+        responseData.faqs = results[resultIndex++];
+      }
+      if (matchedTemplate.showFloorPlans) {
+        responseData.floorPlans = results[resultIndex++];
+      }
+
+      // Add cache headers for better performance
+      res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+      res.json(responseData);
+    } catch (error) {
+      console.error("Error fetching landing page full data:", error);
+      res.status(500).json({ message: "Failed to fetch landing page data" });
+    }
+  });
+
   app.get("/api/landing-page-templates/:slug", async (req, res) => {
     try {
       const template = await storage.getLandingPageTemplate(req.params.slug);
@@ -1855,12 +2114,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { active } = req.query;
       const filters: any = {};
-      
+
       if (active !== undefined) {
         filters.active = active === 'true';
       }
-      
+
       const pageHeroes = await storage.getPageHeroes(filters);
+
+      // Cache for 5 minutes (public, so CDNs can cache too)
+      // Use stale-while-revalidate for better performance
+      res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+
       res.json(pageHeroes);
     } catch (error) {
       console.error("Error fetching page heroes:", error);
@@ -1874,6 +2138,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!pageHero) {
         return res.status(404).json({ message: "Page hero not found" });
       }
+
+      // Cache aggressively for individual page heroes (10 minutes)
+      // These are static content that rarely changes
+      res.setHeader('Cache-Control', 'public, max-age=600, stale-while-revalidate=1200');
+
+      // Add ETag based on updatedAt timestamp for conditional requests
+      if (pageHero.updatedAt) {
+        const etag = `"${new Date(pageHero.updatedAt).getTime()}"`;
+        res.setHeader('ETag', etag);
+
+        // Check if client has cached version
+        if (req.headers['if-none-match'] === etag) {
+          return res.status(304).send();
+        }
+      }
+
       res.json(pageHero);
     } catch (error) {
       console.error("Error fetching page hero:", error);

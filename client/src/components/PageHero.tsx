@@ -36,6 +36,10 @@ export function PageHero({
       }
       return response.json();
     },
+    // Cache hero data aggressively since it rarely changes
+    // Matches server-side cache duration (10 minutes)
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 20 * 60 * 1000, // 20 minutes (memory cache duration)
   });
 
   // Use hero data if available, otherwise fall back to defaults

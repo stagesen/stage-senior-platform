@@ -8,14 +8,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Community } from "@shared/schema";
+import type { Community, CommunityCard } from "@shared/schema";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 
 interface CommunitySelectionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  communities: Community[];
-  onSelectCommunity?: (community: Community) => void;
+  communities: (Community | CommunityCard)[];
+  onSelectCommunity?: (community: Community | CommunityCard) => void;
 }
 
 export default function CommunitySelectionModal({
@@ -58,12 +58,12 @@ export default function CommunitySelectionModal({
                   data-testid={`community-location-${community.slug}`}
                 >
                   <MapPin className="w-4 h-4 mr-1" />
-                  {community.city}, {community.state}
+                  {community.city}{'state' in community && community.state ? `, ${community.state}` : ', CO'}
                 </div>
               </CardHeader>
               
               <CardContent className="pt-0">
-                {community.shortDescription && (
+                {'shortDescription' in community && community.shortDescription && (
                   <p
                     className="text-sm text-muted-foreground mb-4 line-clamp-2"
                     data-testid={`community-description-${community.slug}`}
@@ -72,7 +72,7 @@ export default function CommunitySelectionModal({
                   </p>
                 )}
                 
-                {community.phoneDisplay && (
+                {'phoneDisplay' in community && community.phoneDisplay && (
                   <p
                     className="text-sm text-muted-foreground mb-4"
                     data-testid={`community-phone-${community.slug}`}

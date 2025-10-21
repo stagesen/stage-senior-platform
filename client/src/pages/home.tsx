@@ -36,7 +36,7 @@ import {
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
-import type { Community, HomepageSection, HomepageConfig } from "@shared/schema";
+import type { CommunityCard, Community, HomepageSection, HomepageConfig } from "@shared/schema";
 import seniorCaregiverDocuments from '@/assets/senior-caregiver-documents.webp';
 import carePricingImage from '@/assets/cp-home.webp';
 
@@ -47,12 +47,12 @@ const CarouselCommunityCard = ({
   selectedIndex, 
   setShowContactForm 
 }: { 
-  community: Community; 
+  community: CommunityCard; 
   index: number; 
   selectedIndex: number; 
   setShowContactForm: (show: boolean) => void;
 }) => {
-  const resolvedHeroUrl = useResolveImageUrl(community.heroImageUrl);
+  const resolvedHeroUrl = useResolveImageUrl(community.imageId);
   
   return (
     <div 
@@ -88,48 +88,10 @@ const CarouselCommunityCard = ({
               {community.name}
             </h3>
             
-            {/* Care Type Badges */}
-            {community.careTypes && community.careTypes.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mb-2">
-                {community.careTypes.map((careType) => {
-                  const getCareTypeStyle = () => {
-                    const lowerCareType = careType.toLowerCase();
-                    if (lowerCareType.includes('memory')) return 'bg-purple-500/80 text-white';
-                    if (lowerCareType.includes('assisted')) return 'bg-blue-500/80 text-white';
-                    if (lowerCareType.includes('independent')) return 'bg-green-500/80 text-white';
-                    return 'bg-white/20 text-white';
-                  };
-                  
-                  const formatCareType = (type: string) => {
-                    return type
-                      .split('-')
-                      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                      .join(' ');
-                  };
-                  
-                  return (
-                    <Badge 
-                      key={careType}
-                      variant="secondary" 
-                      className={`text-xs px-2 py-0.5 ${getCareTypeStyle()} border-0 backdrop-blur-sm`}
-                      data-testid={`care-type-badge-${community.id}-${careType}`}
-                    >
-                      {formatCareType(careType)}
-                    </Badge>
-                  );
-                })}
-              </div>
-            )}
-            
-            <p className="text-sm text-white mb-3 line-clamp-2 drop-shadow-sm">
-              {community.shortDescription || community.description}
-            </p>
             <div className="flex items-center gap-1 text-sm text-white mb-4 drop-shadow-sm">
               <MapPin className="w-4 h-4" />
               <span data-testid={`community-address-${community.id}`}>
-                {community.street && community.city 
-                  ? `${community.street}, ${community.city}, ${community.state}`
-                  : `${community.city}, ${community.state}`}
+                {community.city}, CO
               </span>
             </div>
             
@@ -179,8 +141,8 @@ export default function Home() {
     };
   }, [carouselApi]);
 
-  const { data: communities = [], isLoading } = useQuery<Community[]>({
-    queryKey: ["/api/communities"],
+  const { data: communities = [], isLoading } = useQuery<CommunityCard[]>({
+    queryKey: ["/api/communities/cards"],
   });
 
   // Fetch homepage sections

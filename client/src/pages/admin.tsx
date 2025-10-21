@@ -58,6 +58,9 @@ export default function Admin() {
 
   const { data: pageHeroes = [] } = useQuery<PageHero[]>({
     queryKey: ["/api/page-heroes"],
+    // Shorter cache for admin dashboard to see updates more quickly
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
   });
 
   const { data: floorPlans = [] } = useQuery<FloorPlan[]>({
