@@ -343,7 +343,6 @@ export default function Contact() {
                 variant="inline"
                 title="Get Your Free Consultation"
                 description="Talk to a local senior living advisor about your needs and timeline"
-                onSelectCommunity={() => setShowCommunityModal(true)}
               />
             ) : (
               <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur">
