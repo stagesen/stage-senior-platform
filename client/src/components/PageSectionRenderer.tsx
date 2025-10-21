@@ -121,7 +121,7 @@ export default function PageSectionRenderer({ section }: PageSectionRendererProp
     return (
       <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {content.cards?.map((card: any, index: number) => {
               const IconComponent = card.icon ? iconMap[card.icon] : null;
               return (
