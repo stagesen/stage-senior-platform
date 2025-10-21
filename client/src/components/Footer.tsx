@@ -1,8 +1,8 @@
 import { Link } from "wouter";
 import { Linkedin, Phone, Mail, MapPin, ArrowRight, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logoWhiteUrl from "@assets/stagesenior-logo-wht_1758726884711.webp";
-import ashaLogoUrl from "@assets/68af28185bce7fea2a2d6c03_ASHA_ASHA_WHITE_RGB-ezgif.com-resize_1758727665004.webp";
+import logoWhiteUrl from "@/assets/stage-logo-white.webp";
+import ashaLogoUrl from "@/assets/asha-logo-white.webp";
 
 export default function Footer() {
   const communities = [

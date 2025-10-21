@@ -20,7 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
-import logoUrl from "@assets/stage-horizintal_1759763679642.webp";
+import logoUrl from "@/assets/stage-logo.webp";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
