@@ -15,7 +15,8 @@ import {
   Clock,
   MessageSquare,
   Building2,
-  CheckCircle
+  CheckCircle,
+  Navigation
 } from "lucide-react";
 
 export default function Contact() {
@@ -249,7 +250,7 @@ export default function Contact() {
                   <CardTitle>{community.name}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-start gap-3">
                       <MapPin className="w-5 h-5 text-primary mt-1" />
                       <div>
@@ -265,6 +266,21 @@ export default function Contact() {
                         {community.phone}
                       </a>
                     </div>
+                    <Button 
+                      asChild 
+                      className="w-full"
+                      variant="outline"
+                      data-testid={`button-directions-${community.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    >
+                      <a 
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(community.address + ', ' + community.city)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Navigation className="w-4 h-4 mr-2" />
+                        Get Directions
+                      </a>
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
