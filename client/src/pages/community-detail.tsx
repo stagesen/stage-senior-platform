@@ -1933,6 +1933,23 @@ export default function CommunityDetail() {
                         </p>
                       </div>
                     </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="w-full justify-start text-sm"
+                      asChild
+                      data-testid="button-get-directions"
+                    >
+                      <a 
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(community.address + ', ' + community.city + ', ' + community.state + ' ' + community.zipCode)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Navigation className="w-3 h-3 mr-2" />
+                        Get Directions
+                      </a>
+                    </Button>
+                    <Separator className="my-2" />
                     <div className="flex items-start gap-3">
                       <Mail className="w-4 h-4 text-muted-foreground mt-1" />
                       <div className="text-sm">
