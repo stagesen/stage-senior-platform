@@ -61,10 +61,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Click ID capture middleware - captures Google Ads and Meta click IDs
   app.use(clickIdCaptureMiddleware);
   
-  // Root health check endpoint for deployment health checks
-  app.get("/", (_req, res) => {
-    res.status(200).json({ status: "ok" });
-  });
+  // Root health check endpoint for deployment health checks (production only)
+  // In development, Vite middleware handles the root route
+  if (process.env.NODE_ENV === "production") {
+    app.get("/", (_req, res) => {
+      res.status(200).json({ status: "ok" });
+    });
+  }
   
   // Diagnostic endpoint for debugging production issues
   app.get("/api/health", async (_req, res) => {
@@ -152,21 +155,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const communities = await storage.getCommunities(filters);
-      
-      // Include care type and amenity IDs for admin dashboard
-      const communitiesWithRelationships = await Promise.all(
-        communities.map(async (community) => {
-          const careTypeIds = await storage.getCommunityCareTypes(community.id);
-          const amenityIds = await storage.getCommunityAmenities(community.id);
-          return {
-            ...community,
-            careTypeIds,
-            amenityIds,
-          };
-        })
-      );
-      
-      res.json(communitiesWithRelationships);
+
+      // getCommunities already includes careTypeIds and amenityIds from the junction tables
+      // No need to re-query - this was causing N+1 query problem (1 + 2N queries instead of 3)
+      res.json(communities);
     } catch (error) {
       console.error("Error fetching communities:", error);
       res.status(500).json({ message: "Failed to fetch communities" });

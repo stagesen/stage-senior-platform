@@ -1,47 +1,50 @@
+import { lazy, Suspense } from "react";
 import { Switch, Route, useRoute, Redirect } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, RequireAuth } from "@/lib/auth";
-import Home from "@/pages/home";
-import Communities from "@/pages/communities";
-import CommunityDetail from "@/pages/community-detail";
-import Events from "@/pages/events";
-import Team from "@/pages/team";
-import TeamMember from "@/pages/team-member";
-import Blog from "@/pages/blog";
-import Admin from "@/pages/admin";
-import Login from "@/pages/login";
-import FAQs from "@/pages/faqs";
-import Privacy from "@/pages/privacy";
-import Terms from "@/pages/terms";
-import Accessibility from "@/pages/accessibility";
-import AboutUs from "@/pages/about-us";
-import Services from "@/pages/services";
-import StageCares from "@/pages/stage-cares";
-import CarePoints from "@/pages/care-points";
-import SafetyWithDignity from "@/pages/safety-with-dignity";
-import InHomeCare from "@/pages/in-home-care";
-import Careers from "@/pages/careers";
-import Contact from "@/pages/contact";
-import Dining from "@/pages/dining";
-import BeautySalon from "@/pages/beauty-salon";
-import FitnessTherapy from "@/pages/fitness-therapy";
-import CourtyardsPatios from "@/pages/courtyards-patios";
-import Reviews from "@/pages/Reviews";
-import ProfessionalManagement from "@/pages/services/management";
-import LongTermCare from "@/pages/services/long-term-care";
-import Chaplaincy from "@/pages/services/chaplaincy";
-import NotFound from "@/pages/not-found";
-import DynamicLandingPage from "@/pages/DynamicLandingPage";
-import TourScheduled from "@/pages/tour-scheduled";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ScrollRestoration from "@/components/ScrollRestoration";
 import ScrollToTop from "@/components/ScrollToTop";
 import { ScheduleTourProvider } from "@/hooks/useScheduleTour";
 import ScheduleTourDialog from "@/components/ScheduleTourDialog";
+
+// Lazy load all page components for code splitting
+const Home = lazy(() => import("@/pages/home"));
+const Communities = lazy(() => import("@/pages/communities"));
+const CommunityDetail = lazy(() => import("@/pages/community-detail"));
+const Events = lazy(() => import("@/pages/events"));
+const Team = lazy(() => import("@/pages/team"));
+const TeamMember = lazy(() => import("@/pages/team-member"));
+const Blog = lazy(() => import("@/pages/blog"));
+const Admin = lazy(() => import("@/pages/admin"));
+const Login = lazy(() => import("@/pages/login"));
+const FAQs = lazy(() => import("@/pages/faqs"));
+const Privacy = lazy(() => import("@/pages/privacy"));
+const Terms = lazy(() => import("@/pages/terms"));
+const Accessibility = lazy(() => import("@/pages/accessibility"));
+const AboutUs = lazy(() => import("@/pages/about-us"));
+const Services = lazy(() => import("@/pages/services"));
+const StageCares = lazy(() => import("@/pages/stage-cares"));
+const CarePoints = lazy(() => import("@/pages/care-points"));
+const SafetyWithDignity = lazy(() => import("@/pages/safety-with-dignity"));
+const InHomeCare = lazy(() => import("@/pages/in-home-care"));
+const Careers = lazy(() => import("@/pages/careers"));
+const Contact = lazy(() => import("@/pages/contact"));
+const Dining = lazy(() => import("@/pages/dining"));
+const BeautySalon = lazy(() => import("@/pages/beauty-salon"));
+const FitnessTherapy = lazy(() => import("@/pages/fitness-therapy"));
+const CourtyardsPatios = lazy(() => import("@/pages/courtyards-patios"));
+const Reviews = lazy(() => import("@/pages/Reviews"));
+const ProfessionalManagement = lazy(() => import("@/pages/services/management"));
+const LongTermCare = lazy(() => import("@/pages/services/long-term-care"));
+const Chaplaincy = lazy(() => import("@/pages/services/chaplaincy"));
+const NotFound = lazy(() => import("@/pages/not-found"));
+const DynamicLandingPage = lazy(() => import("@/pages/DynamicLandingPage"));
+const TourScheduled = lazy(() => import("@/pages/tour-scheduled"));
 
 function Router() {
   // Check if we're on a community detail page
@@ -55,7 +58,12 @@ function Router() {
       {/* Don't show main header on community detail pages or in-home care page */}
       {!isCommunityDetail && !isInHomeCare && <Header />}
       <main className="flex-1">
-        <Switch>
+        <Suspense fallback={
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        }>
+          <Switch>
           <Route path="/" component={Home} />
           <Route path="/properties/">{() => <Redirect to="/communities/" />}</Route>
           <Route path="/properties">{() => <Redirect to="/communities/" />}</Route>
@@ -117,6 +125,7 @@ function Router() {
           {/* NotFound must be absolute last */}
           <Route component={NotFound} />
         </Switch>
+        </Suspense>
       </main>
       {/* Don't show main footer on in-home care page */}
       {!isInHomeCare && <Footer />}
