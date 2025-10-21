@@ -237,8 +237,8 @@ export default function NewsletterCard({ communityId }: NewsletterCardProps) {
               data-testid={`newsletter-download-${newsletter.slug}`}
             >
               <a 
-                href={attachment.fileUrl} 
-                download={attachment.fileName || 'newsletter.pdf'}
+                href={attachment.url} 
+                download={attachment.filename || 'newsletter.pdf'}
                 target="_blank"
                 rel="noopener noreferrer"
               >
