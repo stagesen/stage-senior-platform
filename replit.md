@@ -1,162 +1,62 @@
 # Stage Senior Community Platform
 
 ## Overview
-
-This is a comprehensive senior living community platform built for Stage Senior, a locally owned Colorado-based senior living management company founded in 2016. The application serves as the unified platform for showcasing Stage Senior's four flagship communities across Colorado. Stage Senior's mission is "Locally Owned, Resident-Focused," prioritizing dignity, comfort, and joy for residents through personalized care plans and exceptional team care.
-
-**Important Note**: This project focuses exclusively on the communities and their offerings. Marketing pages like About, Company Information, etc. are handled on the main Stage Senior Webflow marketing site. This platform is dedicated to community details, floor plans, care types, events, and resident services.
-
-## Stage Senior Communities
-
-### Four Flagship Communities:
-
-1. **The Gardens at Columbine** (Littleton, CO)
-   - AL + MC (~124 units)
-   - Known for expansive 2+ acre gardens, serene courtyards, thoughtful MC design
-   - Starting: ~$5,245/mo for AL
-
-2. **The Gardens on Quail** (Arvada, CO) 
-   - IL Plus + AL + MC continuum
-   - Upscale, custom-designed with bistro, theater, library, courtyards
-   - Starting: ~$4,695/mo for AL, ~$8,150+ for MC
-
-3. **Golden Pond** (Golden, CO)
-   - IL + AL + MC (~114 units)
-   - 20+ years locally owned
-   - Range: ~$3,855–$8,285/mo by unit & care level
-
-4. **Stonebridge Senior** (Arvada, CO)
-   - AL + MC (formerly Ralston Creek)
-   - "Your Story First" care philosophy with family story sessions
-   - Starting: ~$5,935/mo for AL
+This platform is a comprehensive senior living community application for Stage Senior, a Colorado-based company. It serves as a unified system to showcase their four flagship communities, focusing on community details, floor plans, care types, events, and resident services. The core mission is to provide a resident-focused experience, prioritizing dignity, comfort, and joy through personalized care. This application complements Stage Senior's main marketing site by focusing exclusively on community-specific content and resident engagement.
 
 ## User Preferences
-
 Preferred communication style: Simple, everyday language.
 
 ## System Architecture
 
 ### Frontend Architecture
-The client-side application is built with React 18 and TypeScript, utilizing modern development patterns:
-
-- **UI Framework**: React with functional components and hooks
-- **Routing**: Wouter for lightweight client-side routing
-- **State Management**: TanStack Query (React Query) for server state management and caching
-- **Styling**: Tailwind CSS with shadcn/ui component library for consistent design system
-- **Form Handling**: React Hook Form with Zod validation for type-safe form management
-- **Build Tool**: Vite for fast development and optimized production builds
-- **Team Page**: Comprehensive team directory organized by tags (Stage Management, Communities, Departments) with community-specific filtering when accessed from community pages
-- **Team Member Profiles**: Individual profile pages for each team member at /team/:slug with bio, contact info, and community associations
-- **Community Contact Cards**: Dynamic team member cards on community detail pages showing primary contact
-- **Team Carousel**: Dynamic carousel on About Us page showcasing leadership team with links to individual profiles
-- **Community-Filtered Team View**: When clicking "Meet the Team" from a community page, the team directory automatically filters to show only that community's staff members
-
-The frontend follows a component-based architecture with reusable UI components, page-level components, and custom hooks for shared logic. The application supports responsive design and includes accessibility features.
+The frontend is built with React 18 and TypeScript, using modern patterns. It leverages Wouter for routing, TanStack Query for state management, Tailwind CSS with shadcn/ui for styling, and React Hook Form with Zod for form handling. Vite is used for fast development and optimized builds. The architecture is component-based, supporting responsive design and accessibility, and includes features like a dynamic team directory with filtering, individual team member profiles, and dynamic contact cards.
 
 ### Backend Architecture
-The server-side is built with Express.js following RESTful API principles:
+The backend is an Express.js application built with Node.js and TypeScript, adhering to RESTful API principles. It incorporates middleware for logging, JSON parsing, and error handling. A service layer pattern is used for data operations, ensuring separation of concerns.
 
-- **Runtime**: Node.js with ES modules
-- **Framework**: Express.js with TypeScript for type safety
-- **API Design**: RESTful endpoints with proper HTTP status codes and error handling
-- **Middleware**: Custom logging, JSON parsing, and error handling middleware
-- **Development**: Hot reloading with Vite integration for seamless development experience
-
-The backend implements a service layer pattern with dedicated storage interfaces for data operations, ensuring separation of concerns and testability.
+### Performance Optimizations
+The platform implements route-based code splitting using `React.lazy()` and `Suspense` for all page components to reduce initial bundle size. Lightweight API endpoints are designed to eliminate over-fetching, providing minimal data for specific UI components (e.g., `/api/communities/minimal`, `/api/communities/cards`, `/api/communities/dropdown`). Server-side filtering is utilized for community listings to optimize data retrieval.
 
 ### Data Storage Solutions
-The application uses PostgreSQL as the primary database with modern ORM tooling:
-
-- **Database**: PostgreSQL with Neon serverless hosting
-- **ORM**: Drizzle ORM for type-safe database operations
-- **Schema Management**: Drizzle Kit for migrations and schema evolution
-- **Connection Pooling**: Neon serverless pools for efficient connection management
-- **Data Validation**: Zod schemas shared between client and server for consistent validation
-
-The database schema supports complex relationships between communities, posts, events, FAQs, galleries, and tour requests, with proper indexing and constraints.
+PostgreSQL is the primary database, hosted on Neon for serverless capabilities. Drizzle ORM is used for type-safe database interactions and schema management. Zod schemas are shared between client and server for consistent data validation. The database schema supports complex relationships across various content types like communities, posts, events, FAQs, and tour requests.
 
 ### Authentication and Authorization
-The current implementation appears to use session-based authentication:
-
-- **Session Management**: Connect-pg-simple for PostgreSQL session storage
-- **Security**: Credential-based requests with CORS support
-- **Authorization**: Role-based access control for admin functionality
+The system uses session-based authentication with `connect-pg-simple` for PostgreSQL session storage. Authorization is role-based, controlling access to admin functionalities.
 
 ### Content Management
-The platform includes a comprehensive admin interface for content management:
-
-- **Community Management**: CRUD operations for community information, amenities, and care types with integrated image uploads. Each community has a `rating` field (numeric, 0-5 scale) stored in the database that can be displayed when needed. The platform does not hardcode satisfaction percentages - any displayed ratings must be pulled from the community's actual rating field in the database
-  - **Active/Inactive Filtering**: Public-facing pages default to showing only active communities. Admin dashboard shows all communities (both active and inactive) for management. The GET /api/communities endpoint supports: `active='all'` (all communities), `active='true'` (active only), `active='false'` (inactive only), or no parameter (defaults to active only)
-  - **Cascade Delete**: All foreign key constraints properly configured with ON DELETE CASCADE to allow safe community deletion with all associated data (posts, events, FAQs, galleries, tour requests, floor plans, testimonials, etc.)
-- **Blog System**: Full blog management with categories, tags, featured content, hero image uploads, and team member author integration
-- **Team Member Management**: Complete team member profiles with avatar images, roles, departments, bio/blurb text area, social links, and blog post author connections
-- **Event Management**: Calendar-based event system with RSVP functionality and event image uploads
-- **FAQ System**: Categorized frequently asked questions with search capabilities and HTML answer support
-- **Gallery Management**: Image galleries with multi-image upload support (up to 20 images) and drag-and-drop functionality
-- **Tour Requests**: Lead management system for potential residents
-- **Page Heroes**: Dynamic hero sections with background image uploads for all major pages manageable through admin dashboard
-- **Floor Plans**: Complete floor plan management with image uploads, pricing, and availability tracking
-- **Testimonials**: Customer testimonials with community associations
-- **Community Highlights**: Dynamic highlight cards for each community with customizable titles, descriptions, and images, managed inline within community edit forms for better context and organization
-- **Experience the Difference Features**: Customizable feature sections for each community with eyebrow text, titles, descriptions, images, CTAs, and layout options, fully manageable through admin dashboard
-- **Homepage Sections**: Dynamic homepage content management system for editing homepage feature sections (e.g., "Safety with Dignity") with title, subtitle, body, CTA, image support, and visibility controls through admin dashboard
-- **Email Forwarding System**: Automated email notification system for tour request submissions with admin-configurable recipient management. Tour requests are automatically forwarded to all active recipients via Resend email service.
-- **Database Sync System**: Export/import functionality for syncing development database to production. Includes comprehensive data export of all content types and safe import with automatic ID regeneration to avoid conflicts.
-- **Dining Page**: Dedicated dining services page showcasing Restaurant-Style Dining and Private Family Dining Room amenities with weekly menu samples
-- **Beauty Salon & Barber Page**: Comprehensive beauty services page featuring salon services for women, barber services for men, and on-site convenience benefits
-- **Fitness & Therapy Center Page**: Comprehensive fitness and therapy services page featuring state-of-the-art fitness equipment, physical therapy, occupational therapy, and speech therapy services
-- **Courtyards & Patios Page**: Outdoor spaces and amenities page showcasing secure courtyards, walking paths, garden areas, covered patios, outdoor dining areas, and seasonal activities
-- **Smart Amenity Linking**: Amenities on community pages automatically link to their respective service pages with blue text and arrow indicators for seamless navigation:
-  - Dining amenities → /dining page
-  - Beauty/barber amenities → /beauty-salon page
-  - Fitness/therapy amenities → /fitness-therapy page
-  - Outdoor/garden/courtyard amenities → /courtyards-patios page
-- **Google Ads Landing Page System** (Phase 1): Template-based dynamic landing pages for marketing campaigns with UTM tracking capabilities
-  - **Landing Page Templates**: Pattern-based URL templates (e.g., /assisted-living/:city, /memory-care/:city) with token replacement for {city}, {careType}, {communityName}
-  - **UTM Parameter Tracking**: Automatic capture of UTM parameters (source, medium, campaign, term, content) from URL query strings
-  - **Attribution System**: UTM data stored in session and automatically attached to tour requests for campaign attribution
-  - **Dynamic Content**: Templates reuse existing components (PageHero, galleries, testimonials, team members, FAQs, floor plans) based on community associations
-  - **URL Normalization**: Pattern matching handles query parameters, trailing slashes, and URI encoding for reliable template resolution
-  - **Efficient Caching**: Frontend uses pathname-based query keys to prevent redundant fetches across different UTM parameters
-  - **Admin Management**: Full CRUD interface for managing landing page templates with SEO settings, content section toggles, and community associations
-  - **Pattern Resolution**: Backend endpoint (/api/landing-page-templates/resolve) matches incoming URLs to templates and extracts dynamic parameters
+A comprehensive admin interface provides CRUD operations for:
+- **Community Management**: Includes details, amenities, care types, image uploads, `rating` fields, and active/inactive status. Supports cascade deletion for associated data.
+- **Content Systems**: Blog, team member, event, FAQ, gallery, and testimonial management with image uploads and community associations.
+- **Dynamic Content**: Management for page heroes, floor plans, community highlights, "Experience the Difference" features, and homepage sections.
+- **Lead Management**: Tour request system with automated email forwarding via Resend.
+- **Data Utilities**: Database sync system for exporting/importing data.
+- **Specialized Pages**: Management for Dining, Beauty Salon & Barber, Fitness & Therapy Center, and Courtyards & Patios pages, with smart amenity linking.
+- **Google Ads Landing Page System**: Template-based dynamic landing pages with UTM tracking, content reuse, and an admin interface for template management.
 
 ### Image Management System
-The platform features a comprehensive image management system integrated with Replit's object storage:
-
-- **Database-Backed Storage**: All images stored in object storage with metadata tracked in PostgreSQL
-- **Upload Capabilities**: Drag-and-drop file uploads with progress tracking and preview
-- **Multi-Image Support**: Galleries support up to 20 images with reordering capabilities
-- **Reference Protection**: Images cannot be deleted while referenced by content
-- **Automatic Processing**: Dimension extraction and validation for all uploaded images
-- **Community Associations**: All content types can be associated with specific communities for better organization
-- **Image Resolution System**: Custom `useResolveImageUrl` hook that automatically handles both UUID image IDs and direct URLs, resolving IDs to actual URLs via API
-- **Community Image Fields**: Communities support multiple image types - hero, logo, contact card, and brochure card images, all manageable through admin
-- **Community Logo Display**: Logo images display in community detail pages (hero overlay and sticky nav) with proper fallback support for legacy logo fields
-- **Carousel Image Support**: Homepage carousel properly displays community hero images with automatic resolution of stored image IDs
+An integrated image management system stores images in object storage with metadata in PostgreSQL. It supports drag-and-drop uploads, multi-image galleries, and reference protection. Images are automatically processed for dimensions, and a custom `useResolveImageUrl` hook handles image ID resolution. Communities can have various image types (hero, logo, contact card, brochure card).
 
 ## External Dependencies
 
 ### Database Services
-- **Neon Database**: Serverless PostgreSQL hosting with connection pooling and automatic scaling
+- **Neon Database**: Serverless PostgreSQL hosting.
 
 ### UI Component Libraries
-- **Radix UI**: Headless UI components for accessibility and behavior
-- **shadcn/ui**: Pre-built component library built on Radix UI primitives
-- **Lucide React**: Icon library for consistent iconography
+- **Radix UI**: Headless UI components.
+- **shadcn/ui**: Component library built on Radix UI.
+- **Lucide React**: Icon library.
 
 ### Development Tools
-- **Replit**: Platform-specific plugins for development environment integration
-- **ESBuild**: Fast JavaScript bundler for production builds
-- **PostCSS**: CSS processing with Tailwind CSS integration
+- **Replit**: Platform-specific plugins.
+- **Vite**: Fast development server and bundler.
+- **ESBuild**: JavaScript bundler.
+- **PostCSS**: CSS processing with Tailwind CSS.
 
 ### Utility Libraries
-- **date-fns**: Date manipulation and formatting utilities
-- **clsx**: Conditional CSS class name utility
-- **class-variance-authority**: Type-safe variant API for component styling
-- **cmdk**: Command palette implementation for enhanced UX
+- **date-fns**: Date manipulation.
+- **clsx**: Conditional CSS class names.
+- **class-variance-authority**: Type-safe variant API.
+- **cmdk**: Command palette implementation.
 
-### Image Hosting
-- **Unsplash**: External image service for placeholder and hero images (configured as fallbacks)
-
-The architecture prioritizes type safety, developer experience, and scalability while maintaining a clean separation between concerns. The use of shared schemas between client and server ensures data consistency, while the modern toolchain provides fast development cycles and optimized production builds.
+### Email Service
+- **Resend**: For automated email notifications (e.g., tour requests).
