@@ -42,7 +42,8 @@ import {
   Download,
   ArrowRight,
   Trees,
-  User
+  User,
+  Navigation
 } from "lucide-react";
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
