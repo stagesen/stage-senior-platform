@@ -419,7 +419,7 @@ export class DatabaseStorage implements IStorage {
         name: communities.name,
         slug: communities.slug,
         city: communities.city,
-        imageId: communities.imageId,
+        imageId: communities.heroImageUrl,
       })
       .from(communities);
     
