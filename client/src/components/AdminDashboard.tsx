@@ -1565,6 +1565,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   const [isFeaturesDialogOpen, setIsFeaturesDialogOpen] = useState(false);
   const [editingFeature, setEditingFeature] = useState<CommunityFeature | null>(null);
   const [selectedPagePath, setSelectedPagePath] = useState<string | null>(null);
+  const [blogSearchQuery, setBlogSearchQuery] = useState("");
+  const [selectedBlogTags, setSelectedBlogTags] = useState<string[]>([]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -6979,8 +6981,211 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
 
     // Blog Posts table (using blog-posts API)
     if (type === "blog-posts") {
+      // Get all unique tags from blog posts
+      const allBlogTags = Array.from(
+        new Set(
+          (items as BlogPost[])
+            .filter(item => item.tags && Array.isArray(item.tags))
+            .flatMap(item => item.tags)
+        )
+      ).sort();
+
+      // Filter blog posts based on search query and selected tags
+      const filteredBlogPosts = (items as BlogPost[]).filter(item => {
+        // Search filter (search in title, author, category, and content)
+        const matchesSearch = blogSearchQuery === "" || 
+          item.title.toLowerCase().includes(blogSearchQuery.toLowerCase()) ||
+          (item.author && item.author.toLowerCase().includes(blogSearchQuery.toLowerCase())) ||
+          (item.category && item.category.toLowerCase().includes(blogSearchQuery.toLowerCase())) ||
+          (item.content && item.content.toLowerCase().includes(blogSearchQuery.toLowerCase()));
+
+        // Tag filter (show posts with ANY of the selected tags)
+        const matchesTags = selectedBlogTags.length === 0 || 
+          (item.tags && Array.isArray(item.tags) && item.tags.some(tag => selectedBlogTags.includes(tag)));
+
+        // Both filters must match (AND logic)
+        return matchesSearch && matchesTags;
+      });
+
       return (
-        <Table>
+        <div className="space-y-4">
+          {/* Filters and Actions */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex flex-col gap-2 md:flex-row md:items-center">
+                <div className="flex items-center gap-2">
+                  <Search className="w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by title, author, category, or content..."
+                    value={blogSearchQuery}
+                    onChange={(e) => setBlogSearchQuery(e.target.value)}
+                    className="w-80"
+                    data-testid="input-search-blog-posts"
+                  />
+                </div>
+                
+                {/* Tag Filter Dropdown */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-64 justify-between" data-testid="button-tag-filter">
+                      <span className="flex items-center gap-2">
+                        <Filter className="w-4 h-4" />
+                        {selectedBlogTags.length === 0 
+                          ? "Filter by tags" 
+                          : `${selectedBlogTags.length} tag${selectedBlogTags.length > 1 ? 's' : ''} selected`}
+                      </span>
+                      <ChevronDown className="w-4 h-4 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Search tags..." data-testid="input-search-tags" />
+                      <CommandEmpty>No tags found.</CommandEmpty>
+                      <CommandGroup className="max-h-64 overflow-auto">
+                        {PREDEFINED_BLOG_TAGS.map((tag) => {
+                          const isSelected = selectedBlogTags.includes(tag);
+                          const tagCount = (items as BlogPost[]).filter(item => 
+                            item.tags && Array.isArray(item.tags) && item.tags.includes(tag)
+                          ).length;
+                          
+                          return (
+                            <CommandItem
+                              key={tag}
+                              onSelect={() => {
+                                if (isSelected) {
+                                  setSelectedBlogTags(selectedBlogTags.filter(t => t !== tag));
+                                } else {
+                                  setSelectedBlogTags([...selectedBlogTags, tag]);
+                                }
+                              }}
+                              data-testid={`tag-option-${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                            >
+                              <div className="flex items-center gap-2 flex-1">
+                                <div className={cn(
+                                  "w-4 h-4 border rounded flex items-center justify-center",
+                                  isSelected && "bg-primary border-primary"
+                                )}>
+                                  {isSelected && <Check className="w-3 h-3 text-primary-foreground" />}
+                                </div>
+                                <span>{tag}</span>
+                              </div>
+                              <Badge variant="outline" className="ml-auto">
+                                {tagCount}
+                              </Badge>
+                            </CommandItem>
+                          );
+                        })}
+                        {allBlogTags.filter(tag => !PREDEFINED_BLOG_TAGS.includes(tag)).length > 0 && (
+                          <>
+                            <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                              Other Tags
+                            </div>
+                            {allBlogTags.filter(tag => !PREDEFINED_BLOG_TAGS.includes(tag)).map((tag) => {
+                              const isSelected = selectedBlogTags.includes(tag);
+                              const tagCount = (items as BlogPost[]).filter(item => 
+                                item.tags && Array.isArray(item.tags) && item.tags.includes(tag)
+                              ).length;
+                              
+                              return (
+                                <CommandItem
+                                  key={tag}
+                                  onSelect={() => {
+                                    if (isSelected) {
+                                      setSelectedBlogTags(selectedBlogTags.filter(t => t !== tag));
+                                    } else {
+                                      setSelectedBlogTags([...selectedBlogTags, tag]);
+                                    }
+                                  }}
+                                  data-testid={`tag-option-${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                                >
+                                  <div className="flex items-center gap-2 flex-1">
+                                    <div className={cn(
+                                      "w-4 h-4 border rounded flex items-center justify-center",
+                                      isSelected && "bg-primary border-primary"
+                                    )}>
+                                      {isSelected && <Check className="w-3 h-3 text-primary-foreground" />}
+                                    </div>
+                                    <span>{tag}</span>
+                                  </div>
+                                  <Badge variant="outline" className="ml-auto">
+                                    {tagCount}
+                                  </Badge>
+                                </CommandItem>
+                              );
+                            })}
+                          </>
+                        )}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              {/* Clear filters button */}
+              {(blogSearchQuery || selectedBlogTags.length > 0) && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    setBlogSearchQuery("");
+                    setSelectedBlogTags([]);
+                  }}
+                  data-testid="button-clear-filters"
+                >
+                  <X className="w-4 h-4 mr-1" />
+                  Clear Filters
+                </Button>
+              )}
+            </div>
+
+            {/* Active Filters Display */}
+            {(blogSearchQuery || selectedBlogTags.length > 0) && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm text-muted-foreground">Active filters:</span>
+                
+                {blogSearchQuery && (
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    Search: "{blogSearchQuery}"
+                    <button
+                      onClick={() => setBlogSearchQuery("")}
+                      className="hover:bg-secondary-foreground/20 rounded-full p-0.5"
+                      data-testid="button-clear-search"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                )}
+                
+                {selectedBlogTags.map((tag, index) => (
+                  <Badge 
+                    key={index} 
+                    variant={tag === "Newsletter" ? "destructive" : "secondary"}
+                    className="flex items-center gap-1"
+                  >
+                    Tag: {tag}
+                    <button
+                      onClick={() => setSelectedBlogTags(selectedBlogTags.filter(t => t !== tag))}
+                      className="hover:bg-secondary-foreground/20 rounded-full p-0.5"
+                      data-testid={`button-clear-tag-${index}`}
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            )}
+
+            {/* Results Count */}
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <span data-testid="text-filtered-count">
+                Showing {filteredBlogPosts.length} of {items.length} blog post{items.length !== 1 ? 's' : ''}
+                {(blogSearchQuery || selectedBlogTags.length > 0) && " (filtered)"}
+              </span>
+            </div>
+          </div>
+
+          {/* Table */}
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
@@ -6994,7 +7199,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items.map((item: BlogPost) => {
+            {filteredBlogPosts.map((item: BlogPost) => {
               const community = communities.find(c => c.id === item.communityId);
               return (
                 <TableRow key={item.id} data-testid={`blog-post-row-${item.id}`}>
@@ -7077,6 +7282,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
             })}
           </TableBody>
         </Table>
+        </div>
       );
     }
 
