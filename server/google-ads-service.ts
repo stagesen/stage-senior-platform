@@ -101,6 +101,11 @@ export interface ConversionActionResult {
   category: string;
   status: string;
   conversionActionLabel?: string;
+  value?: number;
+  attributionModel?: string;
+  countingType?: string;
+  clickThroughWindowDays?: number;
+  viewThroughWindowDays?: number;
 }
 
 class GoogleAdsService {
@@ -162,7 +167,12 @@ class GoogleAdsService {
           conversion_action.category,
           conversion_action.status,
           conversion_action.type,
-          conversion_action.tag_snippets
+          conversion_action.tag_snippets,
+          conversion_action.value_settings,
+          conversion_action.attribution_model_settings,
+          conversion_action.counting_type,
+          conversion_action.click_through_lookback_window_days,
+          conversion_action.view_through_lookback_window_days
         FROM conversion_action
         WHERE conversion_action.status != 'REMOVED'
         ORDER BY conversion_action.name
@@ -209,6 +219,14 @@ class GoogleAdsService {
           console.warn(`[Google Ads Service] No tag_snippets found for action "${action.name}" (ID: ${id})`);
         }
         
+        // Extract value from value_settings
+        const value = action.value_settings?.default_value 
+          ? parseFloat(action.value_settings.default_value) 
+          : undefined;
+        
+        // Extract attribution model from attribution_model_settings
+        const attributionModel = action.attribution_model_settings?.attribution_model || undefined;
+        
         return {
           resourceName: action.resource_name || '',
           id,
@@ -216,6 +234,11 @@ class GoogleAdsService {
           category: action.category || '',
           status: action.status || '',
           conversionActionLabel: conversionLabel,
+          value,
+          attributionModel,
+          countingType: action.counting_type || undefined,
+          clickThroughWindowDays: action.click_through_lookback_window_days || undefined,
+          viewThroughWindowDays: action.view_through_lookback_window_days || undefined,
         };
       });
 

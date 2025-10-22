@@ -1,6 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { db } from "./db";
 import { setupAuth } from "./auth";
 import { utmTrackingMiddleware } from "./utm-tracking";
 import { clickIdCaptureMiddleware } from "./click-id-middleware";
@@ -8,7 +9,9 @@ import { sendTourRequestNotification } from "./email";
 import { sendConversion } from "./conversion-service";
 import { validateConversionPayload, generateTransactionId, type ConversionPayload } from "./conversion-utils";
 import { tourRequestLimiter, verifyCaptcha, detectHoneypot, detectSpeedAnomaly, logSecurityEvent } from "./security-middleware";
+import { googleAdsService } from "./google-ads-service";
 import DOMPurify from "isomorphic-dompurify";
+import { eq, desc } from "drizzle-orm";
 import {
   uploadSingle,
   uploadMultiple,
@@ -43,6 +46,10 @@ import {
   insertHomepageConfigSchema,
   insertPageContentSectionSchema,
   insertLandingPageTemplateSchema,
+  insertGoogleAdsConversionActionSchema,
+  googleAdsConversionActions,
+  type SelectGoogleAdsConversionAction,
+  type InsertGoogleAdsConversionAction,
 } from "@shared/schema";
 
 // Middleware to protect admin routes - referenced by javascript_auth_all_persistance integration
@@ -135,6 +142,181 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({
         success: false,
         error: error.message || 'Failed to process conversion',
+      });
+    }
+  });
+
+  // Google Ads conversion actions management routes
+  
+  // GET /api/google-ads/conversions - List all conversion actions from database
+  app.get("/api/google-ads/conversions", async (req, res) => {
+    try {
+      const conversions = await db
+        .select()
+        .from(googleAdsConversionActions)
+        .orderBy(desc(googleAdsConversionActions.createdAt));
+      
+      res.json(conversions);
+    } catch (error: any) {
+      console.error('Error fetching Google Ads conversions:', error);
+      res.status(500).json({ 
+        message: 'Failed to fetch conversion actions',
+        error: error.message 
+      });
+    }
+  });
+
+  // POST /api/google-ads/conversions/sync - Sync conversion actions from Google Ads API
+  app.post("/api/google-ads/conversions/sync", async (req, res) => {
+    try {
+      // Fetch conversion actions from Google Ads API
+      const apiConversions = await googleAdsService.listConversionActions();
+      
+      let syncedCount = 0;
+      let updatedCount = 0;
+      
+      // Process each conversion from API
+      for (const apiConversion of apiConversions) {
+        // Check if conversion exists in database by resourceName
+        const existingConversion = await db
+          .select()
+          .from(googleAdsConversionActions)
+          .where(eq(googleAdsConversionActions.resourceName, apiConversion.resourceName))
+          .limit(1);
+        
+        if (existingConversion.length > 0) {
+          // Update existing conversion with all metadata fields
+          await db
+            .update(googleAdsConversionActions)
+            .set({
+              name: apiConversion.name,
+              category: apiConversion.category,
+              conversionActionId: apiConversion.id,
+              status: apiConversion.status,
+              conversionLabel: apiConversion.conversionActionLabel || existingConversion[0].conversionLabel,
+              value: apiConversion.value?.toString() || null,
+              attributionModel: apiConversion.attributionModel || null,
+              countingType: apiConversion.countingType || null,
+              clickThroughWindowDays: apiConversion.clickThroughWindowDays || null,
+              viewThroughWindowDays: apiConversion.viewThroughWindowDays || null,
+              syncedAt: new Date(),
+              updatedAt: new Date(),
+            })
+            .where(eq(googleAdsConversionActions.resourceName, apiConversion.resourceName));
+          
+          updatedCount++;
+        } else {
+          // Insert new conversion with all metadata fields
+          const insertData: InsertGoogleAdsConversionAction = {
+            resourceName: apiConversion.resourceName,
+            conversionActionId: apiConversion.id,
+            name: apiConversion.name,
+            conversionLabel: apiConversion.conversionActionLabel || null,
+            category: apiConversion.category,
+            status: apiConversion.status,
+            value: apiConversion.value?.toString() || null,
+            attributionModel: apiConversion.attributionModel || null,
+            countingType: apiConversion.countingType || null,
+            clickThroughWindowDays: apiConversion.clickThroughWindowDays || null,
+            viewThroughWindowDays: apiConversion.viewThroughWindowDays || null,
+            syncedAt: new Date(),
+          };
+          
+          await db.insert(googleAdsConversionActions).values(insertData);
+          syncedCount++;
+        }
+      }
+      
+      res.json({
+        success: true,
+        synced: syncedCount,
+        updated: updatedCount,
+        total: apiConversions.length,
+      });
+    } catch (error: any) {
+      console.error('Error syncing Google Ads conversions:', error);
+      res.status(500).json({ 
+        message: 'Failed to sync conversion actions',
+        error: error.message 
+      });
+    }
+  });
+
+  // POST /api/google-ads/conversions - Create a new conversion action
+  app.post("/api/google-ads/conversions", async (req, res) => {
+    try {
+      // Validate request body
+      const validationResult = insertGoogleAdsConversionActionSchema.safeParse(req.body);
+      
+      if (!validationResult.success) {
+        return res.status(400).json({
+          message: 'Validation failed',
+          errors: validationResult.error.errors,
+        });
+      }
+      
+      const { name, category, value, isPrimary, attributionModel } = req.body;
+      
+      // Create conversion action in Google Ads
+      const apiResult = await googleAdsService.createConversionAction({
+        name,
+        category: category || 'LEAD',
+        value: value ? parseFloat(value) : undefined,
+        attributionModel: attributionModel || 'DATA_DRIVEN',
+      });
+      
+      // Save to database with conversion label from API response
+      const insertData: InsertGoogleAdsConversionAction = {
+        resourceName: apiResult.resourceName,
+        conversionActionId: apiResult.id,
+        name: apiResult.name,
+        conversionLabel: apiResult.conversionActionLabel || null,
+        category: apiResult.category,
+        value: value || null,
+        status: apiResult.status,
+        isPrimary: isPrimary || false,
+        attributionModel: attributionModel || null,
+        syncedAt: new Date(),
+      };
+      
+      const [createdConversion] = await db
+        .insert(googleAdsConversionActions)
+        .values(insertData)
+        .returning();
+      
+      res.status(201).json(createdConversion);
+    } catch (error: any) {
+      console.error('Error creating Google Ads conversion:', error);
+      res.status(500).json({ 
+        message: 'Failed to create conversion action',
+        error: error.message 
+      });
+    }
+  });
+
+  // GET /api/google-ads/conversions/:id - Get single conversion by ID
+  app.get("/api/google-ads/conversions/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      const [conversion] = await db
+        .select()
+        .from(googleAdsConversionActions)
+        .where(eq(googleAdsConversionActions.id, id))
+        .limit(1);
+      
+      if (!conversion) {
+        return res.status(404).json({ 
+          message: 'Conversion action not found' 
+        });
+      }
+      
+      res.json(conversion);
+    } catch (error: any) {
+      console.error('Error fetching Google Ads conversion:', error);
+      res.status(500).json({ 
+        message: 'Failed to fetch conversion action',
+        error: error.message 
       });
     }
   });
