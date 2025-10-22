@@ -9,6 +9,10 @@ import TestimonialSection from "@/components/TestimonialSection";
 import CommunitySelectionModal from "@/components/CommunitySelectionModal";
 import { PageHero } from "@/components/PageHero";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
+import FadeIn from "@/components/animations/FadeIn";
+import ScaleIn from "@/components/animations/ScaleIn";
+import StaggerContainer from "@/components/animations/StaggerContainer";
+import StaggerItem from "@/components/animations/StaggerItem";
 import { 
   Carousel,
   CarouselContent,
@@ -196,14 +200,16 @@ export default function Home() {
         <div className="absolute inset-0 bg-primary/95 z-0" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Header */}
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Find your Colorado community
-            </h2>
-            <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
-              Find a community near you and explore all the benefits of vibrant independent living.
-            </p>
-          </div>
+          <FadeIn direction="up" delay={0.1}>
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold mb-4">
+                Find your Colorado community
+              </h2>
+              <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
+                Find a community near you and explore all the benefits of vibrant independent living.
+              </p>
+            </div>
+          </FadeIn>
           
           {/* Carousel */}
           {isLoading ? (
@@ -312,175 +318,185 @@ export default function Home() {
       {/* Featured Differentiators */}
       <section className="py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              {homepageConfig?.heading || "What Makes Stage Senior Different"}
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {homepageConfig?.subheading || "Three pillars that define our commitment to Colorado families"}
-            </p>
-          </div>
-          
-          <div className="space-y-24">
-            {/* Feature 1: Transparent Care Points - Left Aligned */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="order-2 lg:order-1">
-                <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
-                  {transparentSectionImageUrl && (
-                    <img
-                      src={transparentSectionImageUrl}
-                      alt="Senior resident reviewing care pricing with staff member"  
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  )}
-                  {!transparentSectionImageUrl && transparentSectionImageUrl !== null && (
-                    <img
-                      src={carePricingImage}
-                      alt="Senior resident reviewing care pricing with staff member"
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  )}
-                </div>
-              </div>
-              <div className="order-1 lg:order-2">
-                <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">
-                  {transparentSection?.subtitle || 'Featured'}
-                </Badge>
-                <h3 className="text-3xl font-bold mb-6">
-                  <CheckCircle className="inline w-8 h-8 text-primary mr-3" />
-                  {transparentSection?.title || 'Transparent Care-Based Pricing'}
-                </h3>
-                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                  {transparentSection?.body || 'No hidden fees. No surprises. Our published Care Points menu clearly shows what services cost and when they apply. Changes only happen when care needs truly change—with advance notice and family partnership every step of the way.'}
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button size="lg" asChild data-testid="button-care-points">
-                    <Link href={transparentSection?.ctaUrl || '/care-points'}>
-                      {transparentSection?.ctaLabel || 'See How Care Points Work'}
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Link>
-                  </Button>
-                </div>
-              </div>
+          <FadeIn direction="up" delay={0.1}>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                {homepageConfig?.heading || "What Makes Stage Senior Different"}
+              </h2>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                {homepageConfig?.subheading || "Three pillars that define our commitment to Colorado families"}
+              </p>
             </div>
-
-            {/* Feature 2: Locally Owned - Right Aligned */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">
-                  {locallyOwnedSection?.subtitle || 'Since 2016'}
-                </Badge>
-                <h3 className="text-3xl font-bold mb-6">
-                  <Award className="inline w-8 h-8 text-primary mr-3" />
-                  {locallyOwnedSection?.title || 'Locally Owned & Operated'}
-                </h3>
-                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                  {locallyOwnedSection?.body || 'Colorado born, Colorado proud. As a locally owned company, we make decisions right here—not in some corporate boardroom. Our leadership knows residents by name, and our teams stay for years, not months. That\'s the difference local ownership makes.'}
-                </p>
-                {locallyOwnedSection?.ctaLabel && locallyOwnedSection?.ctaUrl && (
-                  <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                    <Button size="lg" asChild data-testid="button-locally-owned">
-                      <Link href={locallyOwnedSection.ctaUrl}>
-                        {locallyOwnedSection.ctaLabel}
+          </FadeIn>
+          
+          <StaggerContainer staggerDelay={0.15} className="space-y-24">
+            {/* Feature 1: Transparent Care Points - Left Aligned */}
+            <StaggerItem direction="up">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div className="order-2 lg:order-1">
+                  <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
+                    {transparentSectionImageUrl && (
+                      <img
+                        src={transparentSectionImageUrl}
+                        alt="Senior resident reviewing care pricing with staff member"  
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )}
+                    {!transparentSectionImageUrl && transparentSectionImageUrl !== null && (
+                      <img
+                        src={carePricingImage}
+                        alt="Senior resident reviewing care pricing with staff member"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )}
+                  </div>
+                </div>
+                <div className="order-1 lg:order-2">
+                  <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">
+                    {transparentSection?.subtitle || 'Featured'}
+                  </Badge>
+                  <h3 className="text-3xl font-bold mb-6">
+                    <CheckCircle className="inline w-8 h-8 text-primary mr-3" />
+                    {transparentSection?.title || 'Transparent Care-Based Pricing'}
+                  </h3>
+                  <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                    {transparentSection?.body || 'No hidden fees. No surprises. Our published Care Points menu clearly shows what services cost and when they apply. Changes only happen when care needs truly change—with advance notice and family partnership every step of the way.'}
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Button size="lg" asChild data-testid="button-care-points">
+                      <Link href={transparentSection?.ctaUrl || '/care-points'}>
+                        {transparentSection?.ctaLabel || 'See How Care Points Work'}
                         <ArrowRight className="w-5 h-5 ml-2" />
                       </Link>
                     </Button>
                   </div>
-                )}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-muted-foreground">Decision-makers you can actually meet</span>
+                </div>
+              </div>
+            </StaggerItem>
+
+            {/* Feature 2: Locally Owned - Right Aligned */}
+            <StaggerItem direction="up">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                  <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">
+                    {locallyOwnedSection?.subtitle || 'Since 2016'}
+                  </Badge>
+                  <h3 className="text-3xl font-bold mb-6">
+                    <Award className="inline w-8 h-8 text-primary mr-3" />
+                    {locallyOwnedSection?.title || 'Locally Owned & Operated'}
+                  </h3>
+                  <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                    {locallyOwnedSection?.body || 'Colorado born, Colorado proud. As a locally owned company, we make decisions right here—not in some corporate boardroom. Our leadership knows residents by name, and our teams stay for years, not months. That\'s the difference local ownership makes.'}
+                  </p>
+                  {locallyOwnedSection?.ctaLabel && locallyOwnedSection?.ctaUrl && (
+                    <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                      <Button size="lg" asChild data-testid="button-locally-owned">
+                        <Link href={locallyOwnedSection.ctaUrl}>
+                          {locallyOwnedSection.ctaLabel}
+                          <ArrowRight className="w-5 h-5 ml-2" />
+                        </Link>
+                      </Button>
+                    </div>
+                  )}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                      <span className="text-muted-foreground">Decision-makers you can actually meet</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                      <span className="text-muted-foreground">Long-tenured staff who become like family</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                      <span className="text-muted-foreground">Community partnerships that run deep</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-muted-foreground">Long-tenured staff who become like family</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-muted-foreground">Community partnerships that run deep</span>
+                </div>
+                <div>
+                  <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
+                    {locallyOwnedSectionImageUrl && (
+                      <img
+                        src={locallyOwnedSectionImageUrl}
+                        alt="Local Colorado team and leadership"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )}
+                    {!locallyOwnedSectionImageUrl && locallyOwnedSectionImageUrl !== null && (
+                      <img
+                        src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1600&auto=format&fit=crop"
+                        alt="Local Colorado team and leadership"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )}
                   </div>
                 </div>
               </div>
-              <div>
-                <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
-                  {locallyOwnedSectionImageUrl && (
-                    <img
-                      src={locallyOwnedSectionImageUrl}
-                      alt="Local Colorado team and leadership"
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  )}
-                  {!locallyOwnedSectionImageUrl && locallyOwnedSectionImageUrl !== null && (
-                    <img
-                      src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1600&auto=format&fit=crop"
-                      alt="Local Colorado team and leadership"
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
+            </StaggerItem>
 
             {/* Feature 3: Safety with Dignity - Left Aligned */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="order-2 lg:order-1">
-                <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
-                  {safetySectionImageUrl && (
-                    <img
-                      src={safetySectionImageUrl}
-                      alt="Advanced safety technology"
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  )}
-                  {!safetySectionImageUrl && safetySectionImageUrl !== null && (
-                    <img
-                      src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1600&auto=format&fit=crop"
-                      alt="Advanced safety technology"
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  )}
+            <StaggerItem direction="up">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div className="order-2 lg:order-1">
+                  <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
+                    {safetySectionImageUrl && (
+                      <img
+                        src={safetySectionImageUrl}
+                        alt="Advanced safety technology"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )}
+                    {!safetySectionImageUrl && safetySectionImageUrl !== null && (
+                      <img
+                        src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1600&auto=format&fit=crop"
+                        alt="Advanced safety technology"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )}
+                  </div>
+                </div>
+                <div className="order-1 lg:order-2">
+                  <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">
+                    {safetySection?.subtitle || 'Innovation'}
+                  </Badge>
+                  <h3 className="text-3xl font-bold mb-6">
+                    <Shield className="inline w-8 h-8 text-primary mr-3" />
+                    {safetySection?.title || 'Safety with Dignity'}
+                  </h3>
+                  <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                    {safetySection?.body || 'Advanced fall detection that works like a guardian angel—always watching, never intrusive. Our smart technology provides rapid response while preserving independence and privacy. It\'s safety that respects dignity, not a system that feels like surveillance.'}
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Button size="lg" asChild data-testid="button-safety-dignity">
+                      <Link href={safetySection?.ctaUrl || '/safety-with-dignity'}>
+                        {safetySection?.ctaLabel || 'Explore Our Technology'}
+                        <ArrowRight className="w-5 h-5 ml-2" />
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
               </div>
-              <div className="order-1 lg:order-2">
-                <Badge className="bg-primary/10 text-primary border-primary/20 mb-4">
-                  {safetySection?.subtitle || 'Innovation'}
-                </Badge>
-                <h3 className="text-3xl font-bold mb-6">
-                  <Shield className="inline w-8 h-8 text-primary mr-3" />
-                  {safetySection?.title || 'Safety with Dignity'}
-                </h3>
-                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                  {safetySection?.body || 'Advanced fall detection that works like a guardian angel—always watching, never intrusive. Our smart technology provides rapid response while preserving independence and privacy. It\'s safety that respects dignity, not a system that feels like surveillance.'}
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button size="lg" asChild data-testid="button-safety-dignity">
-                    <Link href={safetySection?.ctaUrl || '/safety-with-dignity'}>
-                      {safetySection?.ctaLabel || 'Explore Our Technology'}
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
+            </StaggerItem>
+          </StaggerContainer>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <TestimonialSection />
+      <FadeIn direction="up" delay={0.2}>
+        <TestimonialSection />
+      </FadeIn>
 
       {/* Pricing Teaser */}
       <section id="pricing" className="py-16 bg-white">
@@ -529,86 +545,88 @@ export default function Home() {
       </section>
 
       {/* Lead Generation Panel - Blue Background for CTA Emphasis */}
-      <section id="lead" className="py-16 bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
-                Talk to a real local advisor today
-              </h2>
-              <p className="text-xl text-white/90 mb-6">
-                Get a callback today
-              </p>
-              <div className="flex flex-wrap gap-4 mb-8">
-                <Button 
-                  size="lg" 
-                  className="bg-[var(--deep-blue)] text-white hover:bg-gradient-to-r hover:from-[var(--deep-blue)] hover:to-[var(--bright-blue)]"
-                  asChild
-                  data-testid="button-call-now"
-                >
-                  <a href="tel:+1-970-444-4689">
-                    <Phone className="w-5 h-5 mr-2" />
-                    Call (970) 444‑4689
-                  </a>
-                </Button>
-                <Button 
-                  variant="glassmorphism"
-                  size="lg" 
-                  onClick={() => setShowContactForm(true)}
-                  data-testid="button-request-callback"
-                >
-                  Request Callback
-                </Button>
-              </div>
-              <ul className="space-y-3 text-white/90">
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-white" />
-                  Same‑day and next‑day tours available
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-white" />
-                  Transparent availability & pricing information
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-white" />
-                  Expert help comparing communities and care options
-                </li>
-              </ul>
-            </div>
-            
-{showContactForm ? (
-              <LeadCaptureForm
-                variant="inline"
-                title="Get Your Free Consultation"
-                description="Talk to a local senior living advisor about your needs and timeline"
-                urgencyText="✨ Most calls returned within 10 minutes"
-                onSuccess={handleFormSuccess}
-                className="max-w-lg"
-              />
-            ) : (
-              <Card className="bg-white">
-                <CardContent className="p-8 text-center">
-                  <Mail className="w-16 h-16 mx-auto mb-6 text-primary" />
-                  <h3 className="text-2xl font-bold mb-4">Get Expert Guidance</h3>
-                  <p className="text-muted-foreground mb-6">
-                    Our senior living advisors are standing by to help you find the perfect community for your loved one.
-                  </p>
+      <ScaleIn delay={0.2}>
+        <section id="lead" className="py-16 bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+                  Talk to a real local advisor today
+                </h2>
+                <p className="text-xl text-white/90 mb-6">
+                  Get a callback today
+                </p>
+                <div className="flex flex-wrap gap-4 mb-8">
                   <Button 
                     size="lg" 
-                    variant="default"
-                    onClick={() => setShowContactForm(true)}
-                    className="w-full"
-                    data-testid="button-show-contact-form"
+                    className="bg-[var(--deep-blue)] text-white hover:bg-gradient-to-r hover:from-[var(--deep-blue)] hover:to-[var(--bright-blue)]"
+                    asChild
+                    data-testid="button-call-now"
                   >
-                    Start Your Search
+                    <a href="tel:+1-970-444-4689">
+                      <Phone className="w-5 h-5 mr-2" />
+                      Call (970) 444‑4689
+                    </a>
                   </Button>
-                </CardContent>
-              </Card>
-            )}
+                  <Button 
+                    variant="glassmorphism"
+                    size="lg" 
+                    onClick={() => setShowContactForm(true)}
+                    data-testid="button-request-callback"
+                  >
+                    Request Callback
+                  </Button>
+                </div>
+                <ul className="space-y-3 text-white/90">
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-white" />
+                    Same‑day and next‑day tours available
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-white" />
+                    Transparent availability & pricing information
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-white" />
+                    Expert help comparing communities and care options
+                  </li>
+                </ul>
+              </div>
+              
+              {showContactForm ? (
+                <LeadCaptureForm
+                  variant="inline"
+                  title="Get Your Free Consultation"
+                  description="Talk to a local senior living advisor about your needs and timeline"
+                  urgencyText="✨ Most calls returned within 10 minutes"
+                  onSuccess={handleFormSuccess}
+                  className="max-w-lg"
+                />
+              ) : (
+                <Card className="bg-white">
+                  <CardContent className="p-8 text-center">
+                    <Mail className="w-16 h-16 mx-auto mb-6 text-primary" />
+                    <h3 className="text-2xl font-bold mb-4">Get Expert Guidance</h3>
+                    <p className="text-muted-foreground mb-6">
+                      Our senior living advisors are standing by to help you find the perfect community for your loved one.
+                    </p>
+                    <Button 
+                      size="lg" 
+                      variant="default"
+                      onClick={() => setShowContactForm(true)}
+                      className="w-full"
+                      data-testid="button-show-contact-form"
+                    >
+                      Start Your Search
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </ScaleIn>
       
       {/* Community Selection Modal */}
       <CommunitySelectionModal 
