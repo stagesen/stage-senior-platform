@@ -25,10 +25,7 @@ export const tourRequestLimiter = rateLimit({
       retryAfter: (req as any).rateLimit?.resetTime,
     });
   },
-  keyGenerator: (req: Request) => {
-    // Use IP as the key for rate limiting
-    return req.ip || req.connection.remoteAddress || 'unknown';
-  },
+  // Use default keyGenerator (handles IPv6 properly)
 });
 
 /**

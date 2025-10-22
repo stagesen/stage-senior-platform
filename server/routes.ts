@@ -8,6 +8,7 @@ import { sendTourRequestNotification } from "./email";
 import { sendConversion } from "./conversion-service";
 import { validateConversionPayload, generateTransactionId, type ConversionPayload } from "./conversion-utils";
 import { tourRequestLimiter, verifyCaptcha, detectHoneypot, detectSpeedAnomaly, logSecurityEvent } from "./security-middleware";
+import DOMPurify from "isomorphic-dompurify";
 import {
   uploadSingle,
   uploadMultiple,
@@ -50,6 +51,18 @@ function requireAuth(req: Request, res: Response, next: NextFunction) {
     return res.status(401).json({ message: "Authentication required" });
   }
   next();
+}
+
+// Helper function to sanitize HTML content for blog posts
+function sanitizeBlogContent(content: string): string {
+  return DOMPurify.sanitize(content, {
+    ALLOWED_TAGS: [
+      'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre',
+      'table', 'thead', 'tbody', 'tr', 'th', 'td', 'div', 'span'
+    ],
+    ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'id', 'target', 'rel']
+  });
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -621,13 +634,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/blog-posts", requireAuth, async (req, res) => {
     try {
       const validatedData = insertBlogPostSchema.parse(req.body);
+
+      // Sanitize HTML content to prevent XSS attacks
+      if (validatedData.content) {
+        validatedData.content = sanitizeBlogContent(validatedData.content);
+      }
+
       const post = await storage.createBlogPost(validatedData);
-      
+
       // If there's an attachmentId, link it to the post
       if (req.body.attachmentId) {
         await storage.updatePostAttachment(req.body.attachmentId, { postId: post.id });
       }
-      
+
       res.status(201).json(post);
     } catch (error) {
       console.error("Error creating blog post:", error);
@@ -638,8 +657,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/blog-posts/:id", requireAuth, async (req, res) => {
     try {
       const validatedData = insertBlogPostSchema.partial().parse(req.body);
+
+      // Sanitize HTML content to prevent XSS attacks
+      if (validatedData.content) {
+        validatedData.content = sanitizeBlogContent(validatedData.content);
+      }
+
       const post = await storage.updateBlogPost(req.params.id, validatedData);
-      
+
       // Handle attachment update
       if (req.body.attachmentId !== undefined) {
         // First, remove any existing attachment for this post
@@ -652,13 +677,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             await storage.deletePostAttachment(attachment.id);
           }
         }
-        
+
         // Link the new attachment if provided
         if (req.body.attachmentId) {
           await storage.updatePostAttachment(req.body.attachmentId, { postId: req.params.id });
         }
       }
-      
+
       res.json(post);
     } catch (error) {
       console.error("Error updating blog post:", error);
