@@ -45,6 +45,12 @@ const Chaplaincy = lazy(() => import("@/pages/services/chaplaincy"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 const DynamicLandingPage = lazy(() => import("@/pages/DynamicLandingPage"));
 const TourScheduled = lazy(() => import("@/pages/tour-scheduled"));
+const ForProfessionals = lazy(() => import("@/pages/ForProfessionals"));
+const WhyStageSenior = lazy(() => import("@/pages/WhyStageSenior"));
+const CompareCareLevels = lazy(() => import("@/pages/CompareCareLevels"));
+const FamilyStories = lazy(() => import("@/pages/FamilyStories"));
+const VirtualTours = lazy(() => import("@/pages/VirtualTours"));
+const PricingAvailability = lazy(() => import("@/pages/PricingAvailability"));
 
 function Router() {
   // Check if we're on a community detail page
@@ -96,6 +102,12 @@ function Router() {
           <Route path="/accessibility" component={Accessibility} />
           <Route path="/login" component={Login} />
           <Route path="/tour-scheduled" component={TourScheduled} />
+          <Route path="/for-professionals" component={ForProfessionals} />
+          <Route path="/why-stage-senior" component={WhyStageSenior} />
+          <Route path="/compare-care-levels" component={CompareCareLevels} />
+          <Route path="/family-stories-and-reviews" component={FamilyStories} />
+          <Route path="/virtual-tour-and-floorplans" component={VirtualTours} />
+          <Route path="/pricing-and-availability" component={PricingAvailability} />
           <Route path="/admin">
             <RequireAuth>
               <Admin />
