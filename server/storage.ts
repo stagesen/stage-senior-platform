@@ -53,6 +53,7 @@ import {
   type CareType,
   type InsertCareType,
   type Amenity,
+  type InsertAmenity,
   type User,
   type InsertUser,
   type Image,
@@ -682,7 +683,11 @@ export class DatabaseStorage implements IStorage {
   async createCommunity(community: InsertCommunity): Promise<Community> {
     const [created] = await db
       .insert(communities)
-      .values(community)
+      .values({
+        ...community,
+        amenities: community.amenities as string[] | undefined,
+        careTypes: community.careTypes as string[] | undefined,
+      })
       .returning();
     return created;
   }
@@ -690,7 +695,11 @@ export class DatabaseStorage implements IStorage {
   async updateCommunity(id: string, community: Partial<InsertCommunity>): Promise<Community> {
     const [updated] = await db
       .update(communities)
-      .set(community)
+      .set({
+        ...community,
+        amenities: community.amenities as string[] | null | undefined,
+        careTypes: community.careTypes as string[] | null | undefined,
+      })
       .where(eq(communities.id, id))
       .returning();
     return updated;
@@ -1053,7 +1062,11 @@ export class DatabaseStorage implements IStorage {
   async createBlogPost(post: InsertBlogPost): Promise<BlogPost> {
     const [created] = await db
       .insert(blogPosts)
-      .values(post)
+      .values({
+        ...post,
+        galleryImages: post.galleryImages as string[] | undefined,
+        tags: post.tags as string[] | undefined,
+      })
       .returning();
     return created;
   }
@@ -1061,7 +1074,11 @@ export class DatabaseStorage implements IStorage {
   async updateBlogPost(id: string, post: Partial<InsertBlogPost>): Promise<BlogPost> {
     const [updated] = await db
       .update(blogPosts)
-      .set(post)
+      .set({
+        ...post,
+        galleryImages: post.galleryImages as string[] | null | undefined,
+        tags: post.tags as string[] | null | undefined,
+      })
       .where(eq(blogPosts.id, id))
       .returning();
     return updated;
@@ -1226,7 +1243,10 @@ export class DatabaseStorage implements IStorage {
   async createGallery(gallery: InsertGallery): Promise<Gallery> {
     const [created] = await db
       .insert(galleries)
-      .values(gallery)
+      .values({
+        ...gallery,
+        images: gallery.images as Array<{url: string; alt: string; width?: number; height?: number; caption?: string}> | undefined,
+      })
       .returning();
     return created;
   }
@@ -1234,7 +1254,10 @@ export class DatabaseStorage implements IStorage {
   async updateGallery(id: string, gallery: Partial<InsertGallery>): Promise<Gallery> {
     const [updated] = await db
       .update(galleries)
-      .set(gallery)
+      .set({
+        ...gallery,
+        images: gallery.images as Array<{url: string; alt: string; width?: number; height?: number; caption?: string}> | null | undefined,
+      })
       .where(eq(galleries.id, id))
       .returning();
     return updated;
@@ -1328,7 +1351,10 @@ export class DatabaseStorage implements IStorage {
   async createFloorPlan(floorPlan: InsertFloorPlan): Promise<FloorPlan> {
     const [created] = await db
       .insert(floorPlans)
-      .values(floorPlan)
+      .values({
+        ...floorPlan,
+        images: floorPlan.images as string[] | undefined,
+      })
       .returning();
     return created;
   }
@@ -1336,7 +1362,10 @@ export class DatabaseStorage implements IStorage {
   async updateFloorPlan(id: string, floorPlan: Partial<InsertFloorPlan>): Promise<FloorPlan> {
     const [updated] = await db
       .update(floorPlans)
-      .set(floorPlan)
+      .set({
+        ...floorPlan,
+        images: floorPlan.images as string[] | null | undefined,
+      })
       .where(eq(floorPlans.id, id))
       .returning();
     return updated;
