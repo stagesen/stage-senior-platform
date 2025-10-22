@@ -17,6 +17,10 @@ import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import NotFound from "@/pages/not-found";
 import { generateSchemaOrgData } from "@/lib/schemaOrg";
 import { toTitleCase } from "@/lib/utils";
+import FadeIn from "@/components/animations/FadeIn";
+import ScaleHeader from "@/components/animations/ScaleHeader";
+import StaggerContainer from "@/components/animations/StaggerContainer";
+import StaggerItem from "@/components/animations/StaggerItem";
 import {
   Calendar,
   MapPin,
@@ -254,19 +258,19 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: Gallery[],
     <div className="space-y-8">
       {/* Gallery Cards Grid - Show first 4 galleries as cards */}
       {mainGalleries.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
           {mainGalleries.map((gallery) => {
             const images = gallery.images || [];
             const totalImages = images.length;
             const previewImages = images.slice(0, 4);
 
             return (
-              <Card 
-                key={gallery.id}
-                className="overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer group bg-gradient-to-br from-gray-50 to-white border-gray-200"
-                onClick={() => onGallerySelect(gallery)}
-                data-testid={`gallery-card-${gallery.id}`}
-              >
+              <StaggerItem key={gallery.id}>
+                <Card 
+                  className="overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer group bg-gradient-to-br from-gray-50 to-white border-gray-200"
+                  onClick={() => onGallerySelect(gallery)}
+                  data-testid={`gallery-card-${gallery.id}`}
+                >
                 {/* Gallery Preview Grid */}
                 <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
                   {previewImages.length > 0 && (
@@ -325,9 +329,10 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: Gallery[],
                   </div>
                 </CardContent>
               </Card>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
       )}
 
       {/* Gallery Category Cards - Additional galleries or categories */}
@@ -672,28 +677,34 @@ export default function DynamicLandingPage() {
   const StatsStrip = () => (
     <section className="py-12 md:py-16" data-testid="stats-strip">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
-          <Card className="text-center p-6 md:p-8 border-2 hover:border-primary/50 transition-colors">
-            <CardContent className="p-0">
-              <div className="text-4xl md:text-5xl font-bold text-primary mb-2">500+</div>
-              <p className="text-base md:text-lg text-muted-foreground">Families Trust Us</p>
-            </CardContent>
-          </Card>
-          <Card className="text-center p-6 md:p-8 border-2 hover:border-primary/50 transition-colors">
-            <CardContent className="p-0">
-              <div className="text-4xl md:text-5xl font-bold text-primary mb-2">20+</div>
-              <p className="text-base md:text-lg text-muted-foreground">Years of Excellence</p>
-            </CardContent>
-          </Card>
-          <Card className="text-center p-6 md:p-8 border-2 hover:border-primary/50 transition-colors">
-            <CardContent className="p-0">
-              <div className="text-4xl md:text-5xl font-bold text-primary mb-2 flex items-center justify-center gap-2">
-                4.8 <Star className="w-8 h-8 md:w-10 md:h-10 fill-primary text-primary" />
-              </div>
-              <p className="text-base md:text-lg text-muted-foreground">Average Rating</p>
-            </CardContent>
-          </Card>
-        </div>
+        <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
+          <StaggerItem>
+            <Card className="text-center p-6 md:p-8 border-2 hover:border-primary/50 transition-colors">
+              <CardContent className="p-0">
+                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">500+</div>
+                <p className="text-base md:text-lg text-muted-foreground">Families Trust Us</p>
+              </CardContent>
+            </Card>
+          </StaggerItem>
+          <StaggerItem>
+            <Card className="text-center p-6 md:p-8 border-2 hover:border-primary/50 transition-colors">
+              <CardContent className="p-0">
+                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">20+</div>
+                <p className="text-base md:text-lg text-muted-foreground">Years of Excellence</p>
+              </CardContent>
+            </Card>
+          </StaggerItem>
+          <StaggerItem>
+            <Card className="text-center p-6 md:p-8 border-2 hover:border-primary/50 transition-colors">
+              <CardContent className="p-0">
+                <div className="text-4xl md:text-5xl font-bold text-primary mb-2 flex items-center justify-center gap-2">
+                  4.8 <Star className="w-8 h-8 md:w-10 md:h-10 fill-primary text-primary" />
+                </div>
+                <p className="text-base md:text-lg text-muted-foreground">Average Rating</p>
+              </CardContent>
+            </Card>
+          </StaggerItem>
+        </StaggerContainer>
       </div>
     </section>
   );
@@ -919,7 +930,9 @@ export default function DynamicLandingPage() {
         <section className="py-12 md:py-16" data-testid="section-highlights">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">Experience the Difference</h2>
+              <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+                <h2 className="text-2xl md:text-3xl font-bold mb-4">Experience the Difference</h2>
+              </ScaleHeader>
               <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
                 Discover a community where every detail is designed for your comfort, enjoyment, and well-being.
               </p>
@@ -927,11 +940,16 @@ export default function DynamicLandingPage() {
 
             <div className="space-y-16 md:space-y-20">
               {communityHighlights.map((highlight, index) => (
-                <FeatureSection 
-                  key={highlight.id} 
-                  highlight={highlight}
-                  imageLeft={index % 2 === 1}
-                />
+                <FadeIn 
+                  key={highlight.id}
+                  direction={index % 2 === 0 ? "left" : "right"}
+                  delay={0.1}
+                >
+                  <FeatureSection 
+                    highlight={highlight}
+                    imageLeft={index % 2 === 1}
+                  />
+                </FadeIn>
               ))}
             </div>
           </div>
@@ -949,9 +967,11 @@ export default function DynamicLandingPage() {
                   {careTypeSlug ? `${getCareTypeName()} Floor Plans` : 'Floor Plans & Pricing'}
                 </span>
               </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
-                Choose Your Ideal Living Space
-              </h2>
+              <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                  Choose Your Ideal Living Space
+                </h2>
+              </ScaleHeader>
               <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
                 {careTypeSlug 
                   ? `Explore our ${getCareTypeName().toLowerCase()} floor plans with transparent pricing`
@@ -959,15 +979,16 @@ export default function DynamicLandingPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {floorPlans.map((plan) => (
-                <FloorPlanCard
-                  key={plan.id}
-                  plan={plan}
-                  onClick={() => setSelectedFloorPlan(plan)}
-                />
+                <StaggerItem key={plan.id}>
+                  <FloorPlanCard
+                    plan={plan}
+                    onClick={() => setSelectedFloorPlan(plan)}
+                  />
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </section>
       )}
@@ -981,9 +1002,11 @@ export default function DynamicLandingPage() {
                 <ImageIcon className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="text-sm md:text-base font-semibold">Photo Gallery</span>
               </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
-                See Our Beautiful Community
-              </h2>
+              <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                  See Our Beautiful Community
+                </h2>
+              </ScaleHeader>
               <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
                 Explore our vibrant community life, comfortable living spaces, and beautiful surroundings
               </p>
@@ -999,13 +1022,15 @@ export default function DynamicLandingPage() {
 
       {/* 7. Testimonials - Social proof from satisfied families */}
       {template.showTestimonials && testimonials.length > 0 && (
-        <section className="py-12 md:py-16" data-testid="section-testimonials">
-          <TestimonialSection 
-            communityId={primaryCommunity?.id}
-            communityName={primaryCommunity?.name}
-            communitySlug={primaryCommunity?.slug}
-          />
-        </section>
+        <FadeIn direction="up" delay={0.2}>
+          <section className="py-12 md:py-16" data-testid="section-testimonials">
+            <TestimonialSection 
+              communityId={primaryCommunity?.id}
+              communityName={primaryCommunity?.name}
+              communitySlug={primaryCommunity?.slug}
+            />
+          </section>
+        </FadeIn>
       )}
 
       {/* 8. Community Amenities - Comprehensive details */}
@@ -1017,35 +1042,38 @@ export default function DynamicLandingPage() {
                 <CheckCircle className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="text-sm md:text-base font-semibold">Amenities & Services</span>
               </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
-                Exceptional Care & Comfort
-              </h2>
+              <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                  Exceptional Care & Comfort
+                </h2>
+              </ScaleHeader>
               <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
                 Experience our comprehensive amenities designed for your wellbeing
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {communityAmenities.map((amenity) => (
-                <div
-                  key={amenity.id}
-                  className="flex items-start gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-shadow"
-                  data-testid={`amenity-item-${amenity.id}`}
-                >
-                  <div className="flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                <StaggerItem key={amenity.id}>
+                  <div
+                    className="flex items-start gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-shadow"
+                    data-testid={`amenity-item-${amenity.id}`}
+                  >
+                    <div className="flex-shrink-0">
+                      <CheckCircle className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-sm md:text-base mb-1">{amenity.name}</h3>
+                      {amenity.description && (
+                        <p className="text-xs md:text-sm text-muted-foreground">
+                          {amenity.description}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-sm md:text-base mb-1">{amenity.name}</h3>
-                    {amenity.description && (
-                      <p className="text-xs md:text-sm text-muted-foreground">
-                        {amenity.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </section>
       )}
@@ -1078,19 +1106,23 @@ export default function DynamicLandingPage() {
                 <Home className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="text-sm md:text-base font-semibold">Our Communities</span>
               </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
-                Find Your Perfect Home
-              </h2>
+              <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                  Find Your Perfect Home
+                </h2>
+              </ScaleHeader>
               <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
                 Explore our exceptional senior living communities across Colorado
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {targetCommunities.map((comm) => (
-                <CommunityCardLP key={comm.id} community={comm} />
+                <StaggerItem key={comm.id}>
+                  <CommunityCardLP community={comm} />
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </section>
       )}
@@ -1104,9 +1136,11 @@ export default function DynamicLandingPage() {
                 <MapPin className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="text-sm md:text-base font-semibold">Visit Us</span>
               </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
-                Find {primaryCommunity.name}
-              </h2>
+              <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                  Find {primaryCommunity.name}
+                </h2>
+              </ScaleHeader>
               <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
                 Conveniently located in {primaryCommunity.city}, {primaryCommunity.state}
               </p>
@@ -1236,9 +1270,11 @@ export default function DynamicLandingPage() {
                 <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="text-sm md:text-base font-semibold">FAQs</span>
               </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
-                Frequently Asked Questions
-              </h2>
+              <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                  Frequently Asked Questions
+                </h2>
+              </ScaleHeader>
               <p className="text-base md:text-lg text-muted-foreground">
                 Find answers to common questions about our community
               </p>
