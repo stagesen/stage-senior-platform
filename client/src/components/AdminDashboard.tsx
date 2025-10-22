@@ -1779,7 +1779,6 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       pagePath: "",
       title: "",
       subtitle: "",
-      description: "",
       backgroundImageUrl: "",
       ctaText: "",
       ctaLink: "",
@@ -4797,19 +4796,6 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   )}
                 />
               </div>
-              <FormField
-                control={pageHeroForm.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} value={field.value || ""} rows={3} data-testid="textarea-hero-description" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={pageHeroForm.control}
                 name="backgroundImageUrl"

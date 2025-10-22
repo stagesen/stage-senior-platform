@@ -822,7 +822,6 @@ export const pageHeroes = pgTable("page_heroes", {
   pagePath: varchar("page_path", { length: 255 }).notNull().unique(), // e.g., '/communities', '/care-points'
   title: varchar("title", { length: 255 }).notNull(),
   subtitle: text("subtitle"),
-  description: text("description"),
   backgroundImageUrl: text("background_image_url").notNull(), // Keep for backward compatibility
   imageId: varchar("image_id", { length: 255 }).references(() => images.id), // New image reference
   ctaText: varchar("cta_text", { length: 100 }),
