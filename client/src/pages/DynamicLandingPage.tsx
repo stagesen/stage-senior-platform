@@ -753,7 +753,7 @@ export default function DynamicLandingPage() {
     return (
       <section className={`py-12 md:py-16 ${bgColors[variant]}`} data-testid={`cta-section-${variant}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className={`text-2xl md:text-3xl lg:text-4xl font-bold mb-4 ${variant === "primary" ? "text-white" : "text-foreground"}`}>
+          <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-4 ${variant === "primary" ? "text-white" : "text-foreground"}`}>
             {heading}
           </h2>
           {subheading && (
@@ -931,7 +931,7 @@ export default function DynamicLandingPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 md:mb-16">
               <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                <h2 className="text-2xl md:text-3xl font-bold mb-4">Experience the Difference</h2>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Experience the Difference</h2>
               </ScaleHeader>
               <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
                 Discover a community where every detail is designed for your comfort, enjoyment, and well-being.
@@ -968,7 +968,7 @@ export default function DynamicLandingPage() {
                 </span>
               </div>
               <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 md:mb-4">
                   Choose Your Ideal Living Space
                 </h2>
               </ScaleHeader>
@@ -1003,7 +1003,7 @@ export default function DynamicLandingPage() {
                 <span className="text-sm md:text-base font-semibold">Photo Gallery</span>
               </div>
               <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 md:mb-4">
                   See Our Beautiful Community
                 </h2>
               </ScaleHeader>
@@ -1043,7 +1043,7 @@ export default function DynamicLandingPage() {
                 <span className="text-sm md:text-base font-semibold">Amenities & Services</span>
               </div>
               <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 md:mb-4">
                   Exceptional Care & Comfort
                 </h2>
               </ScaleHeader>
@@ -1107,7 +1107,7 @@ export default function DynamicLandingPage() {
                 <span className="text-sm md:text-base font-semibold">Our Communities</span>
               </div>
               <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 md:mb-4">
                   Find Your Perfect Home
                 </h2>
               </ScaleHeader>
@@ -1137,7 +1137,7 @@ export default function DynamicLandingPage() {
                 <span className="text-sm md:text-base font-semibold">Visit Us</span>
               </div>
               <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 md:mb-4">
                   Find {primaryCommunity.name}
                 </h2>
               </ScaleHeader>
@@ -1271,7 +1271,7 @@ export default function DynamicLandingPage() {
                 <span className="text-sm md:text-base font-semibold">FAQs</span>
               </div>
               <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 md:mb-4">
                   Frequently Asked Questions
                 </h2>
               </ScaleHeader>
@@ -1308,7 +1308,7 @@ export default function DynamicLandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
             <div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-6">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">
                 {template.heroCtaText || "Ready to Learn More?"}
               </h2>
               <p className="text-lg md:text-xl text-white/90 mb-6 md:mb-8">

@@ -12,8 +12,8 @@ interface ScaleHeaderProps {
 export default function ScaleHeader({
   children,
   className = "",
-  scaleFrom = 0.85,
-  scaleTo = 1,
+  scaleFrom = 0.75,
+  scaleTo = 1.05,
   duration = 0.5,
 }: ScaleHeaderProps) {
   const ref = useRef<HTMLDivElement>(null);

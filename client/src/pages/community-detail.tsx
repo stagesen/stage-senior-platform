@@ -1042,7 +1042,7 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
           />
         )}
 
-        <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
           Ready to Experience {community.name}?
         </h2>
         <p className="text-lg md:text-xl text-white/90 mb-12 max-w-3xl mx-auto">
@@ -1551,7 +1551,7 @@ export default function CommunityDetail() {
                     <Home className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-lg md:text-xl font-bold text-gray-900">{community.name}</h2>
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">{community.name}</h2>
                     <p className="text-xs text-gray-600 hidden md:block">{community.city}, {community.state}</p>
                   </div>
                 </div>
@@ -1645,9 +1645,6 @@ export default function CommunityDetail() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Overview Content */}
           <div className="md:col-span-2">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6" data-testid="overview-title">
-              Welcome to {community.name}
-            </h2>
             <div 
               className="text-lg text-gray-600 leading-relaxed mb-6 prose prose-lg max-w-none" 
               data-testid="community-description"
@@ -1727,7 +1724,7 @@ export default function CommunityDetail() {
             {highlights.length > 0 && (
               <section id="highlights" className="scroll-mt-24">
                 <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                  <h2 className="text-2xl md:text-3xl font-bold mb-8">Community Highlights</h2>
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Community Highlights</h2>
                 </ScaleHeader>
                 <StaggerContainer staggerDelay={0.15} className="flex flex-col gap-6">
                   {highlights.map((highlight, index) => (
@@ -1752,7 +1749,7 @@ export default function CommunityDetail() {
             {community.amenities && community.amenities.length > 0 && (
               <section id="amenities" className="scroll-mt-24">
                 <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                  <h2 className="text-2xl md:text-3xl font-bold mb-8">Amenities & Services</h2>
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Amenities & Services</h2>
                 </ScaleHeader>
                 <FadeIn direction="up" delay={0.1}>
                   <div className="bg-gray-50 rounded-2xl p-8">
@@ -2055,7 +2052,7 @@ export default function CommunityDetail() {
         {/* Experience the Difference - Feature Sections */}
         <section id="features" className="scroll-mt-24 space-y-20">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Experience the Difference</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Experience the Difference</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Discover a community where every detail is designed for your comfort, enjoyment, and well-being.
             </p>
@@ -2068,7 +2065,7 @@ export default function CommunityDetail() {
             {floorPlans.length > 0 && (
               <section id="floor-plans" className="scroll-mt-24">
                 <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                  <h2 className="text-2xl md:text-3xl font-bold mb-8">Floor Plans & Pricing</h2>
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Floor Plans & Pricing</h2>
                 </ScaleHeader>
                 <FadeIn direction="up" delay={0.1}>
                   <p className="text-lg text-gray-600 mb-8">
@@ -2089,7 +2086,7 @@ export default function CommunityDetail() {
 
             {/* Experience Our Community Section */}
             <section>
-              <h2 className="text-2xl md:text-3xl font-bold mb-8">Experience Our Community</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Experience Our Community</h2>
               {experienceImageUrl && (
                 <div className="rounded-2xl overflow-hidden shadow-2xl mb-12">
                   <img
@@ -2112,7 +2109,7 @@ export default function CommunityDetail() {
             {galleries.length > 0 && (
               <section id="gallery" className="scroll-mt-24">
                 <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                  <h2 className="text-2xl md:text-3xl font-bold mb-8">Photo Gallery</h2>
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Photo Gallery</h2>
                 </ScaleHeader>
                 <FadeIn direction="up" delay={0.1}>
                   <p className="text-lg text-gray-600 mb-8">
@@ -2135,7 +2132,7 @@ export default function CommunityDetail() {
             {events.length > 0 && (
               <section id="events" className="scroll-mt-24">
                 <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                  <h2 className="text-2xl md:text-3xl font-bold mb-8">Upcoming Events</h2>
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Upcoming Events</h2>
                 </ScaleHeader>
                 <StaggerContainer staggerDelay={0.12} className="space-y-6">
                   {events.slice(0, 4).map((event) => (
@@ -2164,7 +2161,7 @@ export default function CommunityDetail() {
             {testimonials.length > 0 && (
               <section id="testimonials" className="scroll-mt-24">
                 <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                  <h2 className="text-2xl md:text-3xl font-bold mb-8">What Residents & Families Say</h2>
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">What Residents & Families Say</h2>
                 </ScaleHeader>
                 <FadeIn direction="up" delay={0.1}>
                   <TestimonialsCarousel testimonials={testimonials} />
@@ -2177,7 +2174,7 @@ export default function CommunityDetail() {
               <section id="news" className="py-8 scroll-mt-24">
                 <div className="flex items-center justify-between mb-8">
                   <div>
-                    <h2 className="text-2xl md:text-3xl font-bold mb-2">Latest News & Activities</h2>
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">Latest News & Activities</h2>
                     <p className="text-lg text-gray-600">
                       Discover what's happening in our vibrant {community.name} community
                     </p>
@@ -2215,7 +2212,7 @@ export default function CommunityDetail() {
             {/* Resources Section - Regular Posts */}
             {posts.length > 0 && (
               <section className="py-8">
-                <h2 className="text-2xl md:text-3xl font-bold mb-8">Helpful Resources</h2>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Helpful Resources</h2>
                 <p className="text-lg text-gray-600 mb-8">
                   Educational articles about senior living, health tips, and care guidance.
                 </p>
@@ -2264,7 +2261,7 @@ export default function CommunityDetail() {
             {faqs.length > 0 && (
               <section id="faqs" className="scroll-mt-24">
                 <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                  <h2 className="text-2xl md:text-3xl font-bold mb-8">Frequently Asked Questions</h2>
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Frequently Asked Questions</h2>
                 </ScaleHeader>
                 <Accordion type="single" collapsible className="space-y-4">
                   {faqs.slice(0, 6).map((faq) => (
@@ -2294,7 +2291,7 @@ export default function CommunityDetail() {
             {/* Location & Neighborhood */}
             <section id="neighborhood" className="scroll-mt-24">
               <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                <h2 className="text-2xl md:text-3xl font-bold mb-8">Location & Neighborhood</h2>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Location & Neighborhood</h2>
               </ScaleHeader>
               <FadeIn direction="up" delay={0.1}>
                 <Card className="mb-6 overflow-hidden">
