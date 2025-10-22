@@ -260,7 +260,7 @@ export default function StageCares() {
             Contact Stage Cares Foundation to learn how you can be part of our charitable mission.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" asChild data-testid="button-email-foundation">
+            <Button size="lg" className="bg-white hover:bg-gray-100 text-blue-600 hover:text-blue-700 font-semibold" asChild data-testid="button-email-foundation">
               <a href="mailto:stagecares@stagesenior.com">
                 <Mail className="w-5 h-5 mr-2" />
                 Email Foundation

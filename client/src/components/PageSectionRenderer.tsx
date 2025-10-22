@@ -227,7 +227,7 @@ export default function PageSectionRenderer({ section }: PageSectionRendererProp
               <div className="mt-8 text-center">
                 <Button
                   size="lg"
-                  variant="secondary"
+                  className="bg-white hover:bg-gray-100 text-purple-600 hover:text-purple-700 font-semibold"
                   asChild
                   data-testid={`${section.sectionKey}-button`}
                 >
