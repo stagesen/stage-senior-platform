@@ -920,17 +920,17 @@ function HeroSectionEditor({ value, onChange }: { value: any; onChange: (v: any)
       <div>
         <ImageUploader
           label="Hero Background Image *"
-          value={value.imageUrl || ""}
-          onChange={(url) => onChange({ ...value, imageUrl: url || "" })}
+          value={value.imageId || ""}
+          onChange={(imageId) => onChange({ ...value, imageId: imageId || "" })}
           multiple={false}
         />
         <p className="text-xs text-muted-foreground mt-1">
-          Or enter an image URL directly:
+          Or enter an image URL directly (for external images):
         </p>
         <Input
           value={value.imageUrl || ""}
           onChange={(e) => onChange({ ...value, imageUrl: e.target.value })}
-          placeholder="https://images.unsplash.com/... or /attached_assets/..."
+          placeholder="https://images.unsplash.com/... (optional)"
           className="mt-1"
           data-testid="input-hero-image-url"
         />
