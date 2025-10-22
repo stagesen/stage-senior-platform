@@ -15,6 +15,7 @@ import GalleryModal from "@/components/GalleryModal";
 import CommunityMap from "@/components/CommunityMap";
 import FadeIn from "@/components/animations/FadeIn";
 import ScaleIn from "@/components/animations/ScaleIn";
+import ScaleHeader from "@/components/animations/ScaleHeader";
 import StaggerContainer from "@/components/animations/StaggerContainer";
 import StaggerItem from "@/components/animations/StaggerItem";
 import { 
@@ -1725,9 +1726,9 @@ export default function CommunityDetail() {
             {/* Features & Highlights */}
             {highlights.length > 0 && (
               <section id="highlights" className="scroll-mt-24">
-                <FadeIn direction="up">
+                <ScaleHeader scaleFrom={0.85} scaleTo={1}>
                   <h2 className="text-2xl md:text-3xl font-bold mb-8">Community Highlights</h2>
-                </FadeIn>
+                </ScaleHeader>
                 <StaggerContainer staggerDelay={0.15} className="flex flex-col gap-6">
                   {highlights.map((highlight, index) => (
                     <StaggerItem key={highlight.id} direction="up">
@@ -1750,9 +1751,9 @@ export default function CommunityDetail() {
             {/* Amenities Showcase */}
             {community.amenities && community.amenities.length > 0 && (
               <section id="amenities" className="scroll-mt-24">
-                <FadeIn direction="up">
+                <ScaleHeader scaleFrom={0.85} scaleTo={1}>
                   <h2 className="text-2xl md:text-3xl font-bold mb-8">Amenities & Services</h2>
-                </FadeIn>
+                </ScaleHeader>
                 <FadeIn direction="up" delay={0.1}>
                   <div className="bg-gray-50 rounded-2xl p-8">
                     <p className="text-lg text-gray-600 mb-8">
@@ -2066,8 +2067,10 @@ export default function CommunityDetail() {
             {/* Floor Plans Section */}
             {floorPlans.length > 0 && (
               <section id="floor-plans" className="scroll-mt-24">
-                <FadeIn direction="up">
+                <ScaleHeader scaleFrom={0.85} scaleTo={1}>
                   <h2 className="text-2xl md:text-3xl font-bold mb-8">Floor Plans & Pricing</h2>
+                </ScaleHeader>
+                <FadeIn direction="up" delay={0.1}>
                   <p className="text-lg text-gray-600 mb-8">
                     Each apartment home is designed for comfort and independence, with modern conveniences and thoughtful layouts.
                   </p>
@@ -2108,8 +2111,10 @@ export default function CommunityDetail() {
             {/* Photo Gallery */}
             {galleries.length > 0 && (
               <section id="gallery" className="scroll-mt-24">
-                <FadeIn direction="up">
+                <ScaleHeader scaleFrom={0.85} scaleTo={1}>
                   <h2 className="text-2xl md:text-3xl font-bold mb-8">Photo Gallery</h2>
+                </ScaleHeader>
+                <FadeIn direction="up" delay={0.1}>
                   <p className="text-lg text-gray-600 mb-8">
                     Explore our vibrant community life, comfortable living spaces, dedicated care team, and beautiful Colorado surroundings.
                   </p>
@@ -2129,9 +2134,9 @@ export default function CommunityDetail() {
             {/* Events & Activities - Full Width */}
             {events.length > 0 && (
               <section id="events" className="scroll-mt-24">
-                <FadeIn direction="up">
+                <ScaleHeader scaleFrom={0.85} scaleTo={1}>
                   <h2 className="text-2xl md:text-3xl font-bold mb-8">Upcoming Events</h2>
-                </FadeIn>
+                </ScaleHeader>
                 <StaggerContainer staggerDelay={0.12} className="space-y-6">
                   {events.slice(0, 4).map((event) => (
                     <StaggerItem key={event.id} direction="up">
@@ -2158,9 +2163,9 @@ export default function CommunityDetail() {
             {/* Testimonials */}
             {testimonials.length > 0 && (
               <section id="testimonials" className="scroll-mt-24">
-                <FadeIn direction="up">
+                <ScaleHeader scaleFrom={0.85} scaleTo={1}>
                   <h2 className="text-2xl md:text-3xl font-bold mb-8">What Residents & Families Say</h2>
-                </FadeIn>
+                </ScaleHeader>
                 <FadeIn direction="up" delay={0.1}>
                   <TestimonialsCarousel testimonials={testimonials} />
                 </FadeIn>
@@ -2258,9 +2263,9 @@ export default function CommunityDetail() {
             {/* FAQs */}
             {faqs.length > 0 && (
               <section id="faqs" className="scroll-mt-24">
-                <FadeIn direction="up">
+                <ScaleHeader scaleFrom={0.85} scaleTo={1}>
                   <h2 className="text-2xl md:text-3xl font-bold mb-8">Frequently Asked Questions</h2>
-                </FadeIn>
+                </ScaleHeader>
                 <Accordion type="single" collapsible className="space-y-4">
                   {faqs.slice(0, 6).map((faq) => (
                     <AccordionItem key={faq.id} value={faq.id} className="border rounded-lg px-6 bg-gray-50" data-testid={`faq-${faq.id}`}>
@@ -2288,9 +2293,9 @@ export default function CommunityDetail() {
 
             {/* Location & Neighborhood */}
             <section id="neighborhood" className="scroll-mt-24">
-              <FadeIn direction="up">
+              <ScaleHeader scaleFrom={0.85} scaleTo={1}>
                 <h2 className="text-2xl md:text-3xl font-bold mb-8">Location & Neighborhood</h2>
-              </FadeIn>
+              </ScaleHeader>
               <FadeIn direction="up" delay={0.1}>
                 <Card className="mb-6 overflow-hidden">
                 <CardContent className="p-0">

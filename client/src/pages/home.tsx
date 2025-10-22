@@ -11,6 +11,7 @@ import { PageHero } from "@/components/PageHero";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 import FadeIn from "@/components/animations/FadeIn";
 import ScaleIn from "@/components/animations/ScaleIn";
+import ScaleHeader from "@/components/animations/ScaleHeader";
 import StaggerContainer from "@/components/animations/StaggerContainer";
 import StaggerItem from "@/components/animations/StaggerItem";
 import { 
@@ -200,16 +201,18 @@ export default function Home() {
         <div className="absolute inset-0 bg-primary/95 z-0" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Header */}
-          <FadeIn direction="up" delay={0.1}>
-            <div className="text-center mb-12">
+          <div className="text-center mb-12">
+            <ScaleHeader scaleFrom={0.85} scaleTo={1}>
               <h2 className="text-2xl md:text-3xl font-bold mb-4">
                 Find your Colorado community
               </h2>
+            </ScaleHeader>
+            <FadeIn direction="up" delay={0.2}>
               <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
                 Find a community near you and explore all the benefits of vibrant independent living.
               </p>
-            </div>
-          </FadeIn>
+            </FadeIn>
+          </div>
           
           {/* Carousel */}
           {isLoading ? (
@@ -318,16 +321,18 @@ export default function Home() {
       {/* Featured Differentiators */}
       <section className="py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn direction="up" delay={0.1}>
-            <div className="text-center mb-16">
+          <div className="text-center mb-16">
+            <ScaleHeader scaleFrom={0.85} scaleTo={1}>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                 {homepageConfig?.heading || "What Makes Stage Senior Different"}
               </h2>
+            </ScaleHeader>
+            <FadeIn direction="up" delay={0.2}>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
                 {homepageConfig?.subheading || "Three pillars that define our commitment to Colorado families"}
               </p>
-            </div>
-          </FadeIn>
+            </FadeIn>
+          </div>
           
           <StaggerContainer staggerDelay={0.15} className="space-y-24">
             {/* Feature 1: Transparent Care Points - Left Aligned */}
