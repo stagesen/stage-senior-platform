@@ -1,0 +1,174 @@
+🧭 Roadmap — where you are in the process
+
+✅ Step 1: Installed GTM container
+✅ Step 2: Added Variables (done)
+👉 Step 3: Create Triggers for your custom events
+👉 Step 4: Create & configure Tags for Google Ads, GA4, and Meta
+➡️ Step 5: Add Conversion Linker & Consent Mode
+➡️ Step 6: Test in Preview mode
+➡️ Step 7: Publish & verify in Ads/Analytics dashboards
+
+🔹 Step 3 — Create Triggers (when tags fire)
+
+These correspond exactly to your custom event: names in the dataLayer.push() calls your site makes.
+
+Create one Custom Event Trigger per event
+
+In GTM:
+
+Go to Triggers → New → Trigger Configuration → Custom Event
+
+Event name = ScheduleTour
+
+Trigger fires on All Custom Events (or add conditions like Page URL contains /tour if you want).
+
+Name: TRG – EVT – ScheduleTour.
+
+Repeat for each event:
+
+TRG – EVT – GenerateLead
+
+TRG – EVT – PricingRequest
+
+TRG – EVT – RSVPEvent
+
+TRG – EVT – PhoneCallStart
+
+TRG – EVT – ChatStart
+
+✅ Tip: keep the names exactly the same as your pushed event: property — capitalization matters.
+
+🔹 Step 4 — Create Tags (who fires what)
+
+Now we tell GTM what to do when those triggers happen.
+
+(A) Google Ads Conversion Tags
+
+For each conversion action you created in Google Ads (Schedule Tour, Generate Lead, Pricing Request, RSVP Event):
+
+New Tag → Tag Type → Google Ads Conversion Tracking
+
+Conversion ID: {{CONST – Ads Conversion ID}}
+
+Conversion Label: the label from your Google Ads UI (or use {{LUT – Event to Ads Label}} if you set that up).
+
+Conversion Value: {{DLV – value}}
+
+Currency: {{DLV – currency}}
+
+Enhanced Conversions for Leads → ON → Manual Mapping
+
+Email → {{DLV – user.email}} (check “not hashed” so GTM hashes it)
+
+Phone → {{DLV – user.phone}}
+
+Trigger: TRG – EVT – ScheduleTour (or appropriate one)
+
+Name the tag → ADS – Conv – ScheduleTour.
+
+Repeat for each conversion type.
+
+Only Schedule Tour and Website Calls need to be marked Primary in Google Ads for bidding.
+The others stay Secondary (observation).
+
+(B) GA4 Event Tags (optional but highly recommended)
+
+These feed GA4 for analytics and remarketing.
+
+New Tag → GA4 Event
+
+Configuration Tag → your GA4 Config (Measurement ID).
+
+Event Name → ScheduleTour.
+
+Parameters →
+
+value = {{DLV – value}}
+
+currency = {{DLV – currency}}
+
+care_level = {{DLV – care_level}}
+
+metro = {{DLV – metro}}
+
+community_name = {{DLV – community_name}}
+
+Trigger → TRG – EVT – ScheduleTour.
+
+Name → GA4 – EVT – ScheduleTour.
+
+Repeat for each event.
+
+Later in GA4 → Admin → Events, mark the ones you care about (ScheduleTour, GenerateLead, PricingRequest, RSVPEvent) as Conversions.
+
+(C) Meta Pixel Tags
+1. Lead / Generate Lead
+
+Tag Type → Custom HTML
+
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','{{CONST – Pixel ID}}');
+fbq('track','Lead',
+  {value: {{DLV - value}}, currency: '{{DLV - currency}}'},
+  {eventID: '{{DLV - event_id}}'}
+);
+</script>
+
+
+Trigger → TRG – EVT – GenerateLead.
+
+2. CompleteRegistration / Schedule Tour
+
+Duplicate the tag, change:
+
+fbq('track','CompleteRegistration', {...});
+
+
+Trigger → TRG – EVT – ScheduleTour.
+
+Add optional tags for other events if you want (PricingRequest = Lead works fine).
+
+(D) Conversion Linker (one time)
+
+Tag Type → Conversion Linker
+
+Trigger → All Pages
+
+This stores the gclid/gbraid/wbraid cookies that link ad clicks to conversions.
+
+(E) Consent Mode v2 (one time)
+
+Tag Type → Custom HTML
+
+Add the consent default script (deny until CMP updates).
+
+Trigger → Consent Initialization – All Pages
+
+Must fire before every other tag.
+
+🔹 Step 5 — Test everything
+
+Preview Mode (Tag Assistant)
+
+Fill out a form or schedule a tour.
+
+You should see:
+
+The correct Custom Event in the left sidebar.
+
+Your Ads / GA4 / Meta tags firing under it.
+
+The variables showing correct values (email, value, etc.).
+
+Tag Assistant → Ads Diagnostics: confirm hits arriving.
+
+GA4 DebugView: event appears in near-real-time.
+
+Meta Test Events: see Lead and CompleteRegistration appear with event_id.
+
+Publish Container once verified.
