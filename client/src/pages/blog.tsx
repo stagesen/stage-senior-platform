@@ -42,6 +42,7 @@ export default function Blog() {
 
   // Resolve main image URL for current post
   const resolvedMainImage = useResolveImageUrl(currentPost?.mainImage);
+  const resolvedAuthorAvatar = useResolveImageUrl(currentPost?.authorDetails?.avatarImageId);
 
   // Get all unique tags
   const allTags = Array.from(
@@ -140,14 +141,21 @@ export default function Blog() {
               </h1>
               
               {currentPost.authorDetails && (
-                <div className="text-lg text-muted-foreground">
-                  By{" "}
+                <div className="flex items-center gap-3 text-lg text-muted-foreground">
+                  <span>By</span>
                   <Link 
                     href={`/team/${currentPost.authorDetails.slug}`}
-                    className="text-muted-foreground hover:text-primary transition-colors font-medium"
+                    className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-medium group"
                     data-testid="post-author-link"
                   >
-                    {currentPost.authorDetails.name}
+                    {resolvedAuthorAvatar && (
+                      <img 
+                        src={resolvedAuthorAvatar}
+                        alt={currentPost.authorDetails.name}
+                        className="w-10 h-10 rounded-full object-cover border-2 border-border group-hover:border-primary transition-colors"
+                      />
+                    )}
+                    <span>{currentPost.authorDetails.name}</span>
                   </Link>
                 </div>
               )}
@@ -167,10 +175,14 @@ export default function Blog() {
                   }
                 </div>
                 {community && (
-                  <div className="flex items-center" data-testid="post-community">
+                  <Link 
+                    href={`/communities/${community.slug}`}
+                    className="flex items-center hover:text-primary transition-colors"
+                    data-testid="post-community"
+                  >
                     <User className="w-4 h-4 mr-2" />
                     {community.name}
-                  </div>
+                  </Link>
                 )}
               </div>
             </div>
