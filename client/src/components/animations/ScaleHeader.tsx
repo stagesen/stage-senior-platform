@@ -29,19 +29,20 @@ export default function ScaleHeader({
   const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
 
   return (
-    <motion.div
-      ref={ref}
-      className={className}
-      style={{
-        scale,
-        opacity,
-      }}
-      transition={{
-        duration,
-        ease: "easeOut",
-      }}
-    >
-      {children}
-    </motion.div>
+    <div ref={ref} className="relative">
+      <motion.div
+        className={className}
+        style={{
+          scale,
+          opacity,
+        }}
+        transition={{
+          duration,
+          ease: "easeOut",
+        }}
+      >
+        {children}
+      </motion.div>
+    </div>
   );
 }
