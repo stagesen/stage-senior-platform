@@ -459,6 +459,27 @@ export const floorPlanImages = pgTable("floor_plan_images", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Google Ads conversion actions table for tracking conversion configurations
+export const googleAdsConversionActions = pgTable("google_ads_conversion_actions", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  resourceName: text("resource_name"), // Full Google Ads resource name (e.g., "customers/123/conversionActions/456")
+  conversionActionId: text("conversion_action_id"), // Numeric ID extracted from resource name
+  name: varchar("name", { length: 255 }), // Display name (e.g., "Schedule Tour")
+  conversionLabel: text("conversion_label"), // GTM label extracted from tag snippets (CRITICAL field)
+  category: varchar("category", { length: 50 }), // Conversion category (e.g., "LEAD")
+  value: decimal("value", { precision: 10, scale: 2 }), // Conversion value (e.g., 250.00)
+  currency: varchar("currency", { length: 3 }).default("USD"), // Currency code
+  countingType: varchar("counting_type", { length: 50 }), // e.g., "ONE_PER_CLICK"
+  status: varchar("status", { length: 50 }), // e.g., "ENABLED", "PAUSED", "REMOVED"
+  isPrimary: boolean("is_primary").default(false), // Whether this is a primary conversion for bidding
+  attributionModel: varchar("attribution_model", { length: 50 }), // e.g., "DATA_DRIVEN", "LAST_CLICK"
+  clickThroughWindowDays: integer("click_through_window_days").default(90), // Click-through conversion window
+  viewThroughWindowDays: integer("view_through_window_days").default(30), // View-through conversion window
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  syncedAt: timestamp("synced_at"), // Last time synced from Google Ads API
+});
+
 // Relations
 export const careTypesRelations = relations(careTypes, ({ many }) => ({
   communities: many(communitiesCareTypes),
@@ -818,6 +839,12 @@ export const insertUserSchema = createInsertSchema(users).omit({
   email: z.string().email("Please enter a valid email address").optional().or(z.literal("")),
 });
 
+export const insertGoogleAdsConversionActionSchema = createInsertSchema(googleAdsConversionActions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Page heroes table for managing hero sections across pages
 export const pageHeroes = pgTable("page_heroes", {
   id: varchar("id", { length: 255 }).primaryKey().default(sql`gen_random_uuid()`),
@@ -958,6 +985,8 @@ export type Image = typeof images.$inferSelect;
 export type InsertImage = z.infer<typeof insertImageSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
+export type SelectGoogleAdsConversionAction = typeof googleAdsConversionActions.$inferSelect;
+export type InsertGoogleAdsConversionAction = z.infer<typeof insertGoogleAdsConversionActionSchema>;
 export type PageHero = typeof pageHeroes.$inferSelect;
 export type InsertPageHero = z.infer<typeof insertPageHeroSchema>;
 export type HomepageSection = typeof homepageSections.$inferSelect;
