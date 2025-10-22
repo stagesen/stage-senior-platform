@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -50,7 +51,9 @@ import {
   ArrowRight,
   Trees,
   User,
-  Navigation
+  Navigation,
+  Video,
+  Play
 } from "lucide-react";
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -1087,6 +1090,26 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
   );
 };
 
+// Helper function to extract YouTube video ID from various URL formats
+const extractYouTubeVideoId = (url: string): string | null => {
+  if (!url) return null;
+  
+  // Handle different YouTube URL formats
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+    /^([a-zA-Z0-9_-]{11})$/ // Direct video ID
+  ];
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+  
+  return null;
+};
+
 export default function CommunityDetail() {
   const { openScheduleTour } = useScheduleTour();
   const params = useParams();
@@ -1096,6 +1119,7 @@ export default function CommunityDetail() {
   const [selectedGallery, setSelectedGallery] = useState<any>(null);
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>("overview");
   const [showNav, setShowNav] = useState(false);
   const [showAllAmenities, setShowAllAmenities] = useState(false);
@@ -2100,9 +2124,23 @@ export default function CommunityDetail() {
             {/* Photo Gallery */}
             {galleries.length > 0 && (
               <section id="gallery" className="scroll-mt-24">
-                <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Photo Gallery</h2>
-                </ScaleHeader>
+                <div className="flex items-center justify-between mb-8">
+                  <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">Photo Gallery</h2>
+                  </ScaleHeader>
+                  {community.videoUrl && (
+                    <Button
+                      size="lg"
+                      variant="default"
+                      onClick={() => setIsVideoModalOpen(true)}
+                      className="gap-2"
+                      data-testid="button-watch-video"
+                    >
+                      <Video className="w-5 h-5" />
+                      Watch Video
+                    </Button>
+                  )}
+                </div>
                 <FadeIn direction="up" delay={0.1}>
                   <p className="text-lg text-gray-600 mb-8">
                     Explore our vibrant community life, comfortable living spaces, dedicated care team, and beautiful Colorado surroundings.
@@ -2374,6 +2412,28 @@ export default function CommunityDetail() {
         isOpen={!!selectedEvent}
         onClose={() => setSelectedEvent(null)}
       />
+
+      {/* Video Modal */}
+      {community?.videoUrl && (
+        <Dialog open={isVideoModalOpen} onOpenChange={setIsVideoModalOpen}>
+          <DialogContent className="max-w-4xl" data-testid="dialog-video">
+            <DialogHeader>
+              <DialogTitle>Community Video - {community.name}</DialogTitle>
+            </DialogHeader>
+            <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+              <iframe
+                src={`https://www.youtube.com/embed/${extractYouTubeVideoId(community.videoUrl)}`}
+                title={`${community.name} Video`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="absolute top-0 left-0 w-full h-full rounded-lg"
+                style={{ border: 0 }}
+                data-testid="iframe-youtube-video"
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Scroll to Top Button */}
       <ScrollToTop />

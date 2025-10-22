@@ -1647,6 +1647,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       phone: "", // Backward compatibility
       email: "",
       talkFurtherId: "",
+      videoUrl: "",
       heroImageUrl: "",
       logoImageId: "",
       contactImageId: "",
@@ -2634,6 +2635,22 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     </FormControl>
                     <FormDescription>
                       Optional: Add a TalkFurther widget ID to enable the scheduling widget for this community.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
+                name="videoUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>YouTube Video URL</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value || ""} placeholder="https://www.youtube.com/watch?v=..." data-testid="input-community-video-url" />
+                    </FormControl>
+                    <FormDescription>
+                      Optional: Add a YouTube video URL to display a "Watch Video" button on the community page.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
