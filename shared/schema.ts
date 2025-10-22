@@ -530,6 +530,10 @@ export const blogPostsRelations = relations(blogPosts, ({ one }) => ({
     fields: [blogPosts.communityId],
     references: [communities.id],
   }),
+  author: one(teamMembers, {
+    fields: [blogPosts.authorId],
+    references: [teamMembers.id],
+  }),
 }));
 
 export const eventsRelations = relations(events, ({ one }) => ({
@@ -883,7 +887,17 @@ export type Post = typeof posts.$inferSelect;
 export type InsertPost = z.infer<typeof insertPostSchema>;
 export type PostAttachment = typeof postAttachments.$inferSelect;
 export type InsertPostAttachment = z.infer<typeof insertPostAttachmentSchema>;
-export type BlogPost = typeof blogPosts.$inferSelect;
+export type BlogPost = typeof blogPosts.$inferSelect & {
+  authorDetails?: {
+    id: string;
+    name: string;
+    slug: string;
+    role: string;
+    department: string | null;
+    avatarImageId: string | null;
+    email: string | null;
+  };
+};
 export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
 export type Event = typeof events.$inferSelect;
 export type InsertEvent = z.infer<typeof insertEventSchema>;

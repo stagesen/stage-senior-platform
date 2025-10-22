@@ -139,6 +139,19 @@ export default function Blog() {
                 {currentPost.title}
               </h1>
               
+              {currentPost.authorDetails && (
+                <div className="text-lg text-muted-foreground">
+                  By{" "}
+                  <Link 
+                    href={`/team/${currentPost.authorDetails.slug}`}
+                    className="text-muted-foreground hover:text-primary transition-colors font-medium"
+                    data-testid="post-author-link"
+                  >
+                    {currentPost.authorDetails.name}
+                  </Link>
+                </div>
+              )}
+              
               {currentPost.summary && (
                 <p className="text-xl text-muted-foreground" data-testid="post-summary">
                   {currentPost.summary}
