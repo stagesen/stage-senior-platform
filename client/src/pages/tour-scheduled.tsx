@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CheckCircle, Phone, Mail, MapPin, ArrowRight, Home } from 'lucide-react';
-import { fireLead, getMetaCookies, getClickIdsFromUrl } from '@/lib/tracking';
+import { fireScheduleTour, getMetaCookies, getClickIdsFromUrl, generateEventId } from '@/lib/tracking';
 import { apiRequest } from '@/lib/queryClient';
 import { useResolveImageUrl } from '@/hooks/useResolveImageUrl';
 import type { Community } from '@shared/schema';
@@ -85,23 +85,23 @@ export default function TourScheduled() {
   // Resolve hero image URL
   const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
   
-  // Mutation to send Tier 2 conversion to server
-  const tier2Mutation = useMutation({
+  // Mutation to send conversion to server
+  const conversionMutation = useMutation({
     mutationFn: async (payload: any) => {
       return apiRequest('POST', '/api/conversions', payload);
     },
     onSuccess: () => {
-      console.log('[Tier 2] Server-side conversion sent successfully');
+      console.log('[Success Page] Server-side conversion sent successfully');
     },
     onError: (error) => {
-      console.error('[Tier 2] Failed to send server-side conversion:', error);
+      console.error('[Success Page] Failed to send server-side conversion:', error);
     },
   });
   
-  // Fire Tier 2 conversion (booking_confirmed) once on page load
-  // Wait for community data to load if communitySlug is provided, OR fire immediately if no community slug
+  // Fire ScheduleTour conversion once on page load
+  // Handles both native form (with transactionId) and TalkFurther (may not have transactionId) redirects
   useEffect(() => {
-    if (!tier2Fired && transactionId) {
+    if (!tier2Fired) {
       // If we have a community slug but community is still loading, wait
       if (communitySlug && isCommunityLoading) {
         return;
@@ -110,14 +110,17 @@ export default function TourScheduled() {
       const metaCookies = getMetaCookies();
       const clickIds = getClickIdsFromUrl();
       
-      // Fire server-side Tier 2 conversion
+      // Use transactionId from URL if available (native form), otherwise generate one (TalkFurther)
+      const eventId = transactionId || generateEventId();
+      
+      // Fire server-side conversion
       const conversionPayload = {
-        transactionId,
-        leadType: 'booking_confirmed',
-        value: 100, // Tier 2 value
+        transactionId: eventId,
+        leadType: 'schedule_tour', // Changed from booking_confirmed to match form submission
+        value: 250, // Changed from $100 to match ScheduleTour event value
         currency: 'USD',
         communityId: community?.id,
-        communityName: community?.name || communitySlug || undefined, // Use slug as fallback
+        communityName: community?.name || communitySlug || undefined,
         gclid: clickIds.gclid,
         gbraid: clickIds.gbraid,
         wbraid: clickIds.wbraid,
@@ -129,36 +132,27 @@ export default function TourScheduled() {
       };
       
       // Send to server
-      tier2Mutation.mutate(conversionPayload);
+      conversionMutation.mutate(conversionPayload);
       
-      // Also fire browser-side dataLayer event as backup
-      fireLead({
-        event: 'booking_confirmed',
-        transactionId,
-        leadType: 'booking_confirmed',
-        leadValue: 100,
-        community: community ? {
-          id: community.id,
-          name: community.name,
-          slug: community.slug,
-        } : (communitySlug ? { slug: communitySlug } : undefined), // Use slug as fallback
-        careType: undefined,
-        pageType: 'tour_scheduled',
-        identifiers: {
-          fbp: metaCookies.fbp,
-          fbc: metaCookies.fbc,
-        },
+      // Fire browser-side ScheduleTour event for deduplication with form submission
+      // If this came from native form, same event_id ensures deduplication
+      // If this came from TalkFurther, new event_id tracks the conversion
+      fireScheduleTour({
+        event_id: eventId,
+        email: undefined, // We don't have PII on success page (privacy)
+        phone: undefined,
+        care_level: undefined,
+        metro: undefined,
+        community_name: community?.name || communitySlug || undefined,
+        landing_page: window.location.pathname,
       });
       
       setTier2Fired(true);
     }
-  }, [transactionId, community, communitySlug, isCommunityLoading, tier2Fired, tier2Mutation]);
+  }, [community, communitySlug, isCommunityLoading, tier2Fired, conversionMutation, transactionId]);
   
-  // Redirect to home if no transaction ID
-  if (!transactionId) {
-    navigate('/');
-    return null;
-  }
+  // Allow success page to show even without transactionId (for TalkFurther redirects)
+  // Conversion tracking will still fire with a generated event_id
   
   // Get up to 6 gallery images for preview
   const galleryImages = galleries.flatMap(g => g.images || []).slice(0, 6);
