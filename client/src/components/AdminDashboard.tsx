@@ -7995,8 +7995,81 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
 
     // Landing page templates table
     if (type === "landing-pages") {
+      // Generate target URLs for testing
+      const careLevels = ['assisted-living', 'memory-care', 'independent-living'];
+      const cities = ['littleton', 'arvada', 'golden', 'englewood', 'lakewood', 'wheat-ridge', 'denver', 'highlands-ranch', 'aurora', 'westminster', 'centennial', 'broomfield', 'lone-tree', 'greenwood-village'];
+      
+      const targetUrls: { pattern: string; urls: string[] }[] = [];
+      
+      // Find unique URL patterns in templates
+      const patterns = [...new Set(items.map((item: LandingPageTemplate) => item.urlPattern))];
+      
+      patterns.forEach(pattern => {
+        if (pattern === '/:careLevel/:city') {
+          const urls = careLevels.flatMap(careLevel =>
+            cities.map(city => `/${careLevel}/${city}`)
+          );
+          targetUrls.push({ pattern, urls });
+        } else if (pattern === '/cost/:careLevel/:city') {
+          const urls = careLevels.flatMap(careLevel =>
+            cities.map(city => `/cost/${careLevel}/${city}`)
+          );
+          targetUrls.push({ pattern, urls });
+        } else {
+          // For other patterns, just show the pattern itself
+          targetUrls.push({ pattern, urls: [pattern] });
+        }
+      });
+
       return (
-        <Table>
+        <div className="space-y-4">
+          {/* URL Preview Section */}
+          <Collapsible>
+            <Card>
+              <CardHeader>
+                <CollapsibleTrigger className="w-full" data-testid="toggle-url-preview">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Eye className="w-5 h-5" />
+                      <CardTitle>Target URLs for Testing</CardTitle>
+                      <Badge variant="secondary">{targetUrls.reduce((sum, group) => sum + group.urls.length, 0)} URLs</Badge>
+                    </div>
+                    <ChevronDown className="w-4 h-4" />
+                  </div>
+                </CollapsibleTrigger>
+              </CardHeader>
+              <CollapsibleContent>
+                <CardContent className="space-y-4">
+                  {targetUrls.map(({ pattern, urls }) => (
+                    <div key={pattern} className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <code className="text-sm bg-muted px-2 py-1 rounded font-mono">{pattern}</code>
+                        <Badge variant="outline">{urls.length} URLs</Badge>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 pl-4">
+                        {urls.map(url => (
+                          <a
+                            key={url}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                            data-testid={`link-test-url-${url.replace(/\//g, '-')}`}
+                          >
+                            <ArrowRight className="w-3 h-3" />
+                            {url}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </CollapsibleContent>
+            </Card>
+          </Collapsible>
+
+          {/* Templates Table */}
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Slug</TableHead>
@@ -8091,6 +8164,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
             })}
           </TableBody>
         </Table>
+        </div>
       );
     }
 
