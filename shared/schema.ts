@@ -745,6 +745,10 @@ export const insertTourRequestSchema = createInsertSchema(tourRequests).omit({
   notes: z.string().optional(),
   lastContactedAt: z.coerce.date().optional(),
   scheduledDate: z.coerce.date().optional(),
+  // Bot protection fields (not stored in database)
+  captchaToken: z.string().optional(),
+  honeypot: z.string().optional(),
+  formLoadTime: z.number().optional(),
 });
 
 export const insertLandingPageTemplateSchema = createInsertSchema(landingPageTemplates).omit({

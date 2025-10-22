@@ -7,6 +7,7 @@ import { clickIdCaptureMiddleware } from "./click-id-middleware";
 import { sendTourRequestNotification } from "./email";
 import { sendConversion } from "./conversion-service";
 import { validateConversionPayload, generateTransactionId, type ConversionPayload } from "./conversion-utils";
+import { tourRequestLimiter, verifyCaptcha, detectHoneypot, detectSpeedAnomaly, logSecurityEvent } from "./security-middleware";
 import {
   uploadSingle,
   uploadMultiple,
@@ -923,16 +924,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/tour-requests", async (req, res) => {
+  app.post("/api/tour-requests", tourRequestLimiter, async (req, res) => {
+    const ip = req.ip || req.connection.remoteAddress || 'unknown';
+    const userAgent = req.headers['user-agent'] || 'unknown';
+    
     try {
       const validatedData = insertTourRequestSchema.parse(req.body);
       
+      // Extract bot protection fields (not stored in database)
+      const { captchaToken, honeypot, formLoadTime, ...tourRequestData } = validatedData;
+      
+      // Security Check 1: Honeypot detection
+      if (detectHoneypot(honeypot)) {
+        logSecurityEvent({
+          type: 'honeypot',
+          ip,
+          userAgent,
+          details: { honeypot },
+        });
+        return res.status(400).json({ message: 'Invalid submission' });
+      }
+      
+      // Security Check 2: Speed check
+      if (detectSpeedAnomaly(formLoadTime)) {
+        const timeDiff = formLoadTime ? (Date.now() - formLoadTime) / 1000 : 'unknown';
+        logSecurityEvent({
+          type: 'speed_check',
+          ip,
+          userAgent,
+          details: { timeDiff },
+        });
+        return res.status(400).json({ message: 'Please fill out the form completely' });
+      }
+      
+      // Security Check 3: CAPTCHA verification
+      if (captchaToken) {
+        const captchaResult = await verifyCaptcha(captchaToken, ip);
+        
+        if (!captchaResult.success) {
+          logSecurityEvent({
+            type: 'captcha_fail',
+            ip,
+            userAgent,
+            details: { errors: captchaResult['error-codes'] },
+          });
+          return res.status(403).json({ 
+            message: 'Security verification failed. Please try again.',
+            errors: captchaResult['error-codes']
+          });
+        }
+        
+        // Log successful CAPTCHA verification
+        console.log(`[CAPTCHA] Verified token from IP: ${ip}`);
+      }
+      
       // Generate transaction ID if not provided
-      const transactionId = validatedData.transactionId || generateTransactionId();
+      const transactionId = tourRequestData.transactionId || generateTransactionId();
       
       // Add UTM tracking data from session and click IDs
-      const tourRequestData = {
-        ...validatedData,
+      const enrichedTourRequestData = {
+        ...tourRequestData,
         transactionId,
         utmSource: req.session.utm?.utm_source,
         utmMedium: req.session.utm?.utm_medium,
@@ -941,17 +992,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         utmContent: req.session.utm?.utm_content,
         landingPageUrl: req.session.utm?.landing_page_url,
         // Add click IDs from session
-        gclid: req.session.clickIds?.gclid || validatedData.gclid,
-        gbraid: req.session.clickIds?.gbraid || validatedData.gbraid,
-        wbraid: req.session.clickIds?.wbraid || validatedData.wbraid,
-        fbclid: req.session.clickIds?.fbclid || validatedData.fbclid,
+        gclid: req.session.clickIds?.gclid || tourRequestData.gclid,
+        gbraid: req.session.clickIds?.gbraid || tourRequestData.gbraid,
+        wbraid: req.session.clickIds?.wbraid || tourRequestData.wbraid,
+        fbclid: req.session.clickIds?.fbclid || tourRequestData.fbclid,
         // Client info for Meta CAPI
-        clientUserAgent: req.headers['user-agent'] || validatedData.clientUserAgent,
-        clientIpAddress: req.ip || req.connection.remoteAddress || validatedData.clientIpAddress,
+        clientUserAgent: req.headers['user-agent'] || tourRequestData.clientUserAgent,
+        clientIpAddress: req.ip || req.connection.remoteAddress || tourRequestData.clientIpAddress,
         conversionTier1SentAt: new Date(), // Mark that we're sending Tier 1 now
       };
       
-      const tourRequest = await storage.createTourRequest(tourRequestData);
+      const tourRequest = await storage.createTourRequest(enrichedTourRequestData);
       
       // Send email notification to all active recipients
       try {
@@ -968,25 +1019,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           leadType: 'lead_submit',
           value: 50, // Tier 1 value
           currency: 'USD',
-          email: tourRequestData.email || undefined,
-          phone: tourRequestData.phone,
-          communityId: tourRequestData.communityId || undefined,
+          email: enrichedTourRequestData.email || undefined,
+          phone: enrichedTourRequestData.phone,
+          communityId: enrichedTourRequestData.communityId || undefined,
           communityName: undefined, // Will be looked up by conversion service if needed
           careType: undefined,
-          gclid: tourRequestData.gclid || undefined,
-          gbraid: tourRequestData.gbraid || undefined,
-          wbraid: tourRequestData.wbraid || undefined,
-          fbclid: tourRequestData.fbclid || undefined,
-          fbp: tourRequestData.fbp || undefined,
-          fbc: tourRequestData.fbc || undefined,
-          clientUserAgent: tourRequestData.clientUserAgent || undefined,
-          clientIpAddress: tourRequestData.clientIpAddress || undefined,
-          eventSourceUrl: req.headers.referer || tourRequestData.landingPageUrl || undefined,
-          utmSource: tourRequestData.utmSource || undefined,
-          utmMedium: tourRequestData.utmMedium || undefined,
-          utmCampaign: tourRequestData.utmCampaign || undefined,
-          utmTerm: tourRequestData.utmTerm || undefined,
-          utmContent: tourRequestData.utmContent || undefined,
+          gclid: enrichedTourRequestData.gclid || undefined,
+          gbraid: enrichedTourRequestData.gbraid || undefined,
+          wbraid: enrichedTourRequestData.wbraid || undefined,
+          fbclid: enrichedTourRequestData.fbclid || undefined,
+          fbp: enrichedTourRequestData.fbp || undefined,
+          fbc: enrichedTourRequestData.fbc || undefined,
+          clientUserAgent: enrichedTourRequestData.clientUserAgent || undefined,
+          clientIpAddress: enrichedTourRequestData.clientIpAddress || undefined,
+          eventSourceUrl: req.headers.referer || enrichedTourRequestData.landingPageUrl || undefined,
+          utmSource: enrichedTourRequestData.utmSource || undefined,
+          utmMedium: enrichedTourRequestData.utmMedium || undefined,
+          utmCampaign: enrichedTourRequestData.utmCampaign || undefined,
+          utmTerm: enrichedTourRequestData.utmTerm || undefined,
+          utmContent: enrichedTourRequestData.utmContent || undefined,
         };
 
         // Send conversion asynchronously (don't block response)
@@ -997,6 +1048,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Failed to prepare Tier 1 conversion:", conversionError);
         // Don't fail the request if conversion tracking fails
       }
+      
+      // Log successful submission
+      logSecurityEvent({
+        type: 'success',
+        ip,
+        userAgent,
+        details: { transactionId, communityId: enrichedTourRequestData.communityId },
+      });
       
       res.status(201).json(tourRequest);
     } catch (error) {
