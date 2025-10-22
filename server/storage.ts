@@ -2425,14 +2425,39 @@ export class DatabaseStorage implements IStorage {
     await db.delete(emailRecipients).where(eq(emailRecipients.id, id));
   }
 
+  // Helper function to convert pattern to regex
+  private patternToRegex(pattern: string): RegExp {
+    const regexPattern = pattern
+      .split('/')
+      .map(segment => {
+        if (segment.startsWith(':')) {
+          return '[^/]+'; // Match any non-slash characters for parameter segments
+        }
+        // Escape special regex characters in literal segments
+        return segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      })
+      .join('/');
+    
+    return new RegExp(`^${regexPattern}$`);
+  }
+
+  // Helper function to check if a path matches a pattern
+  private pathMatchesPattern(path: string, pattern: string): boolean {
+    // Exact match for non-pattern paths
+    if (!pattern.includes(':')) {
+      return path === pattern;
+    }
+    
+    const regex = this.patternToRegex(pattern);
+    return regex.test(path);
+  }
+
   // Page content section operations
   async getPageContentSections(pagePath?: string, activeOnly?: boolean): Promise<PageContentSection[]> {
     let query = db.select().from(pageContentSections);
     
     const conditions = [];
-    if (pagePath) {
-      conditions.push(eq(pageContentSections.pagePath, pagePath));
-    }
+    // Only filter by active status in the database query
     if (activeOnly) {
       conditions.push(eq(pageContentSections.active, true));
     }
@@ -2441,8 +2466,17 @@ export class DatabaseStorage implements IStorage {
       query = query.where(and(...conditions)) as any;
     }
     
-    const sections = await query.orderBy(asc(pageContentSections.sortOrder));
-    return sections;
+    const allSections = await query.orderBy(asc(pageContentSections.sortOrder));
+    
+    // If no pagePath filter, return all sections
+    if (!pagePath) {
+      return allSections;
+    }
+    
+    // Filter sections by pattern matching in memory
+    return allSections.filter(section => 
+      this.pathMatchesPattern(pagePath, section.pagePath)
+    );
   }
 
   async getPageContentSection(id: string): Promise<PageContentSection | undefined> {
