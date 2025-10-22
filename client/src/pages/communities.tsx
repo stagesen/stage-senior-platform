@@ -11,6 +11,7 @@ import CommunityMap from "@/components/CommunityMap";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHero } from "@/components/PageHero";
 import CommunitySelectionModal from "@/components/CommunitySelectionModal";
+import TestimonialSection from "@/components/TestimonialSection";
 import type { Community } from "@shared/schema";
 
 const CARE_TYPES = [
@@ -246,72 +247,7 @@ export default function Communities() {
       </main>
 
       {/* Testimonials Section */}
-      <section className="py-12 sm:py-20 bg-gradient-to-br from-primary/5 to-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Why Families Choose Stage Senior
-            </h2>
-            <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              Hear directly from families who've found peace of mind with our communities
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            {/* Testimonial Cards */}
-            <Card className="hover:shadow-xl transition-shadow duration-300 hover-lift">
-              <CardContent className="p-6 sm:p-8">
-                <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-primary text-primary" />
-                  ))}
-                </div>
-                <p className="text-sm sm:text-base text-muted-foreground mb-6 italic">
-                  "The staff at Golden Pond has been amazing with my mother. She's happier and more active than she's been in years. The community activities and personalized care have truly made a difference."
-                </p>
-                <div className="border-t pt-4">
-                  <p className="font-semibold text-foreground">Sarah Johnson</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Daughter of Resident</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-xl transition-shadow duration-300 hover-lift">
-              <CardContent className="p-6 sm:p-8">
-                <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-primary text-primary" />
-                  ))}
-                </div>
-                <p className="text-sm sm:text-base text-muted-foreground mb-6 italic">
-                  "Moving my father to The Gardens on Quail was the best decision. The memory care program is exceptional, and the staff treats him with such dignity and respect. I finally have peace of mind."
-                </p>
-                <div className="border-t pt-4">
-                  <p className="font-semibold text-foreground">Michael Chen</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Son of Resident</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-xl transition-shadow duration-300 hover-lift">
-              <CardContent className="p-6 sm:p-8">
-                <div className="flex mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-primary text-primary" />
-                  ))}
-                </div>
-                <p className="text-sm sm:text-base text-muted-foreground mb-6 italic">
-                  "The Gardens at Columbine feels like a real home, not an institution. My mom loves the garden spaces and has made wonderful friends. The locally-owned aspect really shows in their attention to detail."
-                </p>
-                <div className="border-t pt-4">
-                  <p className="font-semibold text-foreground">Emily Rodriguez</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Daughter of Resident</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
+      <TestimonialSection />
 
       {/* CTA Section with Contact */}
       <section id="contact-section" className="relative bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] text-white py-16 sm:py-24 overflow-hidden">
