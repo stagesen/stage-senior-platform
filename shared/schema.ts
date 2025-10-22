@@ -106,6 +106,7 @@ export const communities = pgTable("communities", {
   noObligation: boolean("no_obligation").default(true),
   talkFurtherId: text("talk_further_id"),
   videoUrl: text("video_url"),
+  cluster: varchar("cluster", { length: 100 }), // Geographic cluster for landing page recommendations: 'littleton', 'arvada', 'golden'
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
