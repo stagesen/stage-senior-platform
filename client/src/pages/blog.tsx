@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "wouter";
+import { useParams, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,14 +18,16 @@ import type { BlogPost, Community } from "@shared/schema";
 export default function Blog() {
   const params = useParams();
   const postSlug = params.slug;
+  const [, setLocation] = useLocation();
   
-  // Read community filter from URL parameter
+  // Read filters from URL parameters
   const urlParams = new URLSearchParams(window.location.search);
   const communityParam = urlParams.get('community');
+  const tagParam = urlParams.get('tag');
   
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCommunity, setSelectedCommunity] = useState(communityParam || "all");
-  const [selectedTag, setSelectedTag] = useState("all");
+  const [selectedTag, setSelectedTag] = useState(tagParam || "all");
 
   const { data: communities = [] } = useQuery<Community[]>({
     queryKey: ["/api/communities?active=true"],
@@ -128,8 +130,13 @@ export default function Blog() {
             <div className="space-y-4">
               {currentPost.tags && currentPost.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
-                  {currentPost.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" data-testid={`post-tag-${tag}`}>
+                  {currentPost.tags.slice(0, 3).map((tag) => (
+                    <Badge 
+                      key={tag}
+                      className="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors"
+                      onClick={() => setLocation(`/blog?tag=${encodeURIComponent(tag)}`)}
+                      data-testid={`post-tag-${tag}`}
+                    >
                       {tag}
                     </Badge>
                   ))}
