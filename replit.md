@@ -32,6 +32,7 @@ A comprehensive admin interface provides CRUD operations for:
 - **Data Utilities**: Database sync system for exporting/importing data.
 - **Specialized Pages**: Management for Dining, Beauty Salon & Barber, Fitness & Therapy Center, and Courtyards & Patios pages, with smart amenity linking.
 - **Google Ads Landing Page System**: Template-based dynamic landing pages with UTM tracking, content reuse, and an admin interface for template management.
+- **Google Ads Conversion Manager**: Admin interface for creating and managing Google Ads conversion actions via API, with one-click templates, sync from Google Ads, and copy-to-clipboard labels for GTM integration.
 
 ### Image Management System
 An integrated image management system stores images in object storage with metadata in PostgreSQL. It supports drag-and-drop uploads, multi-image galleries, and reference protection. Images are automatically processed for dimensions, and a custom `useResolveImageUrl` hook handles image ID resolution. Communities can have various image types (hero, logo, contact card, brochure card).
@@ -60,3 +61,93 @@ An integrated image management system stores images in object storage with metad
 
 ### Email Service
 - **Resend**: For automated email notifications (e.g., tour requests).
+
+### Advertising Platforms
+- **Google Ads API**: For programmatic creation and management of conversion actions.
+- **Google Ads**: Enhanced Conversions for Leads (ECL) integration with server-side and browser-side tracking.
+- **Meta Conversions API**: Server-side conversion tracking for Facebook/Instagram ads.
+
+## Conversion Tracking System
+
+The platform implements comprehensive conversion tracking for Google Ads and Meta advertising platforms. The system captures user journey data from first click through conversion, with proper deduplication between server-side and browser-side events.
+
+### Tracking Events
+
+**Primary Conversions** (used for bidding):
+- **ScheduleTour** - $250 value - Tour request submissions (native forms and TalkFurther widget)
+- **PhoneCallStart** - $25 value - Click-to-call interactions
+
+**Secondary Conversions** (observation only):
+- **GenerateLead** - $25 value - General contact form submissions
+- **PricingRequest** - $25 value - Pricing inquiry submissions
+
+### Architecture
+
+**Browser-Side Tracking:**
+- Events fire to dataLayer with complete metadata (event_id, value, hashed PII, click IDs, UTM params)
+- UTM parameters and click IDs (gclid, gbraid, wbraid, fbclid) auto-captured via middleware
+- Meta cookies (_fbp, _fbc) tracked for attribution
+- PII (email, phone) hashed with SHA-256 before transmission
+
+**Server-Side Tracking:**
+- Conversions sent to Google Ads Enhanced Conversions API and Meta Conversions API
+- Click ID middleware preserves gclid/gbraid/wbraid in secure HTTP-only cookies
+- Event deduplication using shared event_id between browser and server events
+- Proper sequence: Server conversion fires first, browser fires backup with same event_id
+
+**TalkFurther Integration:**
+- Third-party scheduling widget opens when users click buttons with `talkfurther-schedule-tour` CSS class
+- After submission, TalkFurther redirects to `/tour-scheduled` success page
+- Success page fires conversion tracking with generated event_id if not in URL parameters
+
+### Google Ads Conversion Manager
+
+**Admin Interface** (`/admin` → Google Ads tab):
+
+1. **Quick-Create Templates:**
+   - Schedule Tour ($250, PRIMARY)
+   - Generate Lead ($25, SECONDARY)
+   - Pricing Request ($25, SECONDARY)
+   - Phone Call Start ($25, PRIMARY)
+
+2. **Sync from Google Ads:**
+   - One-click sync button fetches all conversion actions from Google Ads API
+   - Updates database with latest metadata (name, value, status, attribution model)
+   - Shows synced/updated counts
+
+3. **Copy Labels for GTM:**
+   - Each conversion displays its label with copy-to-clipboard button
+   - Labels needed for GTM tag configuration
+   - Format: Opaque string extracted from Google Ads tag snippets
+
+**GTM Integration Workflow:**
+
+1. **In Admin Panel:**
+   - Create conversion action using template or custom values
+   - API creates conversion in Google Ads account
+   - Copy the conversion label to clipboard
+
+2. **In Google Tag Manager:**
+   - Create trigger for custom event (e.g., "ScheduleTour")
+   - Create Google Ads Conversion tag:
+     - Conversion ID: AW-17667766916
+     - Conversion Label: (paste from admin panel)
+     - Transaction ID: {{DLV - event_id}}
+     - Value: {{DLV - value}}
+     - Enhanced Conversions: Manual mode with {{DLV - user.email}} and {{DLV - user.phone}} (already hashed)
+   - Create Meta Pixel tag with eventID: {{DLV - event_id}} for deduplication
+
+3. **Data Layer Variables in GTM:**
+   - event_id, value, currency
+   - user.email, user.phone (pre-hashed with SHA-256)
+   - care_level, metro, community_name, landing_page
+   - gclid, gbraid, wbraid, fbp, fbc
+
+**API Credentials Required:**
+- GOOGLE_ADS_DEVELOPER_TOKEN
+- GOOGLE_ADS_CLIENT_ID
+- GOOGLE_ADS_CLIENT_SECRET
+- GOOGLE_ADS_REFRESH_TOKEN
+- GOOGLE_ADS_CUSTOMER_ID
+
+Stored as environment secrets for secure access to Google Ads API.
