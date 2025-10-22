@@ -5,6 +5,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { useScheduleTour } from "@/hooks/useScheduleTour";
 import type { PageContentSection } from "@shared/schema";
 
 const iconMap: Record<string, any> = {
@@ -28,6 +29,7 @@ interface PageSectionRendererProps {
 
 export default function PageSectionRenderer({ section }: PageSectionRendererProps) {
   const content = section.content as any;
+  const { openScheduleTour } = useScheduleTour();
   
   // Resolve image URLs (converts UUIDs to actual URLs)
   const heroImageUrl = useResolveImageUrl(content.imageId || content.imageUrl);
@@ -225,16 +227,27 @@ export default function PageSectionRenderer({ section }: PageSectionRendererProp
             )}
             {content.buttonText && content.buttonLink && (
               <div className="mt-8 text-center">
-                <Button
-                  size="lg"
-                  className="bg-white hover:bg-gray-100 text-purple-600 hover:text-purple-700 font-semibold"
-                  asChild
-                  data-testid={`${section.sectionKey}-button`}
-                >
-                  <Link href={content.buttonLink}>
+                {content.buttonLink === "#schedule-tour" ? (
+                  <Button
+                    size="lg"
+                    className="bg-white hover:bg-gray-100 text-purple-600 hover:text-purple-700 font-semibold"
+                    onClick={() => openScheduleTour()}
+                    data-testid={`${section.sectionKey}-button`}
+                  >
                     {content.buttonText}
-                  </Link>
-                </Button>
+                  </Button>
+                ) : (
+                  <Button
+                    size="lg"
+                    className="bg-white hover:bg-gray-100 text-purple-600 hover:text-purple-700 font-semibold"
+                    asChild
+                    data-testid={`${section.sectionKey}-button`}
+                  >
+                    <Link href={content.buttonLink}>
+                      {content.buttonText}
+                    </Link>
+                  </Button>
+                )}
               </div>
             )}
           </div>
