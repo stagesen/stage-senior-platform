@@ -31,7 +31,14 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { insertTourRequestSchema, type InsertTourRequest } from "@shared/schema";
-import { getMetaCookies, getClickIdsFromUrl, generateTransactionId, fireLead } from "@/lib/tracking";
+import { 
+  getMetaCookies, 
+  getClickIdsFromUrl, 
+  getUtmParams,
+  generateEventId, 
+  generateTransactionId,
+  fireScheduleTour 
+} from "@/lib/tracking";
 
 interface LeadCaptureFormProps {
   variant?: "inline" | "modal" | "sidebar" | "hero";
@@ -111,15 +118,28 @@ export default function LeadCaptureForm({
     mutationFn: async (data: FormData) => {
       return apiRequest("POST", "/api/tour-requests", data);
     },
-    onSuccess: (response: any) => {
+    onSuccess: async (response: any, variables: FormData) => {
       queryClient.invalidateQueries({ queryKey: ["/api/tour-requests"] });
+      
+      // Fire ScheduleTour event to dataLayer ONLY AFTER successful submission
+      // This ensures browser and server conversions are synchronized
+      const eventId = response.transactionId || generateEventId();
+      await fireScheduleTour({
+        event_id: eventId,
+        email: variables.email,
+        phone: variables.phone,
+        care_level: undefined,
+        metro: undefined,
+        community_name: communityName,
+        landing_page: window.location.pathname,
+      });
+      
       setIsSuccess(true);
       form.reset();
       
       // Redirect to success page with transaction ID and community info
-      const transactionId = response.transactionId || generateTransactionId();
       const params = new URLSearchParams({
-        txn: transactionId,
+        txn: eventId,
         ...(communityId && { community: communityId }),
         ...(communityName && { name: form.getValues('name') }),
       });
@@ -144,40 +164,33 @@ export default function LeadCaptureForm({
     // Collect tracking data
     const metaCookies = getMetaCookies();
     const clickIds = getClickIdsFromUrl();
-    const transactionId = generateTransactionId();
+    const utmParams = getUtmParams();
+    const eventId = generateEventId();
     
     // Add tracking data and security fields to form submission
     const enrichedData = {
       ...data,
-      transactionId,
+      transactionId: eventId, // Use event_id as transaction ID for deduplication
       fbp: metaCookies.fbp,
       fbc: metaCookies.fbc,
       gclid: clickIds.gclid,
       gbraid: clickIds.gbraid,
       wbraid: clickIds.wbraid,
       fbclid: clickIds.fbclid,
+      utmSource: utmParams.utm_source,
+      utmMedium: utmParams.utm_medium,
+      utmCampaign: utmParams.utm_campaign,
+      utmTerm: utmParams.utm_term,
+      utmContent: utmParams.utm_content,
+      landingPageUrl: window.location.pathname,
       clientUserAgent: navigator.userAgent,
       // Security fields
       captchaToken: captchaToken || undefined,
       formLoadTime,
     };
     
-    // Fire Tier 1 conversion event to dataLayer (browser-side backup)
-    fireLead({
-      event: 'lead_submit',
-      transactionId,
-      leadType: 'schedule_tour',
-      leadValue: 50,
-      community: communityId && communityName ? {
-        id: communityId,
-        name: communityName,
-      } : undefined,
-      identifiers: {
-        email: data.email,
-        phone: data.phone,
-        ...metaCookies,
-      },
-    });
+    // Note: fireScheduleTour() is called in onSuccess after backend confirms submission
+    // This ensures browser and server conversions are synchronized for proper deduplication
     
     submitMutation.mutate(enrichedData);
   };

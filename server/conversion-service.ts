@@ -100,7 +100,8 @@ export async function sendGoogleAdsConversion(
       customer_id: GOOGLE_ADS_CUSTOMER_ID,
       conversions: [conversion],
       partial_failure: false,
-    });
+      validate_only: false,
+    } as any);
 
     console.log('[Google Ads] Conversion sent successfully:', {
       transactionId: payload.transactionId,
@@ -134,7 +135,8 @@ export async function sendMetaConversion(
     // Map lead types to Meta event names
     const eventNameMap: Record<string, string> = {
       lead_submit: 'Lead',
-      booking_confirmed: 'Lead',
+      schedule_tour: 'Lead', // ScheduleTour conversion
+      booking_confirmed: 'CompleteRegistration',
       phone_call_click: 'Contact',
       brochure_download: 'Lead',
     };

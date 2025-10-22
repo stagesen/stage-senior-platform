@@ -79,7 +79,7 @@ export function generateTransactionId(): string {
  */
 export interface ConversionPayload {
   transactionId: string;
-  leadType: 'lead_submit' | 'booking_confirmed' | 'phone_call_click' | 'brochure_download';
+  leadType: 'lead_submit' | 'schedule_tour' | 'booking_confirmed' | 'phone_call_click' | 'brochure_download';
   value: number;
   currency: string;
   email?: string;

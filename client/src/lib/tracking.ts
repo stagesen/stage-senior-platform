@@ -1,5 +1,6 @@
 /**
  * Tracking utilities for conversion tracking with Google Ads and Meta
+ * Following the conversion schema specification for Stage Senior
  */
 
 // Declare dataLayer for GTM integration
@@ -55,7 +56,323 @@ export function getMetaCookies() {
 }
 
 /**
- * Fire a lead event to dataLayer for GTM
+ * Generate a unique event_id using crypto.randomUUID()
+ * This ID is used for deduplication across Google and Meta
+ */
+export function generateEventId(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback for older browsers
+  return `evt_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+}
+
+/**
+ * Legacy transaction ID generator (kept for backward compatibility)
+ */
+export function generateTransactionId(): string {
+  return `txn_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+}
+
+/**
+ * Simple SHA-256 hash function for client-side hashing
+ * Note: For production, Enhanced Conversions should use server-side hashing
+ */
+export async function hashString(str: string): Promise<string> {
+  if (!str) return '';
+  
+  // Normalize: lowercase and trim
+  const normalized = str.toLowerCase().trim();
+  
+  if (typeof crypto !== 'undefined' && crypto.subtle) {
+    try {
+      const msgBuffer = new TextEncoder().encode(normalized);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch (e) {
+      console.warn('[Tracking] SHA-256 hashing failed, returning empty string', e);
+      return '';
+    }
+  }
+  
+  // Crypto API not available
+  return '';
+}
+
+/**
+ * Hash email for Enhanced Conversions
+ */
+export async function hashEmail(email: string): Promise<string> {
+  if (!email) return '';
+  return hashString(email);
+}
+
+/**
+ * Hash phone for Enhanced Conversions
+ * Removes all non-numeric characters before hashing
+ */
+export async function hashPhone(phone: string): Promise<string> {
+  if (!phone) return '';
+  // Remove all non-numeric characters
+  const cleaned = phone.replace(/\D/g, '');
+  return hashString(cleaned);
+}
+
+/**
+ * Get click IDs from URL parameters (for passing to form submissions)
+ */
+export function getClickIdsFromUrl(): {
+  gclid?: string;
+  gbraid?: string;
+  wbraid?: string;
+  fbclid?: string;
+} {
+  if (typeof window === 'undefined') return {};
+  
+  const params = new URLSearchParams(window.location.search);
+  
+  return {
+    gclid: params.get('gclid') || undefined,
+    gbraid: params.get('gbraid') || undefined,
+    wbraid: params.get('wbraid') || undefined,
+    fbclid: params.get('fbclid') || undefined,
+  };
+}
+
+/**
+ * Get UTM parameters from URL
+ */
+export function getUtmParams(): {
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_term?: string;
+  utm_content?: string;
+} {
+  if (typeof window === 'undefined') return {};
+  
+  const params = new URLSearchParams(window.location.search);
+  
+  return {
+    utm_source: params.get('utm_source') || undefined,
+    utm_medium: params.get('utm_medium') || undefined,
+    utm_campaign: params.get('utm_campaign') || undefined,
+    utm_term: params.get('utm_term') || undefined,
+    utm_content: params.get('utm_content') || undefined,
+  };
+}
+
+/**
+ * Get consent flags (placeholder - should be integrated with your consent management)
+ */
+export function getConsentFlags(): {
+  ad_user_data: boolean;
+  ad_personalization: boolean;
+} {
+  // Default to true - in production, check actual consent state
+  return {
+    ad_user_data: true,
+    ad_personalization: true,
+  };
+}
+
+/**
+ * Fire ScheduleTour event to dataLayer (primary conversion)
+ * Value: $250
+ */
+export interface ScheduleTourOptions {
+  event_id: string;
+  email?: string;
+  phone?: string;
+  care_level?: string;
+  metro?: string;
+  community_name?: string;
+  landing_page?: string;
+}
+
+export async function fireScheduleTour(options: ScheduleTourOptions): Promise<void> {
+  if (typeof window === 'undefined') return;
+  
+  const clickIds = getClickIdsFromUrl();
+  const metaCookies = getMetaCookies();
+  const consent = getConsentFlags();
+  const utmParams = getUtmParams();
+  
+  // Hash PII for Enhanced Conversions
+  const hashedEmail = options.email ? await hashEmail(options.email) : undefined;
+  const hashedPhone = options.phone ? await hashPhone(options.phone) : undefined;
+  
+  const payload = {
+    event: 'ScheduleTour',
+    event_id: options.event_id,
+    value: 250,
+    currency: 'USD',
+    care_level: options.care_level || '',
+    metro: options.metro || '',
+    community_name: options.community_name || '',
+    landing_page: options.landing_page || window.location.pathname,
+    gclid: clickIds.gclid,
+    wbraid: clickIds.wbraid,
+    gbraid: clickIds.gbraid,
+    fbc: metaCookies.fbc,
+    fbp: metaCookies.fbp,
+    user: {
+      email: hashedEmail,
+      phone: hashedPhone,
+    },
+    consent: consent,
+    ...utmParams,
+  };
+  
+  console.log('[Tracking] ScheduleTour event:', payload);
+  window.dataLayer.push(payload);
+}
+
+/**
+ * Fire GenerateLead event to dataLayer (secondary conversion)
+ * Value: $25
+ */
+export interface GenerateLeadOptions {
+  event_id: string;
+  email?: string;
+  phone?: string;
+  care_level?: string;
+  metro?: string;
+  community_name?: string;
+  landing_page?: string;
+}
+
+export async function fireGenerateLead(options: GenerateLeadOptions): Promise<void> {
+  if (typeof window === 'undefined') return;
+  
+  const clickIds = getClickIdsFromUrl();
+  const metaCookies = getMetaCookies();
+  const consent = getConsentFlags();
+  const utmParams = getUtmParams();
+  
+  const hashedEmail = options.email ? await hashEmail(options.email) : undefined;
+  const hashedPhone = options.phone ? await hashPhone(options.phone) : undefined;
+  
+  const payload = {
+    event: 'GenerateLead',
+    event_id: options.event_id,
+    value: 25,
+    currency: 'USD',
+    care_level: options.care_level || '',
+    metro: options.metro || '',
+    community_name: options.community_name || '',
+    landing_page: options.landing_page || window.location.pathname,
+    gclid: clickIds.gclid,
+    wbraid: clickIds.wbraid,
+    gbraid: clickIds.gbraid,
+    fbc: metaCookies.fbc,
+    fbp: metaCookies.fbp,
+    user: {
+      email: hashedEmail,
+      phone: hashedPhone,
+    },
+    consent: consent,
+    ...utmParams,
+  };
+  
+  console.log('[Tracking] GenerateLead event:', payload);
+  window.dataLayer.push(payload);
+}
+
+/**
+ * Fire PhoneCallStart event to dataLayer (click-to-call)
+ */
+export interface PhoneCallStartOptions {
+  event_id: string;
+  phone_number: string;
+  community_name?: string;
+  care_level?: string;
+  metro?: string;
+}
+
+export function firePhoneCallStart(options: PhoneCallStartOptions): void {
+  if (typeof window === 'undefined') return;
+  
+  const clickIds = getClickIdsFromUrl();
+  const metaCookies = getMetaCookies();
+  const consent = getConsentFlags();
+  const utmParams = getUtmParams();
+  
+  const payload = {
+    event: 'PhoneCallStart',
+    event_id: options.event_id,
+    value: 25,
+    currency: 'USD',
+    phone_number: options.phone_number,
+    community_name: options.community_name || '',
+    care_level: options.care_level || '',
+    metro: options.metro || '',
+    landing_page: window.location.pathname,
+    gclid: clickIds.gclid,
+    wbraid: clickIds.wbraid,
+    gbraid: clickIds.gbraid,
+    fbc: metaCookies.fbc,
+    fbp: metaCookies.fbp,
+    consent: consent,
+    ...utmParams,
+  };
+  
+  console.log('[Tracking] PhoneCallStart event:', payload);
+  window.dataLayer.push(payload);
+}
+
+/**
+ * Fire PricingRequest event to dataLayer (secondary conversion)
+ */
+export interface PricingRequestOptions {
+  event_id: string;
+  email?: string;
+  phone?: string;
+  care_level?: string;
+  metro?: string;
+  community_name?: string;
+}
+
+export async function firePricingRequest(options: PricingRequestOptions): Promise<void> {
+  if (typeof window === 'undefined') return;
+  
+  const clickIds = getClickIdsFromUrl();
+  const metaCookies = getMetaCookies();
+  const consent = getConsentFlags();
+  const utmParams = getUtmParams();
+  
+  const hashedEmail = options.email ? await hashEmail(options.email) : undefined;
+  const hashedPhone = options.phone ? await hashPhone(options.phone) : undefined;
+  
+  const payload = {
+    event: 'PricingRequest',
+    event_id: options.event_id,
+    value: 25,
+    currency: 'USD',
+    care_level: options.care_level || '',
+    metro: options.metro || '',
+    community_name: options.community_name || '',
+    landing_page: window.location.pathname,
+    gclid: clickIds.gclid,
+    wbraid: clickIds.wbraid,
+    gbraid: clickIds.gbraid,
+    fbc: metaCookies.fbc,
+    fbp: metaCookies.fbp,
+    user: {
+      email: hashedEmail,
+      phone: hashedPhone,
+    },
+    consent: consent,
+    ...utmParams,
+  };
+  
+  console.log('[Tracking] PricingRequest event:', payload);
+  window.dataLayer.push(payload);
+}
+
+/**
+ * Legacy fire lead function (kept for backward compatibility)
  */
 export interface FireLeadOptions {
   event: 'lead_submit' | 'booking_confirmed' | 'phone_call_click' | 'brochure_download' | 'page_view';
@@ -142,7 +459,7 @@ export function firePageView(options: {
 }
 
 /**
- * Track phone call click
+ * Track phone call click (legacy)
  */
 export function trackPhoneClick(options: {
   phoneNumber: string;
@@ -156,14 +473,14 @@ export function trackPhoneClick(options: {
     event: 'phone_call_click',
     transactionId: options.transactionId,
     leadType: 'phone_call_click',
-    leadValue: 25, // Phone clicks are worth less than tours
+    leadValue: 25,
     community: options.community,
     identifiers: getMetaCookies(),
   });
 }
 
 /**
- * Track brochure download
+ * Track brochure download (legacy)
  */
 export function trackBrochureDownload(options: {
   brochureUrl: string;
@@ -177,36 +494,8 @@ export function trackBrochureDownload(options: {
     event: 'brochure_download',
     transactionId: options.transactionId,
     leadType: 'brochure_download',
-    leadValue: 10, // Downloads are worth less than direct contact
+    leadValue: 10,
     community: options.community,
     identifiers: getMetaCookies(),
   });
-}
-
-/**
- * Generate a unique transaction ID for event deduplication
- */
-export function generateTransactionId(): string {
-  return `txn_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-}
-
-/**
- * Get click IDs from URL parameters (for passing to form submissions)
- */
-export function getClickIdsFromUrl(): {
-  gclid?: string;
-  gbraid?: string;
-  wbraid?: string;
-  fbclid?: string;
-} {
-  if (typeof window === 'undefined') return {};
-  
-  const params = new URLSearchParams(window.location.search);
-  
-  return {
-    gclid: params.get('gclid') || undefined,
-    gbraid: params.get('gbraid') || undefined,
-    wbraid: params.get('wbraid') || undefined,
-    fbclid: params.get('fbclid') || undefined,
-  };
 }

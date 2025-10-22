@@ -1055,12 +1055,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Don't fail the request if email fails
       }
       
-      // Prepare and send Tier 1 conversion (lead_submit) to Google Ads and Meta
+      // Prepare and send ScheduleTour conversion to Google Ads and Meta
       try {
         const conversionPayload: ConversionPayload = {
           transactionId,
-          leadType: 'lead_submit',
-          value: 50, // Tier 1 value
+          leadType: 'schedule_tour',
+          value: 250, // ScheduleTour = $250 per spec
           currency: 'USD',
           email: enrichedTourRequestData.email || undefined,
           phone: enrichedTourRequestData.phone,
