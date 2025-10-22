@@ -115,6 +115,7 @@ export interface IStorage {
     careType?: string;
     city?: string;
     state?: string;
+    cluster?: string;
   }): Promise<Community[]>;
   getCommunitiesMinimal(activeOnly?: boolean): Promise<Array<{ id: string; name: string; slug: string }>>;
   getCommunitiesCards(activeOnly?: boolean): Promise<Array<{ id: string; name: string; slug: string; city: string; imageId: string | null }>>;
@@ -370,6 +371,7 @@ export class DatabaseStorage implements IStorage {
     activeOnly?: boolean;
     city?: string;
     state?: string;
+    cluster?: string;
   }) {
     const conditions = [];
     
@@ -385,6 +387,10 @@ export class DatabaseStorage implements IStorage {
     
     if (filters?.state) {
       conditions.push(eq(communities.state, filters.state));
+    }
+    
+    if (filters?.cluster) {
+      conditions.push(eq(communities.cluster, filters.cluster));
     }
     
     return conditions;
@@ -454,6 +460,7 @@ export class DatabaseStorage implements IStorage {
     careType?: string;
     city?: string;
     state?: string;
+    cluster?: string;
   }): Promise<Community[]> {
     let communityIds: string[] | null = null;
     
@@ -480,6 +487,7 @@ export class DatabaseStorage implements IStorage {
       activeOnly: filters?.activeOnly,
       city: filters?.city,
       state: filters?.state,
+      cluster: filters?.cluster,
     });
     
     // Add careType filter if we have matching community IDs

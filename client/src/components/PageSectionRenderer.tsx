@@ -7,6 +7,10 @@ import { Link } from "wouter";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 import type { PageContentSection } from "@shared/schema";
+import CTARow from "@/components/landing-sections/CTARow";
+import TrustStrip from "@/components/landing-sections/TrustStrip";
+import PricingRangeEstimator from "@/components/landing-sections/PricingRangeEstimator";
+import CareComparisonTool from "@/components/landing-sections/CareComparisonTool";
 
 const iconMap: Record<string, any> = {
   Clock,
@@ -25,9 +29,10 @@ const iconMap: Record<string, any> = {
 
 interface PageSectionRendererProps {
   section: PageContentSection;
+  currentCareType?: string;
 }
 
-export default function PageSectionRenderer({ section }: PageSectionRendererProps) {
+export default function PageSectionRenderer({ section, currentCareType }: PageSectionRendererProps) {
   const content = section.content as any;
   const { openScheduleTour } = useScheduleTour();
   
@@ -254,6 +259,22 @@ export default function PageSectionRenderer({ section }: PageSectionRendererProp
         </div>
       </section>
     );
+  }
+
+  if (section.sectionType === "cta_row") {
+    return <CTARow section={section} />;
+  }
+
+  if (section.sectionType === "trust_strip") {
+    return <TrustStrip section={section} />;
+  }
+
+  if (section.sectionType === "pricing_estimator") {
+    return <PricingRangeEstimator section={section} />;
+  }
+
+  if (section.sectionType === "care_comparison") {
+    return <CareComparisonTool section={section} currentCareType={currentCareType} />;
   }
 
   return null;

@@ -142,7 +142,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Community routes
   app.get("/api/communities", async (req, res) => {
     try {
-      const { careTypes, careType, city, state, active, activeOnly } = req.query;
+      const { careTypes, careType, city, state, active, activeOnly, cluster } = req.query;
       const filters: any = {};
       
       // Support both careTypes (legacy, plural) and careType (new, singular)
@@ -162,6 +162,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (state) {
         filters.state = state as string;
+      }
+      
+      if (cluster) {
+        filters.cluster = cluster as string;
       }
       
       // Handle active filter with support for both 'active' and 'activeOnly' parameters

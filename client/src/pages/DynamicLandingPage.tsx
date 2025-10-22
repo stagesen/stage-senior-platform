@@ -12,6 +12,7 @@ import { TeamCarousel } from "@/components/TeamCarousel";
 import GalleryModal from "@/components/GalleryModal";
 import FloorPlanModal from "@/components/FloorPlanModal";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
+import PageSectionRenderer from "@/components/PageSectionRenderer";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import NotFound from "@/pages/not-found";
@@ -60,7 +61,35 @@ import type {
   CommunityHighlight,
   Amenity,
   CareType,
+  PageContentSection,
 } from "@shared/schema";
+
+// City-to-cluster mapping function
+const mapCityToCluster = (city: string | undefined): string | undefined => {
+  if (!city) return undefined;
+  
+  const cityLower = city.toLowerCase().trim();
+  
+  // Direct cluster mappings
+  const clusterMap: Record<string, string> = {
+    'littleton': 'littleton',
+    'arvada': 'arvada',
+    'golden': 'golden',
+    'englewood': 'littleton',  // nearby
+    'lakewood': 'golden',      // nearby
+    'wheat-ridge': 'arvada',   // nearby
+    'denver': 'littleton',     // default fallback
+    'highlands-ranch': 'littleton',
+    'aurora': 'arvada',
+    'westminster': 'arvada',
+    'centennial': 'littleton',
+    'broomfield': 'arvada',
+    'lone-tree': 'littleton',
+    'greenwood-village': 'littleton',
+  };
+  
+  return clusterMap[cityLower];
+};
 
 // Helper function to replace tokens in text
 const replaceTokens = (
@@ -455,12 +484,17 @@ export default function DynamicLandingPage() {
       activeOnly: 'true',
     };
 
-    // Add city filter if present
-    if (urlParams.city) {
-      filters.city = urlParams.city;
-    } else if (template?.cities && template.cities.length > 0) {
-      // If template specifies cities, use the first one
-      filters.city = template.cities[0];
+    // Extract city from URL params
+    const city = urlParams.city || (template?.cities && template.cities.length > 0 ? template.cities[0] : undefined);
+    
+    // Map city to cluster and use cluster filter instead of city
+    const cluster = mapCityToCluster(city);
+    
+    if (cluster) {
+      filters.cluster = cluster;
+    } else if (city) {
+      // Fallback to city if no cluster mapping exists
+      filters.city = city;
     }
 
     // Add care type filter if present
@@ -495,6 +529,48 @@ export default function DynamicLandingPage() {
   const targetCommunities = template?.communityId 
     ? [primaryCommunity].filter(Boolean) as Community[]
     : filteredCommunities;
+
+  // Determine the page path pattern for fetching page content sections
+  const getPagePathPattern = (): string => {
+    // For /:careLevel/:city pages, use "/:careLevel/:city"
+    // For /cost/:careLevel/:city pages, use "/cost/:careLevel/:city"
+    if (template?.urlPattern) {
+      // Extract pattern by replacing dynamic segments
+      return template.urlPattern
+        .replace(':careLevel', urlParams.careLevel || careTypeSlug || 'assisted-living')
+        .replace(':city', urlParams.city || 'littleton');
+    }
+    return pathname;
+  };
+
+  const pagePathPattern = getPagePathPattern();
+
+  // Fetch page content sections for this page
+  const { data: pageSections = [] } = useQuery<PageContentSection[]>({
+    queryKey: ['/api/page-content', pagePathPattern],
+    queryFn: async () => {
+      const queryParams = new URLSearchParams({
+        pagePath: pagePathPattern,
+        active: 'true',
+      });
+      const response = await fetch(`/api/page-content?${queryParams}`);
+      
+      if (!response.ok) {
+        // If sections not found, return empty array (not an error)
+        if (response.status === 404) return [];
+        throw new Error("Failed to fetch page content sections");
+      }
+      
+      return response.json();
+    },
+    throwOnError: false,
+    enabled: !!template,
+  });
+
+  // Sort page sections by sortOrder and filter for active sections
+  const activeSections = pageSections
+    .filter(section => section.active)
+    .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
   // Simple care type name mapping for token replacement
   const getCareTypeName = () => {
@@ -900,6 +976,27 @@ export default function DynamicLandingPage() {
           </p>
         </div>
       </section>
+
+      {/* 1c. Page Content Sections - Dynamic sections from database */}
+      {activeSections.length > 0 && activeSections.map((section) => {
+        // Pass currentCareType prop to CareComparisonTool sections
+        if (section.sectionType === 'care_comparison_tool') {
+          return (
+            <PageSectionRenderer 
+              key={section.id} 
+              section={section}
+              currentCareType={careTypeSlug || undefined}
+            />
+          );
+        }
+        
+        return (
+          <PageSectionRenderer 
+            key={section.id} 
+            section={section}
+          />
+        );
+      })}
 
       {/* 1a. Care Type Focus - Show specific care type if landing page is for a specific care type */}
       {careTypeSlug && getCareTypeName() !== "Senior Living" && (
