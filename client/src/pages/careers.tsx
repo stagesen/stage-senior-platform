@@ -1,10 +1,13 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { PageHero } from "@/components/PageHero";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import type { Community } from "@shared/schema";
 import { 
   Briefcase, 
   Heart, 
@@ -20,6 +23,10 @@ import {
 } from "lucide-react";
 
 export default function Careers() {
+  // Fetch communities
+  const { data: communities = [] } = useQuery<Community[]>({
+    queryKey: ['/api/communities'],
+  });
   useEffect(() => {
     document.title = "Careers | Stage Senior";
     
@@ -219,85 +226,9 @@ export default function Careers() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-xl">The Gardens on Quail</CardTitle>
-                <p className="text-sm text-muted-foreground flex items-center gap-1 mt-2">
-                  <MapPin className="w-4 h-4" />
-                  Arvada, CO
-                </p>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Join our upscale community offering independent living, assisted living, and memory care in a beautiful setting.
-                </p>
-                <Button className="w-full" asChild>
-                  <a href="https://www.gardensonquail.com/employment" target="_blank" rel="noopener noreferrer">
-                    View Open Positions
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-xl">Golden Pond</CardTitle>
-                <p className="text-sm text-muted-foreground flex items-center gap-1 mt-2">
-                  <MapPin className="w-4 h-4" />
-                  Golden, CO
-                </p>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Be part of a community with 20+ years of excellence in senior care, offering IL, AL, and memory care.
-                </p>
-                <Button className="w-full" asChild>
-                  <a href="https://www.goldenpond.com/employment" target="_blank" rel="noopener noreferrer">
-                    View Open Positions
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-xl">The Gardens at Columbine</CardTitle>
-                <p className="text-sm text-muted-foreground flex items-center gap-1 mt-2">
-                  <MapPin className="w-4 h-4" />
-                  Littleton, CO
-                </p>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Work in our serene community known for expansive gardens and thoughtful memory care design.
-                </p>
-                <Button className="w-full" asChild>
-                  <a href="https://www.gardensatcolumbine.com/employment" target="_blank" rel="noopener noreferrer">
-                    View Open Positions
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-xl">Stonebridge Senior</CardTitle>
-                <p className="text-sm text-muted-foreground flex items-center gap-1 mt-2">
-                  <MapPin className="w-4 h-4" />
-                  Arvada, CO
-                </p>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Join a team committed to our 'Your Story First' philosophy of personalized care.
-                </p>
-                <Button className="w-full" asChild>
-                  <a href="https://www.stonebridgesenior.com/careers" target="_blank" rel="noopener noreferrer">
-                    View Open Positions
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
+            {communities.map((community) => (
+              <CommunityCareerCard key={community.id} community={community} />
+            ))}
           </div>
 
           <div className="text-center mt-8">
@@ -314,5 +245,60 @@ export default function Careers() {
       </section>
 
     </div>
+  );
+}
+
+function CommunityCareerCard({ community }: { community: Community }) {
+  const imageUrl = useResolveImageUrl(community.imageId);
+  
+  // Map community slugs to their employment URLs
+  const employmentUrls: Record<string, string> = {
+    'golden-pond': 'https://www.goldenpond.com/employment',
+    'gardens-on-quail': 'https://www.gardensonquail.com/employment',
+    'gardens-at-columbine': 'https://www.gardensatcolumbine.com/employment',
+    'stonebridge-senior': 'https://www.stonebridgesenior.com/careers',
+  };
+
+  // Map community slugs to their descriptions
+  const descriptions: Record<string, string> = {
+    'golden-pond': 'Be part of a community with 20+ years of excellence in senior care, offering IL, AL, and memory care.',
+    'gardens-on-quail': 'Join our upscale community offering independent living, assisted living, and memory care in a beautiful setting.',
+    'gardens-at-columbine': 'Work in our serene community known for expansive gardens and thoughtful memory care design.',
+    'stonebridge-senior': 'Join a team committed to our \'Your Story First\' philosophy of personalized care.',
+  };
+
+  const employmentUrl = employmentUrls[community.slug] || '#';
+  const description = descriptions[community.slug] || community.shortDescription || community.description || '';
+
+  return (
+    <Card className="hover:shadow-lg transition-shadow overflow-hidden" data-testid={`career-card-${community.slug}`}>
+      {imageUrl && (
+        <div className="relative h-48 overflow-hidden">
+          <img
+            src={imageUrl}
+            alt={community.name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        </div>
+      )}
+      <CardHeader>
+        <CardTitle className="text-xl">{community.name}</CardTitle>
+        <p className="text-sm text-muted-foreground flex items-center gap-1 mt-2">
+          <MapPin className="w-4 h-4" />
+          {community.city}, {community.state}
+        </p>
+      </CardHeader>
+      <CardContent>
+        <p className="text-muted-foreground mb-4">
+          {description}
+        </p>
+        <Button className="w-full" asChild data-testid={`career-button-${community.slug}`}>
+          <a href={employmentUrl} target="_blank" rel="noopener noreferrer">
+            View Open Positions
+          </a>
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
