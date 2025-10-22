@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -60,6 +60,8 @@ export default function LeadCaptureForm({
 }: LeadCaptureFormProps) {
   const [step, setStep] = useState(1);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [formLoadTime] = useState(Date.now());
+  const [captchaToken, setCaptchaToken] = useState<string>("");
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -72,9 +74,38 @@ export default function LeadCaptureForm({
       email: "",
       message: "",
       communityId: communityId || undefined,
+      honeypot: "",
     },
     mode: "onBlur",
   });
+
+  // Load Cloudflare Turnstile script and setup callback
+  useEffect(() => {
+    const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+    if (!siteKey) {
+      console.warn('[CAPTCHA] VITE_TURNSTILE_SITE_KEY not configured');
+      return;
+    }
+
+    // Set up global callback for Turnstile
+    (window as any).onTurnstileSuccess = (token: string) => {
+      console.log('[CAPTCHA] Token received');
+      setCaptchaToken(token);
+    };
+
+    const script = document.createElement('script');
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+      delete (window as any).onTurnstileSuccess;
+    };
+  }, []);
 
   const submitMutation = useMutation({
     mutationFn: async (data: FormData) => {
@@ -115,7 +146,7 @@ export default function LeadCaptureForm({
     const clickIds = getClickIdsFromUrl();
     const transactionId = generateTransactionId();
     
-    // Add tracking data to form submission
+    // Add tracking data and security fields to form submission
     const enrichedData = {
       ...data,
       transactionId,
@@ -126,6 +157,9 @@ export default function LeadCaptureForm({
       wbraid: clickIds.wbraid,
       fbclid: clickIds.fbclid,
       clientUserAgent: navigator.userAgent,
+      // Security fields
+      captchaToken: captchaToken || undefined,
+      formLoadTime,
     };
     
     // Fire Tier 1 conversion event to dataLayer (browser-side backup)
@@ -288,6 +322,39 @@ export default function LeadCaptureForm({
           </FormItem>
         )}
       />
+
+      {/* Honeypot field - hidden from users, catches bots */}
+      <FormField
+        control={form.control}
+        name="honeypot"
+        render={({ field }) => (
+          <FormItem className="absolute -left-[9999px]" aria-hidden="true">
+            <FormLabel>Leave this field blank</FormLabel>
+            <FormControl>
+              <Input
+                {...field}
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                data-testid="input-honeypot"
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+
+      {/* Cloudflare Turnstile CAPTCHA */}
+      {import.meta.env.VITE_TURNSTILE_SITE_KEY && (
+        <div className="flex justify-center">
+          <div
+            className="cf-turnstile"
+            data-sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+            data-callback="onTurnstileSuccess"
+            data-theme="light"
+            data-size="normal"
+          ></div>
+        </div>
+      )}
 
       <div className="flex flex-col sm:flex-row gap-3">
         <Button
