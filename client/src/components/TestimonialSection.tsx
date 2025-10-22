@@ -32,6 +32,12 @@ function TestimonialCard({ testimonial }: { testimonial: EnhancedTestimonial }) 
   const imageUrl = resolvedImageUrl || 
     `https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.authorName)}&background=random&size=150`;
   
+  // Truncate content to 350 characters
+  const maxLength = 350;
+  const truncatedContent = testimonial.content.length > maxLength 
+    ? testimonial.content.substring(0, maxLength).trim() + '...'
+    : testimonial.content;
+  
   return (
     <Card className="h-full hover:shadow-2xl transition-all duration-300 border-primary/10 bg-white/80 backdrop-blur-sm">
       <CardContent className="p-6 flex flex-col h-full">
@@ -54,7 +60,7 @@ function TestimonialCard({ testimonial }: { testimonial: EnhancedTestimonial }) 
 
         {/* Testimonial Text */}
         <p className="text-foreground leading-relaxed mb-6 flex-grow">
-          {testimonial.content}
+          {truncatedContent}
         </p>
 
         {/* Highlight */}
