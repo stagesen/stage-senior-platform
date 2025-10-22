@@ -190,14 +190,6 @@ export default function Communities() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Results Header */}
-        <div className="mb-6 sm:mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-foreground" data-testid="results-count">
-            {sortedCommunities.length} {sortedCommunities.length === 1 ? 'Community' : 'Communities'} Found
-          </h2>
-          <p className="text-sm sm:text-base text-muted-foreground mt-2">Discover the perfect senior living community for your loved one</p>
-        </div>
-
         {/* Communities List */}
         {isLoading ? (
           <div className="space-y-6">
