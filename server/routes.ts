@@ -958,6 +958,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Security Check 3: CAPTCHA verification
+      const captchaConfigured = !!process.env.TURNSTILE_SECRET_KEY;
+      
+      if (captchaConfigured && !captchaToken) {
+        logSecurityEvent({
+          type: 'captcha_fail',
+          ip,
+          userAgent,
+          details: { error: 'missing-captcha-token' },
+        });
+        return res.status(403).json({ 
+          message: 'Security verification required. Please refresh and try again.',
+        });
+      }
+      
       if (captchaToken) {
         const captchaResult = await verifyCaptcha(captchaToken, ip);
         
