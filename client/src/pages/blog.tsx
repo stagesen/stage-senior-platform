@@ -312,7 +312,12 @@ export default function Blog() {
             ) : filteredPosts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredPosts.map((post) => (
-                  <BlogCard key={post.id} post={post} community={communities.find(c => c.id === post.communityId)} />
+                  <BlogCard 
+                    key={post.id} 
+                    post={post} 
+                    community={communities.find(c => c.id === post.communityId)}
+                    onTagClick={(tag) => setSelectedTag(tag)}
+                  />
                 ))}
               </div>
             ) : (

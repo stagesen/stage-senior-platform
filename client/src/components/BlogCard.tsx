@@ -8,9 +8,10 @@ import type { BlogPost, Community } from "@shared/schema";
 interface BlogCardProps {
   post: BlogPost;
   community?: Community;
+  onTagClick?: (tag: string) => void;
 }
 
-export default function BlogCard({ post, community }: BlogCardProps) {
+export default function BlogCard({ post, community, onTagClick }: BlogCardProps) {
   // Resolve image URLs
   const resolvedThumbnailImage = useResolveImageUrl(post.thumbnailImage);
   const resolvedMainImage = useResolveImageUrl(post.mainImage);
@@ -41,13 +42,6 @@ export default function BlogCard({ post, community }: BlogCardProps) {
               className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
               data-testid={`blog-image-${post.slug}`}
             />
-            {post.tags && post.tags.length > 0 && (
-              <div className="absolute top-4 left-4">
-                <Badge className="bg-primary text-primary-foreground" data-testid={`blog-primary-tag-${post.slug}`}>
-                  {post.tags[0]}
-                </Badge>
-              </div>
-            )}
           </div>
 
           {/* Content */}
@@ -83,23 +77,22 @@ export default function BlogCard({ post, community }: BlogCardProps) {
             )}
 
             {/* Tags */}
-            {post.tags && post.tags.length > 1 && (
+            {post.tags && post.tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {post.tags.slice(1, 4).map((tag) => (
+                {post.tags.slice(0, 3).map((tag) => (
                   <Badge 
                     key={tag} 
-                    variant="outline" 
-                    className="text-xs"
+                    className="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors text-xs"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onTagClick?.(tag);
+                    }}
                     data-testid={`blog-tag-${tag}-${post.slug}`}
                   >
                     {tag}
                   </Badge>
                 ))}
-                {post.tags.length > 4 && (
-                  <Badge variant="outline" className="text-xs" data-testid={`blog-more-tags-${post.slug}`}>
-                    +{post.tags.length - 4} more
-                  </Badge>
-                )}
               </div>
             )}
           </div>
