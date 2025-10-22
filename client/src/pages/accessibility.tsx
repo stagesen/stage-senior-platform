@@ -371,8 +371,8 @@ export default function AccessibilityStatement() {
                     <div className="space-y-3">
                       <div className="flex items-center gap-3">
                         <Mail className="w-5 h-5 text-primary" />
-                        <a href="mailto:accessibility@stagesenior.com" className="text-primary hover:underline" data-testid="accessibility-email">
-                          accessibility@stagesenior.com
+                        <a href="mailto:info@stagesenior.com" className="text-primary hover:underline" data-testid="accessibility-email">
+                          info@stagesenior.com
                         </a>
                       </div>
                       <div className="flex items-center gap-3">

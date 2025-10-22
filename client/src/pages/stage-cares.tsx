@@ -114,7 +114,7 @@ export default function StageCares() {
                   </a>
                 </Button>
                 <Button variant="outline" size="lg" asChild data-testid="button-contact">
-                  <a href="mailto:stagecares@stagesenior.com">
+                  <a href="mailto:info@stagesenior.com">
                     <Mail className="w-5 h-5 mr-2" />
                     Contact Foundation
                   </a>
@@ -222,7 +222,7 @@ export default function StageCares() {
               Want to learn more about our charitable initiatives or how you can contribute?
             </p>
             <Button size="lg" className="bg-blue-600 hover:bg-blue-700" asChild data-testid="button-get-involved">
-              <a href="mailto:stagecares@stagesenior.com">
+              <a href="mailto:info@stagesenior.com">
                 <Heart className="w-5 h-5 mr-2" />
                 Get Involved
               </a>
@@ -261,7 +261,7 @@ export default function StageCares() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-white hover:bg-gray-100 text-blue-600 hover:text-blue-700 font-semibold" asChild data-testid="button-email-foundation">
-              <a href="mailto:stagecares@stagesenior.com">
+              <a href="mailto:info@stagesenior.com">
                 <Mail className="w-5 h-5 mr-2" />
                 Email Foundation
               </a>

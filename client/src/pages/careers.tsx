@@ -236,7 +236,7 @@ export default function Careers() {
               Have questions about careers at Stage Senior? We're here to help.
             </p>
             <Button variant="outline" size="lg" asChild>
-              <a href="mailto:careers@stagesenior.com">
+              <a href="mailto:info@stagesenior.com">
                 Contact Our HR Team
               </a>
             </Button>
