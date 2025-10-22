@@ -359,6 +359,11 @@ export default function Team() {
     activeMembers.forEach(member => {
       if (member.tags && Array.isArray(member.tags)) {
         member.tags.forEach(tag => {
+          // Skip "Community Leadership" tag
+          if (tag.toLowerCase() === 'community leadership') {
+            return;
+          }
+          
           // If filtering by community, only show that community's tag
           if (displayCommunityName) {
             if (tag.toLowerCase() === displayCommunityName.toLowerCase() ||
