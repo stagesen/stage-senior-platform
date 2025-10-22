@@ -13,6 +13,10 @@ import EventDetailsModal from "@/components/EventDetailsModal";
 import FloorPlanModal from "@/components/FloorPlanModal";
 import GalleryModal from "@/components/GalleryModal";
 import CommunityMap from "@/components/CommunityMap";
+import FadeIn from "@/components/animations/FadeIn";
+import ScaleIn from "@/components/animations/ScaleIn";
+import StaggerContainer from "@/components/animations/StaggerContainer";
+import StaggerItem from "@/components/animations/StaggerItem";
 import { 
   MapPin, 
   Phone, 
@@ -377,7 +381,8 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
             const previewImages = images.slice(0, 4);
 
             return (
-              <Card 
+              <StaggerItem key={gallery.id} direction="up">
+                <Card 
                 key={gallery.id}
                 className="overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer group bg-gradient-to-br from-gray-50 to-white border-gray-200"
                 onClick={() => onGallerySelect(gallery)}
@@ -441,6 +446,7 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
                   </div>
                 </CardContent>
               </Card>
+              </StaggerItem>
             );
           })}
         </div>
@@ -1453,32 +1459,38 @@ export default function CommunityDetail() {
         {/* Hero Content */}
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4" data-testid="community-name">
-              {community.name}
-            </h1>
-            <div className="flex items-start text-white/90 text-lg mb-4" data-testid="community-location">
-              <MapPin className="w-5 h-5 mr-2 mt-1" />
-              <div>
-                {community.street || community.address}
-                {(community.street || community.address) && <br />}
-                {community.city}, {community.state} {community.zipCode}
+            <FadeIn direction="up" delay={0.2}>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4" data-testid="community-name">
+                {community.name}
+              </h1>
+            </FadeIn>
+            <FadeIn direction="up" delay={0.3}>
+              <div className="flex items-start text-white/90 text-lg mb-4" data-testid="community-location">
+                <MapPin className="w-5 h-5 mr-2 mt-1" />
+                <div>
+                  {community.street || community.address}
+                  {(community.street || community.address) && <br />}
+                  {community.city}, {community.state} {community.zipCode}
+                </div>
               </div>
-            </div>
+            </FadeIn>
             {community.careTypes && community.careTypes.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {community.careTypes.map((careType) => (
-                  <Badge 
-                    key={careType} 
-                    variant="secondary"
-                    className="bg-white/20 text-white border-white/30 backdrop-blur-sm text-sm px-3 py-1"
-                    data-testid={`care-type-${careType}`}
-                  >
-                    {careType.split('-').map(word => 
-                      word.charAt(0).toUpperCase() + word.slice(1)
-                    ).join(' ')}
-                  </Badge>
-                ))}
-              </div>
+              <FadeIn direction="up" delay={0.4}>
+                <div className="flex flex-wrap gap-2">
+                  {community.careTypes.map((careType) => (
+                    <Badge 
+                      key={careType} 
+                      variant="secondary"
+                      className="bg-white/20 text-white border-white/30 backdrop-blur-sm text-sm px-3 py-1"
+                      data-testid={`care-type-${careType}`}
+                    >
+                      {careType.split('-').map(word => 
+                        word.charAt(0).toUpperCase() + word.slice(1)
+                      ).join(' ')}
+                    </Badge>
+                  ))}
+                </div>
+              </FadeIn>
             )}
           </div>
         </div>
@@ -1713,21 +1725,24 @@ export default function CommunityDetail() {
             {/* Features & Highlights */}
             {highlights.length > 0 && (
               <section id="highlights" className="scroll-mt-24">
-                <h2 className="text-2xl md:text-3xl font-bold mb-8">Community Highlights</h2>
-                <div className="flex flex-col gap-6">
+                <FadeIn direction="up">
+                  <h2 className="text-2xl md:text-3xl font-bold mb-8">Community Highlights</h2>
+                </FadeIn>
+                <StaggerContainer staggerDelay={0.15} className="flex flex-col gap-6">
                   {highlights.map((highlight, index) => (
-                    <HighlightCard
-                      key={highlight.id}
-                      highlight={{
-                        ...highlight,
-                        imageId: highlight.imageId ?? undefined,
-                        ctaLabel: highlight.ctaLabel ?? undefined,
-                        ctaHref: highlight.ctaHref ?? undefined
-                      }}
-                      imageOnRight={index % 2 !== 0}
-                    />
+                    <StaggerItem key={highlight.id} direction="up">
+                      <HighlightCard
+                        highlight={{
+                          ...highlight,
+                          imageId: highlight.imageId ?? undefined,
+                          ctaLabel: highlight.ctaLabel ?? undefined,
+                          ctaHref: highlight.ctaHref ?? undefined
+                        }}
+                        imageOnRight={index % 2 !== 0}
+                      />
+                    </StaggerItem>
                   ))}
-                </div>
+                </StaggerContainer>
               </section>
             )}
 
@@ -1735,12 +1750,15 @@ export default function CommunityDetail() {
             {/* Amenities Showcase */}
             {community.amenities && community.amenities.length > 0 && (
               <section id="amenities" className="scroll-mt-24">
-                <h2 className="text-2xl md:text-3xl font-bold mb-8">Amenities & Services</h2>
-                <div className="bg-gray-50 rounded-2xl p-8">
-                  <p className="text-lg text-gray-600 mb-8">
-                    Step into a lifestyle where every day feels like a retreat. Our community is packed with thoughtful amenities designed to make life easier and more enjoyable.
-                  </p>
-                  <div className="flex flex-col gap-3">
+                <FadeIn direction="up">
+                  <h2 className="text-2xl md:text-3xl font-bold mb-8">Amenities & Services</h2>
+                </FadeIn>
+                <FadeIn direction="up" delay={0.1}>
+                  <div className="bg-gray-50 rounded-2xl p-8">
+                    <p className="text-lg text-gray-600 mb-8">
+                      Step into a lifestyle where every day feels like a retreat. Our community is packed with thoughtful amenities designed to make life easier and more enjoyable.
+                    </p>
+                    <StaggerContainer staggerDelay={0.1} className="flex flex-col gap-3">
                     {(() => {
                       const amenitiesList = (community as any).amenities || 
                         community.amenities?.map(name => ({ name })) || [];
@@ -1796,51 +1814,54 @@ export default function CommunityDetail() {
                         const amenityLink = getAmenityLink(amenityName);
 
                         return amenityLink ? (
-                          <Link 
-                            key={`amenity-${index}`}
-                            href={amenityLink.href}
-                            className="flex items-center justify-between bg-white rounded-lg p-4 hover:bg-primary/5 hover:shadow-md transition-all duration-200 cursor-pointer group"
-                            data-testid={`amenity-link-${amenityLink.testIdPrefix}-${index}`}
-                          >
-                            <div className="flex items-center space-x-3">
-                              <IconComponent className="w-8 h-8 text-primary flex-shrink-0" />
-                              <span className="text-sm font-medium text-primary group-hover:text-primary/80 transition-colors">{amenityName}</span>
-                            </div>
-                            <ChevronRight className="w-4 h-4 text-primary group-hover:translate-x-0.5 transition-all" />
-                          </Link>
+                          <StaggerItem key={`amenity-${index}`} direction="up">
+                            <Link 
+                              href={amenityLink.href}
+                              className="flex items-center justify-between bg-white rounded-lg p-4 hover:bg-primary/5 hover:shadow-md transition-all duration-200 cursor-pointer group"
+                              data-testid={`amenity-link-${amenityLink.testIdPrefix}-${index}`}
+                            >
+                              <div className="flex items-center space-x-3">
+                                <IconComponent className="w-8 h-8 text-primary flex-shrink-0" />
+                                <span className="text-sm font-medium text-primary group-hover:text-primary/80 transition-colors">{amenityName}</span>
+                              </div>
+                              <ChevronRight className="w-4 h-4 text-primary group-hover:translate-x-0.5 transition-all" />
+                            </Link>
+                          </StaggerItem>
                         ) : (
-                          <div 
-                            key={`amenity-${index}`}
-                            className="flex items-center space-x-3 bg-white rounded-lg p-4"
-                            data-testid={`amenity-${index}`}
-                          >
-                            <IconComponent className="w-8 h-8 text-primary flex-shrink-0" />
-                            <span className="text-sm font-medium">{amenityName}</span>
-                          </div>
+                          <StaggerItem key={`amenity-${index}`} direction="up">
+                            <div 
+                              className="flex items-center space-x-3 bg-white rounded-lg p-4"
+                              data-testid={`amenity-${index}`}
+                            >
+                              <IconComponent className="w-8 h-8 text-primary flex-shrink-0" />
+                              <span className="text-sm font-medium">{amenityName}</span>
+                            </div>
+                          </StaggerItem>
                         );
                       });
                     })()}
+                    </StaggerContainer>
+                    {(() => {
+                      const amenitiesList = (community as any).amenities || 
+                        community.amenities?.map(name => ({ name })) || [];
+                      const hasMoreAmenities = amenitiesList.length > 5;
+                      
+                      return hasMoreAmenities && (
+                        <div className="mt-6 text-center">
+                          <Button
+                            variant="outline"
+                            onClick={() => setShowAllAmenities(!showAllAmenities)}
+                            className="px-6"
+                            data-testid="toggle-amenities-button"
+                          >
+                            {showAllAmenities ? 'Show Less' : `Show All ${amenitiesList.length} Amenities`}
+                            <ChevronRight className={`ml-2 w-4 h-4 transition-transform ${showAllAmenities ? 'rotate-90' : ''}`} />
+                          </Button>
+                        </div>
+                      );
+                    })()}
                   </div>
-                  {(() => {
-                    const amenitiesList = (community as any).amenities || 
-                      community.amenities?.map(name => ({ name })) || [];
-                    const hasMoreAmenities = amenitiesList.length > 5;
-                    
-                    return hasMoreAmenities && (
-                      <div className="mt-6 text-center">
-                        <Button
-                          variant="outline"
-                          onClick={() => setShowAllAmenities(!showAllAmenities)}
-                          className="px-6"
-                          data-testid="toggle-amenities-button"
-                        >
-                          {showAllAmenities ? 'Show Less' : `Show All ${amenitiesList.length} Amenities`}
-                          <ChevronRight className={`ml-2 w-4 h-4 transition-transform ${showAllAmenities ? 'rotate-90' : ''}`} />
-                        </Button>
-                      </div>
-                    );
-                  })()}
-                </div>
+                </FadeIn>
               </section>
             )}
 
@@ -2045,17 +2066,21 @@ export default function CommunityDetail() {
             {/* Floor Plans Section */}
             {floorPlans.length > 0 && (
               <section id="floor-plans" className="scroll-mt-24">
-                <h2 className="text-2xl md:text-3xl font-bold mb-8">Floor Plans & Pricing</h2>
-                <p className="text-lg text-gray-600 mb-8">
-                  Each apartment home is designed for comfort and independence, with modern conveniences and thoughtful layouts.
-                </p>
-                <FloorPlansCarousel
-                  plans={floorPlans}
-                  onOpen={(plan) => {
-                    setSelectedFloorPlan(plan);
-                    setIsFloorPlanModalOpen(true);
-                  }}
-                />
+                <FadeIn direction="up">
+                  <h2 className="text-2xl md:text-3xl font-bold mb-8">Floor Plans & Pricing</h2>
+                  <p className="text-lg text-gray-600 mb-8">
+                    Each apartment home is designed for comfort and independence, with modern conveniences and thoughtful layouts.
+                  </p>
+                </FadeIn>
+                <FadeIn direction="up" delay={0.1}>
+                  <FloorPlansCarousel
+                    plans={floorPlans}
+                    onOpen={(plan) => {
+                      setSelectedFloorPlan(plan);
+                      setIsFloorPlanModalOpen(true);
+                    }}
+                  />
+                </FadeIn>
               </section>
             )}
 
@@ -2083,34 +2108,40 @@ export default function CommunityDetail() {
             {/* Photo Gallery */}
             {galleries.length > 0 && (
               <section id="gallery" className="scroll-mt-24">
-                <h2 className="text-2xl md:text-3xl font-bold mb-8">Photo Gallery</h2>
-                <p className="text-lg text-gray-600 mb-8">
-                  Explore our vibrant community life, comfortable living spaces, dedicated care team, and beautiful Colorado surroundings.
-                </p>
-                <GalleryOverview 
-                  galleries={galleries}
-                  onGallerySelect={(gallery) => {
-                    setSelectedGallery(gallery as Gallery);
-                    setIsGalleryModalOpen(true);
-                  }}
-                />
+                <FadeIn direction="up">
+                  <h2 className="text-2xl md:text-3xl font-bold mb-8">Photo Gallery</h2>
+                  <p className="text-lg text-gray-600 mb-8">
+                    Explore our vibrant community life, comfortable living spaces, dedicated care team, and beautiful Colorado surroundings.
+                  </p>
+                </FadeIn>
+                <StaggerContainer staggerDelay={0.12}>
+                  <GalleryOverview 
+                    galleries={galleries}
+                    onGallerySelect={(gallery) => {
+                      setSelectedGallery(gallery as Gallery);
+                      setIsGalleryModalOpen(true);
+                    }}
+                  />
+                </StaggerContainer>
               </section>
             )}
 
             {/* Events & Activities - Full Width */}
             {events.length > 0 && (
               <section id="events" className="scroll-mt-24">
-                <h2 className="text-2xl md:text-3xl font-bold mb-8">Upcoming Events</h2>
-                <div className="space-y-6">
+                <FadeIn direction="up">
+                  <h2 className="text-2xl md:text-3xl font-bold mb-8">Upcoming Events</h2>
+                </FadeIn>
+                <StaggerContainer staggerDelay={0.12} className="space-y-6">
                   {events.slice(0, 4).map((event) => (
-                    <div key={event.id} className="w-full">
+                    <StaggerItem key={event.id} direction="up">
                       <EventCard 
                         event={event} 
                         onViewDetails={() => setSelectedEvent(event)}
                       />
-                    </div>
+                    </StaggerItem>
                   ))}
-                </div>
+                </StaggerContainer>
                 {events.length > 4 && (
                   <div className="text-center mt-8">
                     <Button variant="outline" size="lg" asChild data-testid="button-view-all-events">
@@ -2127,8 +2158,12 @@ export default function CommunityDetail() {
             {/* Testimonials */}
             {testimonials.length > 0 && (
               <section id="testimonials" className="scroll-mt-24">
-                <h2 className="text-2xl md:text-3xl font-bold mb-8">What Residents & Families Say</h2>
-                <TestimonialsCarousel testimonials={testimonials} />
+                <FadeIn direction="up">
+                  <h2 className="text-2xl md:text-3xl font-bold mb-8">What Residents & Families Say</h2>
+                </FadeIn>
+                <FadeIn direction="up" delay={0.1}>
+                  <TestimonialsCarousel testimonials={testimonials} />
+                </FadeIn>
               </section>
             )}
 
@@ -2223,7 +2258,9 @@ export default function CommunityDetail() {
             {/* FAQs */}
             {faqs.length > 0 && (
               <section id="faqs" className="scroll-mt-24">
-                <h2 className="text-2xl md:text-3xl font-bold mb-8">Frequently Asked Questions</h2>
+                <FadeIn direction="up">
+                  <h2 className="text-2xl md:text-3xl font-bold mb-8">Frequently Asked Questions</h2>
+                </FadeIn>
                 <Accordion type="single" collapsible className="space-y-4">
                   {faqs.slice(0, 6).map((faq) => (
                     <AccordionItem key={faq.id} value={faq.id} className="border rounded-lg px-6 bg-gray-50" data-testid={`faq-${faq.id}`}>
@@ -2251,8 +2288,11 @@ export default function CommunityDetail() {
 
             {/* Location & Neighborhood */}
             <section id="neighborhood" className="scroll-mt-24">
-              <h2 className="text-2xl md:text-3xl font-bold mb-8">Location & Neighborhood</h2>
-              <Card className="mb-6 overflow-hidden">
+              <FadeIn direction="up">
+                <h2 className="text-2xl md:text-3xl font-bold mb-8">Location & Neighborhood</h2>
+              </FadeIn>
+              <FadeIn direction="up" delay={0.1}>
+                <Card className="mb-6 overflow-hidden">
                 <CardContent className="p-0">
                   <div className="h-96" data-testid="community-map">
                     {community.latitude && community.longitude ? (
@@ -2273,7 +2313,9 @@ export default function CommunityDetail() {
                   </div>
                 </CardContent>
               </Card>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              </FadeIn>
+              <FadeIn direction="up" delay={0.2}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                   <CardContent className="p-6">
                     <h3 className="text-xl font-semibold mb-3">Nearby Healthcare</h3>
@@ -2295,6 +2337,7 @@ export default function CommunityDetail() {
                   </CardContent>
                 </Card>
               </div>
+              </FadeIn>
             </section>
 
             {/* Action Panel - Contact, Pricing, and Resources */}
