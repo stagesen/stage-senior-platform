@@ -30,7 +30,7 @@ export default function PageSectionRenderer({ section }: PageSectionRendererProp
   const content = section.content as any;
   
   // Resolve image URLs (converts UUIDs to actual URLs)
-  const heroImageUrl = useResolveImageUrl(content.imageUrl);
+  const heroImageUrl = useResolveImageUrl(content.imageId || content.imageUrl);
 
   // Text Block
   if (section.sectionType === "text_block") {
