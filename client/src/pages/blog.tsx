@@ -214,6 +214,45 @@ export default function Blog() {
             />
           </article>
 
+          {/* Author Bio Card */}
+          {currentPost.authorDetails && (
+            <Card className="my-8 bg-gradient-to-br from-primary/5 to-accent/10 border-primary/20" data-testid="author-bio-card">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-6">
+                  {resolvedAuthorAvatar && (
+                    <img 
+                      src={resolvedAuthorAvatar}
+                      alt={currentPost.authorDetails.name}
+                      className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md flex-shrink-0"
+                      data-testid="author-avatar"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xl font-bold text-foreground mb-1" data-testid="author-name">
+                      {currentPost.authorDetails.name}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-3" data-testid="author-role">
+                      {currentPost.authorDetails.role}
+                      {currentPost.authorDetails.department && ` • ${currentPost.authorDetails.department}`}
+                    </p>
+                    <Button 
+                      asChild 
+                      variant="outline" 
+                      size="sm"
+                      className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      data-testid="button-view-bio"
+                    >
+                      <Link href={`/team/${currentPost.authorDetails.slug}`}>
+                        View Full Bio
+                        <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Community CTA - Only show if post is associated with a community */}
           {currentPost.communityId && community && (
             <BlogCommunityCTA community={community} />
