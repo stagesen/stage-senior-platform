@@ -64,27 +64,6 @@ export default function Reviews() {
         defaultSubtitle="Hear from our community"
       />
       <div className="container mx-auto px-4 py-20">
-
-        {/* Statistics Bar */}
-        {approvedTestimonials.length > 0 && (
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl border border-primary/10 p-8 mb-12 max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
-              <div>
-                <div className="text-3xl font-bold text-primary mb-2">
-                  {approvedTestimonials.length}
-                </div>
-                <div className="text-sm text-muted-foreground">Total Reviews</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-primary mb-2">
-                  {(approvedTestimonials.reduce((sum, t) => sum + (t.rating || 5), 0) / approvedTestimonials.length).toFixed(1)}
-                </div>
-                <div className="text-sm text-muted-foreground">Average Rating</div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Testimonials Grid */}
         {approvedTestimonials.length > 0 ? (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
