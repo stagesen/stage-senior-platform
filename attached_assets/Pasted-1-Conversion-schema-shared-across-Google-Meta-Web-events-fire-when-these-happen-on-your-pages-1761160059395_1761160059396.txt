@@ -1,0 +1,1128 @@
+1) Conversion schema (shared across Google & Meta)
+
+Web events (fire when these happen on your pages):
+
+GenerateLead (contact form submit)
+
+ScheduleTour (tour form submit or Calendly confirm)
+
+PhoneCallStart (click‑to‑call) & Website Call (DNI call starts)
+
+PricingRequest (pricing form completion)
+
+RSVPEvent (open house RSVP)
+
+ChatStart (if you use web chat)
+
+Event parameters (send with every event):
+event_id (UUID), value (USD), currency, care_level (AL/MC/IL), metro (e.g., “Littleton”), community_name (when applicable), landing_page, gclid, wbraid/gbraid (iOS), fbc, fbp, consent flags.
+
+Primary conversions in Google Ads: ScheduleTour, Website Call (>=60s), RSVPEvent.
+
+Secondary conversions: GenerateLead, PricingRequest, ChatStart (observe only unless later promoted to Primary). 
+Google Help
++1
+
+Values (for value‑based bidding and ROAS modeling—start with proxies, refine with real outcomes):
+
+GenerateLead = $25
+
+ScheduleTour = $250
+
+Deposit = $1,000 (offline/ECL)
+
+Move‑In = $6,000 (offline/ECL)
+
+Rationale: VBB lets Smart Bidding find higher‑value prospects instead of just more leads. 
+Google Help
++1
+
+2) Google Ads: conversions & integrations (step‑by‑step)
+A) Link accounts & define conversions
+
+Link GA4 ↔ Google Ads (for reporting & audiences). 
+Google Help
+
+In Google Ads → Tools & Settings → Conversions, create actions for:
+
+Schedule Tour (Web), Pricing Request (Web), Lead (Web).
+
+Website call conversions (DNI/forwarding number)—set 60‑second threshold. 
+Google Help
++1
+
+Import (offline): “from clicks” for Deposit and Move‑In (using Data Manager or API). 
+Google Help
+
+Mark only the actions you want to bid on as Primary; the rest stay Secondary for observation. 
+Google Help
+
+B) Install tags & Enhanced Conversions for Leads (ECL)
+
+Use GTM (web) to fire the Google tag & conversion events.
+
+Enable Enhanced Conversions for Leads (ECL) and map hashed email/phone from the form. (Google provides GTM & gtag instructions.) 
+Google Help
++1
+
+Consent Mode v2: set ad_user_data and ad_personalization signals based on the user’s choices—required for certain EMEA use cases and recommended overall. 
+Google Help
++1
+
+C) Capture click IDs & phone calls
+
+Auto‑tagging ON; capture gclid/wbraid/gbraid into hidden form fields and your CRM. Later, import conversions by matching click IDs + timestamps. 
+Google Help
+
+Website call tracking: implement Google Forwarding Numbers (DNI) on call‑visible pages; set call‑length thresholds. 
+Google Help
+
+Optional: import phone call conversions from your call platform if not using Google forwarding numbers. 
+Google Help
++1
+
+D) Offline & Enhanced conversions (beyond the browser)
+
+Classic offline: import CSV/API with gclid/wbraid/gbraid, conversion name, value, and time. 
+Google Help
++1
+
+ECL: upload hashed first‑party identifiers (email/phone) tied to the original lead for Deposit and Move‑In; recommended vs. legacy offline import. Use Google Ads Data Manager (supports Salesforce, HubSpot, Sheets, SFTP, HTTPS, etc.). 
+Google Help
++1
+
+Compliance note (housing): Google limits audience personalization for housing ads in the US/CA (no age, gender, ZIP, etc.). Keep all demographics enabled and avoid ZIP targeting. 
+Google Help
+
+3) Meta: conversions & integrations (step‑by‑step)
+A) Foundation
+
+Verify your domain in Business Settings → Brand Safety → Domains. 
+Facebook
+
+Install Meta Pixel via GTM and create standard events (Lead, CompleteRegistration for ScheduleTour), including value and currency. Use Test Events to validate. 
+Facebook
++1
+
+B) Add Conversions API (CAPI) in parallel
+
+Send the same events from server with the same event_id as the browser event to deduplicate; Meta’s best practice is event_name + event_id matching. 
+Facebook Developers
++1
+
+Include _fbc/_fbp and customer information parameters (hashed email/phone) to improve Event Match Quality. 
+Facebook Developers
++1
+
+C) Offline outcome tracking (deposits & move‑ins)
+
+Create a Dataset in Events Manager (Meta replaced “Offline Event Sets” creation with Datasets). Upload or stream real‑world events (phone closes, move‑ins) with timestamps + PII (hashed) + value. 
+Facebook
++1
+
+Compliance note (housing): On Meta you must choose the Special Ad Category: Housing, which restricts age/zip targeting, etc. Plan to rely on creative, geography radius, and first‑party audiences. 
+Facebook
++1
+
+4) Data layer & form requirements (copy/paste to your spec)
+
+On form submit (all lead forms):
+
+dataLayer.push({
+  event: 'ScheduleTour',             // or 'GenerateLead', 'PricingRequest'
+  event_id: crypto.randomUUID(),     // generate once, reuse for Meta CAPI dedup
+  value: 250, currency: 'USD',
+  care_level: 'Assisted Living', metro: 'Littleton',
+  community_name: '—', 
+  gclid: getParam('gclid') || readCookie('_gclid'),
+  wbraid: getParam('wbraid'), gbraid: getParam('gbraid'),
+  fbc: readCookie('_fbc'), fbp: readCookie('_fbp'),
+  user: { email: hash(email), phone: hash(phone) },
+  consent: { ad_user_data: true, ad_personalization: true }
+});
+
+
+Ensure hidden fields persist gclid/gbraid/wbraid and fbc/fbp into the CRM record. 
+Google Help
++1
+
+GTM sends to Google Ads (ECL) and Meta (Pixel + CAPI) using the same event_id. 
+Google Help
++1
+
+5) CRM & file import templates
+
+Google Ads – offline click conversions (CSV columns):
+
+Google Click ID, Conversion Name, Conversion Time, Conversion Value, Conversion Currency
+E.g.,  Cj0KCQ... , Move-In, 2025-10-20 14:35:00, 6000, USD
+
+
+(Upload via Google Ads → Conversions → Uploads or automate via Data Manager/API.) 
+Google Help
+
+Meta – offline (Dataset) CSV essentials:
+event_name (e.g., Purchase or custom “MoveIn”), event_time (epoch), value, currency, hashed email/phone, fbc/fbp when available, and an event_id if you want deduping with web events. (Create/assign Datasets in Events Manager first.) 
+Facebook Developers
+
+6) Campaign management blueprint
+Google Ads (search‑led, VBB‑ready)
+
+Account structure
+
+Search – Nonbrand: Care level × City clusters (e.g., Assisted Living – Littleton area), Exact + Broad with negatives, Maximize Conv. Value (or tCPA if values aren’t ready). 
+Google Help
+
+Search – Brand/Competitor (brand defense; competitor careful on policy).
+
+Performance Max (Lead Gen) for scale (brand exclusions, strict asset discipline). 
+Google Help
++1
+
+Demand Gen (former Discovery) for mid‑funnel education (family caregivers in research mode). 
+Google Help
+
+Assets: RSAs aligned to care level + geo; sitelinks (Amenities, Floor Plans, Pricing, Schedule a Tour), call assets, and location assets (as applicable).
+
+Bidding: Start Maximize Conversions (with CPA cap) → move to Maximize Conversion Value once proxy values are live and stable. 
+Google Help
+
+Policies (housing): no age/gender/ZIP constraints; use city/radius and contextual keywords. 
+Google Help
+
+Meta (Special Ad Category: Housing)
+
+Objectives: Leads (conversion location: website) or Sales (if you’re using value events).
+
+Structure:
+
+Prospecting (broad within allowed geo radius; Advantage+ placements).
+
+Engaged website visitors and first‑party lists for retargeting (within policy).
+
+Creative: Short social video + carousels featuring local ownership, chaplain/counselor support, gardens & fresh food, resident life—aligns to your brand differentiators.
+
+Measurement: Watch Event Match Quality and Test Events; fix low EMQ by passing hashed email/phone and fbc/fbp. 
+Facebook
++1
+
+7) QA & monitoring checklist (weekly)
+
+Google Tag Assistant / real‑time conversion debug; Conversions → Diagnostics for import health. 
+Google for Developers
+
+Meta Events Manager → Test Events (verify Pixel + CAPI dedup via event_id) and monitor EMQ scores. 
+Facebook
++1
+
+Call conversions: confirm forwarding numbers render and call duration threshold logs conversions. 
+Google Help
+
+Consent Mode v2: confirm consent states propagate; ads still model conversions when consent is denied. 
+Google Help
+
+8) Naming conventions & UTM plan
+
+Campaign name: GOOG_Search_AL_Littleton_[B/Broad]_[US-CO]
+Ad group: AL_Littleton_Core / AL_Littleton_Competitors
+Meta Ad set: Housing_AL_Littleton_Prospecting_[Radius]
+
+UTM template (both platforms):
+utm_source={google|meta}&utm_medium=cpc&utm_campaign={{campaign.name}}&utm_content={{ad.id}}&utm_term={keyword}
+
+Store alongside: gclid / gbraid / wbraid / fbc / fbp / event_id.
+
+9) 90‑day rollout
+
+Days 1–7 – Foundation
+
+GA4↔Google Ads link; create Primary/Secondary conversions; enable ECL; install Pixel + CAPI with dedup; configure Consent Mode v2. 
+Google Help
++3
+Google Help
++3
+Google Help
++3
+
+Implement Google forwarding numbers on key pages. 
+Google Help
+
+Create Meta Dataset for offline outcomes. 
+Facebook
+
+Days 8–21 – Launch & QA
+
+Launch Search (brand + nonbrand), Meta (prospecting/retargeting), and a small PMax pilot. 
+Google Help
+
+Start value proxies (lead/tour values) and verify imports.
+
+Days 22–45 – Calibrate
+
+Tighten negatives & geo; creative round 2 (community‑specific proof).
+
+Begin offline/ECL uploads for tours→deposits→move‑ins; evaluate move to Maximize Conversion Value / tROAS. 
+Google Help
+
+Days 46–90 – Scale
+
+Expand Demand Gen for mid‑funnel; broaden Match Types if CPL is stable. 
+Google Help
+
+Iterate on Meta creative; watch EMQ and CAPI dedup. 
+Facebook
++1
+
+10) Practical how‑tos (links to the exact steps)
+
+Google Ads:
+
+Offline conversions from clicks (GCLID/GBRAID/WBRAID) & file prep. 
+Google Help
++1
+
+Enhanced Conversions for Leads setup (GTM or gtag). 
+Google Help
++1
+
+Link GA4 ↔ Google Ads. 
+Google Help
+
+Call conversions (from ads & website). 
+Google Help
++1
+
+Value‑based bidding overview & best practices. 
+Google Help
++1
+
+Performance Max (lead gen) & Demand Gen docs. 
+Google Help
++1
+
+Consent Mode v2 reference. 
+Google Help
+
+Meta:
+
+Install Pixel; use Test Events to validate. 
+Facebook
++1
+
+CAPI parameters and dedup via event_id. 
+Facebook Developers
++1
+
+_fbc/_fbp details for better matching. 
+Facebook Developers
+
+Datasets for offline events (replacing new Offline Event Set creation). 
+Facebook
+
+Special Ad Category: Housing rules. 
+Facebook
+
+11) What we’ll hand to dev (condensed spec)
+
+GTM (web) tags:
+
+Google tag, conversion events (GenerateLead, ScheduleTour, etc.) with ECL mapping (hashed email/phone). 
+Google Help
+
+Meta Pixel events mirroring those names; event_id generated client‑side and pushed to the dataLayer; store fbc/fbp & click IDs. 
+Facebook Developers
+
+GTM (server) or backend webhook:
+
+Send Meta CAPI events with the same event_id (dedup). 
+Facebook Developers
+
+Optionally send Google ECL via API/Data Manager for late‑stage outcomes. 
+Google for Developers
++1
+
+CRM fields to add: email (raw for hashing server‑side), phone, event_id, gclid, wbraid, gbraid, fbc, fbp, consent flags, care_level, community_name, conversion stage, values.
+
+Privacy note: never send health/diagnosis or sensitive data to ad platforms; ECL/CAPI uses hashed identifiers and must respect user consent preferences. 
+Google Help
+
+12) Campaign guardrails specific to Stage Senior
+
+Creative leans into local ownership, chaplain/counselor support, fresh‑food culture, and family trust—this is your unfair advantage in ads and landing pages, and it materially lifts conversion rates.
+
+Meta & Google housing rules constrain targeting; compensate with geography, creative relevance, and first‑party lists (site visitors, engaged emails) rather than demographic filters. 
+Facebook
++1
+
+Want me to prepare:
+
+a GTM implementation doc (tags/triggers/variables + dataLayer spec),
+
+CSV templates for Google & Meta offline uploads, and
+
+naming/UTM cheat‑sheet you can hand to anyone creating campaigns?
+
+I can generate those immediately so your dev and media teams can copy‑paste and launch with confidence.
+
+You said:
+yes please
+ChatGPT said:
+Request for GPT-5 Pro
+Reasoned for 15m 51s
+Analyzed
+Always show details
+# Create deliverable files for Stage Senior ad measurement & ops
+import hashlib, time, json, os, pandas as pd
+
+base_path = "/mnt/data"
+
+# 1) GTM Implementation Spec (Markdown)
+gtm_spec = """# Stage Senior — Ads & Measurement Implementation Spec (GTM + ECL + CAPI)
+
+> This document defines the *copy‑paste* implementation details to wire **Google Ads** (incl. Enhanced Conversions for Leads & offline imports) and **Meta** (Pixel + CAPI + Offline/Datasets), with **Consent Mode v2** and a unified **dataLayer**. It complements your landing page system and page inventory.
+
+---
+
+## 0) Prereqs (accounts & foundations)
+
+- **Google Ads**: access to Conversions, Data Manager, and call reporting enabled.
+- **GA4**: property linked to Google Ads (Admin → *Google Ads links*). 
+- **GTM Web**: container installed site‑wide (head & body snippets). Optional **GTM Server** for CAPI.
+- **Meta Business Manager**: Pixel ID, verified domain, Events Manager access; Conversions API destination (server/app).
+- **Call tracking**: Google forwarding numbers (website calls) or 3rd‑party DNI with import.
+- **CMP/Consent banner** implementing **Consent Mode v2** signals.
+
+---
+
+## 1) Consent Mode v2 (site‑wide, before any tags)
+
+> Default to **denied** until the user provides consent. Your CMP should update these signals when the user accepts/changes preferences.
+
+```html
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+
+// Default (user has not made a choice yet)
+gtag('consent', 'default', {
+  'ad_storage': 'denied',
+  'analytics_storage': 'denied',
+  'ad_user_data': 'denied',
+  'ad_personalization': 'denied'
+});
+
+// Example: on user Accept in your CMP callback
+// gtag('consent', 'update', {
+//   'ad_storage': 'granted',
+//   'analytics_storage': 'granted',
+//   'ad_user_data': 'granted',
+//   'ad_personalization': 'granted'
+// });
+</script>
+
+
+Do this in a Consent Initialization tag in GTM so it runs before all other tags.
+
+Why: ad_user_data is required for measurement use cases like Enhanced Conversions; ad_personalization controls remarketing and similar uses.
+
+2) Unified dataLayer events (copy‑paste schema)
+
+Fire one of these Custom Events in JS when a form successfully submits or a scheduler/tour is confirmed.
+
+Always show details
+// Helper: generate a UUID for event_id if your app doesn't provide one
+function ss_uuid(){return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+  (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+)};
+
+// Example payload for a tour booking
+window.dataLayer = window.dataLayer || [];
+window.dataLayer.push({
+  event: 'ScheduleTour',                     // or GenerateLead, PricingRequest, RSVPEvent, PhoneCallStart, ChatStart
+  event_id: ss_uuid(),
+  value: 250,                                // proxy; override with true values if known
+  currency: 'USD',
+  care_level: 'Assisted Living',             // Assisted Living | Memory Care | Independent Living
+  metro: 'Littleton',
+  community_name: 'The Gardens at Columbine',// optional
+  landing_page: window.location.href,
+
+  // click IDs & meta IDs captured client‑side
+  gclid: new URLSearchParams(location.search).get('gclid'),
+  gbraid: new URLSearchParams(location.search).get('gbraid'),
+  wbraid: new URLSearchParams(location.search).get('wbraid'),
+  fbc: (document.cookie.match(/_fbc=([^;]+)/)||[])[1],
+  fbp: (document.cookie.match(/_fbp=([^;]+)/)||[])[1],
+
+  // map hashed identifiers for Enhanced Conversions for Leads & Meta EMQ
+  user: {
+    // Replace with your form fields when available
+    email_sha256: sha256(window.ssForm?.email || ''),
+    phone_sha256: sha256(window.ssForm?.phone || '')
+  },
+
+  consent: { ad_user_data: true, ad_personalization: true } // set from CMP
+});
+
+// Minimal SHA‑256 helper (for illustration; use a robust hasher in production)
+async function sha256(input){
+  const enc = new TextEncoder().encode((input||'').trim().toLowerCase());
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+
+Custom events to implement: GenerateLead (contact form), ScheduleTour (tour/scheduler confirm), PricingRequest (multi‑step quote), PhoneCallStart (click‑to‑call), RSVPEvent, ChatStart.
+
+3) GTM Web — Tags, Triggers, Variables
+3.1 Tags (create once per conversion action)
+
+Google Ads – Conversion (Web)
+
+Tag type: Google Ads Conversion Tracking
+
+Conversion ID/Label: from Google Ads → Conversions.
+
+Trigger: Custom Event equals the matching dataLayer event (e.g., ScheduleTour).
+
+Enhanced Conversions for Leads: In tag settings → Turn on Enhanced Conversions → Manual mapping:
+
+Email: {{DLV - user.email_sha256}} (set as SHA‑256 hashed)
+
+Phone: {{DLV - user.phone_sha256}} (SHA‑256)
+
+Send dynamic values: value and currency from dataLayer.
+
+GA4 – Event (optional but recommended)
+
+Tag type: GA4 Event
+
+Event name mirrors your dataLayer event.
+
+Params: value, currency, care_level, metro, community_name.
+
+Meta Pixel – Web events
+
+Tag type: Custom HTML or Community Template
+
+Fire Lead for GenerateLead, and CompleteRegistration for ScheduleTour.
+
+Include {eventID: {{DLV - event_id}}} in the fbq('track', ...) call and pass value, currency, and custom params.
+
+Trigger: matching Custom Event.
+
+Website Call Conversion (Google)
+
+Create a Website calls conversion in Google Ads (with Google forwarding numbers).
+
+Implement the event snippet (or a GTM Custom HTML tag) on pages where the phone number is displayed.
+
+Optional: bind click‑to‑call links to fire a PhoneCallStart event for analytics alignment.
+
+3.2 Triggers
+
+Type: Custom Event
+
+Event name: GenerateLead, ScheduleTour, PricingRequest, RSVPEvent, PhoneCallStart, ChatStart.
+
+3.3 Variables
+
+DLV: Data Layer Variables for event_id, value, currency, care_level, metro, community_name, user.email_sha256, user.phone_sha256, gclid, gbraid, wbraid, fbc, fbp.
+
+URL vars for gclid/gbraid/wbraid (if you prefer GTM URL Variable).
+
+1st‑party cookie variables for _fbc and _fbp.
+
+4) GTM Server (or backend) — Meta CAPI (dedup with event_id)
+
+If you have GTM Server:
+
+Create a CAPI tag that listens for the same events via the Client and forwards to Meta with:
+
+event_name: Lead or CompleteRegistration (map from your web event).
+
+event_id: {{event_id}} (same ID from web to deduplicate).
+
+event_time: UNIX seconds.
+
+user_data: hashed email/phone, fbc, fbp, IP, UA (when available per consent).
+
+custom_data: value, currency, care_level, etc.
+
+If you don’t have GTM Server: implement a small server function or use a connector (Segment/Tealium/etc.).
+
+5) Google Ads — Offline & ECL
+
+Enhanced Conversions for Leads (ECL)
+
+In Google Ads → Conversions → your web lead action → Enhanced Conversions → Turn on → Manual mapping (from GTM).
+
+Offline conversions (deposits, move‑ins)
+
+Capture and store gclid/gbraid/wbraid, event_id, and identifiers in the CRM from the original lead form.
+
+Import later via Data Manager, CSV, or API with proper conversion name/time/value.
+
+Use values for value‑based bidding (proxy → actual when available).
+
+6) Meta — Offline outcomes (Datasets)
+
+In Events Manager, create a Dataset and associate it with the ad account.
+
+Upload (manually, scheduled, or via partner) rows with event_name, event_time, value/currency, and hashed identifiers (email/phone) plus fbc/fbp when available.
+
+Map move‑ins and deposits to standard Purchase or a custom event.
+
+7) QA checklist
+
+Google: Tag Assistant → verify conversion tags & enhanced conversions payloads; Conversions → Diagnostics.
+
+Meta: Events Manager → Test Events (see Pixel & CAPI events; dedup indicated by “Received from Browser and Server” with one counted).
+
+Calls: Confirm website call conversions are logging (duration threshold met).
+
+Consent: Toggle CMP choices and confirm Consent Mode updates; conversions should model per policy when denied.
+
+8) Governance & privacy
+
+Hash emails/phones with SHA‑256 client or server‑side before sending (never send raw PII in tags).
+
+Respect user consent; withhold user_data when ad_user_data is denied.
+
+Avoid transmitting any health/diagnosis details; restrict to marketing‑safe parameters (care level category, city).
+
+"""
+
+gtm_path = os.path.join(base_path, "StageSenior_GTM_Implementation_Spec.md")
+with open(gtm_path, "w", encoding="utf-8") as f:
+f.write(gtm_spec)
+
+2) CSV templates
+
+google_csv = """Google Click ID,Conversion Name,Conversion Time,Conversion Value,Conversion Currency
+Cj0KCQj...,Move-In,2025-10-20 14:35:00,6000,USD
+Cj0KCQj...,Deposit,2025-10-18 11:20:00,1000,USD
+Cj0KCQj...,Schedule Tour,2025-10-15 09:05:30,250,USD
+"""
+
+google_csv_path = os.path.join(base_path, "Template_Google_Offline_Conversions.csv")
+with open(google_csv_path, "w", encoding="utf-8") as f:
+f.write(google_csv)
+
+meta_csv = """event_name,event_time,value,currency,email,phone,fn,ln,zip,city,state,country,fbc,fbp,event_id
+Purchase,1739997900,6000,USD,hash_of_email_sha256,hash_of_phone_sha256,hash_of_first_name_sha256,hash_of_last_name_sha256,hash_of_zip_sha256,hash_of_city_sha256,hash_of_state_sha256,hash_of_country_sha256,fb.1.1739900000.AbCdEfGhIjKlMnOpQrSt,fb.1.1739800000.ZyXwVuTsRqPoNmLkJiHg,0c2a5a50-3f6a-4b2f-9c39-0d6e4f21c001
+Purchase,1739811600,1000,USD,hash_of_email_sha256,hash_of_phone_sha256,hash_of_first_name_sha256,hash_of_last_name_sha256,hash_of_zip_sha256,hash_of_city_sha256,hash_of_state_sha256,hash_of_country_sha256,fb.1.1739700000.AbCdEfGhIjKlMnOpQrSt,fb.1.1739600000.ZyXwVuTsRqPoNmLkJiHg,7aa4ffd2-f8c3-4c66-8d1f-4d9f4e5e2002
+"""
+
+meta_csv_path = os.path.join(base_path, "Template_Meta_Offline_Events.csv")
+with open(meta_csv_path, "w", encoding="utf-8") as f:
+f.write(meta_csv)
+
+3) Naming & UTM cheat-sheet
+
+utm_rows = [
+{
+"Platform":"Google Ads",
+"Campaign Name Pattern":"GOOG_Search_{Care}{ClusterCity}{MatchType}{US-CO}",
+"Ad Group / Asset Group":"{Care}{City}Core",
+"UTM Template":"utm_source=google&utm_medium=cpc&utm_campaign={{campaign.name}}&utm_content={{ad.id}}&utm_term={keyword}",
+"Example":"GOOG_Search_AL_Littleton_Exact_US-CO"
+},
+{
+"Platform":"Google Ads",
+"Campaign Name Pattern":"GOOG_PMax{CareCluster}{US-CO}",
+"Ad Group / Asset Group":"AG{Care}{City}",
+"UTM Template":"utm_source=google&utm_medium=cpc&utm_campaign={{campaign.name}}&utm_content={{asset_group.id}}",
+"Example":"GOOG_PMax_ALMC_ArvadaCluster_US-CO"
+},
+{
+"Platform":"Meta",
+"Campaign Name Pattern":"META_Leads_Housing{Care}{ClusterCity}",
+"Ad Set":"AS{GeoRadius}{Placement}{Objective}",
+"UTM Template":"utm_source=meta&utm_medium=paid-social&utm_campaign={{campaign.name}}&utm_content={{ad.id}}",
+"Example":"META_Leads_Housing_AL_Littleton | AS_15mi_AdvPlus_Leads"
+},
+]
+df_utm = pd.DataFrame(utm_rows)
+utm_path = os.path.join(base_path, "Naming_UTM_CheatSheet.csv")
+df_utm.to_csv(utm_path, index=False)
+
+4) Data layer schema (JSON) for devs
+
+schema = {
+"events": {
+"GenerateLead": {
+"required": ["event_id","value","currency","care_level","metro"],
+"optional": ["community_name","landing_page","gclid","gbraid","wbraid","fbc","fbp","user","consent"]
+},
+"ScheduleTour": {
+"required": ["event_id","value","currency","care_level","metro"],
+"optional": ["community_name","landing_page","gclid","gbraid","wbraid","fbc","fbp","user","consent"]
+},
+"PricingRequest": {
+"required": ["event_id","value","currency","care_level","metro"],
+"optional": ["community_name","landing_page","gclid","gbraid","wbraid","fbc","fbp","user","consent"]
+},
+"RSVPEvent": {
+"required": ["event_id","value","currency","metro"],
+"optional": ["community_name","landing_page","gclid","gbraid","wbraid","fbc","fbp","user","consent"]
+},
+"PhoneCallStart": {
+"required": ["event_id","metro"],
+"optional": ["value","currency","landing_page","gclid","gbraid","wbraid"]
+},
+"ChatStart": {
+"required": ["event_id","landing_page"],
+"optional": ["metro"]
+}
+},
+"identifiers": {
+"click_ids": ["gclid","gbraid","wbraid"],
+"meta": ["fbc","fbp"],
+"user_hashed": ["email_sha256","phone_sha256"]
+}
+}
+schema_path = os.path.join(base_path, "StageSenior_DataLayer_Schema.json")
+with open(schema_path, "w", encoding="utf-8") as f:
+json.dump(schema, f, indent=2)
+
+5) README for templates
+
+readme = """# Stage Senior — Offline Conversion Templates
+
+Google Ads — Offline Conversions (from clicks)
+
+Use Template_Google_Offline_Conversions.csv with columns:
+
+Google Click ID (GCLID/GBRAID/WBRAID)
+
+Conversion Name (exact name of the conversion action in Google Ads)
+
+Conversion Time (YYYY-MM-DD HH:MM:SS, account time zone)
+
+Conversion Value (numeric)
+
+Conversion Currency (USD)
+
+Upload via Google Ads → Tools → Conversions → Uploads or automate in Data Manager/API.
+
+Meta — Offline Events (Datasets)
+
+Use Template_Meta_Offline_Events.csv with columns:
+
+event_name (e.g., Purchase or custom MoveIn)
+
+event_time (UNIX seconds)
+
+value, currency
+
+hashed identifiers (email, phone, etc.) — SHA‑256
+
+fbc, fbp (when available)
+
+event_id (optional; improves deduplication)
+
+Upload in Events Manager → your Dataset → Upload. Map fields as prompted.
+"""
+readme_path = os.path.join(base_path, "Templates_README.md")
+with open(readme_path, "w", encoding="utf-8") as f:
+f.write(readme)
+
+Return the created file paths
+
+[gtm_path, google_csv_path, meta_csv_path, utm_path, schema_path, readme_path]
+
+Always show details
+Result
+['/mnt/data/StageSenior_GTM_Implementation_Spec.md',
+ '/mnt/data/Template_Google_Offline_Conversions.csv',
+ '/mnt/data/Template_Meta_Offline_Events.csv',
+ '/mnt/data/Naming_UTM_CheatSheet.csv',
+ '/mnt/data/StageSenior_DataLayer_Schema.json',
+ '/mnt/data/Templates_README.md']
+
+Perfect—here are your ready‑to‑ship deliverables (download links) plus a step‑by‑step playbook that wires Google Ads + Meta to your new landing‑page system with correct consent, enhanced conversions, calls, and offline outcomes.
+
+📥 Downloads (copy/paste ready)
+
+GTM Implementation Spec (Markdown) — tags, triggers, variables, dataLayer, consent, testing
+StageSenior_GTM_Implementation_Spec.md
+
+Google Ads offline‑import CSV template — deposits / move‑ins / tours from CRM
+Template_Google_Offline_Conversions.csv
+
+Meta offline (Dataset) CSV template — deposits / move‑ins with hashed IDs
+Template_Meta_Offline_Events.csv
+
+Naming & UTM cheat‑sheet (CSV) — consistent names across platforms
+Naming_UTM_CheatSheet.csv
+
+dataLayer event schema (JSON) — what your devs will implement
+StageSenior_DataLayer_Schema.json
+
+Templates README
+Templates_README.md
+
+All files reflect Stage Senior’s brand & proof points (locally owned, long‑tenured teams, chaplaincy) so your ads and LPs stay message‑matched and conversion‑ready.
+
+How to connect everything (clear, cited steps)
+1) Link GA4 ↔ Google Ads
+
+Linking enables shared audiences, reporting, and (optionally) GA4 events in Ads.
+GA4 Admin → Product links → Google Ads links → Link. 
+Google Help
+
+(You can also view/manage from Google Ads → Tools → Data manager → Connect Product.) 
+Google Help
+
+2) Turn on Enhanced Conversions for Leads (ECL) for web forms
+
+ECL lets Google match hashed first‑party form data (email/phone) to the ad click—improving conversion modeling and bidding.
+
+Option A (GTM): follow Google’s GTM guide to enable Enhanced Conversions for Leads and map hashed inputs. 
+Google Help
+
+Option B (Google tag/gtag.js)—if not using GTM. 
+Google Help
+
+If you prefer a low‑code connection, Data Manager in Google Ads provides a guided flow for ECL imports. 
+Google Help
+
+The GTM Implementation Spec file shows exactly how to push event_id, value, and hashed identifiers from the dataLayer and map them in the Google Ads tag.
+
+3) Implement Consent Mode v2 before any tags
+
+Configure consent in a Consent Initialization tag; default to denied and update after user choice.
+
+Developer reference and guide (ad_storage, analytics_storage, ad_user_data, ad_personalization). 
+Google for Developers
++2
+Google for Developers
++2
+
+Note: ad_user_data is required for measurement use cases like enhanced conversions; ad_personalization controls remarketing. 
+Google Help
+
+4) Track website phone calls with Google forwarding numbers (DNI)
+
+Create a Website call conversion in Google Ads and implement the snippet (or via GTM). Calls placed to your swapped number after a click will count as conversions; set a sensible duration threshold (e.g., 60s). 
+Google Help
++1
+
+5) Import offline conversions (deposits & move‑ins) to Google Ads
+
+Use our CSV template (above) or automate via API: include GCLID (or GBRAID/WBRAID), Conversion Name, Time, Value, Currency.
+
+How to import from clicks (one‑time or scheduled). 
+Google Help
+
+Why import offline conversions (measure post‑lead outcomes). 
+Google Help
+
+Example API upload & supported identifiers. 
+Google for Developers
+
+6) Set up Meta Pixel (browser) + Conversions API (CAPI) (server) with dedup
+
+Install Pixel and verify with Test Events in Events Manager. 
+Facebook
++1
+
+Send the same event name + event_id from both browser (Pixel) and server (CAPI) to deduplicate. Include _fbp / _fbc and hashed email/phone to boost Event Match Quality. 
+Facebook
++3
+Facebook
++3
+Facebook
++3
+
+Follow Meta’s CAPI best practices (IDs and hashing improve matching). 
+Facebook Developers
+
+The GTM spec includes a dataLayer and tag blueprint for Lead (GenerateLead) and CompleteRegistration (ScheduleTour) with a shared event_id for Pixel+CAPI dedup.
+
+7) Upload offline outcomes to Meta (Datasets)
+
+Create a Dataset in Events Manager, associate it to your ad account, then upload deposit/move‑in rows (use our CSV). Include event_name, event_time (epoch), value, currency, hashed identifiers, and fbc/fbp when available.
+
+8) Housing advertising compliance (Google & Meta)
+
+Google Ads (HEC policy): U.S./Canada housing ads may not use ZIP code, gender, age, or parental/marital demographic targeting. Set all demographics to enabled and remove ZIPs.
+
+Meta (Special Ad Category: Housing): declare the special category; age/gender/ZIP and certain detailed targeting options are restricted. Plan to rely on location radius, creative relevance, and first‑party audiences.
+
+What your devs actually need to ship (high level)
+
+Add the Consent Mode v2 snippet (from the spec) as a Consent Initialization tag in GTM.
+
+Push dataLayer events on form success / tour confirm (payload & field names exactly as in the spec).
+
+Create GTM Tags & Triggers:
+
+Google Ads Conversion tags for GenerateLead, ScheduleTour, PricingRequest with Enhanced Conversions mapping.
+
+Meta Pixel events with {eventID: {{event_id}}}; if using GTM Server, forward to CAPI with the same event_id.
+
+Website call conversions snippet on pages with phone numbers.
+
+CRM fields: store gclid/gbraid/wbraid, fbc/fbp, event_id, email, phone (raw for server hashing), care_level, city, timestamps.
+
+Start offline uploads (Google CSV / Meta Dataset) for deposits & move‑ins using the templates above.
+
+QA—what “good” looks like
+
+Google Tag Assistant shows conversion tags with Enhanced Conversions payload (hashed identifiers present). Conversions → Uploads/Diagnostics shows accepted rows.
+
+Meta Events Manager → Test Events displays one counted event per action with “received from Browser and Server (deduplicated)”.
+
+Website calls: forwarding numbers swap on LPs; call‑length threshold reached and logged as conversions.
+
+Consent: toggling CMP changes ad_user_data/ad_personalization; tags respect consent.
+
+Bidding & campaign notes (how you’ll use the data)
+
+In Google Ads → Conversions, mark ScheduleTour + Qualified Website Calls as Primary (bid to these) and observe GenerateLead/PricingRequest. Adjust as outcomes stream in.
+
+Use value‑based bidding once proxy values are stable; then replace with real deposit/move‑in values from offline imports. (Performance Max for lead gen benefits when correct values + ECL are in place.)
+
+Why this is tailored to Stage Senior
+
+Your LPs and creative lean into genuine differentiators—local ownership, long‑tenured teams, chaplaincy, whole‑person care—which materially improves CTR and conversion quality across both platforms while complying with housing policies.
+
+If you want, I can also drop this GTM spec into a container JSON (importable) and include sample GTM Server routes for Meta CAPI. 
+
+You said:
+can you explain where best to do all this conversion details in Google - inside Analytics, Ads via one of these, GTM, etc?
+ChatGPT said:
+
+Great — here’s a clear breakdown of where to manage your conversion tracking and which platform to use for what, along with best practices for Google Analytics 4 (GA4), Google Tag Manager (GTM), and Google Ads (Ads).
+
+Where to do what: platform roles
+Platform	Primary Role	What you should set up there
+Google Tag Manager (GTM)	Tag/trigger deployment — capture events & push to analytics/ads	Install tags (Google tag, conversion snippets, enhanced conversions), set up dataLayer variables/events, capture gclid/gbraid/wbraid and user identifiers. 
+Google Help
++1
+
+GA4 (Google Analytics 4)	Site/app analytics, full-funnel insight & behavioural data	Define events, mark key events, create conversions for reporting, link to Google Ads for deeper insights. 
+Google Help
++1
+
+Google Ads	Ads performance, bidding/optimization, conversion import/action	Create conversion actions, track “web” conversions, import offline conversions, manage optimized bidding. 
+Google Help
++2
+Google Help
++2
+Recommended workflow: how to use them together
+
+In GTM, implement your tags/dataLayer:
+
+Push events like ScheduleTour, GenerateLead etc. with parameters (value, care_level, gclid/gbraid, email/phone hashed).
+
+Use GTM to fire Google Ads conversion tags and/or GA4 events.
+
+Example: see GTM tag setup for Google Ads conversion tracking. 
+Google Help
+
+In GA4, track the same events:
+
+Mark events that matter (e.g., GenerateLead) as Conversions in GA4. 
+Google Help
+
+Use GA4 for behaviour insight (paths, assisted conversions, multi-session impacts). 
+analyticsmates.com
++1
+
+Link GA4 → Google Ads (Admin → Product links) so data flows between them. 
+Google Help
+
+In Google Ads, set up conversion actions:
+
+Create Conversion Actions for the key outcomes (Tour, Lead, Pricing Request, Phone Call, Deposit, Move-In). 
+Google Help
++1
+
+Choose which conversions will be used for bidding/optimization (mark as “Primary” or equivalent).
+
+Import offline conversions (clicks → deposits/move-ins) or use Enhanced Conversions for Leads (email/phone hashed) for higher accuracy. 
+Analytics Mania
++1
+
+Use GA4 vs Ads reports appropriately:
+
+Use Google Ads as your source of truth for campaign/keyword bidding and optimized decision-making.
+
+Use GA4 for full-funnel analysis, multi-channel attribution, assisting behaviours. Because GA4 uses a different attribution model (focuses on time of conversion rather than click time) you’ll see differences. 
+ClickPatrol
++1
+
+Tag, test, validate:
+
+After setup, use GTM’s Preview mode or Google Tag Assistant to test that tags fire correctly and capture parameters.
+
+In Ads, check that conversion counts are appearing; in GA4, check that events and conversions are logged.
+
+Expect some discrepancies between GA4 & Ads due to different counting/attribution logic. 
+OptimizeSmart Newsletter
++1
+
+Which conversions to set up where (for your landing page strategy)
+
+Web-form completions, tour bookings, pricing requests, chat starts, click-to-call starts → track via GTM → fire both GA4 event and Google Ads conversion tag (or import via enhanced conversions).
+
+Offline outcomes (e.g., deposit, move-in) → capture in CRM (with gclid/ids) → import into Google Ads (via offline conversion import) and optionally into GA4 if you want full-funnel.
+
+Behavioural insights (scrolls, video plays) → track in GA4 for content optimization, but don’t necessarily use these for bidding in Google Ads.
+
+Retargeting/remarketing audiences → build in GA4 (or Ads audiences) based on site behaviour → use in Google Ads and Meta.
+
+Summary guidance & best practice
+
+Always tag via GTM so you have flexibility and centralized management.
+
+Use native conversion tracking in Google Ads for any action you plan to optimize/bid on — this prevents delays or inaccuracies caused by importing from GA4. 
+OptimizeSmart Newsletter
++1
+
+Use GA4 for broader analytic context — not solely for Ads bidding.
+
+Link GA4 ↔ Google Ads so you share audiences, data flows, and you get consistent understanding across platforms.
+
+Expect and plan for data discrepancies; treat GA4 and Ads as complementary tools vs. identical. 
+ClickPatrol
+
+Ensure call tracking, gclid capture, user-identifier hashing, and consent mode are implemented — these underpin reliable conversion capture.
+
+If you like, I can pull together a visual decision-flow diagram (who sets up what: GTM → GA4 → Ads) that you can share with your dev/media teams so everyone knows exactly where their responsibility lies.
+
+You said:
+can any of this be setup via api?
+ChatGPT said:
+Thought for 43s
+
+Short answer: yes—almost everything you care about can be automated via API. Here’s the clean “who does what” map, with the exact APIs/endpoints you’d use and what (if anything) still needs the UI.
+
+What you can automate (and how)
+Google Ads (conversions, values, offline, ECL)
+
+Create & manage conversion actions (web/lead/call/etc.)
+Use Google Ads API → ConversionActionService (sample “Add Conversion Action”). 
+Google for Developers
++1
+
+Upload offline outcomes (tour → deposit → move-in) tied to clicks (gclid/gbraid/wbraid)
+Use Google Ads API → ConversionUploadService.UploadClickConversions (or adjustments). 
+Google for Developers
++1
+
+Enhanced Conversions for Leads (ECL) via API / Data Manager
+ECL is supported in Google Ads API and Data Manager; it upgrades legacy offline import. 
+Google Help
++1
+
+Data Manager API (new) to send conversion/audience data with one call (supports confidential matching)
+Use Data Manager API for sending lead/deal events to Ads. 
+Google for Developers
++1
+
+Note on website call conversions (DNI): you still enable the forwarding number feature and create the website-call conversion in the Ads UI; after that, you can read/operate via API, but initial setup is most reliable in UI. 
+Facebook Developers
+
+Google Tag Manager (deploy tags at scale)
+
+Programmatically create containers, workspaces, tags, triggers, variables
+Use GTM REST API (accounts.containers.workspaces.*), e.g., triggers.create, then publish. 
+Google for Developers
++1
+
+GA4 (linking, config, reporting—not bidding)
+
+Programmatically link GA4 ↔ Google Ads
+Use GA Admin API → properties.googleAdsLinks.create to create the link. (You can also link from Ads “Data manager” UI.) 
+Google for Developers
++2
+Google Help
++2
+
+Automate GA4 property/config tasks (create properties, manage access, etc.)
+Use GA Admin API (v1). 
+Google for Developers
++1
+
+Best practice: still send native Ads conversions for bidding, and use GA4 for analysis/remarketing; don’t rely on “import from GA4” for your primary bid signals.
+
+Meta (Pixel/CAPI + offline)
+
+Server-side events (CAPI) with dedup against Pixel by event_id
+Use Meta Conversions API; send event_name, event_id, hashed identifiers, _fbc/_fbp. 
+Facebook Developers
++1
+
+Offline outcomes (deposits/move-ins) → Datasets
+Upload/stream to a Dataset via Meta’s API; Meta retired the “Offline Conversions API” in favor of Datasets/CAPI. 
+Facebook Developers
++1
+
+What I’d automate for Stage Senior (practical list)
+
+Spin up GTM artifacts by script
+
+Create tags/triggers/variables for: Google tag, Google Ads conversions (Lead, ScheduleTour, PricingRequest), Meta Pixel events, and the dataLayer variables (event_id, value, gclid/gbraid, fbc/fbp). GTM API. 
+Google for Developers
+
+Create conversion actions in Ads (one time)
+
+ScheduleTour, PricingRequest, GenerateLead, Website Call (DNI), and placeholders for Deposit/Move-In. Google Ads API. 
+Google for Developers
+
+Enable Enhanced Conversions for Leads
+
+Map hashed email/phone to your web lead conversions via Ads API/Data Manager; keep browser tags for redundancy. 
+Google Help
++1
+
+Automate offline uploads (daily/near-real-time)
+
+From CRM, push deposits & move-ins with value to Ads using UploadClickConversions (or via Data Manager API if you prefer single-pipe). 
+Google for Developers
++2
+Google for Developers
++2
+
+Stand up Meta CAPI
+
+Send the same events server-side (Lead/CompleteRegistration), reuse event_id, include _fbc/_fbp + hashed identifiers; create a Dataset for offline outcomes. 
+Facebook Developers
++2
+Facebook Developers
++2
+
+Programmatically link GA4 ↔ Ads (optional but nice)
+
+Create/manage GoogleAdsLinks so audiences/remarketing are available without manual clicks. GA Admin API. 
+Google for Developers
+
+What still benefits from UI
+
+Initial website call conversions (forwarding numbers): set up in Ads UI, then leave the counting to tags/API. 
+Facebook Developers
+
+Troubleshooting/Data Manager wizards: Google’s Data Manager UI is the simplest path to get ECL working; you can later move to API once stable. 
+Google Help
+
+TL;DR (decision rule)
+
+Deploy & maintain tags → GTM API. 
+Google for Developers
+
+Create actions, upload offline/ECL, value-based bidding → Google Ads API / Data Manager API. 
+Google for Developers
++2
+Google for Developers
++2
+
+Link/configure GA4 → GA Admin API (optional), otherwise UI is fine. 
+Google for Developers
+
+Mirror to Meta → Meta Conversions API (web+server dedup) and Datasets for offline results.
+
+If you want, I can draft a tiny Postman collection (Ads API + Data Manager + Meta CAPI) with sample bodies for: create conversion action, upload click conversion, send CAPI event, and create GA4↔Ads link.
