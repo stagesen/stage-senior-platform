@@ -18,6 +18,8 @@ import ScaleIn from "@/components/animations/ScaleIn";
 import ScaleHeader from "@/components/animations/ScaleHeader";
 import StaggerContainer from "@/components/animations/StaggerContainer";
 import StaggerItem from "@/components/animations/StaggerItem";
+import ParallaxHero from "@/components/animations/ParallaxHero";
+import ParallaxText from "@/components/animations/ParallaxText";
 import { 
   MapPin, 
   Phone, 
@@ -1428,21 +1430,11 @@ export default function CommunityDetail() {
   return (
     <div className="min-h-screen bg-white" style={communityStyles}>
       {/* Hero Section */}
-      <section className="relative h-[500px] md:h-[600px] overflow-hidden">
-        {finalHeroImageUrl ? (
-          <>
-            <img
-              src={finalHeroImageUrl}
-              alt={`${community.name} - Senior Living Community`}
-              className="w-full h-full object-cover"
-              data-testid="hero-image"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-blue-900/60 via-blue-800/60 to-blue-600/60" />
-          </>
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600" />
-        )}
-
+      <ParallaxHero 
+        backgroundImage={finalHeroImageUrl}
+        className="relative md:h-[600px]"
+        height="500px"
+      >
         {/* Hero Logo Overlay */}
         {heroLogoSrc && (
           <div className="absolute top-6 right-6 md:top-10 md:right-10 z-20">
@@ -1460,11 +1452,11 @@ export default function CommunityDetail() {
         {/* Hero Content */}
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16">
           <div className="max-w-7xl mx-auto">
-            <FadeIn direction="up" delay={0.2}>
+            <ParallaxText speed={0.5}>
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4" data-testid="community-name">
                 {community.name}
               </h1>
-            </FadeIn>
+            </ParallaxText>
             <FadeIn direction="up" delay={0.3}>
               <div className="flex items-start text-white/90 text-lg mb-4" data-testid="community-location">
                 <MapPin className="w-5 h-5 mr-2 mt-1" />
@@ -1495,7 +1487,7 @@ export default function CommunityDetail() {
             )}
           </div>
         </div>
-      </section>
+      </ParallaxHero>
 
       {/* Static Navigation Bar - Always visible below hero */}
       {navSections.length > 0 && (
