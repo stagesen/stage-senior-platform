@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import AdminDashboard from "@/components/AdminDashboard";
 import PageGalleryAdmin from "@/components/PageGalleryAdmin";
 import PageContentManager from "@/components/PageContentManager";
+import GoogleAdsConversionsManager from "@/components/GoogleAdsConversionsManager";
 import { useAuth } from "@/lib/auth";
 import { 
   Users, 
@@ -18,7 +19,8 @@ import {
   Mail,
   LogOut,
   User,
-  Image
+  Image,
+  Target
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import type { Community, Post, Event, TourRequest, Faq, Gallery, Testimonial, PageHero, FloorPlan } from "@shared/schema";
@@ -144,6 +146,10 @@ export default function Admin() {
             <TabsTrigger value="homepage" data-testid="tab-homepage">Homepage</TabsTrigger>
             <TabsTrigger value="email-recipients" data-testid="tab-email-recipients">Email Recipients</TabsTrigger>
             <TabsTrigger value="landing-pages" data-testid="tab-landing-pages" className="bg-primary text-primary-foreground hover:bg-primary/90">Landing Pages</TabsTrigger>
+            <TabsTrigger value="google-ads" data-testid="tab-google-ads">
+              <Target className="h-4 w-4 mr-1" />
+              Google Ads
+            </TabsTrigger>
             <TabsTrigger value="image-gallery" data-testid="tab-image-gallery">
               <Image className="h-4 w-4 mr-1" />
               Image Gallery
@@ -397,6 +403,10 @@ export default function Admin() {
 
           <TabsContent value="landing-pages">
             <AdminDashboard type="landing-pages" />
+          </TabsContent>
+
+          <TabsContent value="google-ads">
+            <GoogleAdsConversionsManager />
           </TabsContent>
 
           <TabsContent value="image-gallery">
