@@ -7437,6 +7437,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
               <TableHead>Role</TableHead>
               <TableHead>Department</TableHead>
               <TableHead>Tags</TableHead>
+              <TableHead>Email</TableHead>
               <TableHead>Featured</TableHead>
               <TableHead>Active</TableHead>
               <TableHead>Actions</TableHead>
