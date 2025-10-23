@@ -38,6 +38,7 @@ const CONFIG = {
 
 const CUSTOMER_ID = process.env.GOOGLE_ADS_CUSTOMER_ID || '';
 const REFRESH_TOKEN = process.env.GOOGLE_ADS_REFRESH_TOKEN || '';
+const LOGIN_CUSTOMER_ID = process.env.GOOGLE_ADS_LOGIN_CUSTOMER_ID || '';
 
 /**
  * Extract conversion label from a tag snippet (raw HTML/JS string)
@@ -128,9 +129,17 @@ class GoogleAdsService {
     }
 
     this.client = new GoogleAdsApi(CONFIG);
+    
+    console.log('[Google Ads Service] Initializing with:', {
+      customer_id: CUSTOMER_ID,
+      login_customer_id: LOGIN_CUSTOMER_ID,
+      has_refresh_token: !!REFRESH_TOKEN
+    });
+    
     this.customer = this.client.Customer({
       customer_id: CUSTOMER_ID,
       refresh_token: REFRESH_TOKEN,
+      login_customer_id: LOGIN_CUSTOMER_ID,
     });
 
     console.log('[Google Ads Service] Client initialized successfully');
