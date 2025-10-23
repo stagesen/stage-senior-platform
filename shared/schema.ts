@@ -9,7 +9,8 @@ import {
   boolean,
   jsonb,
   uuid,
-  serial
+  serial,
+  bigint
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -480,6 +481,98 @@ export const googleAdsConversionActions = pgTable("google_ads_conversion_actions
   syncedAt: timestamp("synced_at"), // Last time synced from Google Ads API
 });
 
+// Google Ads campaigns table for managing ad campaigns
+export const googleAdsCampaigns = pgTable("google_ads_campaigns", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  resourceName: text("resource_name"), // Google Ads resource name (e.g., "customers/123/campaigns/456")
+  campaignId: text("campaign_id"), // Numeric ID from Google Ads
+  name: varchar("name", { length: 255 }).notNull(), // Campaign name
+  
+  // Local references
+  landingPageTemplateId: uuid("landing_page_template_id").references(() => landingPageTemplates.id, { onDelete: "set null" }),
+  communityId: uuid("community_id").references(() => communities.id, { onDelete: "set null" }),
+  
+  // Campaign configuration
+  status: varchar("status", { length: 50 }).default("PAUSED"), // ENABLED, PAUSED, REMOVED
+  budgetAmountMicros: bigint("budget_amount_micros", { mode: "number" }), // Daily budget in micros ($50 = 50000000)
+  biddingStrategy: varchar("bidding_strategy", { length: 100 }).default("MANUAL_CPC"), // MANUAL_CPC, MAXIMIZE_CONVERSIONS, TARGET_CPA
+  targetCpaMicros: bigint("target_cpa_micros", { mode: "number" }), // Target CPA in micros
+  
+  // Network settings
+  targetGoogleSearch: boolean("target_google_search").default(true),
+  targetSearchNetwork: boolean("target_search_network").default(true),
+  targetContentNetwork: boolean("target_content_network").default(false),
+  
+  // Tracking
+  impressions: integer("impressions").default(0),
+  clicks: integer("clicks").default(0),
+  conversions: decimal("conversions", { precision: 10, scale: 2 }).default("0"),
+  cost: decimal("cost", { precision: 12, scale: 2 }).default("0"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  syncedAt: timestamp("synced_at"), // Last sync with Google Ads API
+});
+
+// Google Ads ad groups table
+export const googleAdsAdGroups = pgTable("google_ads_ad_groups", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  resourceName: text("resource_name"), // Google Ads resource name
+  adGroupId: text("ad_group_id"), // Numeric ID from Google Ads
+  campaignId: uuid("campaign_id").notNull().references(() => googleAdsCampaigns.id, { onDelete: "cascade" }),
+  
+  name: varchar("name", { length: 255 }).notNull(),
+  status: varchar("status", { length: 50 }).default("ENABLED"), // ENABLED, PAUSED, REMOVED
+  cpcBidMicros: bigint("cpc_bid_micros", { mode: "number" }), // Max CPC bid in micros
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Google Ads keywords table
+export const googleAdsKeywords = pgTable("google_ads_keywords", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  resourceName: text("resource_name"), // Google Ads resource name
+  criterionId: text("criterion_id"), // Numeric ID from Google Ads
+  adGroupId: uuid("ad_group_id").notNull().references(() => googleAdsAdGroups.id, { onDelete: "cascade" }),
+  
+  keywordText: varchar("keyword_text", { length: 500 }).notNull(),
+  matchType: varchar("match_type", { length: 50 }).notNull().default("BROAD"), // EXACT, PHRASE, BROAD
+  status: varchar("status", { length: 50 }).default("ENABLED"),
+  cpcBidMicros: bigint("cpc_bid_micros", { mode: "number" }), // Keyword-level bid override
+  
+  // Performance metrics
+  impressions: integer("impressions").default(0),
+  clicks: integer("clicks").default(0),
+  conversions: decimal("conversions", { precision: 10, scale: 2 }).default("0"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Google Ads responsive search ads table
+export const googleAdsAds = pgTable("google_ads_ads", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  resourceName: text("resource_name"), // Google Ads resource name
+  adId: text("ad_id"), // Numeric ID from Google Ads
+  adGroupId: uuid("ad_group_id").notNull().references(() => googleAdsAdGroups.id, { onDelete: "cascade" }),
+  
+  status: varchar("status", { length: 50 }).default("ENABLED"),
+  headlines: jsonb("headlines").$type<string[]>().notNull(), // Array of up to 15 headlines (max 30 chars each)
+  descriptions: jsonb("descriptions").$type<string[]>().notNull(), // Array of up to 4 descriptions (max 90 chars each)
+  finalUrl: text("final_url").notNull(), // Landing page URL
+  path1: varchar("path1", { length: 15 }), // Display URL path 1
+  path2: varchar("path2", { length: 15 }), // Display URL path 2
+  
+  // Performance metrics
+  impressions: integer("impressions").default(0),
+  clicks: integer("clicks").default(0),
+  conversions: decimal("conversions", { precision: 10, scale: 2 }).default("0"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const careTypesRelations = relations(careTypes, ({ many }) => ({
   communities: many(communitiesCareTypes),
@@ -845,6 +938,31 @@ export const insertGoogleAdsConversionActionSchema = createInsertSchema(googleAd
   updatedAt: true,
 });
 
+export const insertGoogleAdsCampaignSchema = createInsertSchema(googleAdsCampaigns).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  syncedAt: true,
+});
+
+export const insertGoogleAdsAdGroupSchema = createInsertSchema(googleAdsAdGroups).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertGoogleAdsKeywordSchema = createInsertSchema(googleAdsKeywords).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertGoogleAdsAdSchema = createInsertSchema(googleAdsAds).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Page heroes table for managing hero sections across pages
 export const pageHeroes = pgTable("page_heroes", {
   id: varchar("id", { length: 255 }).primaryKey().default(sql`gen_random_uuid()`),
@@ -987,6 +1105,14 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type SelectGoogleAdsConversionAction = typeof googleAdsConversionActions.$inferSelect;
 export type InsertGoogleAdsConversionAction = z.infer<typeof insertGoogleAdsConversionActionSchema>;
+export type GoogleAdsCampaign = typeof googleAdsCampaigns.$inferSelect;
+export type InsertGoogleAdsCampaign = z.infer<typeof insertGoogleAdsCampaignSchema>;
+export type GoogleAdsAdGroup = typeof googleAdsAdGroups.$inferSelect;
+export type InsertGoogleAdsAdGroup = z.infer<typeof insertGoogleAdsAdGroupSchema>;
+export type GoogleAdsKeyword = typeof googleAdsKeywords.$inferSelect;
+export type InsertGoogleAdsKeyword = z.infer<typeof insertGoogleAdsKeywordSchema>;
+export type GoogleAdsAd = typeof googleAdsAds.$inferSelect;
+export type InsertGoogleAdsAd = z.infer<typeof insertGoogleAdsAdSchema>;
 export type PageHero = typeof pageHeroes.$inferSelect;
 export type InsertPageHero = z.infer<typeof insertPageHeroSchema>;
 export type HomepageSection = typeof homepageSections.$inferSelect;
