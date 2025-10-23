@@ -16,14 +16,16 @@ export default function PricingRangeEstimator({ section }: PricingRangeEstimator
   const [unitType, setUnitType] = useState("studio");
   const [careLevel, setCareLevel] = useState([2]);
 
-  // Default base rates - used as fallback when content doesn't provide them
+  // Default base rates - synced with Care Points page (Assisted Living rates)
+  // See /care-points for full pricing breakdown
   const defaultBaseRates = {
-    studio: 4500,
-    "one-bedroom": 5200,
-    "two-bedroom": 6000,
+    studio: 5770,        // Assisted Living - Private suite
+    "one-bedroom": 7000, // Assisted Living - One bedroom
+    "two-bedroom": 8640, // Assisted Living - Two bedroom
   };
 
   // Default care level multipliers - used as fallback when content doesn't provide them
+  // These represent: Minimal (1.0), Low (1.1), Moderate (1.25), High (1.4), Intensive (1.6)
   const defaultCareLevelMultipliers = [1.0, 1.1, 1.25, 1.4, 1.6];
 
   // Merge content-provided values with defaults (defensive programming)
