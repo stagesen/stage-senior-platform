@@ -9,7 +9,7 @@ import { useScheduleTour } from "@/hooks/useScheduleTour";
 import type { PageContentSection } from "@shared/schema";
 import CTARow from "@/components/landing-sections/CTARow";
 import TrustStrip from "@/components/landing-sections/TrustStrip";
-import PricingRangeEstimator from "@/components/landing-sections/PricingRangeEstimator";
+import CarePointsPricingWidget from "@/components/CarePointsPricingWidget";
 import CareComparisonTool from "@/components/landing-sections/CareComparisonTool";
 
 const iconMap: Record<string, any> = {
@@ -270,7 +270,7 @@ export default function PageSectionRenderer({ section, currentCareType }: PageSe
   }
 
   if (section.sectionType === "pricing_estimator") {
-    return <PricingRangeEstimator section={section} />;
+    return <CarePointsPricingWidget />;
   }
 
   if (section.sectionType === "care_comparison") {
