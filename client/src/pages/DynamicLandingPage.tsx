@@ -753,7 +753,7 @@ export default function DynamicLandingPage() {
   const StatsStrip = () => (
     <section className="py-12 md:py-16" data-testid="stats-strip">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
+        <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-6">
           <StaggerItem>
             <Card className="text-center p-6 md:p-8 border-2 hover:border-primary/50 transition-colors">
               <CardContent className="p-0">
@@ -767,16 +767,6 @@ export default function DynamicLandingPage() {
               <CardContent className="p-0">
                 <div className="text-4xl md:text-5xl font-bold text-primary mb-2">20+</div>
                 <p className="text-base md:text-lg text-muted-foreground">Years of Excellence</p>
-              </CardContent>
-            </Card>
-          </StaggerItem>
-          <StaggerItem>
-            <Card className="text-center p-6 md:p-8 border-2 hover:border-primary/50 transition-colors">
-              <CardContent className="p-0">
-                <div className="text-4xl md:text-5xl font-bold text-primary mb-2 flex items-center justify-center gap-2">
-                  4.8 <Star className="w-8 h-8 md:w-10 md:h-10 fill-primary text-primary" />
-                </div>
-                <p className="text-base md:text-lg text-muted-foreground">Average Rating</p>
               </CardContent>
             </Card>
           </StaggerItem>

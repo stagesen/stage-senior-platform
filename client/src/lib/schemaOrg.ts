@@ -163,14 +163,15 @@ export function generateLocalBusinessSchema(params: SchemaOrgParams): LocalBusin
     schema.priceRange = "$$-$$$";
   }
 
-  // Add aggregate rating
-  const rating = community.rating ? parseFloat(String(community.rating)) : 4.8;
-  const reviewCount = community.reviewCount || 100;
-  schema.aggregateRating = {
-    "@type": "AggregateRating",
-    ratingValue: String(rating),
-    reviewCount: reviewCount,
-  };
+  // Add aggregate rating only if available
+  if (community.rating && community.reviewCount) {
+    const rating = parseFloat(String(community.rating));
+    schema.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: String(rating),
+      reviewCount: community.reviewCount,
+    };
+  }
 
   // Add opening hours - typically senior communities are accessible during business hours
   schema.openingHours = "Mo-Su 08:00-17:00";
@@ -224,14 +225,15 @@ export function generateServiceSchema(params: SchemaOrgParams): ServiceSchema | 
     };
   }
 
-  // Add aggregate rating
-  const rating = community?.rating ? parseFloat(String(community.rating)) : 4.8;
-  const reviewCount = community?.reviewCount || 100;
-  schema.aggregateRating = {
-    "@type": "AggregateRating",
-    ratingValue: String(rating),
-    reviewCount: reviewCount,
-  };
+  // Add aggregate rating only if available
+  if (community?.rating && community?.reviewCount) {
+    const rating = parseFloat(String(community.rating));
+    schema.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: String(rating),
+      reviewCount: community.reviewCount,
+    };
+  }
 
   return schema;
 }

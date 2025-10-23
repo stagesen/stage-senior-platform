@@ -453,14 +453,7 @@ export default function SafetyWithDignity() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <Card key={index} className="hover:shadow-xl transition-all duration-300">
-                <CardHeader>
-                  <div className="flex gap-1 mb-3">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                   <blockquote className="text-muted-foreground mb-4 italic">
                     "{testimonial.quote}"
                   </blockquote>

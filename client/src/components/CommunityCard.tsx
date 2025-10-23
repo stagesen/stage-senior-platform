@@ -145,18 +145,6 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
             
             {/* Trust Indicators */}
             <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center">
-                  <div className="flex text-yellow-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-current" />
-                    ))}
-                  </div>
-                  <span className="ml-2 text-sm text-muted-foreground" data-testid={`rating-${community.slug}`}>
-                    {community.rating || 4.8} ({community.reviewCount || 0} Reviews)
-                  </span>
-                </div>
-              </div>
               <div className="text-sm text-muted-foreground flex items-center">
                 <Shield className="w-4 h-4 mr-1 text-primary" />
                 {community.licenseStatus || 'Licensed & Insured'}
