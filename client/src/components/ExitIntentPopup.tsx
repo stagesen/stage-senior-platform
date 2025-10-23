@@ -82,10 +82,9 @@ interface ExitIntentPopupProps {
  * Displays a compelling offer to capture leads when users attempt to leave
  */
 export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
-  const [name, setName] = useState("");
+  const [step, setStep] = useState<"initial" | "form">("initial");
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
   // Fetch exit intent popup configuration
   const { data: config, isLoading } = useQuery<ExitIntentPopupType>({
@@ -96,46 +95,44 @@ export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
   // Resolve image URL if configured
   const popupImageUrl = useResolveImageUrl(config?.imageId);
 
-  // Handle form submission or CTA click
-  const handleCta = useCallback(
+  // Handle initial CTA click - show form
+  const handleInitialClick = useCallback(() => {
+    setStep("form");
+  }, []);
+
+  // Handle form submission
+  const handleFormSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
 
-      // If there's a CTA link, navigate to it
-      if (config?.ctaLink) {
-        window.location.href = config.ctaLink;
-        onOpenChange(false);
-        return;
-      }
-
-      // Otherwise, handle as form submission
-      if (!name.trim() || !email.trim()) {
+      if (!email.trim()) {
         return;
       }
 
       setIsSubmitting(true);
 
       try {
-        // TODO: Replace with actual API call
-        // For now, just simulate a successful submission
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // TODO: Replace with actual API call to save the email
+        // For now, just log it
+        console.log("[Exit Intent] Email captured:", email);
 
-        console.log("[Exit Intent] Form submitted:", { name, email });
+        // Small delay to show the button is working
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
-        // Show success state
-        setIsSuccess(true);
-
-        // Close popup after showing success message
-        setTimeout(() => {
+        // Redirect to the configured URL
+        if (config?.ctaLink) {
+          window.location.href = config.ctaLink;
+        } else {
+          // If no URL configured, just close the popup
+          console.log("[Exit Intent] No redirect URL configured");
           onOpenChange(false);
-        }, 2000);
+        }
       } catch (error) {
         console.error("[Exit Intent] Submission error:", error);
-      } finally {
         setIsSubmitting(false);
       }
     },
-    [name, email, onOpenChange, config?.ctaLink]
+    [email, onOpenChange, config?.ctaLink]
   );
 
   // Handle close
@@ -144,14 +141,13 @@ export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
     onOpenChange(false);
   }, [onOpenChange]);
 
-  // Reset form when dialog closes
+  // Reset state when dialog closes
   useEffect(() => {
     if (!open) {
       // Reset after animation completes
       setTimeout(() => {
-        setName("");
+        setStep("initial");
         setEmail("");
-        setIsSuccess(false);
       }, 300);
     }
   }, [open]);
@@ -194,101 +190,76 @@ export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
 
         {/* Content */}
         <div className="p-6 sm:p-8">
-          {!isSuccess ? (
+          {step === "initial" ? (
+            // Step 1: Initial CTA button
             <>
-              {/* Form - only show if no CTA link is configured */}
-              {!config.ctaLink ? (
-                <form onSubmit={handleCta} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="exit-popup-name" className="text-[var(--deep-blue)]">
-                    Your Name
-                  </Label>
-                  <Input
-                    id="exit-popup-name"
-                    type="text"
-                    placeholder="John Smith"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    disabled={isSubmitting}
-                    className="min-h-[44px]"
-                  />
-                </div>
+              <Button
+                onClick={handleInitialClick}
+                className="w-full min-h-[48px] text-lg"
+                data-testid="button-cta-popup"
+              >
+                <Download className="w-5 h-5 mr-2" />
+                {config.ctaText}
+              </Button>
 
-                <div className="space-y-2">
-                  <Label htmlFor="exit-popup-email" className="text-[var(--deep-blue)]">
-                    Email Address
-                  </Label>
-                  <Input
-                    id="exit-popup-email"
-                    type="email"
-                    placeholder="john@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={isSubmitting}
-                    className="min-h-[44px]"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full min-h-[48px] text-lg"
-                  disabled={isSubmitting || !name.trim() || !email.trim()}
-                  data-testid="button-submit-popup"
-                >
-                  {isSubmitting ? (
-                    "Sending..."
-                  ) : (
-                    <>
-                      <Download className="w-5 h-5 mr-2" />
-                      {config.ctaText}
-                    </>
-                  )}
-                </Button>
-
-                <p className="text-xs text-center text-muted-foreground mt-3">
-                  We respect your privacy. Unsubscribe anytime.
-                </p>
-              </form>
-              ) : (
-                // Show CTA button if link is configured
-                <Button
-                  onClick={handleCta}
-                  className="w-full min-h-[48px] text-lg"
-                  data-testid="button-cta-popup"
-                >
-                  <Download className="w-5 h-5 mr-2" />
-                  {config.ctaText}
-                </Button>
-              )}
+              {/* Dismissal text */}
+              <button
+                onClick={handleClose}
+                className="text-sm text-muted-foreground hover:text-[var(--deep-blue)] transition-colors mx-auto block mt-4 underline"
+              >
+                No thanks, I'll figure it out myself
+              </button>
             </>
           ) : (
-            // Success state
-            <div className="text-center py-8">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Download className="w-8 h-8 text-green-600" />
+            // Step 2: Email form
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="exit-popup-email" className="text-[var(--deep-blue)]">
+                  Enter your email to get the resource
+                </Label>
+                <Input
+                  id="exit-popup-email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isSubmitting}
+                  className="min-h-[44px]"
+                  autoFocus
+                />
               </div>
-              <h3 className="text-2xl font-bold text-[var(--deep-blue)] mb-2">
-                Success!
-              </h3>
-              <p className="text-[var(--midnight-slate)] mb-4">
-                Check your email for your free Senior Living Guide.
-              </p>
-              <p className="text-sm text-muted-foreground">
-                We'll also send you helpful tips and resources.
-              </p>
-            </div>
-          )}
 
-          {/* Dismissal text */}
-          {!isSuccess && (
-            <button
-              onClick={handleClose}
-              className="text-sm text-muted-foreground hover:text-[var(--deep-blue)] transition-colors mx-auto block mt-4 underline"
-            >
-              No thanks, I'll figure it out myself
-            </button>
+              <Button
+                type="submit"
+                className="w-full min-h-[48px] text-lg"
+                disabled={isSubmitting || !email.trim()}
+                data-testid="button-submit-popup"
+              >
+                {isSubmitting ? (
+                  "Processing..."
+                ) : (
+                  <>
+                    <Download className="w-5 h-5 mr-2" />
+                    {config.ctaText}
+                  </>
+                )}
+              </Button>
+
+              <p className="text-xs text-center text-muted-foreground mt-3">
+                We respect your privacy. Unsubscribe anytime.
+              </p>
+
+              {/* Back button */}
+              <button
+                type="button"
+                onClick={() => setStep("initial")}
+                className="text-sm text-muted-foreground hover:text-[var(--deep-blue)] transition-colors mx-auto block underline"
+                disabled={isSubmitting}
+              >
+                Go back
+              </button>
+            </form>
           )}
         </div>
       </DialogContent>
