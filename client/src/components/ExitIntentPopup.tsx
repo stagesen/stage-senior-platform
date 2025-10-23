@@ -169,7 +169,7 @@ export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
           <DialogHeader>
             <div className="flex items-center justify-center mb-4">
               {popupImageUrl ? (
-                <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center overflow-hidden">
+                <div className="w-40 h-40 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center overflow-hidden">
                   <img 
                     src={popupImageUrl} 
                     alt={config.title} 
@@ -178,8 +178,8 @@ export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
                   />
                 </div>
               ) : (
-                <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <Gift className="w-8 h-8 text-white" />
+                <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                  <Gift className="w-10 h-10 text-white" />
                 </div>
               )}
             </div>
@@ -196,34 +196,6 @@ export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
         <div className="p-6 sm:p-8">
           {!isSuccess ? (
             <>
-              {/* Value proposition */}
-              <Card className="mb-6 border-[var(--bright-blue)]/20 bg-[var(--aspen-cream)]">
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-[var(--deep-blue)] mb-3 flex items-center gap-2">
-                    <Download className="w-5 h-5 text-[var(--bright-blue)]" />
-                    What You'll Get:
-                  </h3>
-                  <ul className="space-y-2 text-sm text-[var(--midnight-slate)]">
-                    <li className="flex items-start gap-2">
-                      <span className="text-[var(--bright-blue)] mt-0.5">✓</span>
-                      <span>Complete guide to choosing the right senior living community</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-[var(--bright-blue)] mt-0.5">✓</span>
-                      <span>Pricing comparisons and what to expect</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-[var(--bright-blue)] mt-0.5">✓</span>
-                      <span>Questions to ask during tours</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-[var(--bright-blue)] mt-0.5">✓</span>
-                      <span>Expert tips from senior living professionals</span>
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-
               {/* Form - only show if no CTA link is configured */}
               {!config.ctaLink ? (
                 <form onSubmit={handleCta} className="space-y-4">
