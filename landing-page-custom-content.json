@@ -1,0 +1,243 @@
+{
+  "main-landing-care-city": {
+    "introSection": {
+      "heading": "Welcome to {careType} in {city}",
+      "content": "{city} is home to a thriving senior community, and finding the right care close to home makes all the difference. Whether you're exploring options for yourself or a loved one, our locally owned communities combine personalized care with the comfort of staying connected to your {city} neighborhood.",
+      "highlights": [
+        "Close to family and familiar neighborhoods",
+        "Same-day tours with no obligation",
+        "Personalized care plans tailored to individual needs",
+        "98%+ resident satisfaction"
+      ]
+    },
+    "whyChooseSection": {
+      "heading": "Why Families Choose {careType} in {city}",
+      "reasons": [
+        {
+          "title": "Stay Close to What Matters",
+          "description": "Your loved one stays connected to their {city} community, friends, and faith community. Family can visit easily, and grandchildren can stop by after school."
+        },
+        {
+          "title": "Locally Owned & Operated",
+          "description": "We're not a corporate chain. Our team lives in {city} and the surrounding areas, and we know the local hospitals, doctors, and community resources that matter to you."
+        },
+        {
+          "title": "Personalized Care Plans",
+          "description": "Every resident is unique. We create individualized care plans that adjust as needs change, ensuring your loved one gets exactly the support they need—nothing more, nothing less."
+        },
+        {
+          "title": "Peace of Mind for Families",
+          "description": "24-hour staff, medication management, nutritious meals, and engaging activities mean you can focus on being family, not a full-time caregiver."
+        }
+      ]
+    },
+    "localContextSection": {
+      "heading": "Living in {city}, Colorado",
+      "content": "{city} offers seniors a wonderful blend of community, accessibility, and Colorado charm. With excellent healthcare facilities nearby and a strong sense of neighborhood connection, it's an ideal place to enjoy retirement while receiving the care and support you need.",
+      "features": [
+        "Easy access to top-rated hospitals and medical centers",
+        "Beautiful parks, walking trails, and outdoor spaces",
+        "Close proximity to Denver for cultural events and family visits",
+        "Strong senior community with 55+ activities and programs",
+        "Safe, walkable neighborhoods with local shops and restaurants"
+      ]
+    },
+    "careDetailsSection": {
+      "heading": "What {careType} Includes",
+      "content": "Our {careType} communities provide comprehensive support designed to help residents live with dignity, independence, and joy. From daily assistance to engaging activities, we handle the details so your loved one can focus on what brings them happiness.",
+      "keyPoints": [
+        "Assistance with daily activities like bathing, dressing, and medication management",
+        "Three chef-prepared meals daily in restaurant-style dining",
+        "Housekeeping, laundry, and maintenance-free living",
+        "24-hour awake staff for emergencies and peace of mind",
+        "Social activities, fitness classes, and cultural outings",
+        "Scheduled transportation to appointments and errands",
+        "Emergency call systems in every apartment",
+        "Coordination with healthcare providers and family"
+      ]
+    },
+    "faqPreview": [
+      {
+        "question": "How do I know if {careType} is the right choice?",
+        "answer": "If daily tasks like cooking, cleaning, or managing medications are becoming challenging, or if social isolation is affecting quality of life, {careType} can help. We offer same-day tours so you can see our community, meet our team, and ask questions. There's no pressure—just honest conversation about what's best for your family."
+      },
+      {
+        "question": "Can my loved one age in place if their needs change?",
+        "answer": "Yes. Many of our communities offer multiple levels of care, from independent living to memory care. As needs change, we adjust the care plan rather than requiring a move to a new facility. This continuity provides stability and comfort during life transitions."
+      },
+      {
+        "question": "What makes your communities different from corporate chains?",
+        "answer": "We're locally owned and operated in Colorado. Our executive director lives in {city}, our staff are your neighbors, and we make decisions based on what's best for residents—not corporate profit targets. You'll notice the difference in personalized attention, flexibility, and genuine care."
+      },
+      {
+        "question": "How quickly can someone move in?",
+        "answer": "We can often accommodate move-ins within days, depending on availability. Some families tour in the morning and move in the same week. We understand that senior living decisions are sometimes urgent, and we're here to help make transitions as smooth as possible."
+      },
+      {
+        "question": "What's included in the monthly rate?",
+        "answer": "Monthly fees cover your apartment, all meals, housekeeping, laundry, activities, scheduled transportation, utilities, and basic care services. Additional care needs (like medication management or specialized assistance) may have tiered pricing. We'll provide transparent pricing during your tour with no hidden fees."
+      }
+    ]
+  },
+  "cost-landing-care-city": {
+    "introSection": {
+      "heading": "Understanding {careType} Costs in {city}",
+      "content": "Choosing senior living is a big decision, and cost is an important factor. We believe in transparent pricing with no surprises. Here's what you need to know about {careType} costs in {city}, what's included in monthly fees, and how to make it work with your family's budget.",
+      "highlights": [
+        "Transparent, all-inclusive pricing",
+        "Multiple payment and financing options available",
+        "Often comparable to in-home care costs",
+        "No hidden fees or surprise charges"
+      ]
+    },
+    "whyChooseSection": {
+      "heading": "The Value of {careType} in {city}",
+      "reasons": [
+        {
+          "title": "Predictable Monthly Costs",
+          "description": "One monthly fee covers rent, meals, utilities, housekeeping, activities, and care services. No more budgeting for property taxes, maintenance emergencies, or rising utility bills."
+        },
+        {
+          "title": "Compare Total Cost of Home Care",
+          "description": "In-home care agencies charge $25-35/hour. At 4 hours/day, that's $3,000-4,200/month—without meals, housekeeping, or social activities. {careType} often costs the same or less while providing comprehensive support."
+        },
+        {
+          "title": "What's Included",
+          "description": "Restaurant-style dining (3 meals daily), private or semi-private apartment, all utilities, housekeeping, laundry, scheduled transportation, activities, emergency response systems, and personalized care assistance."
+        },
+        {
+          "title": "Flexible Care Levels",
+          "description": "Pay only for the level of care needed. Basic care costs less than advanced care. As needs change, pricing adjusts accordingly—you're never paying for services you don't use."
+        }
+      ]
+    },
+    "localContextSection": {
+      "heading": "Cost of Living Context in {city}",
+      "content": "{city} offers excellent value for seniors compared to Denver proper, with lower housing costs and a strong senior living market. Understanding local cost context helps families make informed decisions about senior care investments.",
+      "features": [
+        "More affordable than Denver while maintaining metro accessibility",
+        "Competitive senior living rates compared to similar Colorado communities",
+        "Access to excellent healthcare without premium Denver pricing",
+        "Lower property taxes and utility costs than major metro areas",
+        "Strong community support and age-friendly resources"
+      ]
+    },
+    "careDetailsSection": {
+      "heading": "Breaking Down {careType} Costs",
+      "content": "Pricing varies based on apartment size, care level needed, and community amenities. Here's what to expect and how to evaluate true value beyond the monthly number.",
+      "keyPoints": [
+        "Studio apartments typically range $3,500-5,500/month depending on care level",
+        "One-bedroom apartments typically range $4,500-7,000/month",
+        "Care levels: Basic (minimal assistance) to Advanced (comprehensive daily help)",
+        "Second person in same apartment adds $500-1,500/month",
+        "Pet fees (if applicable): usually $25-50/month per pet",
+        "Most communities offer month-to-month agreements (no long-term contracts)",
+        "Some communities have entrance fees, others are rental-only",
+        "Veterans benefits (Aid & Attendance) can offset $1,200-2,400/month"
+      ]
+    },
+    "faqPreview": [
+      {
+        "question": "What's included in the base monthly rate?",
+        "answer": "The base rate includes your private or semi-private apartment, three daily meals, weekly housekeeping, laundry service, all utilities (electric, water, heat, Wi-Fi), scheduled transportation, social activities, fitness classes, emergency call systems, and basic wellness checks. Care assistance (help with bathing, dressing, medications) is tiered based on needs."
+      },
+      {
+        "question": "Are there hidden fees I should know about?",
+        "answer": "No. We provide transparent pricing upfront. You'll know the base rent, care level fees, and any optional services (like beauty salon visits or private transportation). The only surprises should be pleasant ones. Some communities charge a community fee at move-in ($500-2,000) to cover administrative setup."
+      },
+      {
+        "question": "Can I use long-term care insurance or veteran benefits?",
+        "answer": "Yes. Most long-term care insurance policies cover assisted living. We'll work with your insurance provider to maximize benefits. Veterans and surviving spouses may qualify for Aid & Attendance benefits ($1,200-2,400/month) through the VA. We can help you navigate the application process."
+      },
+      {
+        "question": "Is {careType} more affordable than in-home care?",
+        "answer": "Often, yes. In-home care costs $25-35/hour. Just 4 hours of daily care totals $3,000-4,200/month without meals, social engagement, or emergency overnight coverage. {careType} provides 24/7 support, meals, activities, and community for comparable or lower cost."
+      },
+      {
+        "question": "What happens if my loved one's care needs increase?",
+        "answer": "Care plans and pricing adjust as needs change. If your loved one needs more assistance, we increase the care level and adjust the monthly rate accordingly. If they need less help (like after recovering from surgery), the rate can decrease. You only pay for the care actually needed."
+      }
+    ]
+  },
+  "for-professionals": {
+    "introSection": {
+      "heading": "Partner with Stage Senior Management",
+      "content": "We know you're looking for trusted senior living partners who will care for your patients and clients with the same dedication you provide. Our Colorado communities specialize in smooth transitions, clinical coordination, and family-centered care that makes your referrals confident and successful.",
+      "highlights": [
+        "Same-day tours and rapid placement when needed",
+        "Direct communication with clinical and care teams",
+        "Comprehensive discharge planning coordination",
+        "Licensed and insured communities across Colorado"
+      ]
+    },
+    "whyChooseSection": {
+      "heading": "Why Healthcare Professionals Refer to Us",
+      "reasons": [
+        {
+          "title": "Seamless Care Transitions",
+          "description": "We coordinate closely with hospitals, rehab centers, and case managers to ensure smooth transitions. Our admissions team responds within hours, and we can often arrange same-day tours and next-day move-ins when clinically appropriate."
+        },
+        {
+          "title": "Clinical Collaboration",
+          "description": "Our care teams communicate directly with physicians, therapists, and social workers. We provide detailed care plans, medication records, and health updates to support continuity of care across settings."
+        },
+        {
+          "title": "Multiple Levels of Care",
+          "description": "From independent living to memory care, we offer the full continuum. Patients can age in place as needs change, reducing the stress of multiple moves and maintaining care continuity."
+        },
+        {
+          "title": "Local Ownership, Clinical Excellence",
+          "description": "We're not a corporate chain. Our executive directors make clinical decisions, not distant corporate offices. This means faster responses, personalized care plans, and flexibility to meet individual patient needs."
+        }
+      ]
+    },
+    "localContextSection": {
+      "heading": "Our Colorado Communities",
+      "content": "Stage Senior Management operates four communities across the Denver metro area, each serving distinct neighborhoods with excellent access to healthcare facilities and community resources.",
+      "features": [
+        "Golden Pond (Golden) - Independent living, assisted living, memory care",
+        "Gardens on Quail (Arvada) - Independent living, assisted living, memory care",
+        "Gardens at Columbine (Littleton) - Assisted living, specialized memory care",
+        "Stonebridge Senior (Arvada) - Assisted living, memory care",
+        "Close proximity to UCHealth, AdventHealth, CommonSpirit facilities",
+        "Coordinated transportation to medical appointments",
+        "On-site coordination with home health, hospice, and therapy providers"
+      ]
+    },
+    "careDetailsSection": {
+      "heading": "Our Admission Process for Healthcare Referrals",
+      "content": "We've streamlined our admission process to work efficiently with hospital discharge planners, case managers, and social workers. Here's what to expect when referring a patient or client.",
+      "keyPoints": [
+        "Initial Contact: Call or email our admissions team for immediate response",
+        "Clinical Assessment: We review medical history, medication list, and care needs (can coordinate directly with your team)",
+        "Same-Day Tours: We accommodate family or professional tours within hours when needed",
+        "Financial Clearance: We work with families on payment options, insurance, VA benefits",
+        "Move-In Coordination: We can arrange move-ins within 24-48 hours for urgent placements",
+        "Ongoing Communication: Care plans shared with referring providers, regular updates provided",
+        "Post-Placement Follow-Up: We check in with families and referring professionals after placement"
+      ]
+    },
+    "faqPreview": [
+      {
+        "question": "How quickly can you accommodate a hospital discharge or urgent placement?",
+        "answer": "We prioritize urgent placements and can often arrange same-day tours and next-day admissions when beds are available. Our admissions team is available 7 days a week. Contact us directly and we'll work with your discharge timeline."
+      },
+      {
+        "question": "Do you accept Medicaid or Medicare?",
+        "answer": "We are private-pay communities, but we help families navigate VA benefits (Aid & Attendance), long-term care insurance, and other funding sources. While we don't accept Medicaid directly, we can coordinate with case managers to explore all available options for your clients."
+      },
+      {
+        "question": "What medical documentation do you need for admission?",
+        "answer": "We request: recent physician assessment (within 30 days), current medication list, relevant medical history, functional assessment (ADLs/IADLs), and any advance directives. We can work with incomplete records initially and obtain additional documentation as needed to prevent discharge delays."
+      },
+      {
+        "question": "How do you coordinate with ongoing healthcare providers?",
+        "answer": "We maintain open communication with physicians, home health agencies, hospice providers, and therapists. Families can continue with their existing doctors, and we provide transportation to appointments. Our staff can attend medical appointments (with family permission) to ensure continuity and information sharing."
+      },
+      {
+        "question": "What if a resident's needs exceed assisted living level of care?",
+        "answer": "We work closely with families and healthcare providers to monitor care needs. If skilled nursing becomes necessary, we help coordinate transitions to appropriate facilities and maintain relationships with local SNFs. For hospice care, we partner with hospice providers to allow residents to remain in place whenever clinically appropriate."
+      }
+    ]
+  }
+}
