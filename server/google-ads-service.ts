@@ -130,17 +130,24 @@ class GoogleAdsService {
 
     this.client = new GoogleAdsApi(CONFIG);
     
+    // Build customer config - only include login_customer_id if different from customer_id
+    const customerConfig: any = {
+      customer_id: CUSTOMER_ID,
+      refresh_token: REFRESH_TOKEN,
+    };
+    
+    // Only add login_customer_id if it's different from customer_id
+    if (LOGIN_CUSTOMER_ID && LOGIN_CUSTOMER_ID !== CUSTOMER_ID) {
+      customerConfig.login_customer_id = LOGIN_CUSTOMER_ID;
+    }
+    
     console.log('[Google Ads Service] Initializing with:', {
       customer_id: CUSTOMER_ID,
-      login_customer_id: LOGIN_CUSTOMER_ID,
+      login_customer_id: customerConfig.login_customer_id || 'same as customer_id',
       has_refresh_token: !!REFRESH_TOKEN
     });
     
-    this.customer = this.client.Customer({
-      customer_id: CUSTOMER_ID,
-      refresh_token: REFRESH_TOKEN,
-      login_customer_id: LOGIN_CUSTOMER_ID,
-    });
+    this.customer = this.client.Customer(customerConfig);
 
     console.log('[Google Ads Service] Client initialized successfully');
   }
