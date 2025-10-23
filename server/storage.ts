@@ -509,13 +509,11 @@ export class DatabaseStorage implements IStorage {
       conditions.push(inArray(communities.id, communityIds));
     }
     
-    let query = db.select().from(communities);
+    const query = db.select().from(communities);
     
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
-    
-    const communitiesData = await query.orderBy(desc(communities.featured), asc(communities.name));
+    const communitiesData = conditions.length > 0
+      ? await query.where(and(...conditions)).orderBy(desc(communities.featured), asc(communities.name))
+      : await query.orderBy(desc(communities.featured), asc(communities.name));
     
     // Fetch care types and amenities for all communities from junction tables
     const fetchedCommunityIds = communitiesData.map(c => c.id);
@@ -728,7 +726,7 @@ export class DatabaseStorage implements IStorage {
     communityId?: string;
     tags?: string[];
   }): Promise<Post[]> {
-    let query = db.select().from(posts);
+    const query = db.select().from(posts);
     
     const conditions = [];
     if (filters?.published !== undefined) {
@@ -745,11 +743,9 @@ export class DatabaseStorage implements IStorage {
       conditions.push(or(...tagConditions));
     }
     
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
-    
-    return await query.orderBy(desc(posts.publishedAt), desc(posts.createdAt));
+    return conditions.length > 0
+      ? await query.where(and(...conditions)).orderBy(desc(posts.publishedAt), desc(posts.createdAt))
+      : await query.orderBy(desc(posts.publishedAt), desc(posts.createdAt));
   }
 
   async getPost(slug: string): Promise<Post | undefined> {
@@ -1107,7 +1103,7 @@ export class DatabaseStorage implements IStorage {
     upcoming?: boolean;
     public?: boolean;
   }): Promise<Event[]> {
-    let query = db.select().from(events);
+    const query = db.select().from(events);
     
     const conditions = [];
     if (filters?.communityId) {
@@ -1120,11 +1116,9 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(events.isPublic, filters.public));
     }
     
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
-    
-    return await query.orderBy(asc(events.startsAt));
+    return conditions.length > 0
+      ? await query.where(and(...conditions)).orderBy(asc(events.startsAt))
+      : await query.orderBy(asc(events.startsAt));
   }
 
   async getEvent(slug: string): Promise<Event | undefined> {
@@ -1170,7 +1164,7 @@ export class DatabaseStorage implements IStorage {
     category?: string;
     active?: boolean;
   }): Promise<Faq[]> {
-    let query = db.select().from(faqs);
+    const query = db.select().from(faqs);
     
     const conditions = [];
     if (filters?.communityId) {
@@ -1183,11 +1177,9 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(faqs.active, filters.active));
     }
     
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
-    
-    return await query.orderBy(asc(faqs.sortOrder), asc(faqs.question));
+    return conditions.length > 0
+      ? await query.where(and(...conditions)).orderBy(asc(faqs.sortOrder), asc(faqs.question))
+      : await query.orderBy(asc(faqs.sortOrder), asc(faqs.question));
   }
 
   async getFaq(id: string): Promise<Faq | undefined> {
@@ -1225,7 +1217,7 @@ export class DatabaseStorage implements IStorage {
     category?: string;
     active?: boolean;
   }): Promise<Gallery[]> {
-    let query = db.select().from(galleries);
+    const query = db.select().from(galleries);
     
     const conditions = [];
     if (filters?.communityId) {
@@ -1238,11 +1230,9 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(galleries.active, filters.active));
     }
     
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
-    
-    return await query.orderBy(desc(galleries.createdAt));
+    return conditions.length > 0
+      ? await query.where(and(...conditions)).orderBy(desc(galleries.createdAt))
+      : await query.orderBy(desc(galleries.createdAt));
   }
 
   async getGallery(id: string): Promise<Gallery | undefined> {
@@ -1256,10 +1246,7 @@ export class DatabaseStorage implements IStorage {
   async createGallery(gallery: InsertGallery): Promise<Gallery> {
     const [created] = await db
       .insert(galleries)
-      .values({
-        ...gallery,
-        images: gallery.images as Array<{url: string; alt: string; width?: number; height?: number; caption?: string}> | undefined,
-      })
+      .values(gallery as typeof galleries.$inferInsert)
       .returning();
     return created;
   }
@@ -1267,10 +1254,7 @@ export class DatabaseStorage implements IStorage {
   async updateGallery(id: string, gallery: Partial<InsertGallery>): Promise<Gallery> {
     const [updated] = await db
       .update(galleries)
-      .set({
-        ...gallery,
-        images: gallery.images as Array<{url: string; alt: string; width?: number; height?: number; caption?: string}> | null | undefined,
-      })
+      .set(gallery as Partial<typeof galleries.$inferInsert>)
       .where(eq(galleries.id, id))
       .returning();
     return updated;
@@ -1285,7 +1269,7 @@ export class DatabaseStorage implements IStorage {
     communityId?: string;
     status?: string;
   }): Promise<TourRequest[]> {
-    let query = db.select().from(tourRequests);
+    const query = db.select().from(tourRequests);
     
     const conditions = [];
     if (filters?.communityId) {
@@ -1295,11 +1279,9 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(tourRequests.status, filters.status));
     }
     
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
-    
-    return await query.orderBy(desc(tourRequests.createdAt));
+    return conditions.length > 0
+      ? await query.where(and(...conditions)).orderBy(desc(tourRequests.createdAt))
+      : await query.orderBy(desc(tourRequests.createdAt));
   }
 
   async getTourRequest(id: string): Promise<TourRequest | undefined> {
@@ -1344,7 +1326,7 @@ export class DatabaseStorage implements IStorage {
     communityId?: string;
     active?: boolean;
   }): Promise<FloorPlan[]> {
-    let query = db.select().from(floorPlans);
+    const query = db.select().from(floorPlans);
     
     const conditions = [];
     if (filters?.communityId) {
@@ -1354,11 +1336,9 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(floorPlans.active, filters.active));
     }
     
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
-    
-    return await query.orderBy(asc(floorPlans.sortOrder), asc(floorPlans.name));
+    return conditions.length > 0
+      ? await query.where(and(...conditions)).orderBy(asc(floorPlans.sortOrder), asc(floorPlans.name))
+      : await query.orderBy(asc(floorPlans.sortOrder), asc(floorPlans.name));
   }
 
   async getFloorPlan(id: string): Promise<FloorPlan | undefined> {
@@ -1372,10 +1352,7 @@ export class DatabaseStorage implements IStorage {
   async createFloorPlan(floorPlan: InsertFloorPlan): Promise<FloorPlan> {
     const [created] = await db
       .insert(floorPlans)
-      .values({
-        ...floorPlan,
-        images: floorPlan.images as string[] | undefined,
-      })
+      .values(floorPlan as typeof floorPlans.$inferInsert)
       .returning();
     return created;
   }
@@ -1383,10 +1360,7 @@ export class DatabaseStorage implements IStorage {
   async updateFloorPlan(id: string, floorPlan: Partial<InsertFloorPlan>): Promise<FloorPlan> {
     const [updated] = await db
       .update(floorPlans)
-      .set({
-        ...floorPlan,
-        images: floorPlan.images as string[] | null | undefined,
-      })
+      .set(floorPlan as Partial<typeof floorPlans.$inferInsert>)
       .where(eq(floorPlans.id, id))
       .returning();
     return updated;
@@ -1402,7 +1376,7 @@ export class DatabaseStorage implements IStorage {
     featured?: boolean;
     approved?: boolean;
   }): Promise<Testimonial[]> {
-    let query = db.select().from(testimonials);
+    const query = db.select().from(testimonials);
     
     const conditions = [];
     if (filters?.communityId) {
@@ -1415,11 +1389,9 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(testimonials.approved, filters.approved));
     }
     
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
-    
-    return await query.orderBy(desc(testimonials.featured), asc(testimonials.sortOrder), desc(testimonials.createdAt));
+    return conditions.length > 0
+      ? await query.where(and(...conditions)).orderBy(desc(testimonials.featured), asc(testimonials.sortOrder), desc(testimonials.createdAt))
+      : await query.orderBy(desc(testimonials.featured), asc(testimonials.sortOrder), desc(testimonials.createdAt));
   }
 
   async getTestimonial(id: string): Promise<Testimonial | undefined> {
@@ -1628,13 +1600,11 @@ export class DatabaseStorage implements IStorage {
   async getCareTypes(filters?: {
     active?: boolean;
   }): Promise<CareType[]> {
-    let query = db.select().from(careTypes);
+    const query = db.select().from(careTypes);
     
-    if (filters?.active !== undefined) {
-      query = query.where(eq(careTypes.active, filters.active));
-    }
-    
-    return await query.orderBy(asc(careTypes.sortOrder), asc(careTypes.name));
+    return filters?.active !== undefined
+      ? await query.where(eq(careTypes.active, filters.active)).orderBy(asc(careTypes.sortOrder), asc(careTypes.name))
+      : await query.orderBy(asc(careTypes.sortOrder), asc(careTypes.name));
   }
 
   async getCareType(slug: string): Promise<CareType | undefined> {
@@ -1678,13 +1648,11 @@ export class DatabaseStorage implements IStorage {
   async getAmenities(filters?: {
     active?: boolean;
   }): Promise<Amenity[]> {
-    let query = db.select().from(amenities);
+    const query = db.select().from(amenities);
     
-    if (filters?.active !== undefined) {
-      query = query.where(eq(amenities.active, filters.active));
-    }
-    
-    return await query.orderBy(asc(amenities.sortOrder), asc(amenities.name));
+    return filters?.active !== undefined
+      ? await query.where(eq(amenities.active, filters.active)).orderBy(asc(amenities.sortOrder), asc(amenities.name))
+      : await query.orderBy(asc(amenities.sortOrder), asc(amenities.name));
   }
 
   async getAmenity(slug: string): Promise<Amenity | undefined> {
@@ -1784,13 +1752,11 @@ export class DatabaseStorage implements IStorage {
   async getPageHeroes(filters?: {
     active?: boolean;
   }): Promise<PageHero[]> {
-    let query = db.select().from(pageHeroes);
+    const query = db.select().from(pageHeroes);
     
-    if (filters?.active !== undefined) {
-      query = query.where(eq(pageHeroes.active, filters.active));
-    }
-    
-    return await query.orderBy(asc(pageHeroes.sortOrder), asc(pageHeroes.pagePath));
+    return filters?.active !== undefined
+      ? await query.where(eq(pageHeroes.active, filters.active)).orderBy(asc(pageHeroes.sortOrder), asc(pageHeroes.pagePath))
+      : await query.orderBy(asc(pageHeroes.sortOrder), asc(pageHeroes.pagePath));
   }
 
   async getPageHero(pagePath: string): Promise<PageHero | undefined> {
@@ -1964,20 +1930,8 @@ export class DatabaseStorage implements IStorage {
       .where(eq(communities.privateDiningImageId, imageId));
     
     await db.update(communities)
-      .set({ experienceImage1Id: null })
-      .where(eq(communities.experienceImage1Id, imageId));
-    
-    await db.update(communities)
-      .set({ experienceImage2Id: null })
-      .where(eq(communities.experienceImage2Id, imageId));
-    
-    await db.update(communities)
-      .set({ experienceImage3Id: null })
-      .where(eq(communities.experienceImage3Id, imageId));
-    
-    await db.update(communities)
-      .set({ experienceImage4Id: null })
-      .where(eq(communities.experienceImage4Id, imageId));
+      .set({ experienceImageId: null })
+      .where(eq(communities.experienceImageId, imageId));
     
     // Update posts table
     await db.update(posts)
@@ -2183,16 +2137,11 @@ export class DatabaseStorage implements IStorage {
 
   // Team member operations
   async getAllTeamMembers(includeInactive?: boolean): Promise<TeamMember[]> {
-    let query = db.select().from(teamMembers);
+    const query = db.select().from(teamMembers);
     
-    if (!includeInactive) {
-      query = query.where(eq(teamMembers.active, true));
-    }
-    
-    const members = await query.orderBy(
-      asc(teamMembers.sortOrder),
-      asc(teamMembers.name)
-    );
+    const members = includeInactive
+      ? await query.orderBy(asc(teamMembers.sortOrder), asc(teamMembers.name))
+      : await query.where(eq(teamMembers.active, true)).orderBy(asc(teamMembers.sortOrder), asc(teamMembers.name));
     
     // Ensure tags field is always an array
     return members.map(member => ({
@@ -2286,7 +2235,7 @@ export class DatabaseStorage implements IStorage {
     
     const [created] = await db
       .insert(teamMembers)
-      .values(memberData)
+      .values(memberData as typeof teamMembers.$inferInsert)
       .returning();
     
     // Ensure tags is always returned as an array
@@ -2344,13 +2293,12 @@ export class DatabaseStorage implements IStorage {
 
   // Homepage section operations
   async getHomepageSections(includeInvisible = false): Promise<HomepageSection[]> {
-    let query = db.select().from(homepageSections);
+    const query = db.select().from(homepageSections);
     
-    if (!includeInvisible) {
-      query = query.where(eq(homepageSections.visible, true));
-    }
+    const sections = includeInvisible
+      ? await query.orderBy(asc(homepageSections.sortOrder))
+      : await query.where(eq(homepageSections.visible, true)).orderBy(asc(homepageSections.sortOrder));
     
-    const sections = await query.orderBy(asc(homepageSections.sortOrder));
     return sections;
   }
 
