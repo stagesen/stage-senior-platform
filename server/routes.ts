@@ -1708,7 +1708,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Add optional data if it was fetched
       if (matchedTemplate.showGallery) {
-        responseData.galleries = results[resultIndex++];
+        const galleries = results[resultIndex++];
+        // Fetch images for each gallery and attach them (same as /api/galleries endpoint)
+        const galleriesWithImages = await Promise.all(
+          galleries.map(async (gallery: any) => {
+            const images = await storage.getGalleryImagesByGalleryId(gallery.id);
+            return {
+              ...gallery,
+              images: images
+            };
+          })
+        );
+        responseData.galleries = galleriesWithImages;
       }
       if (matchedTemplate.showTestimonials) {
         responseData.testimonials = results[resultIndex++];
