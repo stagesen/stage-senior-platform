@@ -5,7 +5,7 @@ import { db } from "./db";
 import { setupAuth } from "./auth";
 import { utmTrackingMiddleware } from "./utm-tracking";
 import { clickIdCaptureMiddleware } from "./click-id-middleware";
-import { sendTourRequestNotification } from "./email";
+import { sendTourRequestNotification, sendExitIntentSubmissionNotification } from "./email";
 import { sendConversion } from "./conversion-service";
 import { validateConversionPayload, generateTransactionId, type ConversionPayload } from "./conversion-utils";
 import { tourRequestLimiter, verifyCaptcha, detectHoneypot, detectSpeedAnomaly, logSecurityEvent } from "./security-middleware";
@@ -48,6 +48,7 @@ import {
   insertLandingPageTemplateSchema,
   insertGoogleAdsConversionActionSchema,
   insertExitIntentPopupSchema,
+  insertExitIntentSubmissionSchema,
   googleAdsConversionActions,
   type SelectGoogleAdsConversionAction,
   type InsertGoogleAdsConversionAction,
@@ -1308,6 +1309,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting tour request:", error);
       res.status(500).json({ message: "Failed to delete tour request" });
+    }
+  });
+
+  // Exit intent submission routes - Public endpoint for capturing exit intent emails
+  app.post("/api/exit-intent-submissions", async (req, res) => {
+    try {
+      const validatedData = insertExitIntentSubmissionSchema.parse(req.body);
+      
+      // Add UTM tracking data from session
+      const enrichedSubmissionData = {
+        ...validatedData,
+        utmSource: req.session.utm?.utm_source,
+        utmMedium: req.session.utm?.utm_medium,
+        utmCampaign: req.session.utm?.utm_campaign,
+        utmTerm: req.session.utm?.utm_term,
+        utmContent: req.session.utm?.utm_content,
+      };
+      
+      const submission = await storage.createExitIntentSubmission(enrichedSubmissionData);
+      
+      // Send email notification to all active recipients
+      try {
+        await sendExitIntentSubmissionNotification(submission);
+      } catch (emailError) {
+        console.error("Failed to send exit intent submission notification:", emailError);
+        // Don't fail the request if email fails
+      }
+      
+      res.status(201).json(submission);
+    } catch (error) {
+      console.error("Error creating exit intent submission:", error);
+      res.status(400).json({ message: "Failed to create exit intent submission" });
     }
   });
 

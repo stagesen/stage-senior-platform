@@ -81,6 +81,9 @@ import {
   exitIntentPopup,
   type ExitIntentPopup,
   type InsertExitIntentPopup,
+  exitIntentSubmissions,
+  type ExitIntentSubmission,
+  type InsertExitIntentSubmission,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm";
@@ -206,6 +209,9 @@ export interface IStorage {
   createTourRequest(tourRequest: InsertTourRequest): Promise<TourRequest>;
   updateTourRequest(id: string, tourRequest: Partial<InsertTourRequest>): Promise<TourRequest>;
   deleteTourRequest(id: string): Promise<void>;
+
+  // Exit intent submission operations
+  createExitIntentSubmission(data: InsertExitIntentSubmission): Promise<ExitIntentSubmission>;
 
   // Floor plan operations
   getFloorPlans(filters?: {
@@ -1319,6 +1325,14 @@ export class DatabaseStorage implements IStorage {
       .where(eq(tourRequests.id, id))
       .returning();
     return updated;
+  }
+
+  async createExitIntentSubmission(data: InsertExitIntentSubmission): Promise<ExitIntentSubmission> {
+    const [created] = await db
+      .insert(exitIntentSubmissions)
+      .values(data)
+      .returning();
+    return created;
   }
 
   async deleteTourRequest(id: string): Promise<void> {

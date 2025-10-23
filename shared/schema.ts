@@ -1085,3 +1085,29 @@ export const insertExitIntentPopupSchema = createInsertSchema(exitIntentPopup, {
 
 export type ExitIntentPopup = typeof exitIntentPopup.$inferSelect;
 export type InsertExitIntentPopup = z.infer<typeof insertExitIntentPopupSchema>;
+
+// Exit Intent Popup Submissions table - tracks email captures from exit intent popups
+export const exitIntentSubmissions = pgTable("exit_intent_submissions", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: varchar("email", { length: 255 }).notNull(),
+  source: varchar("source", { length: 255 }), // Which page they were on when popup showed
+  utmSource: varchar("utm_source", { length: 255 }),
+  utmMedium: varchar("utm_medium", { length: 255 }),
+  utmCampaign: varchar("utm_campaign", { length: 255 }),
+  utmTerm: varchar("utm_term", { length: 255 }),
+  utmContent: varchar("utm_content", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertExitIntentSubmissionSchema = createInsertSchema(exitIntentSubmissions, {
+  email: z.string().email(),
+  source: z.string().optional(),
+  utmSource: z.string().optional(),
+  utmMedium: z.string().optional(),
+  utmCampaign: z.string().optional(),
+  utmTerm: z.string().optional(),
+  utmContent: z.string().optional(),
+}).omit({ id: true, createdAt: true });
+
+export type ExitIntentSubmission = typeof exitIntentSubmissions.$inferSelect;
+export type InsertExitIntentSubmission = z.infer<typeof insertExitIntentSubmissionSchema>;

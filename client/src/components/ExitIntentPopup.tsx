@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Download, X, Gift } from "lucide-react";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { apiRequest } from "@/lib/queryClient";
 import type { ExitIntentPopup as ExitIntentPopupType } from "@shared/schema";
 
 // Storage key for tracking if popup has been shown
@@ -112,12 +113,13 @@ export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
       setIsSubmitting(true);
 
       try {
-        // TODO: Replace with actual API call to save the email
-        // For now, just log it
-        console.log("[Exit Intent] Email captured:", email);
+        // Submit the email to the API
+        await apiRequest("POST", "/api/exit-intent-submissions", {
+          email: email.trim(),
+          source: window.location.pathname,
+        });
 
-        // Small delay to show the button is working
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        console.log("[Exit Intent] Email captured and saved:", email);
 
         // Redirect to the configured URL
         if (config?.ctaLink) {
