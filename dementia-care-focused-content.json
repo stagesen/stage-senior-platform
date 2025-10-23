@@ -1,0 +1,80 @@
+{
+  "introSection": {
+    "heading": "Specialized Dementia Care in {city}",
+    "content": "When a loved one needs dementia care, finding the right community makes all the difference. Our dementia care programs in {city} combine specialized memory support with compassionate, person-centered care. We understand that every dementia journey is unique, and we create safe, structured environments where residents can maintain dignity and quality of life.",
+    "highlights": [
+      "Secure memory care neighborhoods designed for safety and comfort",
+      "Staff specially trained in dementia and Alzheimer's care",
+      "Structured daily routines that reduce confusion and anxiety",
+      "Family support and education programs"
+    ]
+  },
+  "whyChooseSection": {
+    "heading": "Why Families Trust Our Dementia Care",
+    "reasons": [
+      {
+        "title": "Specialized Memory Care Programs",
+        "description": "Our dementia care goes beyond basic assisted living. We use evidence-based approaches like reminiscence therapy, sensory activities, and structured routines designed specifically for memory impairment."
+      },
+      {
+        "title": "Trained & Compassionate Staff",
+        "description": "Every team member receives ongoing dementia care training. They understand how to communicate effectively, redirect challenging behaviors with patience, and preserve each resident's dignity and independence."
+      },
+      {
+        "title": "Safe, Purpose-Built Environment",
+        "description": "Secure neighborhoods prevent wandering while maintaining a homelike feel. Visual cues, clear signage, and familiar layouts help residents navigate confidently and reduce confusion."
+      },
+      {
+        "title": "Conveniently Located in {city}",
+        "description": "Being close to home means family can visit regularly, maintaining important connections. Our {city} location provides easy access for family members while keeping your loved one in their familiar Colorado community."
+      }
+    ]
+  },
+  "careDetailsSection": {
+    "heading": "What Our Dementia Care Includes",
+    "content": "Dementia care requires specialized support that goes beyond traditional senior living. Our comprehensive programs address the unique challenges of memory loss while promoting engagement, safety, and quality of life.",
+    "keyPoints": [
+      "24/7 supervision in secure memory care neighborhoods",
+      "Medication management and coordination with neurologists",
+      "Cognitive stimulation through memory games, music therapy, and art",
+      "Assistance with all daily activities (bathing, dressing, eating)",
+      "Structured daily routines that provide comfort and reduce anxiety",
+      "Wandering prevention with secure outdoor walking areas",
+      "Family support groups and care planning meetings",
+      "Person-centered care plans that honor each resident's history and preferences"
+    ]
+  },
+  "localContextSection": {
+    "heading": "Dementia Care Close to Home in {city}",
+    "content": "Staying in the {city} community means your loved one remains near family, familiar places, and local connections. Our location provides easy access for regular visits while offering specialized dementia care in a setting designed for memory support.",
+    "features": [
+      "Close to family for regular visits and involvement in care",
+      "Access to local neurologists and dementia specialists",
+      "Familiar Colorado setting reduces relocation stress",
+      "Safe neighborhood with secure outdoor spaces",
+      "Easy for family to attend care planning meetings"
+    ]
+  },
+  "faqPreview": [
+    {
+      "question": "How do I know when it's time for dementia care?",
+      "answer": "Signs include wandering or getting lost, difficulty managing medications, neglecting personal hygiene, unsafe cooking or home management, or increasing social isolation. If you're worried about safety or feel overwhelmed providing care, it's time to explore specialized dementia care."
+    },
+    {
+      "question": "Is your community secure for someone with dementia?",
+      "answer": "Yes. Our memory care neighborhoods feature secure entries and exits to prevent wandering, monitored outdoor spaces for safe walking, and 24/7 staff supervision. The environment is designed to feel homelike while prioritizing safety."
+    },
+    {
+      "question": "How do you handle challenging dementia behaviors?",
+      "answer": "Our staff uses compassionate redirection, person-centered approaches, and non-pharmacological interventions. We identify triggers, maintain calm environments, and work with families and physicians to develop individualized behavior management plans."
+    },
+    {
+      "question": "Can family visit anytime?",
+      "answer": "Absolutely. Family involvement is crucial to quality dementia care. You're welcome to visit during the day, join meals, participate in activities, or attend care planning meetings. We encourage regular visits to maintain important family connections."
+    },
+    {
+      "question": "What if my loved one's dementia progresses?",
+      "answer": "We adjust care plans as needs change. Our team continuously assesses each resident and modifies support to match current abilities. Many residents stay with us throughout their dementia journey, providing consistency and familiar faces."
+    }
+  ]
+}
