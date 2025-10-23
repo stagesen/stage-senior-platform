@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import AdminDashboard from "@/components/AdminDashboard";
 import PageGalleryAdmin from "@/components/PageGalleryAdmin";
 import PageContentManager from "@/components/PageContentManager";
-import GoogleAdsConversionsManager from "@/components/GoogleAdsConversionsManager";
+import GoogleAdsManager from "@/components/GoogleAdsManager";
 import ExitIntentPopupManager from "@/components/ExitIntentPopupManager";
 import { useAuth } from "@/lib/auth";
 import { 
@@ -410,7 +410,7 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="google-ads">
-            <GoogleAdsConversionsManager />
+            <GoogleAdsManager />
           </TabsContent>
 
           <TabsContent value="exit-intent-popup">
