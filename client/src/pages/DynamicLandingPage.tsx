@@ -1012,6 +1012,144 @@ export default function DynamicLandingPage() {
       {/* 3. Stats Strip - Social proof numbers */}
       <StatsStrip />
 
+      {/* 3a. Custom Content Sections - Template-specific helpful content */}
+      {template.customContent && (
+        <>
+          {/* Intro Section */}
+          {template.customContent.introSection && (
+            <FadeIn direction="up" delay={0.1}>
+              <section className="py-12 md:py-16 bg-white" data-testid="section-intro-custom">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
+                    {replaceTokens(template.customContent.introSection.heading, tokens)}
+                  </h2>
+                  <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                    {replaceTokens(template.customContent.introSection.content, tokens)}
+                  </p>
+                  {template.customContent.introSection.highlights && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+                      {template.customContent.introSection.highlights.map((highlight: string, idx: number) => (
+                        <div key={idx} className="flex items-start gap-3" data-testid={`intro-highlight-${idx}`}>
+                          <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                          <span className="text-base">{replaceTokens(highlight, tokens)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </section>
+            </FadeIn>
+          )}
+
+          {/* Why Choose Section */}
+          {template.customContent.whyChooseSection && (
+            <section className="py-12 md:py-16 bg-gray-50" data-testid="section-why-choose-custom">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+                  {replaceTokens(template.customContent.whyChooseSection.heading, tokens)}
+                </h2>
+                <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {template.customContent.whyChooseSection.reasons?.map((reason: any, idx: number) => (
+                    <StaggerItem key={idx}>
+                      <Card className="h-full hover:shadow-lg transition-shadow" data-testid={`why-choose-card-${idx}`}>
+                        <CardContent className="p-6">
+                          <h3 className="text-xl font-semibold mb-3">
+                            {replaceTokens(reason.title, tokens)}
+                          </h3>
+                          <p className="text-muted-foreground leading-relaxed">
+                            {replaceTokens(reason.description, tokens)}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </StaggerItem>
+                  ))}
+                </StaggerContainer>
+              </div>
+            </section>
+          )}
+
+          {/* Local Context Section */}
+          {template.customContent.localContextSection && (
+            <FadeIn direction="up" delay={0.2}>
+              <section className="py-12 md:py-16 bg-primary/5" data-testid="section-local-context-custom">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
+                    {replaceTokens(template.customContent.localContextSection.heading, tokens)}
+                  </h2>
+                  <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                    {replaceTokens(template.customContent.localContextSection.content, tokens)}
+                  </p>
+                  {template.customContent.localContextSection.features && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+                      {template.customContent.localContextSection.features.map((feature: string, idx: number) => (
+                        <div key={idx} className="flex items-start gap-3" data-testid={`local-feature-${idx}`}>
+                          <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                          <span className="text-base">{replaceTokens(feature, tokens)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </section>
+            </FadeIn>
+          )}
+
+          {/* Care Details Section */}
+          {template.customContent.careDetailsSection && (
+            <section className="py-12 md:py-16 bg-white" data-testid="section-care-details-custom">
+              <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
+                  {replaceTokens(template.customContent.careDetailsSection.heading, tokens)}
+                </h2>
+                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                  {replaceTokens(template.customContent.careDetailsSection.content, tokens)}
+                </p>
+                {template.customContent.careDetailsSection.keyPoints && (
+                  <div className="space-y-3 mt-8">
+                    {template.customContent.careDetailsSection.keyPoints.map((point: string, idx: number) => (
+                      <div key={idx} className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg" data-testid={`care-point-${idx}`}>
+                        <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                        <span className="text-base">{replaceTokens(point, tokens)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* FAQ Preview Section */}
+          {template.customContent.faqPreview && template.customContent.faqPreview.length > 0 && (
+            <FadeIn direction="up" delay={0.2}>
+              <section className="py-12 md:py-16 bg-gray-50" data-testid="section-faq-preview-custom">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+                    Frequently Asked Questions
+                  </h2>
+                  <Accordion type="single" collapsible className="space-y-4">
+                    {template.customContent.faqPreview.map((faq: any, idx: number) => (
+                      <AccordionItem 
+                        key={idx} 
+                        value={`faq-${idx}`} 
+                        className="bg-white border rounded-lg px-6"
+                        data-testid={`faq-item-${idx}`}
+                      >
+                        <AccordionTrigger className="text-left font-semibold hover:no-underline">
+                          {replaceTokens(faq.question, tokens)}
+                        </AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground leading-relaxed pt-2">
+                          {replaceTokens(faq.answer, tokens)}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              </section>
+            </FadeIn>
+          )}
+        </>
+      )}
+
       {/* 4. Community Highlights - What makes this community special (alternating feature sections) */}
       {communityHighlights.length > 0 && (
         <section className="py-12 md:py-16" data-testid="section-highlights">
