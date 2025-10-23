@@ -36,17 +36,20 @@ export default function ExitIntentPopupManager() {
       setCtaText(config.ctaText);
       setCtaLink(config.ctaLink || "");
       setImageId(config.imageId || null);
-      setActive(config.active);
+      setActive(config.active ?? true);
     }
   }, [config]);
 
   // Save mutation
   const saveMutation = useMutation({
     mutationFn: async (data: Partial<ExitIntentPopupType>) => {
-      return await apiRequest("/api/exit-intent-popup", {
+      const response = await fetch("/api/exit-intent-popup", {
         method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+      if (!response.ok) throw new Error("Failed to save settings");
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/exit-intent-popup"] });
@@ -75,12 +78,12 @@ export default function ExitIntentPopupManager() {
     });
   };
 
-  const handleImageUpload = (uploadedImageId: string) => {
-    setImageId(uploadedImageId);
-  };
-
-  const handleImageRemove = () => {
-    setImageId(null);
+  const handleImageChange = (value: string | string[] | undefined) => {
+    if (typeof value === 'string') {
+      setImageId(value);
+    } else {
+      setImageId(null);
+    }
   };
 
   if (isLoading) {
@@ -183,10 +186,9 @@ export default function ExitIntentPopupManager() {
           <div className="space-y-2">
             <Label data-testid="label-image">Popup Image (Optional)</Label>
             <ImageUploader
-              currentImageId={imageId}
-              onImageUpload={handleImageUpload}
-              onImageRemove={handleImageRemove}
-              acceptedFileTypes="image/*"
+              value={imageId || undefined}
+              onChange={handleImageChange}
+              accept="image/*"
             />
             <p className="text-sm text-muted-foreground">
               Recommended size: 200x200px or larger
@@ -225,11 +227,13 @@ export default function ExitIntentPopupManager() {
         </CardContent>
       </Card>
 
-      {/* Preview Modal */}
-      <ExitIntentPopup
-        open={showPreview}
-        onOpenChange={setShowPreview}
-      />
+      {/* Preview Modal - only render when preview is open */}
+      {showPreview && (
+        <ExitIntentPopup
+          open={showPreview}
+          onOpenChange={setShowPreview}
+        />
+      )}
     </div>
   );
 }
