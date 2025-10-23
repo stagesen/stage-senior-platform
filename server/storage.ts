@@ -20,6 +20,10 @@ import {
   users,
   images,
   teamMembers,
+  googleAdsCampaigns,
+  googleAdsAdGroups,
+  googleAdsKeywords,
+  googleAdsAds,
   type Community,
   type InsertCommunity,
   type Post,
@@ -60,6 +64,14 @@ import {
   type InsertImage,
   type TeamMember,
   type InsertTeamMember,
+  type GoogleAdsCampaign,
+  type InsertGoogleAdsCampaign,
+  type GoogleAdsAdGroup,
+  type InsertGoogleAdsAdGroup,
+  type GoogleAdsKeyword,
+  type InsertGoogleAdsKeyword,
+  type GoogleAdsAd,
+  type InsertGoogleAdsAd,
   pageHeroes,
   type PageHero,
   type InsertPageHero,
@@ -377,6 +389,34 @@ export interface IStorage {
   createLandingPageTemplate(template: InsertLandingPageTemplate): Promise<LandingPageTemplate>;
   updateLandingPageTemplate(id: string, template: Partial<InsertLandingPageTemplate>): Promise<LandingPageTemplate>;
   deleteLandingPageTemplate(id: string): Promise<void>;
+
+  // Google Ads campaign operations
+  getGoogleAdsCampaigns(): Promise<GoogleAdsCampaign[]>;
+  getGoogleAdsCampaign(id: string): Promise<GoogleAdsCampaign | undefined>;
+  createGoogleAdsCampaign(campaign: InsertGoogleAdsCampaign): Promise<GoogleAdsCampaign>;
+  updateGoogleAdsCampaign(id: string, campaign: Partial<InsertGoogleAdsCampaign>): Promise<GoogleAdsCampaign>;
+  deleteGoogleAdsCampaign(id: string): Promise<void>;
+  
+  // Google Ads ad group operations
+  getGoogleAdsAdGroups(campaignId?: string): Promise<GoogleAdsAdGroup[]>;
+  getGoogleAdsAdGroup(id: string): Promise<GoogleAdsAdGroup | undefined>;
+  createGoogleAdsAdGroup(adGroup: InsertGoogleAdsAdGroup): Promise<GoogleAdsAdGroup>;
+  updateGoogleAdsAdGroup(id: string, adGroup: Partial<InsertGoogleAdsAdGroup>): Promise<GoogleAdsAdGroup>;
+  deleteGoogleAdsAdGroup(id: string): Promise<void>;
+  
+  // Google Ads keyword operations
+  getGoogleAdsKeywords(adGroupId?: string): Promise<GoogleAdsKeyword[]>;
+  getGoogleAdsKeyword(id: string): Promise<GoogleAdsKeyword | undefined>;
+  createGoogleAdsKeyword(keyword: InsertGoogleAdsKeyword): Promise<GoogleAdsKeyword>;
+  updateGoogleAdsKeyword(id: string, keyword: Partial<InsertGoogleAdsKeyword>): Promise<GoogleAdsKeyword>;
+  deleteGoogleAdsKeyword(id: string): Promise<void>;
+  
+  // Google Ads ad operations
+  getGoogleAdsAds(adGroupId?: string): Promise<GoogleAdsAd[]>;
+  getGoogleAdsAd(id: string): Promise<GoogleAdsAd | undefined>;
+  createGoogleAdsAd(ad: InsertGoogleAdsAd): Promise<GoogleAdsAd>;
+  updateGoogleAdsAd(id: string, ad: Partial<InsertGoogleAdsAd>): Promise<GoogleAdsAd>;
+  deleteGoogleAdsAd(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -2667,6 +2707,187 @@ export class DatabaseStorage implements IStorage {
 
   async deleteLandingPageTemplate(id: string): Promise<void> {
     await db.delete(landingPageTemplates).where(eq(landingPageTemplates.id, id));
+  }
+
+  // Google Ads Campaign operations
+  async getGoogleAdsCampaigns(): Promise<GoogleAdsCampaign[]> {
+    return await db
+      .select()
+      .from(googleAdsCampaigns)
+      .orderBy(desc(googleAdsCampaigns.createdAt));
+  }
+
+  async getGoogleAdsCampaign(id: string): Promise<GoogleAdsCampaign | undefined> {
+    const [campaign] = await db
+      .select()
+      .from(googleAdsCampaigns)
+      .where(eq(googleAdsCampaigns.id, id));
+    return campaign;
+  }
+
+  async createGoogleAdsCampaign(campaign: InsertGoogleAdsCampaign): Promise<GoogleAdsCampaign> {
+    const [created] = await db
+      .insert(googleAdsCampaigns)
+      .values(campaign)
+      .returning();
+    return created;
+  }
+
+  async updateGoogleAdsCampaign(id: string, campaign: Partial<InsertGoogleAdsCampaign>): Promise<GoogleAdsCampaign> {
+    const [updated] = await db
+      .update(googleAdsCampaigns)
+      .set({
+        ...campaign,
+        updatedAt: new Date()
+      })
+      .where(eq(googleAdsCampaigns.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteGoogleAdsCampaign(id: string): Promise<void> {
+    await db.delete(googleAdsCampaigns).where(eq(googleAdsCampaigns.id, id));
+  }
+
+  // Google Ads Ad Group operations
+  async getGoogleAdsAdGroups(campaignId?: string): Promise<GoogleAdsAdGroup[]> {
+    if (campaignId) {
+      return await db
+        .select()
+        .from(googleAdsAdGroups)
+        .where(eq(googleAdsAdGroups.campaignId, campaignId))
+        .orderBy(desc(googleAdsAdGroups.createdAt));
+    }
+    return await db
+      .select()
+      .from(googleAdsAdGroups)
+      .orderBy(desc(googleAdsAdGroups.createdAt));
+  }
+
+  async getGoogleAdsAdGroup(id: string): Promise<GoogleAdsAdGroup | undefined> {
+    const [adGroup] = await db
+      .select()
+      .from(googleAdsAdGroups)
+      .where(eq(googleAdsAdGroups.id, id));
+    return adGroup;
+  }
+
+  async createGoogleAdsAdGroup(adGroup: InsertGoogleAdsAdGroup): Promise<GoogleAdsAdGroup> {
+    const [created] = await db
+      .insert(googleAdsAdGroups)
+      .values(adGroup)
+      .returning();
+    return created;
+  }
+
+  async updateGoogleAdsAdGroup(id: string, adGroup: Partial<InsertGoogleAdsAdGroup>): Promise<GoogleAdsAdGroup> {
+    const [updated] = await db
+      .update(googleAdsAdGroups)
+      .set({
+        ...adGroup,
+        updatedAt: new Date()
+      })
+      .where(eq(googleAdsAdGroups.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteGoogleAdsAdGroup(id: string): Promise<void> {
+    await db.delete(googleAdsAdGroups).where(eq(googleAdsAdGroups.id, id));
+  }
+
+  // Google Ads Keyword operations
+  async getGoogleAdsKeywords(adGroupId?: string): Promise<GoogleAdsKeyword[]> {
+    if (adGroupId) {
+      return await db
+        .select()
+        .from(googleAdsKeywords)
+        .where(eq(googleAdsKeywords.adGroupId, adGroupId))
+        .orderBy(desc(googleAdsKeywords.createdAt));
+    }
+    return await db
+      .select()
+      .from(googleAdsKeywords)
+      .orderBy(desc(googleAdsKeywords.createdAt));
+  }
+
+  async getGoogleAdsKeyword(id: string): Promise<GoogleAdsKeyword | undefined> {
+    const [keyword] = await db
+      .select()
+      .from(googleAdsKeywords)
+      .where(eq(googleAdsKeywords.id, id));
+    return keyword;
+  }
+
+  async createGoogleAdsKeyword(keyword: InsertGoogleAdsKeyword): Promise<GoogleAdsKeyword> {
+    const [created] = await db
+      .insert(googleAdsKeywords)
+      .values(keyword)
+      .returning();
+    return created;
+  }
+
+  async updateGoogleAdsKeyword(id: string, keyword: Partial<InsertGoogleAdsKeyword>): Promise<GoogleAdsKeyword> {
+    const [updated] = await db
+      .update(googleAdsKeywords)
+      .set({
+        ...keyword,
+        updatedAt: new Date()
+      })
+      .where(eq(googleAdsKeywords.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteGoogleAdsKeyword(id: string): Promise<void> {
+    await db.delete(googleAdsKeywords).where(eq(googleAdsKeywords.id, id));
+  }
+
+  // Google Ads Ad operations
+  async getGoogleAdsAds(adGroupId?: string): Promise<GoogleAdsAd[]> {
+    if (adGroupId) {
+      return await db
+        .select()
+        .from(googleAdsAds)
+        .where(eq(googleAdsAds.adGroupId, adGroupId))
+        .orderBy(desc(googleAdsAds.createdAt));
+    }
+    return await db
+      .select()
+      .from(googleAdsAds)
+      .orderBy(desc(googleAdsAds.createdAt));
+  }
+
+  async getGoogleAdsAd(id: string): Promise<GoogleAdsAd | undefined> {
+    const [ad] = await db
+      .select()
+      .from(googleAdsAds)
+      .where(eq(googleAdsAds.id, id));
+    return ad;
+  }
+
+  async createGoogleAdsAd(ad: InsertGoogleAdsAd): Promise<GoogleAdsAd> {
+    const [created] = await db
+      .insert(googleAdsAds)
+      .values(ad)
+      .returning();
+    return created;
+  }
+
+  async updateGoogleAdsAd(id: string, ad: Partial<InsertGoogleAdsAd>): Promise<GoogleAdsAd> {
+    const [updated] = await db
+      .update(googleAdsAds)
+      .set({
+        ...ad,
+        updatedAt: new Date()
+      })
+      .where(eq(googleAdsAds.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteGoogleAdsAd(id: string): Promise<void> {
+    await db.delete(googleAdsAds).where(eq(googleAdsAds.id, id));
   }
 }
 

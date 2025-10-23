@@ -47,12 +47,21 @@ import {
   insertPageContentSectionSchema,
   insertLandingPageTemplateSchema,
   insertGoogleAdsConversionActionSchema,
+  insertGoogleAdsCampaignSchema,
+  insertGoogleAdsAdGroupSchema,
+  insertGoogleAdsKeywordSchema,
+  insertGoogleAdsAdSchema,
   insertExitIntentPopupSchema,
   insertExitIntentSubmissionSchema,
   googleAdsConversionActions,
+  googleAdsCampaigns,
+  googleAdsAdGroups,
+  googleAdsKeywords,
+  googleAdsAds,
   type SelectGoogleAdsConversionAction,
   type InsertGoogleAdsConversionAction,
 } from "@shared/schema";
+import { z } from "zod";
 
 // Middleware to protect admin routes - referenced by javascript_auth_all_persistance integration
 function requireAuth(req: Request, res: Response, next: NextFunction) {
@@ -318,6 +327,286 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error fetching Google Ads conversion:', error);
       res.status(500).json({ 
         message: 'Failed to fetch conversion action',
+        error: error.message 
+      });
+    }
+  });
+
+  // Google Ads Campaign routes
+  
+  // GET /api/google-ads/campaigns - List all campaigns
+  app.get("/api/google-ads/campaigns", async (req, res) => {
+    try {
+      const campaigns = await storage.getGoogleAdsCampaigns();
+      res.json(campaigns);
+    } catch (error: any) {
+      console.error('Error fetching campaigns:', error);
+      res.status(500).json({ 
+        message: 'Failed to fetch campaigns',
+        error: error.message 
+      });
+    }
+  });
+
+  // GET /api/google-ads/campaigns/:id - Get campaign with details
+  app.get("/api/google-ads/campaigns/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const campaign = await storage.getGoogleAdsCampaign(id);
+      
+      if (!campaign) {
+        return res.status(404).json({ message: 'Campaign not found' });
+      }
+
+      // Get related ad groups, keywords, and ads
+      const adGroups = await storage.getGoogleAdsAdGroups(id);
+      const campaignWithDetails = {
+        ...campaign,
+        adGroups: await Promise.all(adGroups.map(async (adGroup) => {
+          const keywords = await storage.getGoogleAdsKeywords(adGroup.id);
+          const ads = await storage.getGoogleAdsAds(adGroup.id);
+          return {
+            ...adGroup,
+            keywords,
+            ads,
+          };
+        })),
+      };
+
+      res.json(campaignWithDetails);
+    } catch (error: any) {
+      console.error('Error fetching campaign:', error);
+      res.status(500).json({ 
+        message: 'Failed to fetch campaign',
+        error: error.message 
+      });
+    }
+  });
+
+  // POST /api/google-ads/campaigns - Create a complete campaign
+  app.post("/api/google-ads/campaigns", async (req, res) => {
+    // Define validation schema for campaign creation request
+    const createCampaignRequestSchema = z.object({
+      name: z.string().min(1, "Campaign name is required").max(255, "Campaign name is too long"),
+      budgetAmount: z.number().positive("Budget amount must be positive"),
+      landingPageTemplateId: z.string().uuid("Invalid landing page template ID").optional().nullable(),
+      communityId: z.string().uuid("Invalid community ID").optional().nullable(),
+      keywords: z.array(z.object({
+        text: z.string().min(1, "Keyword text is required"),
+        matchType: z.enum(["BROAD", "PHRASE", "EXACT"]).optional().default("BROAD"),
+      })).optional().default([]),
+      headlines: z.array(z.string().min(1)).min(3, "At least 3 headlines are required").max(15, "Maximum 15 headlines allowed").optional(),
+      descriptions: z.array(z.string().min(1)).min(2, "At least 2 descriptions are required").max(4, "Maximum 4 descriptions allowed").optional(),
+      finalUrl: z.string().url("Invalid final URL").optional(),
+      biddingStrategy: z.enum(["MANUAL_CPC", "TARGET_CPA", "MAXIMIZE_CONVERSIONS"]).optional().default("MANUAL_CPC"),
+      targetCpa: z.number().positive("Target CPA must be positive").optional().nullable(),
+    });
+
+    try {
+      // Step 1: Validate request body
+      const validationResult = createCampaignRequestSchema.safeParse(req.body);
+      
+      if (!validationResult.success) {
+        return res.status(400).json({
+          message: 'Validation failed',
+          errors: validationResult.error.errors.map(err => ({
+            field: err.path.join('.'),
+            message: err.message,
+          })),
+        });
+      }
+
+      const {
+        name,
+        budgetAmount,
+        landingPageTemplateId,
+        communityId,
+        keywords,
+        headlines,
+        descriptions,
+        finalUrl,
+        biddingStrategy,
+        targetCpa,
+      } = validationResult.data;
+
+      // Step 2: Verify referenced entities exist (if provided)
+      if (landingPageTemplateId) {
+        const template = await storage.getLandingPageTemplate(landingPageTemplateId);
+        if (!template) {
+          return res.status(404).json({ 
+            message: 'Landing page template not found',
+          });
+        }
+      }
+
+      if (communityId) {
+        const community = await storage.getCommunity(communityId);
+        if (!community) {
+          return res.status(404).json({ 
+            message: 'Community not found',
+          });
+        }
+      }
+
+      // Step 3: Start database transaction for all database operations
+      let dbCampaign: any;
+      let budgetResourceName: string;
+      let campaignResult: { resourceName: string; id: string };
+      
+      try {
+        // Create budget in Google Ads (not part of transaction - external API)
+        const budgetAmountMicros = Math.round(budgetAmount * 1000000);
+        budgetResourceName = await googleAdsService.createCampaignBudget(
+          `Budget for ${name}`,
+          budgetAmountMicros
+        );
+
+        // Create campaign in Google Ads (not part of transaction - external API)
+        campaignResult = await googleAdsService.createCampaign({
+          name,
+          budgetResourceName,
+          status: 'PAUSED',
+          biddingStrategy: biddingStrategy,
+          targetCpaMicros: targetCpa ? Math.round(targetCpa * 1000000) : undefined,
+        });
+
+        // All database operations within transaction
+        await db.transaction(async (tx) => {
+          // Save campaign to database
+          const [campaign] = await tx.insert(googleAdsCampaigns).values({
+            name,
+            resourceName: campaignResult.resourceName,
+            campaignId: campaignResult.id,
+            landingPageTemplateId: landingPageTemplateId || null,
+            communityId: communityId || null,
+            status: 'PAUSED',
+            budgetAmountMicros,
+            biddingStrategy: biddingStrategy || 'MANUAL_CPC',
+            targetCpaMicros: targetCpa ? Math.round(targetCpa * 1000000) : null,
+          }).returning();
+          
+          dbCampaign = campaign;
+
+          // Create ad group in Google Ads
+          const adGroupResult = await googleAdsService.createAdGroup({
+            name: `${name} - Ad Group 1`,
+            campaignResourceName: campaignResult.resourceName,
+            cpcBidMicros: 1000000, // $1 default bid
+          });
+
+          // Save ad group to database
+          const [dbAdGroup] = await tx.insert(googleAdsAdGroups).values({
+            name: `${name} - Ad Group 1`,
+            resourceName: adGroupResult.resourceName,
+            adGroupId: adGroupResult.id,
+            campaignId: campaign.id,
+            cpcBidMicros: 1000000,
+          }).returning();
+
+          // Add keywords if provided
+          if (keywords && keywords.length > 0) {
+            const keywordResults = await googleAdsService.addKeywords({
+              adGroupResourceName: adGroupResult.resourceName,
+              keywords: keywords.map((kw) => ({
+                text: kw.text,
+                matchType: kw.matchType || 'BROAD',
+              })),
+            });
+
+            // Save keywords to database
+            for (const kw of keywordResults) {
+              await tx.insert(googleAdsKeywords).values({
+                keywordText: kw.text,
+                matchType: 'BROAD',
+                resourceName: kw.resourceName,
+                criterionId: kw.id,
+                adGroupId: dbAdGroup.id,
+              });
+            }
+          }
+
+          // Create responsive search ad if all required fields provided
+          if (headlines && descriptions && finalUrl) {
+            const adResult = await googleAdsService.createResponsiveSearchAd({
+              adGroupResourceName: adGroupResult.resourceName,
+              headlines,
+              descriptions,
+              finalUrl,
+            });
+
+            // Save ad to database
+            await tx.insert(googleAdsAds).values({
+              resourceName: adResult.resourceName,
+              adId: adResult.id,
+              adGroupId: dbAdGroup.id,
+              headlines,
+              descriptions,
+              finalUrl,
+            });
+          }
+        });
+
+        res.status(201).json({
+          campaign: dbCampaign,
+          message: 'Campaign created successfully',
+        });
+
+      } catch (txError: any) {
+        // Transaction failed - database operations were rolled back
+        // Log the full error for debugging but return sanitized message
+        console.error('[Google Ads Campaign] Transaction failed:', txError);
+        
+        // Check for specific error types
+        if (txError.message?.includes('duplicate key')) {
+          return res.status(409).json({ 
+            message: 'Campaign with this name or resource already exists',
+          });
+        }
+        
+        if (txError.message?.includes('foreign key constraint')) {
+          return res.status(400).json({ 
+            message: 'Invalid reference to landing page template or community',
+          });
+        }
+
+        // Check for Google Ads API errors
+        if (txError.message?.includes('PERMISSION_DENIED') || txError.message?.includes('UNAUTHENTICATED')) {
+          return res.status(403).json({ 
+            message: 'Google Ads API authentication failed',
+          });
+        }
+
+        if (txError.message?.includes('QUOTA_EXCEEDED')) {
+          return res.status(429).json({ 
+            message: 'Google Ads API quota exceeded. Please try again later.',
+          });
+        }
+
+        // Generic error - don't expose internal details
+        throw txError; // Re-throw to outer catch for generic 500 handling
+      }
+
+    } catch (error: any) {
+      // Outer catch for any errors not handled by transaction catch
+      console.error('[Google Ads Campaign] Error creating campaign:', error);
+      
+      // Return generic error message without exposing sensitive details
+      res.status(500).json({ 
+        message: 'Failed to create campaign. Please try again or contact support.',
+      });
+    }
+  });
+
+  // DELETE /api/google-ads/campaigns/:id - Delete campaign
+  app.delete("/api/google-ads/campaigns/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteGoogleAdsCampaign(id);
+      res.json({ message: 'Campaign deleted successfully' });
+    } catch (error: any) {
+      console.error('Error deleting campaign:', error);
+      res.status(500).json({ 
+        message: 'Failed to delete campaign',
         error: error.message 
       });
     }

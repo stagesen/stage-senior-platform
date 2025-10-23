@@ -478,6 +478,274 @@ class GoogleAdsService {
   }
 
   /**
+   * Create a campaign budget
+   */
+  async createCampaignBudget(budgetName: string, budgetAmountMicros: number): Promise<string> {
+    try {
+      const customer = await this.getCustomer();
+      
+      const budgetOperation: any = {
+        create: {
+          name: budgetName,
+          amount_micros: budgetAmountMicros,
+          delivery_method: 'STANDARD',
+          explicitly_shared: false,
+        },
+      };
+
+      console.log('[Google Ads Service] Creating campaign budget:', {
+        name: budgetName,
+        amount: budgetAmountMicros / 1000000,
+      });
+
+      const response: any = await customer.campaignBudgets.create([budgetOperation]);
+      const budgetResourceName = response.results[0].resource_name;
+
+      console.log('[Google Ads Service] Budget created:', budgetResourceName);
+      return budgetResourceName;
+    } catch (error: any) {
+      console.error('[Google Ads Service] Error creating budget:', error);
+      throw new Error(`Failed to create campaign budget: ${error.message || 'Unknown error'}`);
+    }
+  }
+
+  /**
+   * Create a search campaign
+   */
+  async createCampaign(config: {
+    name: string;
+    budgetResourceName: string;
+    status?: 'ENABLED' | 'PAUSED';
+    biddingStrategy?: 'MANUAL_CPC' | 'MAXIMIZE_CONVERSIONS' | 'TARGET_CPA';
+    targetCpaMicros?: number;
+  }): Promise<{ resourceName: string; id: string }> {
+    try {
+      const customer = await this.getCustomer();
+
+      const campaign: any = {
+        name: config.name,
+        status: config.status || 'PAUSED',
+        advertising_channel_type: 'SEARCH',
+        campaign_budget: config.budgetResourceName,
+        network_settings: {
+          target_google_search: true,
+          target_search_network: true,
+          target_content_network: false,
+        },
+      };
+
+      // Set bidding strategy
+      if (config.biddingStrategy === 'MAXIMIZE_CONVERSIONS') {
+        campaign.maximize_conversions = {};
+      } else if (config.biddingStrategy === 'TARGET_CPA' && config.targetCpaMicros) {
+        campaign.target_cpa = {
+          target_cpa_micros: config.targetCpaMicros,
+        };
+      } else {
+        campaign.manual_cpc = {
+          enhanced_cpc_enabled: true,
+        };
+      }
+
+      console.log('[Google Ads Service] Creating campaign:', {
+        name: config.name,
+        status: campaign.status,
+        bidding: config.biddingStrategy || 'MANUAL_CPC',
+      });
+
+      const campaignOperation: any = {
+        create: campaign,
+      };
+
+      const response: any = await customer.campaigns.create([campaignOperation]);
+      const resourceName = response.results[0].resource_name;
+      
+      // Extract ID from resource name
+      const idMatch = resourceName.match(/campaigns\/(\d+)/);
+      const id = idMatch ? idMatch[1] : '';
+
+      console.log('[Google Ads Service] Campaign created:', {
+        resourceName,
+        id,
+      });
+
+      return { resourceName, id };
+    } catch (error: any) {
+      console.error('[Google Ads Service] Error creating campaign:', error);
+      throw new Error(`Failed to create campaign: ${error.message || 'Unknown error'}`);
+    }
+  }
+
+  /**
+   * Create an ad group
+   */
+  async createAdGroup(config: {
+    name: string;
+    campaignResourceName: string;
+    cpcBidMicros?: number;
+    status?: 'ENABLED' | 'PAUSED';
+  }): Promise<{ resourceName: string; id: string }> {
+    try {
+      const customer = await this.getCustomer();
+
+      const adGroup: any = {
+        name: config.name,
+        campaign: config.campaignResourceName,
+        status: config.status || 'ENABLED',
+        type: 'SEARCH_STANDARD',
+      };
+
+      if (config.cpcBidMicros) {
+        adGroup.cpc_bid_micros = config.cpcBidMicros;
+      }
+
+      console.log('[Google Ads Service] Creating ad group:', {
+        name: config.name,
+        campaign: config.campaignResourceName,
+      });
+
+      const adGroupOperation: any = {
+        create: adGroup,
+      };
+
+      const response: any = await customer.adGroups.create([adGroupOperation]);
+      const resourceName = response.results[0].resource_name;
+      
+      // Extract ID from resource name
+      const idMatch = resourceName.match(/adGroups\/(\d+)/);
+      const id = idMatch ? idMatch[1] : '';
+
+      console.log('[Google Ads Service] Ad group created:', {
+        resourceName,
+        id,
+      });
+
+      return { resourceName, id };
+    } catch (error: any) {
+      console.error('[Google Ads Service] Error creating ad group:', error);
+      throw new Error(`Failed to create ad group: ${error.message || 'Unknown error'}`);
+    }
+  }
+
+  /**
+   * Add keywords to an ad group
+   */
+  async addKeywords(config: {
+    adGroupResourceName: string;
+    keywords: Array<{
+      text: string;
+      matchType: 'EXACT' | 'PHRASE' | 'BROAD';
+    }>;
+  }): Promise<Array<{ resourceName: string; id: string; text: string }>> {
+    try {
+      const customer = await this.getCustomer();
+
+      const operations = config.keywords.map((keyword) => ({
+        create: {
+          ad_group: config.adGroupResourceName,
+          status: 'ENABLED',
+          keyword: {
+            text: keyword.text,
+            match_type: keyword.matchType,
+          },
+        },
+      }));
+
+      console.log('[Google Ads Service] Adding keywords:', {
+        adGroup: config.adGroupResourceName,
+        count: config.keywords.length,
+      });
+
+      const response: any = await customer.adGroupCriteria.create(operations);
+      
+      const results = response.results.map((result: any, index: number) => {
+        const idMatch = result.resource_name.match(/criteria\/(\d+)/);
+        return {
+          resourceName: result.resource_name,
+          id: idMatch ? idMatch[1] : '',
+          text: config.keywords[index].text,
+        };
+      });
+
+      console.log('[Google Ads Service] Keywords added:', results.length);
+      return results;
+    } catch (error: any) {
+      console.error('[Google Ads Service] Error adding keywords:', error);
+      throw new Error(`Failed to add keywords: ${error.message || 'Unknown error'}`);
+    }
+  }
+
+  /**
+   * Create a responsive search ad
+   */
+  async createResponsiveSearchAd(config: {
+    adGroupResourceName: string;
+    headlines: string[]; // 3-15 headlines, max 30 chars each
+    descriptions: string[]; // 2-4 descriptions, max 90 chars each
+    finalUrl: string;
+    path1?: string; // max 15 chars
+    path2?: string; // max 15 chars
+  }): Promise<{ resourceName: string; id: string }> {
+    try {
+      const customer = await this.getCustomer();
+
+      // Validate inputs
+      if (config.headlines.length < 3 || config.headlines.length > 15) {
+        throw new Error('Responsive search ads require 3-15 headlines');
+      }
+      if (config.descriptions.length < 2 || config.descriptions.length > 4) {
+        throw new Error('Responsive search ads require 2-4 descriptions');
+      }
+
+      const ad: any = {
+        ad_group: config.adGroupResourceName,
+        status: 'ENABLED',
+        ad: {
+          final_urls: [config.finalUrl],
+          responsive_search_ad: {
+            headlines: config.headlines.map((text) => ({ text })),
+            descriptions: config.descriptions.map((text) => ({ text })),
+          },
+        },
+      };
+
+      if (config.path1) {
+        ad.ad.responsive_search_ad.path1 = config.path1;
+      }
+      if (config.path2) {
+        ad.ad.responsive_search_ad.path2 = config.path2;
+      }
+
+      console.log('[Google Ads Service] Creating responsive search ad:', {
+        adGroup: config.adGroupResourceName,
+        headlines: config.headlines.length,
+        descriptions: config.descriptions.length,
+      });
+
+      const adOperation: any = {
+        create: ad,
+      };
+
+      const response: any = await customer.adGroupAds.create([adOperation]);
+      const resourceName = response.results[0].resource_name;
+      
+      // Extract ID from resource name
+      const idMatch = resourceName.match(/ads\/(\d+)/);
+      const id = idMatch ? idMatch[1] : '';
+
+      console.log('[Google Ads Service] Ad created:', {
+        resourceName,
+        id,
+      });
+
+      return { resourceName, id };
+    } catch (error: any) {
+      console.error('[Google Ads Service] Error creating ad:', error);
+      throw new Error(`Failed to create responsive search ad: ${error.message || 'Unknown error'}`);
+    }
+  }
+
+  /**
    * Check if the service is properly configured
    */
   isConfigured(): boolean {
