@@ -1170,7 +1170,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Please fill out the form completely' });
       }
       
-      // Security Check 3: CAPTCHA verification
+      // Security Check 3: CAPTCHA verification (optional - log warning but allow submission)
       const captchaConfigured = !!process.env.TURNSTILE_SECRET_KEY;
       
       if (captchaConfigured && !captchaToken) {
@@ -1178,11 +1178,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           type: 'captcha_fail',
           ip,
           userAgent,
-          details: { error: 'missing-captcha-token' },
+          details: { error: 'missing-captcha-token', note: 'Allowed to proceed - CAPTCHA optional' },
         });
-        return res.status(403).json({ 
-          message: 'Security verification required. Please refresh and try again.',
-        });
+        console.warn(`[CAPTCHA] Missing token from IP ${ip} - CAPTCHA configured but frontend may not have site key - allowing submission`);
+        // Continue processing - don't block submission
       }
       
       if (captchaToken) {
