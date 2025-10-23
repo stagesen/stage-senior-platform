@@ -1060,3 +1060,28 @@ export const insertPageContentSectionSchema = createInsertSchema(pageContentSect
 
 export type PageContentSection = typeof pageContentSections.$inferSelect;
 export type InsertPageContentSection = z.infer<typeof insertPageContentSectionSchema>;
+
+// Exit Intent Popup table - singleton table for managing exit intent popup settings
+export const exitIntentPopup = pgTable("exit_intent_popup", {
+  id: integer("id").primaryKey().default(1), // Singleton - only one row with id=1
+  title: varchar("title", { length: 255 }).notNull().default("Wait! Don't Miss This"),
+  message: text("message").notNull().default("Get our comprehensive Senior Living Guide absolutely free"),
+  ctaText: varchar("cta_text", { length: 100 }).notNull().default("Get My Free Guide"),
+  ctaLink: text("cta_link"), // Optional link for CTA button
+  imageId: varchar("image_id", { length: 255 }).references(() => images.id, { onDelete: "set null" }),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertExitIntentPopupSchema = createInsertSchema(exitIntentPopup, {
+  title: z.string().min(1).max(255),
+  message: z.string().min(1),
+  ctaText: z.string().min(1).max(100),
+  ctaLink: z.string().optional(),
+  imageId: z.string().optional(),
+  active: z.boolean().default(true),
+}).omit({ id: true, createdAt: true, updatedAt: true });
+
+export type ExitIntentPopup = typeof exitIntentPopup.$inferSelect;
+export type InsertExitIntentPopup = z.infer<typeof insertExitIntentPopupSchema>;

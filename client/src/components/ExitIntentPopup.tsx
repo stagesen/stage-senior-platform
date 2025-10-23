@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Download, X, Gift } from "lucide-react";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import type { ExitIntentPopup as ExitIntentPopupType } from "@shared/schema";
 
 // Storage key for tracking if popup has been shown
 const STORAGE_KEY = "exitIntentPopupShown";
@@ -19,11 +22,16 @@ const STORAGE_KEY = "exitIntentPopupShown";
  * Hook to manage exit intent detection and popup display
  * Returns state and controls for the exit intent popup
  */
-export function useExitIntent() {
+export function useExitIntent(enabled: boolean = true) {
   const [showPopup, setShowPopup] = useState(false);
   const [hasShown, setHasShown] = useState(false);
 
   useEffect(() => {
+    // Don't enable exit intent if not enabled
+    if (!enabled) {
+      return;
+    }
+
     // Check if popup has already been shown in this session
     const alreadyShown = sessionStorage.getItem(STORAGE_KEY) === "true";
     if (alreadyShown) {
@@ -34,11 +42,11 @@ export function useExitIntent() {
     // Exit intent detection - mouse leaving viewport from the top
     const handleMouseLeave = (e: MouseEvent) => {
       // Only trigger if:
-      // 1. Mouse is leaving from the top (clientY <= 0)
+      // 1. Mouse is leaving from the top (clientY <= 10)
       // 2. Popup hasn't been shown yet
       // 3. Mouse is actually leaving the document
       if (
-        e.clientY <= 0 &&
+        e.clientY <= 10 &&
         !hasShown &&
         e.relatedTarget === null &&
         e.target === document.documentElement
@@ -59,7 +67,7 @@ export function useExitIntent() {
     return () => {
       document.removeEventListener("mouseout", handleMouseLeave);
     };
-  }, [hasShown]);
+  }, [hasShown, enabled]);
 
   return { showPopup, setShowPopup, hasShown };
 }
@@ -79,11 +87,28 @@ export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Handle form submission
-  const handleSubmit = useCallback(
+  // Fetch exit intent popup configuration
+  const { data: config, isLoading } = useQuery<ExitIntentPopupType>({
+    queryKey: ["/api/exit-intent-popup"],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // Resolve image URL if configured
+  const popupImageUrl = useResolveImageUrl(config?.imageId);
+
+  // Handle form submission or CTA click
+  const handleCta = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
 
+      // If there's a CTA link, navigate to it
+      if (config?.ctaLink) {
+        window.location.href = config.ctaLink;
+        onOpenChange(false);
+        return;
+      }
+
+      // Otherwise, handle as form submission
       if (!name.trim() || !email.trim()) {
         return;
       }
@@ -110,7 +135,7 @@ export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
         setIsSubmitting(false);
       }
     },
-    [name, email, onOpenChange]
+    [name, email, onOpenChange, config?.ctaLink]
   );
 
   // Handle close
@@ -131,22 +156,38 @@ export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
     }
   }, [open]);
 
+  // Don't render if loading or config is not active
+  if (isLoading || !config || !config.active) {
+    return null;
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden" data-testid="exit-intent-popup">
         {/* Header with gradient background */}
         <div className="bg-gradient-to-r from-[var(--deep-blue)] to-[var(--bright-blue)] text-white p-6 sm:p-8">
           <DialogHeader>
             <div className="flex items-center justify-center mb-4">
-              <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                <Gift className="w-8 h-8 text-white" />
-              </div>
+              {popupImageUrl ? (
+                <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center overflow-hidden">
+                  <img 
+                    src={popupImageUrl} 
+                    alt={config.title} 
+                    className="w-full h-full object-cover"
+                    data-testid="popup-image"
+                  />
+                </div>
+              ) : (
+                <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                  <Gift className="w-8 h-8 text-white" />
+                </div>
+              )}
             </div>
-            <DialogTitle className="text-2xl sm:text-3xl font-bold text-center text-white">
-              Wait! Don't Miss This
+            <DialogTitle className="text-2xl sm:text-3xl font-bold text-center text-white" data-testid="popup-title">
+              {config.title}
             </DialogTitle>
-            <DialogDescription className="text-white/90 text-center text-base sm:text-lg mt-2">
-              Get our comprehensive Senior Living Guide absolutely free
+            <DialogDescription className="text-white/90 text-center text-base sm:text-lg mt-2" data-testid="popup-message">
+              {config.message}
             </DialogDescription>
           </DialogHeader>
         </div>
@@ -183,8 +224,9 @@ export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
                 </CardContent>
               </Card>
 
-              {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Form - only show if no CTA link is configured */}
+              {!config.ctaLink ? (
+                <form onSubmit={handleCta} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="exit-popup-name" className="text-[var(--deep-blue)]">
                     Your Name
@@ -221,13 +263,14 @@ export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
                   type="submit"
                   className="w-full min-h-[48px] text-lg"
                   disabled={isSubmitting || !name.trim() || !email.trim()}
+                  data-testid="button-submit-popup"
                 >
                   {isSubmitting ? (
                     "Sending..."
                   ) : (
                     <>
                       <Download className="w-5 h-5 mr-2" />
-                      Get My Free Guide
+                      {config.ctaText}
                     </>
                   )}
                 </Button>
@@ -236,6 +279,17 @@ export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
                   We respect your privacy. Unsubscribe anytime.
                 </p>
               </form>
+              ) : (
+                // Show CTA button if link is configured
+                <Button
+                  onClick={handleCta}
+                  className="w-full min-h-[48px] text-lg"
+                  data-testid="button-cta-popup"
+                >
+                  <Download className="w-5 h-5 mr-2" />
+                  {config.ctaText}
+                </Button>
+              )}
             </>
           ) : (
             // Success state

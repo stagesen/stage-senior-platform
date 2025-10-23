@@ -47,6 +47,7 @@ import {
   insertPageContentSectionSchema,
   insertLandingPageTemplateSchema,
   insertGoogleAdsConversionActionSchema,
+  insertExitIntentPopupSchema,
   googleAdsConversionActions,
   type SelectGoogleAdsConversionAction,
   type InsertGoogleAdsConversionAction,
@@ -2715,6 +2716,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating homepage config:", error);
       res.status(400).json({ message: "Failed to update homepage config" });
+    }
+  });
+
+  // Exit intent popup routes
+  app.get("/api/exit-intent-popup", async (req, res) => {
+    try {
+      const popup = await storage.getExitIntentPopup();
+      res.json(popup);
+    } catch (error) {
+      console.error("Error fetching exit intent popup:", error);
+      res.status(500).json({ message: "Failed to fetch exit intent popup" });
+    }
+  });
+
+  app.put("/api/exit-intent-popup", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertExitIntentPopupSchema.parse(req.body);
+      const popup = await storage.updateExitIntentPopup(validatedData);
+      res.json(popup);
+    } catch (error) {
+      console.error("Error updating exit intent popup:", error);
+      res.status(400).json({ message: "Failed to update exit intent popup" });
     }
   });
 

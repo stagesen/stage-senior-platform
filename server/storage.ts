@@ -78,6 +78,9 @@ import {
   landingPageTemplates,
   type LandingPageTemplate,
   type InsertLandingPageTemplate,
+  exitIntentPopup,
+  type ExitIntentPopup,
+  type InsertExitIntentPopup,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm";
@@ -341,6 +344,10 @@ export interface IStorage {
   // Homepage config operations
   getHomepageConfig(sectionKey: string): Promise<HomepageConfig | null>;
   updateHomepageConfig(sectionKey: string, data: Partial<InsertHomepageConfig>): Promise<HomepageConfig>;
+
+  // Exit intent popup operations
+  getExitIntentPopup(): Promise<ExitIntentPopup>;
+  updateExitIntentPopup(data: Partial<InsertExitIntentPopup>): Promise<ExitIntentPopup>;
 
   // Email recipient operations
   getEmailRecipients(activeOnly?: boolean): Promise<EmailRecipient[]>;
@@ -2405,6 +2412,50 @@ export class DatabaseStorage implements IStorage {
       
       return created;
     }
+  }
+
+  // Exit intent popup operations
+  async getExitIntentPopup(): Promise<ExitIntentPopup> {
+    // Try to get the singleton row (id = 1)
+    const [popup] = await db
+      .select()
+      .from(exitIntentPopup)
+      .where(eq(exitIntentPopup.id, 1));
+    
+    // If it doesn't exist, create it with defaults
+    if (!popup) {
+      const [created] = await db
+        .insert(exitIntentPopup)
+        .values({
+          id: 1,
+          title: "Wait! Don't Miss This",
+          message: "Get our comprehensive Senior Living Guide absolutely free",
+          ctaText: "Get My Free Guide",
+          active: true,
+        })
+        .returning();
+      
+      return created;
+    }
+    
+    return popup;
+  }
+
+  async updateExitIntentPopup(data: Partial<InsertExitIntentPopup>): Promise<ExitIntentPopup> {
+    // Ensure the row exists first
+    await this.getExitIntentPopup();
+    
+    // Update the singleton row
+    const [updated] = await db
+      .update(exitIntentPopup)
+      .set({
+        ...data,
+        updatedAt: new Date()
+      })
+      .where(eq(exitIntentPopup.id, 1))
+      .returning();
+    
+    return updated;
   }
 
   // Email recipient operations

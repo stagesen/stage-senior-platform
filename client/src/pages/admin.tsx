@@ -7,6 +7,7 @@ import AdminDashboard from "@/components/AdminDashboard";
 import PageGalleryAdmin from "@/components/PageGalleryAdmin";
 import PageContentManager from "@/components/PageContentManager";
 import GoogleAdsConversionsManager from "@/components/GoogleAdsConversionsManager";
+import ExitIntentPopupManager from "@/components/ExitIntentPopupManager";
 import { useAuth } from "@/lib/auth";
 import { 
   Users, 
@@ -149,6 +150,9 @@ export default function Admin() {
             <TabsTrigger value="google-ads" data-testid="tab-google-ads">
               <Target className="h-4 w-4 mr-1" />
               Google Ads
+            </TabsTrigger>
+            <TabsTrigger value="exit-intent-popup" data-testid="tab-exit-intent-popup" className="bg-primary text-primary-foreground hover:bg-primary/90">
+              Exit Intent Popup
             </TabsTrigger>
             <TabsTrigger value="image-gallery" data-testid="tab-image-gallery">
               <Image className="h-4 w-4 mr-1" />
@@ -407,6 +411,10 @@ export default function Admin() {
 
           <TabsContent value="google-ads">
             <GoogleAdsConversionsManager />
+          </TabsContent>
+
+          <TabsContent value="exit-intent-popup">
+            <ExitIntentPopupManager />
           </TabsContent>
 
           <TabsContent value="image-gallery">

@@ -13,6 +13,7 @@ import GalleryModal from "@/components/GalleryModal";
 import FloorPlanModal from "@/components/FloorPlanModal";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
+import { ExitIntentPopup, useExitIntent } from "@/components/ExitIntentPopup";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import NotFound from "@/pages/not-found";
@@ -416,6 +417,15 @@ export default function DynamicLandingPage() {
   const [selectedGallery, setSelectedGallery] = useState<Gallery | null>(null);
   const [selectedFloorPlan, setSelectedFloorPlan] = useState<FloorPlan | null>(null);
   const [showStickyMobileCTA, setShowStickyMobileCTA] = useState(false);
+
+  // Fetch exit intent popup configuration
+  const { data: exitIntentConfig } = useQuery<{active: boolean}>({
+    queryKey: ["/api/exit-intent-popup"],
+    select: (data: any) => ({ active: data?.active || false }),
+  });
+
+  // Enable exit intent detection if popup is active
+  const { showPopup, setShowPopup } = useExitIntent(exitIntentConfig?.active);
 
   // Strip query params from location for efficient caching
   // This ensures URLs with different UTM parameters use the same cache entry
@@ -1613,6 +1623,12 @@ export default function DynamicLandingPage() {
           communitySlug={primaryCommunity?.slug}
         />
       )}
+
+      {/* Exit Intent Popup */}
+      <ExitIntentPopup
+        open={showPopup}
+        onOpenChange={setShowPopup}
+      />
 
       {/* 14. Sticky Mobile CTA - Fixed bottom on mobile */}
       <StickyMobileCTA />
