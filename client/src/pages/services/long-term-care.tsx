@@ -129,8 +129,8 @@ export default function LongTermCare() {
                       <Mail className="w-5 h-5 text-white/80" />
                       <div>
                         <p className="text-sm text-white/80">Email</p>
-                        <a href="mailto:info@stagesenior.com" className="text-white font-semibold hover:underline" data-testid="contact-email">
-                          info@stagesenior.com
+                        <a href="mailto:ltc@stagesenior.com" className="text-white font-semibold hover:underline" data-testid="contact-email">
+                          ltc@stagesenior.com
                         </a>
                       </div>
                     </div>
