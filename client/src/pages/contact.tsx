@@ -228,15 +228,15 @@ export default function Contact() {
                       <MapPin className="w-5 h-5 text-primary mt-1" />
                       <div>
                         <p className="text-muted-foreground">
-                          {community.address}<br />
-                          {community.city}, {community.state} {community.zipCode}
+                          {community.street}<br />
+                          {community.city}, {community.state} {community.zip}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <Phone className="w-5 h-5 text-primary" />
-                      <a href={`tel:${community.phone?.replace(/[^0-9]/g, '')}`} className="text-muted-foreground hover:text-primary">
-                        {community.phone}
+                      <a href={`tel:${community.phoneDial}`} className="text-muted-foreground hover:text-primary">
+                        {community.phoneDisplay}
                       </a>
                     </div>
                     <Button 
@@ -246,7 +246,7 @@ export default function Contact() {
                       data-testid={`button-directions-${community.slug}`}
                     >
                       <a 
-                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${community.address}, ${community.city}, ${community.state} ${community.zipCode}`)}`}
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${community.street}, ${community.city}, ${community.state} ${community.zip}`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
