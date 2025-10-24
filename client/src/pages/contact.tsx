@@ -43,33 +43,6 @@ export default function Contact() {
     }
   }, []);
 
-  const communityLocations = [
-    {
-      name: "The Gardens at Columbine",
-      address: "5130 W Ken Caryl Ave",
-      city: "Littleton, CO 80128",
-      phone: "(303) 973-5450"
-    },
-    {
-      name: "The Gardens on Quail",
-      address: "6055 Quail St",
-      city: "Arvada, CO 80004",
-      phone: "(303) 424-6116"
-    },
-    {
-      name: "Golden Pond",
-      address: "14301 W. 21st Ave",
-      city: "Golden, CO 80401",
-      phone: "(303) 271-0300"
-    },
-    {
-      name: "Stonebridge Senior",
-      address: "5555 W. 59th Ave",
-      city: "Arvada, CO 80002",
-      phone: "(303) 425-1400"
-    }
-  ];
-
   return (
     <div className="min-h-screen bg-background">
       <PageHero
@@ -244,8 +217,8 @@ export default function Contact() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {communityLocations.map((community, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
+            {communities.map((community) => (
+              <Card key={community.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <CardTitle>{community.name}</CardTitle>
                 </CardHeader>
@@ -256,13 +229,13 @@ export default function Contact() {
                       <div>
                         <p className="text-muted-foreground">
                           {community.address}<br />
-                          {community.city}
+                          {community.city}, {community.state} {community.zipCode}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <Phone className="w-5 h-5 text-primary" />
-                      <a href={`tel:${community.phone.replace(/[^0-9]/g, '')}`} className="text-muted-foreground hover:text-primary">
+                      <a href={`tel:${community.phone?.replace(/[^0-9]/g, '')}`} className="text-muted-foreground hover:text-primary">
                         {community.phone}
                       </a>
                     </div>
@@ -270,10 +243,10 @@ export default function Contact() {
                       asChild 
                       className="w-full"
                       variant="outline"
-                      data-testid={`button-directions-${community.name.toLowerCase().replace(/\s+/g, '-')}`}
+                      data-testid={`button-directions-${community.slug}`}
                     >
                       <a 
-                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(community.address + ', ' + community.city)}`}
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${community.address}, ${community.city}, ${community.state} ${community.zipCode}`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
