@@ -2188,13 +2188,13 @@ export default function CommunityDetail() {
             )}
 
             {/* Testimonials */}
-            {testimonials.length > 0 && (
+            {testimonials.length > 1 && (
               <section id="testimonials" className="scroll-mt-24">
                 <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">What Residents & Families Say</h2>
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">More From Our Residents & Families</h2>
                 </ScaleHeader>
                 <FadeIn direction="up" delay={0.1}>
-                  <TestimonialsCarousel testimonials={testimonials} />
+                  <TestimonialsCarousel testimonials={testimonials.slice(1)} />
                 </FadeIn>
               </section>
             )}
