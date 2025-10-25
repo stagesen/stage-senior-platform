@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import AdminDashboard from "@/components/AdminDashboard";
 import PageGalleryAdmin from "@/components/PageGalleryAdmin";
 import PageContentManager from "@/components/PageContentManager";
@@ -21,10 +22,12 @@ import {
   LogOut,
   User,
   Image,
-  Target
+  Target,
+  ExternalLink,
+  Globe
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import type { Community, Post, Event, TourRequest, Faq, Gallery, Testimonial, PageHero, FloorPlan } from "@shared/schema";
+import type { Community, Post, Event, TourRequest, Faq, Gallery, Testimonial, PageHero, FloorPlan, TeamMember, LandingPageTemplate } from "@shared/schema";
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -68,6 +71,14 @@ export default function Admin() {
 
   const { data: floorPlans = [] } = useQuery<FloorPlan[]>({
     queryKey: ["/api/floor-plans"],
+  });
+
+  const { data: teamMembers = [] } = useQuery<TeamMember[]>({
+    queryKey: ["/api/team-members"],
+  });
+
+  const { data: landingPages = [] } = useQuery<LandingPageTemplate[]>({
+    queryKey: ["/api/landing-pages"],
   });
 
   // Calculate stats
@@ -342,6 +353,153 @@ export default function Admin() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Site URLs Accordion */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center" data-testid="site-urls-title">
+                  <Globe className="w-5 h-5 mr-2" />
+                  All Live Site URLs
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Accordion type="single" collapsible className="w-full">
+                  
+                  {/* Static Pages */}
+                  <AccordionItem value="static-pages">
+                    <AccordionTrigger>
+                      <span className="flex items-center gap-2">
+                        Static Pages 
+                        <Badge variant="secondary">31</Badge>
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-2">
+                        {[
+                          { label: "Home", url: "/" },
+                          { label: "About Us", url: "/about-us" },
+                          { label: "Communities", url: "/communities" },
+                          { label: "Contact", url: "/contact" },
+                          { label: "FAQs", url: "/faqs" },
+                          { label: "Events", url: "/events" },
+                          { label: "Team", url: "/team" },
+                          { label: "Care Points", url: "/care-points" },
+                          { label: "Stage Cares", url: "/stage-cares" },
+                          { label: "For Professionals", url: "/for-professionals" },
+                          { label: "Pricing & Availability", url: "/pricing-availability" },
+                          { label: "Assisted Living", url: "/assisted-living" },
+                          { label: "Memory Care", url: "/memory-care" },
+                          { label: "Independent Living", url: "/independent-living" },
+                          { label: "Respite Care", url: "/respite-care" },
+                          { label: "In-Home Care", url: "/in-home-care" },
+                          { label: "Long-Term Care", url: "/services/long-term-care" },
+                          { label: "Dining", url: "/dining" },
+                          { label: "Beauty Salon & Barber", url: "/beauty-salon-barber" },
+                          { label: "Fitness & Therapy Center", url: "/fitness-therapy-center" },
+                          { label: "Courtyards & Patios", url: "/courtyards-patios" },
+                          { label: "Careers", url: "/careers" },
+                          { label: "Tour Scheduled Success", url: "/tour-scheduled" },
+                          { label: "Privacy Policy", url: "/privacy" },
+                          { label: "Terms of Service", url: "/terms" },
+                          { label: "Accessibility", url: "/accessibility" },
+                          { label: "Admin", url: "/admin" },
+                        ].map(({ label, url }) => (
+                          <a
+                            key={url}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-between p-2 hover:bg-muted rounded-md transition-colors group"
+                          >
+                            <span className="text-sm">{label}</span>
+                            <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+                          </a>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  {/* Community Pages */}
+                  <AccordionItem value="communities">
+                    <AccordionTrigger>
+                      <span className="flex items-center gap-2">
+                        Community Pages 
+                        <Badge variant="secondary">{communities.length}</Badge>
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-2">
+                        {communities.map((community) => (
+                          <a
+                            key={community.id}
+                            href={`/communities/${community.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-between p-2 hover:bg-muted rounded-md transition-colors group"
+                          >
+                            <span className="text-sm">{community.name}</span>
+                            <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+                          </a>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  {/* Team Member Pages */}
+                  <AccordionItem value="team-members">
+                    <AccordionTrigger>
+                      <span className="flex items-center gap-2">
+                        Team Member Pages 
+                        <Badge variant="secondary">{teamMembers.length}</Badge>
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-2">
+                        {teamMembers.map((member) => (
+                          <a
+                            key={member.id}
+                            href={`/team/${member.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-between p-2 hover:bg-muted rounded-md transition-colors group"
+                          >
+                            <span className="text-sm">{member.name}</span>
+                            <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+                          </a>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  {/* Landing Pages */}
+                  <AccordionItem value="landing-pages">
+                    <AccordionTrigger>
+                      <span className="flex items-center gap-2">
+                        Google Ads Landing Pages 
+                        <Badge variant="secondary">{landingPages.length}</Badge>
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-2">
+                        {landingPages.map((page) => (
+                          <a
+                            key={page.id}
+                            href={`/lp/${page.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-between p-2 hover:bg-muted rounded-md transition-colors group"
+                          >
+                            <span className="text-sm">{page.title}</span>
+                            <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+                          </a>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                </Accordion>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Content Management Tabs */}
