@@ -46,6 +46,8 @@ export default function Header() {
       name: "Resources", 
       href: null,
       dropdown: [
+        { name: "Care Navigator", href: "/care-navigator" },
+        { name: "Resource Library", href: "/resources" },
         { name: "Latest News", href: "/blog" },
         { name: "Contact Us", href: "/contact" },
       ]
@@ -122,6 +124,7 @@ export default function Header() {
                                       ? "text-primary" 
                                       : "text-foreground hover:text-primary"
                                   }`}
+                                  data-testid={`nav-dropdown-${subItem.name.toLowerCase().replace(/\s+/g, '-')}`}
                                 >
                                   <span>{subItem.name}</span>
                                   <ChevronRight className={`w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 ${

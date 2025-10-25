@@ -69,7 +69,7 @@ export default function Footer() {
             </div>
           
             {/* Communities */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-2">
               <div className="flex items-center mb-6">
                 <Users className="w-5 h-5 text-primary mr-2" />
                 <h3 className="text-xl font-semibold text-background" data-testid="footer-communities-title">
@@ -89,6 +89,35 @@ export default function Footer() {
                     </Link>
                   </li>
                 ))}
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div className="lg:col-span-2">
+              <h3 className="text-xl font-semibold text-background mb-6" data-testid="footer-resources-title">
+                Resources
+              </h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link 
+                    href="/care-navigator" 
+                    className="flex items-center text-background/80 hover:text-primary hover:translate-x-2 transition-all duration-300 group"
+                    data-testid="footer-resource-care-navigator"
+                  >
+                    <ArrowRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    Care Navigator
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    href="/resources" 
+                    className="flex items-center text-background/80 hover:text-primary hover:translate-x-2 transition-all duration-300 group"
+                    data-testid="footer-resource-library"
+                  >
+                    <ArrowRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    Resource Library
+                  </Link>
+                </li>
               </ul>
             </div>
           
@@ -114,7 +143,7 @@ export default function Footer() {
             </div>
           
             {/* Contact */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-2">
               <h3 className="text-xl font-semibold text-background mb-6" data-testid="footer-contact-title">
                 Get In Touch
               </h3>
