@@ -2289,7 +2289,7 @@ export default function CommunityDetail() {
                           {post.summary || post.content.substring(0, 100) + '...'}
                         </p>
                         <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80" size="sm" asChild>
-                          <Link href={`/resources/${post.slug}`}>
+                          <Link href={`/blog/${post.slug}`}>
                             Learn More →
                           </Link>
                         </Button>
