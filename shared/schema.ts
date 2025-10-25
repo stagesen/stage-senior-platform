@@ -663,6 +663,9 @@ export const contentAssets = pgTable("content_assets", {
   fileSize: integer("file_size"), // Size in bytes
   mimeType: varchar("mime_type", { length: 100 }),
   requiredFields: jsonb("required_fields").$type<string[]>().default([]), // Fields to collect: ['email', 'zipCode', 'timeline', 'phone']
+  articleContent: text("article_content"), // Rich HTML content for article
+  featuredImageId: varchar("featured_image_id", { length: 255 }).references(() => images.id),
+  authorId: uuid("author_id").references(() => teamMembers.id),
   active: boolean("active").default(true),
   sortOrder: integer("sort_order").default(0),
   downloadCount: integer("download_count").default(0),
