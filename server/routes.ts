@@ -124,6 +124,123 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Robots.txt - SEO crawling instructions
+  app.get("/robots.txt", (_req, res) => {
+    const baseUrl = process.env.REPLIT_DEV_DOMAIN 
+      ? `https://${process.env.REPLIT_DEV_DOMAIN}` 
+      : "https://stagesenior.com";
+    
+    const robotsTxt = `User-agent: *
+Allow: /
+
+Sitemap: ${baseUrl}/sitemap.xml
+
+# Disallow admin and API routes
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+`;
+
+    res.type("text/plain");
+    res.send(robotsTxt);
+  });
+
+  // Sitemap.xml - Dynamic sitemap for search engines
+  app.get("/sitemap.xml", async (_req, res) => {
+    try {
+      const baseUrl = process.env.REPLIT_DEV_DOMAIN 
+        ? `https://${process.env.REPLIT_DEV_DOMAIN}` 
+        : "https://stagesenior.com";
+
+      // Get all communities
+      const communities = await storage.getCommunities();
+      
+      // Get all landing page templates
+      const landingTemplates = await storage.getLandingPageTemplates();
+
+      // Start building sitemap XML
+      let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage -->
+  <url>
+    <loc>${baseUrl}/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- Main Pages -->
+  <url>
+    <loc>${baseUrl}/communities</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/resources</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/for-professionals</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/get-help</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Community Pages -->
+`;
+
+      // Add all community pages
+      for (const community of communities) {
+        if (community.slug) {
+          sitemap += `  <url>
+    <loc>${baseUrl}/communities/${community.slug}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+`;
+        }
+      }
+
+      // Add all landing pages
+      sitemap += `  
+  <!-- Landing Pages -->
+`;
+      for (const template of landingTemplates) {
+        if (template.slug) {
+          sitemap += `  <url>
+    <loc>${baseUrl}/${template.slug}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+`;
+        }
+      }
+
+      // Close the sitemap
+      sitemap += `</urlset>`;
+
+      res.type("application/xml");
+      res.send(sitemap);
+    } catch (error) {
+      console.error("Error generating sitemap:", error);
+      res.status(500).send("Error generating sitemap");
+    }
+  });
+
   // Conversion tracking endpoint - sends events to Google Ads and Meta
   app.post("/api/conversions", async (req, res) => {
     try {
