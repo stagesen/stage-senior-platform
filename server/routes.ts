@@ -2057,12 +2057,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           } else {
             // Fall back to template cities or all communities
             targetCommunities = matchedTemplate.cities?.length
-              ? allCommunities.filter(c => matchedTemplate.cities?.includes(c.city))
+              ? allCommunities.filter(c => matchedTemplate.cities?.some(city => city.toLowerCase() === c.city.toLowerCase()))
               : allCommunities;
           }
         }
       } else if (matchedTemplate.cities?.length) {
-        targetCommunities = allCommunities.filter(c => matchedTemplate.cities?.includes(c.city));
+        targetCommunities = allCommunities.filter(c => matchedTemplate.cities?.some(city => city.toLowerCase() === c.city.toLowerCase()));
       } else {
         targetCommunities = allCommunities;
       }
