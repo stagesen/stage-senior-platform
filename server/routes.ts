@@ -1857,6 +1857,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Fetch all active templates
       const templates = await storage.getLandingPageTemplates({ active: true });
       
+      // Sort templates by specificity (most specific first)
+      // More path segments = more specific
+      // Static segments (no :) are more specific than dynamic segments
+      const sortedTemplates = templates.sort((a, b) => {
+        const patternA = a.urlPattern || '';
+        const patternB = b.urlPattern || '';
+        
+        // Count path segments
+        const segmentsA = patternA.split('/').filter(Boolean);
+        const segmentsB = patternB.split('/').filter(Boolean);
+        
+        // More segments = more specific
+        if (segmentsA.length !== segmentsB.length) {
+          return segmentsB.length - segmentsA.length;
+        }
+        
+        // Count static (non-dynamic) segments
+        const staticA = segmentsA.filter(s => !s.startsWith(':')).length;
+        const staticB = segmentsB.filter(s => !s.startsWith(':')).length;
+        
+        // More static segments = more specific
+        return staticB - staticA;
+      });
+      
       // Helper function to match URL against pattern and extract params
       const matchUrlPattern = (actualUrl: string, pattern: string): { match: boolean; params: Record<string, string> } => {
         const params: Record<string, string> = {};
@@ -1887,8 +1911,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return { match: true, params };
       };
       
-      // Try to match URL against each template's pattern using the cleaned URL
-      for (const template of templates) {
+      // Try to match URL against each template's pattern using the cleaned URL (sorted by specificity)
+      for (const template of sortedTemplates) {
         if (!template.urlPattern) continue;
         
         const { match, params } = matchUrlPattern(cleanUrl, template.urlPattern);
@@ -1927,6 +1951,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Fetch all active templates
       const templates = await storage.getLandingPageTemplates({ active: true });
 
+      // Sort templates by specificity (most specific first)
+      const sortedTemplates = templates.sort((a, b) => {
+        const patternA = a.urlPattern || '';
+        const patternB = b.urlPattern || '';
+        
+        const segmentsA = patternA.split('/').filter(Boolean);
+        const segmentsB = patternB.split('/').filter(Boolean);
+        
+        if (segmentsA.length !== segmentsB.length) {
+          return segmentsB.length - segmentsA.length;
+        }
+        
+        const staticA = segmentsA.filter(s => !s.startsWith(':')).length;
+        const staticB = segmentsB.filter(s => !s.startsWith(':')).length;
+        
+        return staticB - staticA;
+      });
+
       // Helper function to match URL against pattern and extract params
       const matchUrlPattern = (actualUrl: string, pattern: string): { match: boolean; params: Record<string, string> } => {
         const params: Record<string, string> = {};
@@ -1957,11 +1999,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return { match: true, params };
       };
 
-      // Try to match URL against each template's pattern
+      // Try to match URL against each template's pattern (sorted by specificity)
       let matchedTemplate = null;
       let urlParams: Record<string, string> = {};
 
-      for (const template of templates) {
+      for (const template of sortedTemplates) {
         if (!template.urlPattern) continue;
 
         const { match, params } = matchUrlPattern(cleanUrl, template.urlPattern);
