@@ -963,7 +963,7 @@ export default function DynamicLandingPage() {
                     size="lg"
                     variant="outline"
                     asChild
-                    className="min-h-[56px] px-8 text-lg w-full md:w-auto border-2 hover:bg-gray-50"
+                    className="min-h-[56px] px-8 text-lg w-full md:w-auto border-2 border-white text-white hover:bg-white/20"
                     data-testid="button-hero-cta-phone"
                   >
                     <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
@@ -973,7 +973,7 @@ export default function DynamicLandingPage() {
                   </Button>
                 )}
               </div>
-              <p className="text-center text-sm text-muted-foreground mt-4">
+              <p className="text-center text-sm text-white/90 mt-4">
                 <Clock className="w-4 h-4 inline mr-1" />
                 Same-day tours available • No obligation • Free parking
               </p>
