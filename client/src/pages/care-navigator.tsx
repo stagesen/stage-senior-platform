@@ -39,6 +39,14 @@ import type {
   InsertQuizResponse
 } from "@shared/schema";
 
+interface ResultTier {
+  name: string;
+  minScore: number;
+  maxScore: number;
+  description: string;
+  recommendations: string;
+}
+
 interface QuizWithQuestions extends Quiz {
   questions: (QuizQuestion & { answerOptions: QuizAnswerOption[] })[];
 }
@@ -59,6 +67,9 @@ export default function CareNavigator() {
   const [showLeadCapture, setShowLeadCapture] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [resultCategory, setResultCategory] = useState<string>("");
+  const [totalScore, setTotalScore] = useState<number>(0);
+  const [scorePercentage, setScorePercentage] = useState<number>(0);
+  const [matchedTier, setMatchedTier] = useState<ResultTier | null>(null);
   
   // Fetch quiz data
   const { data: quiz, isLoading: quizLoading, error: quizError } = useQuery<QuizWithQuestions>({
@@ -187,20 +198,65 @@ export default function CareNavigator() {
     mutationFn: async (leadData: { email: string; name?: string; phone?: string; zipCode?: string; timeline?: string }) => {
       if (!quiz) throw new Error("Quiz data not loaded");
 
-      // Calculate result category based on answers
-      const categoryVotes: Record<string, number> = {};
-      answers.forEach(answer => {
-        if (answer.answerOptionId) {
-          const question = quiz.questions.find(q => q.id === answer.questionId);
-          const option = question?.answerOptions.find(o => o.id === answer.answerOptionId);
-          if (option?.resultCategory) {
-            categoryVotes[option.resultCategory] = (categoryVotes[option.resultCategory] || 0) + 1;
+      let calculatedCategory = "general";
+      let calculatedTotalScore = 0;
+      let calculatedScorePercentage = 0;
+      let calculatedTier: ResultTier | null = null;
+
+      // Check if quiz has resultTiers (new weighted scoring system)
+      if (quiz.resultTiers && quiz.resultTiers.length > 0) {
+        // NEW: Weighted scoring system
+        // Calculate total score by summing up scores from selected answer options
+        calculatedTotalScore = answers.reduce((sum, answer) => {
+          if (answer.answerOptionId) {
+            const question = quiz.questions.find(q => q.id === answer.questionId);
+            const option = question?.answerOptions.find(o => o.id === answer.answerOptionId);
+            // Parse score as number (it's stored as decimal in DB)
+            const score = option?.score ? parseFloat(option.score.toString()) : 0;
+            return sum + score;
           }
-        }
-      });
+          return sum;
+        }, 0);
+
+        // Calculate max possible score dynamically from quiz questions
+        const maxPossibleScore = quiz.questions.reduce((sum, question) => {
+          const maxOptionScore = Math.max(...question.answerOptions.map(opt => parseFloat(opt.score || '0')));
+          return sum + maxOptionScore;
+        }, 0);
+
+        // Calculate percentage using dynamic max score
+        calculatedScorePercentage = maxPossibleScore > 0 ? (calculatedTotalScore / maxPossibleScore) * 100 : 0;
+
+        // Find the tier where score percentage falls between minScore and maxScore
+        calculatedTier = quiz.resultTiers.find(tier => 
+          calculatedScorePercentage >= tier.minScore && 
+          calculatedScorePercentage <= tier.maxScore
+        ) || null;
+
+        // Set result category to the tier name
+        calculatedCategory = calculatedTier?.name || "general";
+        
+        // Store results in state for display
+        setTotalScore(calculatedTotalScore);
+        setScorePercentage(calculatedScorePercentage);
+        setMatchedTier(calculatedTier);
+      } else {
+        // FALLBACK: Old voting system if resultTiers not defined
+        const categoryVotes: Record<string, number> = {};
+        answers.forEach(answer => {
+          if (answer.answerOptionId) {
+            const question = quiz.questions.find(q => q.id === answer.questionId);
+            const option = question?.answerOptions.find(o => o.id === answer.answerOptionId);
+            if (option?.resultCategory) {
+              categoryVotes[option.resultCategory] = (categoryVotes[option.resultCategory] || 0) + 1;
+            }
+          }
+        });
+        
+        // Get most common category
+        calculatedCategory = Object.entries(categoryVotes).sort((a, b) => b[1] - a[1])[0]?.[0] || "general";
+      }
       
-      // Get most common category
-      const calculatedCategory = Object.entries(categoryVotes).sort((a, b) => b[1] - a[1])[0]?.[0] || "general";
       setResultCategory(calculatedCategory);
 
       // Collect tracking data
@@ -217,6 +273,7 @@ export default function CareNavigator() {
         zipCode: leadData.zipCode,
         timeline: leadData.timeline,
         answers,
+        totalScore: calculatedTotalScore.toString(),
         resultCategory: calculatedCategory,
         // UTM tracking
         utmSource: utmParams.utm_source,
@@ -262,8 +319,12 @@ export default function CareNavigator() {
     
     // If we have a result category, try to match communities by care type
     if (resultCategory) {
-      // Map result categories to care type keywords
+      // Map tier names to care type keywords
       const careTypeMapping: Record<string, string[]> = {
+        'independent living': ['independent', 'active adult', 'active living'],
+        'assisted living': ['assisted', 'personal care', 'supportive living'],
+        'memory care': ['memory', 'dementia', 'alzheimer', "alzheimer's"],
+        'hybrid care / high acuity': ['memory', 'skilled nursing', 'nursing care', 'high acuity'],
         'memory_care': ['memory', 'dementia', 'alzheimer'],
         'assisted_living': ['assisted', 'personal care'],
         'independent_living': ['independent', 'active adult'],
@@ -271,8 +332,9 @@ export default function CareNavigator() {
         'respite_care': ['respite', 'short-term'],
       };
       
-      // Get relevant care type keywords for this category
-      const keywords = careTypeMapping[resultCategory.toLowerCase()] || [resultCategory.toLowerCase()];
+      // Get relevant care type keywords for this category (case-insensitive)
+      const categoryKey = resultCategory.toLowerCase();
+      const keywords = careTypeMapping[categoryKey] || [categoryKey];
       
       // Try to match communities that offer relevant care types
       const matchedCommunities = activeCommunities.filter(community => {
@@ -385,9 +447,32 @@ export default function CareNavigator() {
                     <h2 className="text-2xl font-bold mb-2" data-testid="text-results-title">
                       {quiz.resultTitle || "Thank You for Completing the Quiz!"}
                     </h2>
-                    <p className="text-lg text-muted-foreground" data-testid="text-results-message">
+                    <p className="text-lg text-muted-foreground mb-4" data-testid="text-results-message">
                       {quiz.resultMessage || "Based on your responses, we've identified the best communities for your needs."}
                     </p>
+                    {/* Display score and tier info if available */}
+                    {matchedTier && scorePercentage >= 0 && (
+                      <div className="mt-4 space-y-3">
+                        <div className="flex items-center gap-3">
+                          <Badge variant="outline" className="text-lg px-4 py-2">
+                            Your Score: {Math.round(scorePercentage)}%
+                          </Badge>
+                          <Badge className="text-lg px-4 py-2">
+                            {matchedTier.name}
+                          </Badge>
+                        </div>
+                        {matchedTier.description && (
+                          <p className="text-base text-muted-foreground" data-testid="text-tier-description">
+                            <strong>Assessment:</strong> {matchedTier.description}
+                          </p>
+                        )}
+                        {matchedTier.recommendations && (
+                          <p className="text-base text-muted-foreground" data-testid="text-tier-recommendations">
+                            <strong>Our Recommendations:</strong> {matchedTier.recommendations}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardContent>
