@@ -573,6 +573,110 @@ export const googleAdsAds = pgTable("google_ads_ads", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Quizzes - for Senior Care Navigator and other interactive assessments
+export const quizzes = pgTable("quizzes", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  resultTitle: varchar("result_title", { length: 255 }), // Title shown on results page
+  resultMessage: text("result_message"), // General message shown with results
+  active: boolean("active").default(true),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Quiz Questions
+export const quizQuestions = pgTable("quiz_questions", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  quizId: uuid("quiz_id").notNull().references(() => quizzes.id, { onDelete: "cascade" }),
+  questionText: text("question_text").notNull(),
+  questionType: varchar("question_type", { length: 50 }).notNull().default("multiple_choice"), // 'multiple_choice', 'text', 'scale'
+  sortOrder: integer("sort_order").default(0),
+  required: boolean("required").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Quiz Answer Options
+export const quizAnswerOptions = pgTable("quiz_answer_options", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  questionId: uuid("question_id").notNull().references(() => quizQuestions.id, { onDelete: "cascade" }),
+  answerText: text("answer_text").notNull(),
+  resultCategory: varchar("result_category", { length: 100 }), // Used to categorize persona (adult_children, prospective_resident, healthcare_referrer)
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Quiz Responses - stores user submissions
+export const quizResponses = pgTable("quiz_responses", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  quizId: uuid("quiz_id").notNull().references(() => quizzes.id, { onDelete: "cascade" }),
+  email: varchar("email", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }),
+  phone: varchar("phone", { length: 20 }),
+  zipCode: varchar("zip_code", { length: 10 }),
+  timeline: varchar("timeline", { length: 100 }), // 'immediate', '1-3 months', '3-6 months', '6-12 months', '1+ years'
+  answers: jsonb("answers").$type<Array<{ questionId: string; answerOptionId?: string; textAnswer?: string }>>().notNull(),
+  resultCategory: varchar("result_category", { length: 100 }), // Calculated persona based on answers
+  // UTM tracking
+  utmSource: varchar("utm_source", { length: 255 }),
+  utmMedium: varchar("utm_medium", { length: 255 }),
+  utmCampaign: varchar("utm_campaign", { length: 255 }),
+  utmTerm: varchar("utm_term", { length: 255 }),
+  utmContent: varchar("utm_content", { length: 255 }),
+  landingPageUrl: text("landing_page_url"),
+  // Conversion tracking
+  transactionId: varchar("transaction_id", { length: 255 }),
+  gclid: varchar("gclid", { length: 255 }),
+  fbclid: varchar("fbclid", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Content Assets - downloadable resources (PDFs, guides, reports)
+export const contentAssets = pgTable("content_assets", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 100 }), // 'guide', 'report', 'checklist', 'ebook'
+  fileUrl: text("file_url"), // Object storage URL or external link
+  objectKey: text("object_key"), // Object storage key for file
+  thumbnailImageId: varchar("thumbnail_image_id", { length: 255 }).references(() => images.id),
+  fileSize: integer("file_size"), // Size in bytes
+  mimeType: varchar("mime_type", { length: 100 }),
+  requiredFields: jsonb("required_fields").$type<string[]>().default([]), // Fields to collect: ['email', 'zipCode', 'timeline', 'phone']
+  active: boolean("active").default(true),
+  sortOrder: integer("sort_order").default(0),
+  downloadCount: integer("download_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Asset Downloads - tracks who downloaded what
+export const assetDownloads = pgTable("asset_downloads", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  assetId: uuid("asset_id").notNull().references(() => contentAssets.id, { onDelete: "cascade" }),
+  email: varchar("email", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }),
+  phone: varchar("phone", { length: 20 }),
+  zipCode: varchar("zip_code", { length: 10 }),
+  timeline: varchar("timeline", { length: 100 }),
+  // UTM tracking
+  utmSource: varchar("utm_source", { length: 255 }),
+  utmMedium: varchar("utm_medium", { length: 255 }),
+  utmCampaign: varchar("utm_campaign", { length: 255 }),
+  utmTerm: varchar("utm_term", { length: 255 }),
+  utmContent: varchar("utm_content", { length: 255 }),
+  landingPageUrl: text("landing_page_url"),
+  // Conversion tracking
+  transactionId: varchar("transaction_id", { length: 255 }),
+  gclid: varchar("gclid", { length: 255 }),
+  fbclid: varchar("fbclid", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const careTypesRelations = relations(careTypes, ({ many }) => ({
   communities: many(communitiesCareTypes),
@@ -763,6 +867,48 @@ export const imagesRelations = relations(images, ({ one, many }) => ({
   }),
   galleries: many(galleryImages),
   floorPlans: many(floorPlanImages),
+}));
+
+export const quizzesRelations = relations(quizzes, ({ many }) => ({
+  questions: many(quizQuestions),
+  responses: many(quizResponses),
+}));
+
+export const quizQuestionsRelations = relations(quizQuestions, ({ one, many }) => ({
+  quiz: one(quizzes, {
+    fields: [quizQuestions.quizId],
+    references: [quizzes.id],
+  }),
+  answerOptions: many(quizAnswerOptions),
+}));
+
+export const quizAnswerOptionsRelations = relations(quizAnswerOptions, ({ one }) => ({
+  question: one(quizQuestions, {
+    fields: [quizAnswerOptions.questionId],
+    references: [quizQuestions.id],
+  }),
+}));
+
+export const quizResponsesRelations = relations(quizResponses, ({ one }) => ({
+  quiz: one(quizzes, {
+    fields: [quizResponses.quizId],
+    references: [quizzes.id],
+  }),
+}));
+
+export const contentAssetsRelations = relations(contentAssets, ({ one, many }) => ({
+  thumbnailImage: one(images, {
+    fields: [contentAssets.thumbnailImageId],
+    references: [images.id],
+  }),
+  downloads: many(assetDownloads),
+}));
+
+export const assetDownloadsRelations = relations(assetDownloads, ({ one }) => ({
+  asset: one(contentAssets, {
+    fields: [assetDownloads.assetId],
+    references: [contentAssets.id],
+  }),
 }));
 
 // Insert schemas
