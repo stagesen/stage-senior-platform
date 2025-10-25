@@ -37,6 +37,14 @@ A comprehensive admin interface provides CRUD operations for:
 ### Image Management System
 An integrated image management system stores images in object storage with metadata in PostgreSQL. It supports drag-and-drop uploads, multi-image galleries, and reference protection. Images are automatically processed for dimensions, and a custom `useResolveImageUrl` hook handles image ID resolution. Communities can have various image types (hero, logo, contact card, brochure card).
 
+### Contact Information Formatting
+A centralized contact information formatting system ensures consistency across all community displays. Helper functions in `client/src/lib/communityContact.ts` handle:
+- **Phone Numbers**: `getPrimaryPhoneDisplay()` for formatted display, `getPrimaryPhoneHref()` for clickable tel: links with +1 country code prefix
+- **Addresses**: `getCityStateZip()` and `getCityState()` for consistent location formatting, checking both `zipCode` and `zip` fields
+- **Email**: `getPrimaryEmail()` for email addresses
+- All phone links automatically normalize to international format (tel:+1...) for proper mobile device handling
+- Graceful fallback to default Stage Senior contact information when community data is missing
+
 ## External Dependencies
 
 ### Database Services
