@@ -19,7 +19,7 @@ import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import NotFound from "@/pages/not-found";
 import { generateSchemaOrgData } from "@/lib/schemaOrg";
-import { toTitleCase } from "@/lib/utils";
+import { toTitleCase, cn } from "@/lib/utils";
 import FadeIn from "@/components/animations/FadeIn";
 import ScaleHeader from "@/components/animations/ScaleHeader";
 import StaggerContainer from "@/components/animations/StaggerContainer";
@@ -417,6 +417,7 @@ export default function DynamicLandingPage() {
   const { openScheduleTour } = useScheduleTour();
   const [selectedGallery, setSelectedGallery] = useState<Gallery | null>(null);
   const [selectedFloorPlan, setSelectedFloorPlan] = useState<FloorPlan | null>(null);
+  const [activeSection, setActiveSection] = useState<string | null>("overview");
   const [showStickyMobileCTA, setShowStickyMobileCTA] = useState(false);
 
   // Fetch exit intent popup configuration
@@ -994,13 +995,86 @@ export default function DynamicLandingPage() {
         </FadeIn>
       )}
 
+      {/* Sticky Navigation Bar */}
+      {(() => {
+        const navSections = [];
+        
+        if (template.customContent) {
+          navSections.push({ id: 'content', label: 'Overview', icon: Home });
+        }
+        if ((template.showPricing || template.showFloorPlans) && floorPlans.length > 0) {
+          navSections.push({ id: 'floor-plans', label: 'Floor Plans', icon: Home });
+        }
+        if (template.showGallery && galleries.length > 0) {
+          navSections.push({ id: 'gallery', label: 'Gallery', icon: ImageIcon });
+        }
+        if (template.showTestimonials && testimonials.length > 0) {
+          navSections.push({ id: 'testimonials', label: 'Reviews', icon: Star });
+        }
+        if (communityAmenities.length > 0) {
+          navSections.push({ id: 'amenities', label: 'Amenities', icon: CheckCircle });
+        }
+        if (primaryCommunity && (primaryCommunity.street || primaryCommunity.lat)) {
+          navSections.push({ id: 'location', label: 'Location', icon: MapPin });
+        }
+
+        const handleNavClick = (sectionId: string) => {
+          const element = document.getElementById(sectionId);
+          if (!element) return;
+
+          const navElement = document.querySelector<HTMLElement>('[data-landing-sticky-nav]');
+          const offset = (navElement?.offsetHeight ?? 0) + 16;
+
+          const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+          const offsetPosition = elementPosition - offset;
+
+          window.scrollTo({
+            top: offsetPosition < 0 ? 0 : offsetPosition,
+            behavior: "smooth",
+          });
+
+          setActiveSection(sectionId);
+        };
+
+        return navSections.length > 0 ? (
+          <div 
+            className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm"
+            data-landing-sticky-nav
+          >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <nav className="flex gap-2 overflow-x-auto py-3 scrollbar-hide" aria-label="Page sections">
+                {navSections.map((section) => {
+                  const Icon = section.icon;
+                  return (
+                    <button
+                      key={section.id}
+                      onClick={() => handleNavClick(section.id)}
+                      className={cn(
+                        "flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all text-sm font-medium",
+                        activeSection === section.id
+                          ? "bg-primary text-white"
+                          : "text-gray-700 hover:bg-gray-100"
+                      )}
+                      data-testid={`nav-${section.id}`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {section.label}
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+          </div>
+        ) : null;
+      })()}
+
       {/* 1c. Custom Content Sections - Template-specific helpful content (MOVED UP) */}
       {template.customContent && (
         <>
           {/* Intro Section */}
           {template.customContent.introSection && (
             <FadeIn direction="up" delay={0.1}>
-              <section className="py-12 md:py-16 bg-white" data-testid="section-intro-custom">
+              <section id="content" className="py-12 md:py-16 bg-white" data-testid="section-intro-custom">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                   <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
                     {replaceTokens(template.customContent.introSection.heading, tokens)}
@@ -1212,7 +1286,7 @@ export default function DynamicLandingPage() {
 
       {/* 5. Floor Plans & Pricing - Show what they'll get (filtered by care type) */}
       {(template.showPricing || template.showFloorPlans) && floorPlans.length > 0 && (
-        <section className="py-12 md:py-16" data-testid="section-floor-plans">
+        <section id="floor-plans" className="py-12 md:py-16" data-testid="section-floor-plans">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 md:mb-12">
               <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
@@ -1249,7 +1323,7 @@ export default function DynamicLandingPage() {
 
       {/* 6. Photo Gallery - Visual engagement */}
       {template.showGallery && galleries.length > 0 && (
-        <section className="py-12 md:py-16 bg-gray-50" data-testid="section-gallery">
+        <section id="gallery" className="py-12 md:py-16 bg-gray-50" data-testid="section-gallery">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 md:mb-12">
               <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
@@ -1277,7 +1351,7 @@ export default function DynamicLandingPage() {
       {/* 7. Testimonials - Social proof from satisfied families */}
       {template.showTestimonials && testimonials.length > 0 && (
         <FadeIn direction="up" delay={0.2}>
-          <section className="py-12 md:py-16" data-testid="section-testimonials">
+          <section id="testimonials" className="py-12 md:py-16" data-testid="section-testimonials">
             <TestimonialSection 
               communityId={primaryCommunity?.id}
               communityName={primaryCommunity?.name}
@@ -1289,7 +1363,7 @@ export default function DynamicLandingPage() {
 
       {/* 8. Community Amenities - Comprehensive details */}
       {communityAmenities.length > 0 && (
-        <section className="py-12 md:py-16 bg-gray-50" data-testid="section-amenities">
+        <section id="amenities" className="py-12 md:py-16 bg-gray-50" data-testid="section-amenities">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 md:mb-12">
               <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
@@ -1383,7 +1457,7 @@ export default function DynamicLandingPage() {
 
       {/* 12. Location & Map - Find and visit us */}
       {primaryCommunity && (primaryCommunity.street || primaryCommunity.lat) && (
-        <section className="py-12 md:py-16" data-testid="section-location">
+        <section id="location" className="py-12 md:py-16" data-testid="section-location">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 md:mb-12">
               <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
