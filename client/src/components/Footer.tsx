@@ -68,15 +68,15 @@ export default function Footer() {
               </div>
             </div>
           
-            {/* Communities */}
-            <div className="lg:col-span-2">
+            {/* Communities & Resources */}
+            <div className="lg:col-span-3">
               <div className="flex items-center mb-6">
                 <Users className="w-5 h-5 text-primary mr-2" />
                 <h3 className="text-xl font-semibold text-background" data-testid="footer-communities-title">
                   Our Communities
                 </h3>
               </div>
-              <ul className="space-y-3">
+              <ul className="space-y-3 mb-8">
                 {communities.map((community) => (
                   <li key={community.slug}>
                     <Link 
@@ -90,10 +90,7 @@ export default function Footer() {
                   </li>
                 ))}
               </ul>
-            </div>
 
-            {/* Resources */}
-            <div className="lg:col-span-2">
               <h3 className="text-xl font-semibold text-background mb-6" data-testid="footer-resources-title">
                 Resources
               </h3>
@@ -143,7 +140,7 @@ export default function Footer() {
             </div>
           
             {/* Contact */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
               <h3 className="text-xl font-semibold text-background mb-6" data-testid="footer-contact-title">
                 Get In Touch
               </h3>
