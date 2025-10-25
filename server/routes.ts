@@ -3531,10 +3531,48 @@ Disallow: /admin/
     }
   });
 
+  // Public content asset routes (must be before wildcard bucket route)
+  // GET /api/public/content-assets - List active assets only
+  app.get("/api/public/content-assets", async (req, res) => {
+    try {
+      const category = req.query.category as string | undefined;
+      const assets = await storage.getContentAssets({ activeOnly: true, category });
+      res.json(assets);
+    } catch (error) {
+      console.error("Error fetching public content assets:", error);
+      res.status(500).json({ message: "Failed to fetch content assets" });
+    }
+  });
+
+  // GET /api/public/content-assets/:slug - Get asset by slug
+  app.get("/api/public/content-assets/:slug", async (req, res) => {
+    try {
+      const asset = await storage.getContentAsset(req.params.slug);
+      if (!asset) {
+        return res.status(404).json({ message: "Content asset not found" });
+      }
+      
+      // Only return active assets to public
+      if (!asset.active) {
+        return res.status(404).json({ message: "Content asset not found" });
+      }
+      
+      res.json(asset);
+    } catch (error) {
+      console.error("Error fetching public content asset:", error);
+      res.status(500).json({ message: "Failed to fetch content asset" });
+    }
+  });
+
   // Serve images from object storage bucket
-  app.get("/:bucketId/public/:filename", async (req, res) => {
+  app.get("/:bucketId/public/:filename", async (req, res, next) => {
     try {
       const { bucketId, filename } = req.params;
+      
+      // Skip API routes - they should be handled by specific API route handlers
+      if (bucketId === 'api') {
+        return next();
+      }
 
       // Import Storage from Google Cloud
       const { Storage } = await import("@google-cloud/storage");
@@ -4307,39 +4345,8 @@ Disallow: /admin/
   });
 
   // Public Asset Routes (no auth)
-
-  // GET /api/public/content-assets - List active assets only
-  app.get("/api/public/content-assets", async (req, res) => {
-    try {
-      const category = req.query.category as string | undefined;
-      const assets = await storage.getContentAssets({ activeOnly: true, category });
-      res.json(assets);
-    } catch (error) {
-      console.error("Error fetching public content assets:", error);
-      res.status(500).json({ message: "Failed to fetch content assets" });
-    }
-  });
-
-  // GET /api/public/content-assets/:slug - Get asset by slug
-  app.get("/api/public/content-assets/:slug", async (req, res) => {
-    try {
-      const asset = await storage.getContentAsset(req.params.slug);
-      if (!asset) {
-        return res.status(404).json({ message: "Content asset not found" });
-      }
-      
-      // Only return active assets to public
-      if (!asset.active) {
-        return res.status(404).json({ message: "Content asset not found" });
-      }
-      
-      res.json(asset);
-    } catch (error) {
-      console.error("Error fetching public content asset:", error);
-      res.status(500).json({ message: "Failed to fetch content asset" });
-    }
-  });
-
+  // Note: Public content asset GET routes moved earlier to avoid wildcard route conflict
+  
   // POST /api/asset-downloads - Track asset download
   app.post("/api/asset-downloads", async (req, res) => {
     try {
