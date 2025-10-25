@@ -924,7 +924,7 @@ export default function DynamicLandingPage() {
 
   return (
     <div className="min-h-screen bg-white" data-testid="dynamic-landing-page">
-      {/* 1. Hero Section - Always shown */}
+      {/* 1. Hero Section with CTA Overlay */}
       <div className="relative">
         <PageHero
           pagePath={pathname}
@@ -935,72 +935,68 @@ export default function DynamicLandingPage() {
           logoAlt={`${primaryCommunity?.name} logo`}
         />
         
-        {/* Map Overlay - Show on "near me" and "best" pages */}
-        {template.urlPattern && (template.urlPattern.includes('-near-me') || template.urlPattern.includes('/best-')) && filteredCommunities.length > 0 && (
-          <FadeIn direction="up" delay={0.3}>
-            <div 
-              className="absolute bottom-0 left-0 right-0 w-full shadow-2xl" 
-              style={{ height: '400px' }}
-              data-testid="section-community-map-overlay"
-            >
-              <CommunityMap 
-                communities={filteredCommunities}
-                selectedCommunityId={primaryCommunity?.id}
-              />
+        {/* CTA Overlay - Bottom of hero */}
+        <FadeIn direction="up" delay={0.3}>
+          <div className="absolute bottom-0 left-0 right-0 w-full bg-white/95 backdrop-blur-sm shadow-2xl py-6 md:py-8" data-testid="hero-cta-overlay">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
+                <Button
+                  size="lg"
+                  onClick={() =>
+                    openScheduleTour({
+                      communityId: primaryCommunity?.id,
+                      communityName: primaryCommunity?.name,
+                      title: `Schedule a Tour${primaryCommunity?.name ? ` at ${primaryCommunity.name}` : ""}`,
+                    })
+                  }
+                  className={`min-h-[56px] px-8 text-lg w-full md:w-auto shadow-lg hover:shadow-xl transition-shadow talkfurther-schedule-tour ${primaryCommunity?.slug ? `community-${primaryCommunity.slug}` : ''}`}
+                  data-community-id={primaryCommunity?.id}
+                  data-community-slug={primaryCommunity?.slug}
+                  data-community-name={primaryCommunity?.name}
+                  data-testid="button-hero-cta-schedule"
+                >
+                  <Calendar className="w-5 h-5 mr-2" />
+                  {template.heroCtaText || "Schedule Your Free Tour"}
+                </Button>
+                {primaryCommunity?.phoneDisplay && (
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    asChild
+                    className="min-h-[56px] px-8 text-lg w-full md:w-auto border-2 hover:bg-gray-50"
+                    data-testid="button-hero-cta-phone"
+                  >
+                    <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
+                      <Phone className="w-5 h-5 mr-2" />
+                      {primaryCommunity.phoneDisplay}
+                    </a>
+                  </Button>
+                )}
+              </div>
+              <p className="text-center text-sm text-muted-foreground mt-4">
+                <Clock className="w-4 h-4 inline mr-1" />
+                Same-day tours available • No obligation • Free parking
+              </p>
             </div>
-          </FadeIn>
-        )}
+          </div>
+        </FadeIn>
       </div>
 
-      {/* 1b. Hero CTA Section - Immediate conversion opportunity */}
-      <section 
-        className="bg-white py-8 md:py-12 border-b border-gray-100" 
-        style={{ 
-          marginTop: template.urlPattern && (template.urlPattern.includes('-near-me') || template.urlPattern.includes('/best-')) && filteredCommunities.length > 0 ? '400px' : '0' 
-        }}
-        data-testid="hero-cta-section"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
-            <Button
-              size="lg"
-              onClick={() =>
-                openScheduleTour({
-                  communityId: primaryCommunity?.id,
-                  communityName: primaryCommunity?.name,
-                  title: `Schedule a Tour${primaryCommunity?.name ? ` at ${primaryCommunity.name}` : ""}`,
-                })
-              }
-              className={`min-h-[56px] px-8 text-lg w-full md:w-auto shadow-lg hover:shadow-xl transition-shadow talkfurther-schedule-tour ${primaryCommunity?.slug ? `community-${primaryCommunity.slug}` : ''}`}
-              data-community-id={primaryCommunity?.id}
-              data-community-slug={primaryCommunity?.slug}
-              data-community-name={primaryCommunity?.name}
-              data-testid="button-hero-cta-schedule"
-            >
-              <Calendar className="w-5 h-5 mr-2" />
-              {template.heroCtaText || "Schedule Your Free Tour"}
-            </Button>
-            {primaryCommunity?.phoneDisplay && (
-              <Button
-                size="lg"
-                variant="outline"
-                asChild
-                className="min-h-[56px] px-8 text-lg w-full md:w-auto border-2 hover:bg-gray-50"
-                data-testid="button-hero-cta-phone"
-              >
-                <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
-                  <Phone className="w-5 h-5 mr-2" />
-                  {primaryCommunity.phoneDisplay}
-                </a>
-              </Button>
-            )}
-          </div>
-          <p className="text-center text-sm text-muted-foreground mt-4">
-            <Clock className="w-4 h-4 inline mr-1" />
-            Same-day tours available • No obligation • Free parking
-          </p>
-        </div>
-      </section>
+      {/* Spacer to account for overlay */}
+      <div className="h-24 md:h-32" aria-hidden="true"></div>
+
+      {/* 1b. Map Section - Show on "near me" and "best" pages */}
+      {template.urlPattern && (template.urlPattern.includes('-near-me') || template.urlPattern.includes('/best-')) && filteredCommunities.length > 0 && (
+        <FadeIn direction="up" delay={0.2}>
+          <section className="w-full" data-testid="section-community-map" style={{ height: '500px' }}>
+            <CommunityMap 
+              communities={filteredCommunities}
+              selectedCommunityId={primaryCommunity?.id}
+            />
+          </section>
+        </FadeIn>
+      )}
+
 
 
       {/* 1c. Page Content Sections - Dynamic sections from database */}
