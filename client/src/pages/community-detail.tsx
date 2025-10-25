@@ -2331,6 +2331,7 @@ export default function CommunityDetail() {
                       <CommunityMap 
                         communities={[community]}
                         selectedCommunityId={community.id}
+                        showPopups={false}
                       />
                     ) : (
                       <div className="bg-gray-100 rounded-xl h-full flex items-center justify-center text-gray-500">

@@ -26,12 +26,14 @@ interface CommunityMapProps {
   communities: Community[];
   onCommunitySelect?: (community: Community) => void;
   selectedCommunityId?: string;
+  showPopups?: boolean;
 }
 
 export default function CommunityMap({ 
   communities, 
   onCommunitySelect, 
-  selectedCommunityId 
+  selectedCommunityId,
+  showPopups = true
 }: CommunityMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -162,15 +164,19 @@ export default function CommunityMap({
       const marker = L.marker([lat, lng], {
         icon: createCustomMarker(markerColor)
       })
-        .addTo(mapInstanceRef.current!)
-        .bindPopup(popupDiv, {
+        .addTo(mapInstanceRef.current!);
+
+      // Bind popup only if showPopups is true
+      if (showPopups) {
+        marker.bindPopup(popupDiv, {
           maxWidth: 250,
           className: 'custom-popup'
         });
 
-      // Highlight selected community
-      if (selectedCommunityId === community.id) {
-        marker.openPopup();
+        // Highlight selected community
+        if (selectedCommunityId === community.id) {
+          marker.openPopup();
+        }
       }
 
       markers.push(marker);
@@ -183,7 +189,7 @@ export default function CommunityMap({
       const group = new L.FeatureGroup(markers);
       mapInstanceRef.current.fitBounds(group.getBounds().pad(0.1));
     }
-  }, [communities, selectedCommunityId, onCommunitySelect]);
+  }, [communities, selectedCommunityId, onCommunitySelect, showPopups]);
 
   return (
     <div 
