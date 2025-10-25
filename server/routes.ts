@@ -4255,6 +4255,17 @@ Disallow: /admin/
     }
   });
 
+  // GET /api/content-assets/:id/downloads - Get downloads for specific asset
+  app.get("/api/content-assets/:id/downloads", requireAuth, async (req, res) => {
+    try {
+      const downloads = await storage.getAssetDownloads(req.params.id);
+      res.json(downloads);
+    } catch (error) {
+      console.error("Error fetching asset downloads:", error);
+      res.status(500).json({ message: "Failed to fetch asset downloads" });
+    }
+  });
+
   // GET /api/asset-downloads - Get download tracking
   app.get("/api/asset-downloads", requireAuth, async (req, res) => {
     try {
@@ -4264,6 +4275,34 @@ Disallow: /admin/
     } catch (error) {
       console.error("Error fetching asset downloads:", error);
       res.status(500).json({ message: "Failed to fetch asset downloads" });
+    }
+  });
+
+  // POST /api/object-storage/upload - Upload file to object storage
+  // Using multer for file upload since object storage client setup is complex
+  app.post("/api/object-storage/upload", requireAuth, uploadDocument, async (req: any, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const file = req.file;
+      
+      // For now, store the file info and return the path
+      // The file is already uploaded by multer middleware
+      const objectKey = `resources/${file.filename}`;
+      const uploadUrl = `/uploads/${file.filename}`;
+      
+      res.json({ 
+        uploadUrl,
+        objectKey,
+        fileSize: file.size,
+        mimeType: file.mimetype,
+        filename: file.originalname
+      });
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      res.status(500).json({ message: "Failed to upload file" });
     }
   });
 

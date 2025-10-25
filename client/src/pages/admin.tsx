@@ -42,11 +42,18 @@ import {
   Trash2,
   Eye,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Upload,
+  Download,
+  FileType,
+  Check,
+  X
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import type { Community, Post, Event, TourRequest, Faq, Gallery, Testimonial, PageHero, FloorPlan, TeamMember, LandingPageTemplate, Quiz, QuizQuestion, QuizAnswerOption, QuizResponse, InsertQuiz, InsertQuizQuestion, InsertQuizAnswerOption } from "@shared/schema";
-import { insertQuizSchema } from "@shared/schema";
+import type { Community, Post, Event, TourRequest, Faq, Gallery, Testimonial, PageHero, FloorPlan, TeamMember, LandingPageTemplate, Quiz, QuizQuestion, QuizAnswerOption, QuizResponse, InsertQuiz, InsertQuizQuestion, InsertQuizAnswerOption, ContentAsset, InsertContentAsset, AssetDownload } from "@shared/schema";
+import { insertQuizSchema, insertContentAssetSchema } from "@shared/schema";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Progress } from "@/components/ui/progress";
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -190,6 +197,7 @@ export default function Admin() {
               Exit Intent Popup
             </TabsTrigger>
             <TabsTrigger value="quizzes" data-testid="tab-quizzes">Quizzes</TabsTrigger>
+            <TabsTrigger value="resources" data-testid="tab-resources">Resources</TabsTrigger>
             <TabsTrigger value="image-gallery" data-testid="tab-image-gallery">
               <Image className="h-4 w-4 mr-1" />
               Image Gallery
@@ -607,6 +615,10 @@ export default function Admin() {
 
           <TabsContent value="quizzes" className="space-y-6">
             <QuizManagement />
+          </TabsContent>
+
+          <TabsContent value="resources" className="space-y-6">
+            <ResourceManagement />
           </TabsContent>
 
           <TabsContent value="image-gallery">
@@ -1519,6 +1531,621 @@ function QuizManagement() {
             <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => quizToDelete && deleteQuizMutation.mutate(quizToDelete.id)}
+              className="bg-destructive hover:bg-destructive/90"
+              data-testid="button-confirm-delete"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </Card>
+  );
+}
+
+function ResourceManagement() {
+  const { toast } = useToast();
+  const [viewMode, setViewMode] = useState<"list" | "editor" | "downloads">("list");
+  const [selectedResource, setSelectedResource] = useState<ContentAsset | null>(null);
+  const [editingResource, setEditingResource] = useState<Partial<InsertContentAsset>>({
+    title: "",
+    slug: "",
+    description: "",
+    category: "",
+    fileUrl: "",
+    objectKey: "",
+    thumbnailImageId: "",
+    fileSize: 0,
+    mimeType: "",
+    requiredFields: [],
+    active: true,
+    sortOrder: 0,
+  });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [resourceToDelete, setResourceToDelete] = useState<ContentAsset | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedFileName, setUploadedFileName] = useState("");
+
+  const { data: contentAssets = [], isLoading: assetsLoading } = useQuery<ContentAsset[]>({
+    queryKey: ["/api/content-assets"],
+  });
+
+  const { data: downloads = [] } = useQuery<AssetDownload[]>({
+    queryKey: ["/api/content-assets", selectedResource?.id, "downloads"],
+    enabled: viewMode === "downloads" && !!selectedResource?.id,
+  });
+
+  const createResourceMutation = useMutation({
+    mutationFn: async (data: InsertContentAsset) => {
+      const res = await apiRequest("POST", "/api/content-assets", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Resource created successfully" });
+      queryClient.invalidateQueries({ queryKey: ["/api/content-assets"] });
+      setViewMode("list");
+      resetForm();
+    },
+    onError: () => {
+      toast({ title: "Failed to create resource", variant: "destructive" });
+    },
+  });
+
+  const updateResourceMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<InsertContentAsset> }) => {
+      const res = await apiRequest("PATCH", `/api/content-assets/${id}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Resource updated successfully" });
+      queryClient.invalidateQueries({ queryKey: ["/api/content-assets"] });
+      setViewMode("list");
+      resetForm();
+    },
+    onError: () => {
+      toast({ title: "Failed to update resource", variant: "destructive" });
+    },
+  });
+
+  const deleteResourceMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/content-assets/${id}`);
+    },
+    onSuccess: () => {
+      toast({ title: "Resource deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ["/api/content-assets"] });
+      setDeleteDialogOpen(false);
+      setResourceToDelete(null);
+    },
+    onError: () => {
+      toast({ title: "Failed to delete resource", variant: "destructive" });
+    },
+  });
+
+  const toggleActiveMutation = useMutation({
+    mutationFn: async ({ id, active }: { id: string; active: boolean }) => {
+      const res = await apiRequest("PATCH", `/api/content-assets/${id}`, { active });
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Resource status updated" });
+      queryClient.invalidateQueries({ queryKey: ["/api/content-assets"] });
+    },
+    onError: () => {
+      toast({ title: "Failed to update resource status", variant: "destructive" });
+    },
+  });
+
+  const resetForm = () => {
+    setEditingResource({
+      title: "",
+      slug: "",
+      description: "",
+      category: "",
+      fileUrl: "",
+      objectKey: "",
+      thumbnailImageId: "",
+      fileSize: 0,
+      mimeType: "",
+      requiredFields: [],
+      active: true,
+      sortOrder: 0,
+    });
+    setSelectedResource(null);
+    setUploadedFileName("");
+    setUploadProgress(0);
+  };
+
+  const handleCreateNew = () => {
+    resetForm();
+    setViewMode("editor");
+  };
+
+  const handleEdit = (resource: ContentAsset) => {
+    setSelectedResource(resource);
+    setEditingResource({
+      title: resource.title,
+      slug: resource.slug,
+      description: resource.description || "",
+      category: resource.category || "",
+      fileUrl: resource.fileUrl || "",
+      objectKey: resource.objectKey || "",
+      thumbnailImageId: resource.thumbnailImageId || "",
+      fileSize: resource.fileSize || 0,
+      mimeType: resource.mimeType || "",
+      requiredFields: resource.requiredFields || [],
+      active: resource.active ?? true,
+      sortOrder: resource.sortOrder ?? 0,
+    });
+    setUploadedFileName(resource.fileUrl?.split("/").pop() || "");
+    setViewMode("editor");
+  };
+
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .trim();
+  };
+
+  const handleTitleChange = (title: string) => {
+    setEditingResource({
+      ...editingResource,
+      title,
+      slug: generateSlug(title),
+    });
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf") {
+      toast({ title: "Only PDF files are allowed", variant: "destructive" });
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const xhr = new XMLHttpRequest();
+      
+      xhr.upload.addEventListener("progress", (e) => {
+        if (e.lengthComputable) {
+          const percentComplete = (e.loaded / e.total) * 100;
+          setUploadProgress(percentComplete);
+        }
+      });
+
+      xhr.addEventListener("load", () => {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          setEditingResource({
+            ...editingResource,
+            objectKey: response.objectKey,
+            fileUrl: response.uploadUrl,
+            fileSize: response.fileSize,
+            mimeType: response.mimeType,
+          });
+          setUploadedFileName(response.filename);
+          setIsUploading(false);
+          setUploadProgress(100);
+          toast({ title: "File uploaded successfully" });
+        } else {
+          throw new Error("Upload failed");
+        }
+      });
+
+      xhr.addEventListener("error", () => {
+        throw new Error("Upload failed");
+      });
+
+      xhr.open("POST", "/api/object-storage/upload");
+      xhr.send(formData);
+
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast({ title: "Failed to upload file", variant: "destructive" });
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const handleSave = () => {
+    try {
+      const validatedData = insertContentAssetSchema.parse(editingResource);
+      
+      if (selectedResource) {
+        updateResourceMutation.mutate({ id: selectedResource.id, data: validatedData });
+      } else {
+        createResourceMutation.mutate(validatedData);
+      }
+    } catch (error: any) {
+      toast({ 
+        title: "Validation error", 
+        description: error.errors?.[0]?.message || "Please check all required fields",
+        variant: "destructive" 
+      });
+    }
+  };
+
+  const toggleRequiredField = (field: string) => {
+    const currentFields = editingResource.requiredFields || [];
+    const newFields = currentFields.includes(field)
+      ? currentFields.filter(f => f !== field)
+      : [...currentFields, field];
+    setEditingResource({ ...editingResource, requiredFields: newFields });
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + " " + sizes[i];
+  };
+
+  if (viewMode === "editor") {
+    return (
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle data-testid="resource-editor-title">
+              {selectedResource ? "Edit Resource" : "Upload New Resource"}
+            </CardTitle>
+            <Button
+              onClick={() => {
+                setViewMode("list");
+                resetForm();
+              }}
+              variant="outline"
+              size="sm"
+              data-testid="button-back-to-list"
+            >
+              Back to List
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title *</Label>
+              <Input
+                id="title"
+                value={editingResource.title}
+                onChange={(e) => handleTitleChange(e.target.value)}
+                placeholder="Resource title"
+                data-testid="input-resource-title"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="slug">Slug *</Label>
+              <Input
+                id="slug"
+                value={editingResource.slug}
+                onChange={(e) => setEditingResource({ ...editingResource, slug: e.target.value })}
+                placeholder="resource-slug"
+                data-testid="input-resource-slug"
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={editingResource.description}
+                onChange={(e) => setEditingResource({ ...editingResource, description: e.target.value })}
+                placeholder="Resource description"
+                rows={3}
+                data-testid="input-resource-description"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="category">Category</Label>
+              <Select
+                value={editingResource.category}
+                onValueChange={(value) => setEditingResource({ ...editingResource, category: value })}
+              >
+                <SelectTrigger id="category" data-testid="select-resource-category">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Financial Planning">Financial Planning</SelectItem>
+                  <SelectItem value="Safety & Security">Safety & Security</SelectItem>
+                  <SelectItem value="Care Planning">Care Planning</SelectItem>
+                  <SelectItem value="Lifestyle">Lifestyle</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="sortOrder">Sort Order</Label>
+              <Input
+                id="sortOrder"
+                type="number"
+                value={editingResource.sortOrder}
+                onChange={(e) => setEditingResource({ ...editingResource, sortOrder: parseInt(e.target.value) || 0 })}
+                data-testid="input-resource-sort"
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="file">PDF File *</Label>
+              <div className="space-y-2">
+                <Input
+                  id="file"
+                  type="file"
+                  accept="application/pdf"
+                  onChange={handleFileUpload}
+                  disabled={isUploading}
+                  data-testid="input-resource-file"
+                />
+                {isUploading && (
+                  <div className="space-y-1">
+                    <Progress value={uploadProgress} data-testid="upload-progress" />
+                    <p className="text-sm text-muted-foreground">Uploading... {Math.round(uploadProgress)}%</p>
+                  </div>
+                )}
+                {uploadedFileName && !isUploading && (
+                  <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
+                    <FileType className="h-4 w-4" />
+                    <span className="text-sm flex-1" data-testid="uploaded-file-name">{uploadedFileName}</span>
+                    <span className="text-sm text-muted-foreground" data-testid="uploaded-file-size">
+                      {formatFileSize(editingResource.fileSize || 0)}
+                    </span>
+                    <Check className="h-4 w-4 text-green-600" />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <Label>Required Fields</Label>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {["email", "name", "phone", "zipCode", "timeline"].map((field) => (
+                  <div key={field} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`field-${field}`}
+                      checked={editingResource.requiredFields?.includes(field)}
+                      onCheckedChange={() => toggleRequiredField(field)}
+                      data-testid={`checkbox-field-${field}`}
+                    />
+                    <Label htmlFor={`field-${field}`} className="text-sm capitalize cursor-pointer">
+                      {field === "zipCode" ? "Zip Code" : field}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="active"
+                checked={editingResource.active ?? true}
+                onCheckedChange={(checked) => setEditingResource({ ...editingResource, active: checked })}
+                data-testid="switch-resource-active"
+              />
+              <Label htmlFor="active">Active</Label>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4 border-t">
+            <Button
+              onClick={() => {
+                setViewMode("list");
+                resetForm();
+              }}
+              variant="outline"
+              data-testid="button-cancel-resource"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={createResourceMutation.isPending || updateResourceMutation.isPending || isUploading}
+              data-testid="button-save-resource"
+            >
+              {selectedResource ? "Update Resource" : "Save Resource"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (viewMode === "downloads") {
+    return (
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle data-testid="downloads-title">
+              Downloads: {selectedResource?.title}
+            </CardTitle>
+            <Button
+              onClick={() => {
+                setViewMode("list");
+                setSelectedResource(null);
+              }}
+              variant="outline"
+              size="sm"
+              data-testid="button-back-to-list"
+            >
+              Back to List
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {downloads.length === 0 ? (
+            <p className="text-muted-foreground text-center py-8" data-testid="no-downloads">
+              No downloads yet.
+            </p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Phone</TableHead>
+                  <TableHead>Zip Code</TableHead>
+                  <TableHead>Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {downloads.map((download) => (
+                  <TableRow key={download.id} data-testid={`download-row-${download.id}`}>
+                    <TableCell data-testid={`download-name-${download.id}`}>
+                      {download.name || "N/A"}
+                    </TableCell>
+                    <TableCell data-testid={`download-email-${download.id}`}>
+                      {download.email}
+                    </TableCell>
+                    <TableCell data-testid={`download-phone-${download.id}`}>
+                      {download.phone || "N/A"}
+                    </TableCell>
+                    <TableCell data-testid={`download-zipcode-${download.id}`}>
+                      {download.zipCode || "N/A"}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(download.createdAt || new Date()).toLocaleDateString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center" data-testid="resource-list-title">
+            <FileType className="w-5 h-5 mr-2" />
+            Resource Library
+          </CardTitle>
+          <Button onClick={handleCreateNew} data-testid="button-create-resource">
+            <Upload className="h-4 w-4 mr-2" />
+            Upload New Resource
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {assetsLoading ? (
+          <div className="space-y-4">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </div>
+        ) : contentAssets.length === 0 ? (
+          <p className="text-muted-foreground text-center py-8" data-testid="no-resources">
+            No resources yet. Upload one to get started.
+          </p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead>Slug</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>File Size</TableHead>
+                <TableHead>Downloads</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {contentAssets.map((resource) => (
+                <TableRow key={resource.id} data-testid={`resource-row-${resource.id}`}>
+                  <TableCell className="font-medium" data-testid={`resource-title-${resource.id}`}>
+                    {resource.title}
+                  </TableCell>
+                  <TableCell data-testid={`resource-slug-${resource.id}`}>
+                    {resource.slug}
+                  </TableCell>
+                  <TableCell data-testid={`resource-category-${resource.id}`}>
+                    {resource.category || "N/A"}
+                  </TableCell>
+                  <TableCell data-testid={`resource-size-${resource.id}`}>
+                    {formatFileSize(resource.fileSize || 0)}
+                  </TableCell>
+                  <TableCell data-testid={`resource-downloads-${resource.id}`}>
+                    {resource.downloadCount || 0}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={resource.active ? "default" : "secondary"} data-testid={`resource-status-${resource.id}`}>
+                      {resource.active ? "Active" : "Inactive"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        onClick={() => handleEdit(resource)}
+                        size="sm"
+                        variant="ghost"
+                        data-testid={`button-edit-resource-${resource.id}`}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setSelectedResource(resource);
+                          setViewMode("downloads");
+                        }}
+                        size="sm"
+                        variant="ghost"
+                        data-testid={`button-view-downloads-${resource.id}`}
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                      <Switch
+                        checked={resource.active ?? false}
+                        onCheckedChange={(checked) => toggleActiveMutation.mutate({ id: resource.id, active: checked })}
+                        data-testid={`switch-resource-active-${resource.id}`}
+                      />
+                      <Button
+                        onClick={() => {
+                          setResourceToDelete(resource);
+                          setDeleteDialogOpen(true);
+                        }}
+                        size="sm"
+                        variant="ghost"
+                        data-testid={`button-delete-resource-${resource.id}`}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </CardContent>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete the resource "{resourceToDelete?.title}" and all its download records. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => resourceToDelete && deleteResourceMutation.mutate(resourceToDelete.id)}
               className="bg-destructive hover:bg-destructive/90"
               data-testid="button-confirm-delete"
             >
