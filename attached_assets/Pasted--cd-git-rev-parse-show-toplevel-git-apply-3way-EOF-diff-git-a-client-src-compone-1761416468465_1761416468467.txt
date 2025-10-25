@@ -1,0 +1,2806 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/client/src/components/BlogCommunityCTA.tsx b/client/src/components/BlogCommunityCTA.tsx
+index ca69982434ef4292306dde50672ab837ae4580a0..a085b52aa52a0b71f372b6eb910815610982a252 100644
+--- a/client/src/components/BlogCommunityCTA.tsx
++++ b/client/src/components/BlogCommunityCTA.tsx
+@@ -1,32 +1,33 @@
+ import { Link } from "wouter";
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent } from "@/components/ui/card";
+ import { ArrowRight, Phone } from "lucide-react";
+ import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+ import { useScheduleTour } from "@/hooks/useScheduleTour";
+ import type { Community } from "@shared/schema";
++import { getPrimaryPhoneDisplay, getPrimaryPhoneHref } from "@/lib/communityContact";
+ 
+ interface BlogCommunityCTAProps {
+   community: Community;
+ }
+ 
+ export default function BlogCommunityCTA({ community }: BlogCommunityCTAProps) {
+   const logoUrl = useResolveImageUrl(community.logoImageId);
+   const { openScheduleTour } = useScheduleTour();
+ 
+   // Helper function to convert hex to rgba (handles both #rrggbb and rrggbb formats)
+   const hexToRgba = (hex: string, alpha: number): string | null => {
+     if (!hex) return null;
+     
+     // Remove '#' if present
+     const cleanHex = hex.startsWith('#') ? hex.slice(1) : hex;
+     
+     // Validate hex format (must be 6 characters)
+     if (cleanHex.length !== 6 || !/^[0-9A-Fa-f]{6}$/.test(cleanHex)) {
+       return null;
+     }
+     
+     const r = parseInt(cleanHex.slice(0, 2), 16);
+     const g = parseInt(cleanHex.slice(2, 4), 16);
+     const b = parseInt(cleanHex.slice(4, 6), 16);
+     
+@@ -126,42 +127,42 @@ export default function BlogCommunityCTA({ community }: BlogCommunityCTAProps) {
+                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+               </Button>
+               
+               <Button
+                 asChild
+                 variant="outline"
+                 size="lg"
+                 className="border-2 hover:bg-accent text-base sm:text-lg font-semibold w-full sm:w-auto"
+                 data-testid="button-contact"
+               >
+                 <Link href="/contact">
+                   Contact Us
+                 </Link>
+               </Button>
+             </div>
+           </div>
+         </div>
+ 
+         {/* Contact Info Bar */}
+         {community.phoneDisplay && (
+           <div className="mt-6 lg:mt-8 pt-6 lg:pt-8 border-t-2 border-border">
+             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-between gap-4">
+               <p className="text-sm sm:text-base text-muted-foreground text-center lg:text-left" data-testid="cta-contact-info">
+                 Have questions? We're here to help!
+               </p>
+-              <a 
+-                href={`tel:${community.phoneDial || community.phoneDisplay}`}
++              <a
++                href={getPrimaryPhoneHref(community)}
+                 className="flex items-center gap-2 px-6 py-3 bg-accent/20 hover:bg-accent/30 rounded-lg transition-colors group border border-accent/40"
+                 data-testid="link-phone"
+               >
+                 <Phone className="w-5 h-5 text-foreground" />
+                 <span className="font-bold text-foreground text-base sm:text-lg">
+-                  {community.phoneDisplay}
++                  {getPrimaryPhoneDisplay(community)}
+                 </span>
+               </a>
+             </div>
+           </div>
+         )}
+       </CardContent>
+     </Card>
+   );
+ }
+diff --git a/client/src/components/CommunityCard.tsx b/client/src/components/CommunityCard.tsx
+index 1d315741e628084365a0e59edd1d64fabcc4bfe9..591654a08e901c9b58f736c0dd5aa285f15b9a2f 100644
+--- a/client/src/components/CommunityCard.tsx
++++ b/client/src/components/CommunityCard.tsx
+@@ -1,49 +1,50 @@
+ import { Link } from "wouter";
+ import { useState } from "react";
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent } from "@/components/ui/card";
+ import { Badge } from "@/components/ui/badge";
+ import { Dialog, DialogContent } from "@/components/ui/dialog";
+ import { 
+   MapPin, 
+   Phone, 
+   Calendar, 
+   Info, 
+   Star, 
+   Shield, 
+   Leaf, 
+   Users, 
+   Home,
+   Check,
+   ChevronRight
+ } from "lucide-react";
+ import LeadCaptureForm from "@/components/LeadCaptureForm";
+ import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+ import { getCommunityFurtherClass } from "@/lib/furtherWidgetUtils";
+ import { cn } from "@/lib/utils";
+ import type { Community } from "@shared/schema";
++import { getCityStateZip, getPrimaryPhoneDisplay, getPrimaryPhoneHref } from "@/lib/communityContact";
+ 
+ interface CommunityCardProps {
+   community: Community;
+   isSelected?: boolean;
+   onSelect?: () => void;
+ }
+ 
+ export default function CommunityCard({ community, isSelected, onSelect }: CommunityCardProps) {
+   const [showLeadCapture, setShowLeadCapture] = useState(false);
+   const heroImageUrl = useResolveImageUrl(community.heroImageUrl);
+   const formatPrice = (price: number | null) => {
+     if (!price) return "Contact for pricing";
+     return `$${price.toLocaleString()}`;
+   };
+ 
+   const getCareTypeColor = (careType: string) => {
+     switch (careType) {
+       case "assisted-living":
+         return "bg-white text-blue-700 border-blue-300";
+       case "memory-care":
+         return "bg-white text-purple-700 border-purple-300";
+       case "independent-living":
+         return "bg-white text-green-700 border-green-300";
+       default:
+         return "bg-white text-gray-700 border-gray-300";
+@@ -72,51 +73,51 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
+             <Link href={`/communities/${community.slug}`}>
+               <div className="aspect-[4/3] md:aspect-auto md:h-full">
+                 <img
+                   src={heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600`}
+                   alt={`${community.name} - Senior Living Community`}
+                   className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
+                   loading="lazy"
+                   decoding="async"
+                   data-testid={`image-${community.slug}`}
+                 />
+               </div>
+             </Link>
+           </div>
+           
+           {/* Content - More spacing */}
+           <div className="md:col-span-3 p-6 md:p-8">
+             <div className="flex justify-between items-start mb-3">
+               <div>
+                 <Link href={`/communities/${community.slug}`}>
+                   <h3 className="text-xl font-bold text-foreground mb-1 hover:text-primary transition-colors cursor-pointer" data-testid={`name-${community.slug}`}>
+                     {community.name}
+                   </h3>
+                 </Link>
+                 <p className="text-muted-foreground flex items-center" data-testid={`location-${community.slug}`}>
+                   <MapPin className="w-4 h-4 mr-1" />
+-                  {community.city}, {community.state}
++                  {getCityStateZip(community)}
+                 </p>
+               </div>
+               <div className="text-right">
+                 <div className="text-2xl font-bold text-foreground" data-testid={`price-${community.slug}`}>
+                   {formatPrice(community.startingPrice)}
+                 </div>
+                 {community.startingPrice && (
+                   <div className="text-sm text-muted-foreground">starting/month</div>
+                 )}
+               </div>
+             </div>
+             
+             {/* Care Types */}
+             {community.careTypes && community.careTypes.length > 0 && (
+               <div className="flex flex-wrap gap-2 mb-4">
+                 {community.careTypes.map((careType) => (
+                   <Badge
+                     key={careType}
+                     className={getCareTypeColor(careType)}
+                     data-testid={`care-type-${careType}-${community.slug}`}
+                   >
+                     {careType.split('-').map(word => 
+                       word.charAt(0).toUpperCase() + word.slice(1)
+                     ).join(' ')}
+                   </Badge>
+@@ -148,59 +149,59 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
+               <div className="text-sm text-muted-foreground flex items-center">
+                 <Shield className="w-4 h-4 mr-1 text-primary" />
+                 {community.licenseStatus || 'Licensed & Insured'}
+               </div>
+             </div>
+             
+             {/* Enhanced Actions with Lead Capture */}
+             <div className="space-y-3">
+               <div className="flex flex-col sm:flex-row gap-2">
+                 <Button 
+                   variant="default"
+                   className={cn(
+                     "flex-1 h-11 font-semibold talkfurther-schedule-tour",
+                     getCommunityFurtherClass(community.slug),
+                     community.slug ? `community-${community.slug}` : ''
+                   )}
+                   onClick={() => setShowLeadCapture(true)}
+                   data-community-id={community.id}
+                   data-community-slug={community.slug}
+                   data-community-name={community.name}
+                   data-testid={`button-schedule-tour-${community.slug}`}
+                 >
+                   <Calendar className="w-4 h-4 mr-2" />
+                   Schedule Tour
+                 </Button>
+-                <Button 
+-                  variant="outline" 
+-                  className="flex-1 h-11 font-semibold" 
++                <Button
++                  variant="outline"
++                  className="flex-1 h-11 font-semibold"
+                   asChild
+                   data-testid={`button-call-${community.slug}`}
+                 >
+-                  <a href={`tel:${community.phoneDial || community.phone || '+19704444689'}`}>
++                  <a href={getPrimaryPhoneHref(community)}>
+                     <Phone className="w-4 h-4 mr-2" />
+-                    {community.phoneDisplay || community.phone || '(970) 444-4689'}
++                    {getPrimaryPhoneDisplay(community)}
+                   </a>
+                 </Button>
+               </div>
+               
+               <Button 
+                 variant="secondary" 
+                 className="w-full h-9 text-sm bg-white hover:bg-gray-50 text-gray-700 hover:text-gray-900 rounded-full shadow-sm border border-gray-200"
+                 asChild
+                 data-testid={`button-details-${community.slug}`}
+               >
+                 <Link href={`/communities/${community.slug}`}>
+                   <Info className="w-4 h-4 mr-2" />
+                   View Full Details
+                   <ChevronRight className="w-4 h-4 ml-2" />
+                 </Link>
+               </Button>
+               
+               {/* Trust indicators */}
+               <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground mt-2">
+                 {(community.sameDayTours !== false) && (
+                   <div className="flex items-center gap-1">
+                     <Check className="w-3 h-3 text-green-600" />
+                     <span>Same-day tours</span>
+                   </div>
+                 )}
+diff --git a/client/src/components/CommunitySelectionModal.tsx b/client/src/components/CommunitySelectionModal.tsx
+index 8751df3067010c26d6096d941ab6039a51aa8d89..5e750823008b94a3e61a3b539ff16c70fc74495f 100644
+--- a/client/src/components/CommunitySelectionModal.tsx
++++ b/client/src/components/CommunitySelectionModal.tsx
+@@ -1,122 +1,129 @@
+ import { MapPin, Calendar } from "lucide-react";
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+ import {
+   Dialog,
+   DialogContent,
+   DialogDescription,
+   DialogHeader,
+   DialogTitle,
+ } from "@/components/ui/dialog";
+ import type { Community, CommunityCard } from "@shared/schema";
+ import { useScheduleTour } from "@/hooks/useScheduleTour";
++import { getCityStateZip, getPrimaryPhoneDisplay } from "@/lib/communityContact";
+ 
+ interface CommunitySelectionModalProps {
+   open: boolean;
+   onOpenChange: (open: boolean) => void;
+   communities: (Community | CommunityCard)[];
+   onSelectCommunity?: (community: Community | CommunityCard) => void;
+ }
+ 
+ export default function CommunitySelectionModal({
+   open,
+   onOpenChange,
+   communities,
+   onSelectCommunity,
+ }: CommunitySelectionModalProps) {
+   const { openScheduleTour } = useScheduleTour();
+   return (
+     <Dialog open={open} onOpenChange={onOpenChange}>
+       <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto" data-testid="community-selection-modal">
+         <DialogHeader>
+           <DialogTitle className="text-2xl font-bold">
+             Select a Community to Schedule Your Tour
+           </DialogTitle>
+           <DialogDescription className="text-base">
+             Choose from our beautiful communities across Colorado. Each offers exceptional care and amenities.
+           </DialogDescription>
+         </DialogHeader>
+         
+         <div className="grid gap-4 py-4 sm:grid-cols-2">
+-          {communities.map((community) => (
++          {communities.map((community) => {
++            const locationLabel = 'city' in community
++              ? getCityStateZip(community) || `${community.city}${'state' in community && community.state ? '' : ', CO'}`
++              : '';
++
++            return (
+             <Card
+               key={community.id}
+               className="overflow-hidden hover:shadow-lg transition-shadow duration-200"
+               data-testid={`community-selection-card-${community.slug}`}
+             >
+               <CardHeader className="pb-3">
+                 <CardTitle className="flex items-start justify-between">
+                   <span
+                     className="text-lg font-semibold"
+                     data-testid={`community-name-${community.slug}`}
+                   >
+                     {community.name}
+                   </span>
+                 </CardTitle>
+                 <div
+                   className="flex items-center text-sm text-muted-foreground mt-1"
+                   data-testid={`community-location-${community.slug}`}
+                 >
+                   <MapPin className="w-4 h-4 mr-1" />
+-                  {community.city}{'state' in community && community.state ? `, ${community.state}` : ', CO'}
++                  {locationLabel}
+                 </div>
+               </CardHeader>
+               
+               <CardContent className="pt-0">
+                 {'shortDescription' in community && community.shortDescription && (
+                   <p
+                     className="text-sm text-muted-foreground mb-4 line-clamp-2"
+                     data-testid={`community-description-${community.slug}`}
+                   >
+                     {community.shortDescription}
+                   </p>
+                 )}
+                 
+                 {'phoneDisplay' in community && community.phoneDisplay && (
+                   <p
+                     className="text-sm text-muted-foreground mb-4"
+                     data-testid={`community-phone-${community.slug}`}
+                   >
+-                    Call: {community.phoneDisplay}
++                    Call: {getPrimaryPhoneDisplay(community)}
+                   </p>
+                 )}
+                 
+                 <Button
+                   className={`w-full talkfurther-schedule-tour ${community.slug ? `community-${community.slug}` : ''}`}
+                   size="default"
+                   data-community-id={community.id}
+                   data-community-slug={community.slug}
+                   data-community-name={community.name}
+                   data-testid={`button-schedule-tour-${community.slug}`}
+                   onClick={() => {
+                     if (onSelectCommunity) {
+                       onSelectCommunity(community);
+                     } else {
+                       openScheduleTour({
+                         communityId: community.id,
+                         communityName: community.name,
+                       });
+                     }
+                     onOpenChange(false);
+                   }}
+                 >
+                   <Calendar className="w-4 h-4 mr-2" />
+                   Schedule Tour
+                 </Button>
+               </CardContent>
+             </Card>
+-          ))}
++            );
++          })}
+         </div>
+         
+         {communities.length === 0 && (
+           <div
+             className="text-center py-8 text-muted-foreground"
+             data-testid="no-communities-message"
+           >
+             No communities available at this time.
+           </div>
+         )}
+       </DialogContent>
+     </Dialog>
+   );
+ }
+\ No newline at end of file
+diff --git a/client/src/lib/communityContact.ts b/client/src/lib/communityContact.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..ef6f0a61aac65bb1e9d0a1a93ab80c701ad2f412
+--- /dev/null
++++ b/client/src/lib/communityContact.ts
+@@ -0,0 +1,153 @@
++import type { Community } from "@shared/schema";
++
++export const DEFAULT_COMMUNITY_PHONE_DISPLAY = "(970) 444-4689";
++export const DEFAULT_COMMUNITY_PHONE_DIAL = "+19704444689";
++export const DEFAULT_COMMUNITY_EMAIL = "info@stagesenior.com";
++
++export type CommunityContactLike = Partial<
++  Pick<
++    Community,
++    | "street"
++    | "address"
++    | "city"
++    | "state"
++    | "zip"
++    | "zipCode"
++    | "lat"
++    | "lng"
++    | "latitude"
++    | "longitude"
++    | "phoneDisplay"
++    | "phoneDial"
++    | "phone"
++    | "secondaryPhoneDisplay"
++    | "secondaryPhoneDial"
++    | "email"
++  >
++> & {
++  [key: string]: unknown;
++};
++
++const sanitizePhoneForTel = (value?: string | null): string => {
++  if (!value) return "";
++  const trimmed = value.trim();
++  if (!trimmed) return "";
++
++  if (trimmed.startsWith("+")) {
++    const digits = trimmed.replace(/[^\d]/g, "");
++    return digits ? `+${digits}` : "";
++  }
++
++  const digitsOnly = trimmed.replace(/\D/g, "");
++  if (!digitsOnly) return "";
++
++  if (digitsOnly.length === 11 && digitsOnly.startsWith("1")) {
++    return `+${digitsOnly}`;
++  }
++
++  if (digitsOnly.length === 10) {
++    return `+1${digitsOnly}`;
++  }
++
++  if (digitsOnly.startsWith("1")) {
++    return `+${digitsOnly}`;
++  }
++
++  return `+${digitsOnly}`;
++};
++
++export const getPrimaryPhoneDisplay = (community: CommunityContactLike): string =>
++  community.phoneDisplay?.toString().trim() ||
++  community.phone?.toString().trim() ||
++  DEFAULT_COMMUNITY_PHONE_DISPLAY;
++
++export const getPrimaryPhoneDial = (community: CommunityContactLike): string => {
++  const dialCandidate =
++    community.phoneDial?.toString().trim() ||
++    community.phone?.toString().trim() ||
++    community.phoneDisplay?.toString().trim();
++
++  const sanitized = sanitizePhoneForTel(dialCandidate);
++  return sanitized || DEFAULT_COMMUNITY_PHONE_DIAL;
++};
++
++export const getPrimaryPhoneHref = (community: CommunityContactLike): string =>
++  `tel:${getPrimaryPhoneDial(community)}`;
++
++export const getSecondaryPhoneDisplay = (community: CommunityContactLike): string | undefined =>
++  community.secondaryPhoneDisplay?.toString().trim() ||
++  community.secondaryPhoneDial?.toString().trim() ||
++  undefined;
++
++export const getSecondaryPhoneDial = (community: CommunityContactLike): string | undefined => {
++  const candidate =
++    community.secondaryPhoneDial?.toString().trim() ||
++    community.secondaryPhoneDisplay?.toString().trim();
++
++  const sanitized = sanitizePhoneForTel(candidate);
++  return sanitized || undefined;
++};
++
++export const getSecondaryPhoneHref = (community: CommunityContactLike): string | undefined => {
++  const dial = getSecondaryPhoneDial(community);
++  return dial ? `tel:${dial}` : undefined;
++};
++
++export const getCommunityEmail = (community: CommunityContactLike): string =>
++  community.email?.toString().trim() || DEFAULT_COMMUNITY_EMAIL;
++
++export const getResolvedStreet = (community: CommunityContactLike): string =>
++  community.street?.toString().trim() || community.address?.toString().trim() || "";
++
++export const getResolvedZip = (community: CommunityContactLike): string =>
++  community.zip?.toString().trim() || community.zipCode?.toString().trim() || "";
++
++export const getCityState = (community: CommunityContactLike): string => {
++  const city = community.city?.toString().trim() || "";
++  const state = community.state?.toString().trim() || "";
++
++  if (city && state) return `${city}, ${state}`;
++  return city || state;
++};
++
++export const getCityStateZip = (community: CommunityContactLike): string => {
++  const cityState = getCityState(community);
++  const zip = getResolvedZip(community);
++
++  if (cityState && zip) return `${cityState} ${zip}`;
++  return cityState || zip;
++};
++
++export const getAddressLines = (community: CommunityContactLike): string[] => {
++  const street = getResolvedStreet(community);
++  const cityStateZip = getCityStateZip(community);
++
++  return [street, cityStateZip].filter((line) => !!line.trim());
++};
++
++export const getFullAddress = (community: CommunityContactLike): string =>
++  getAddressLines(community).join(", ");
++
++export const getDirectionsQuery = (community: CommunityContactLike): string => {
++  const fullAddress = getFullAddress(community);
++
++  if (fullAddress) {
++    return fullAddress;
++  }
++
++  const cityState = getCityState(community);
++  if (cityState) {
++    return cityState;
++  }
++
++  return "";
++};
++
++export const getGoogleMapsDirectionsUrl = (
++  community: CommunityContactLike,
++): string | undefined => {
++  const query = getDirectionsQuery(community);
++  if (!query) return undefined;
++
++  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`;
++};
+diff --git a/client/src/lib/schemaOrg.ts b/client/src/lib/schemaOrg.ts
+index 6bce98fc59377cd5da7c3b76ca00708ff2028c5e..d15b7d50396e9ce7bd706acd0fedc9cf39cc8c1f 100644
+--- a/client/src/lib/schemaOrg.ts
++++ b/client/src/lib/schemaOrg.ts
+@@ -1,26 +1,32 @@
+ import type { Community, LandingPageTemplate } from "@shared/schema";
++import {
++  getCommunityEmail,
++  getPrimaryPhoneDisplay,
++  getResolvedStreet,
++  getResolvedZip,
++} from "./communityContact";
+ 
+ /**
+  * Schema.org structured data utility for generating JSON-LD
+  * Improves SEO and enables rich snippets in search results
+  */
+ 
+ export interface SchemaOrgParams {
+   community?: Community;
+   careType?: string;
+   template: LandingPageTemplate;
+   pathname: string;
+ }
+ 
+ export interface LocalBusinessSchema {
+   "@context": string;
+   "@type": string;
+   name: string;
+   description?: string;
+   image?: string[];
+   address?: {
+     "@type": "PostalAddress";
+     streetAddress: string;
+     addressLocality: string;
+     addressRegion: string;
+     postalCode?: string;
+@@ -92,82 +98,88 @@ export function generateLocalBusinessSchema(params: SchemaOrgParams): LocalBusin
+     "@context": "https://schema.org",
+     "@type": "SeniorCenterOrCommunity",
+     name: community.name,
+     url: `${baseUrl}${params.pathname}`,
+   };
+ 
+   // Add description
+   if (community.shortDescription) {
+     schema.description = community.shortDescription;
+   } else if (community.description) {
+     schema.description = community.description.substring(0, 200);
+   } else if (template.metaDescription) {
+     schema.description = template.metaDescription;
+   }
+ 
+   // Add images
+   const images: string[] = [];
+   if (community.heroImageUrl) {
+     images.push(community.heroImageUrl);
+   }
+   if (images.length > 0) {
+     schema.image = images;
+   }
+ 
+   // Add address
+-  if (community.street && community.city && community.state) {
++  const streetAddress = getResolvedStreet(community);
++  const city = community.city || "";
++  const state = community.state || "";
++  if (city && state) {
+     schema.address = {
+       "@type": "PostalAddress",
+-      streetAddress: community.street,
+-      addressLocality: community.city,
+-      addressRegion: community.state,
++      streetAddress: streetAddress || `${city}, ${state}`,
++      addressLocality: city,
++      addressRegion: state,
+       addressCountry: "US",
+     };
+ 
+-    if (community.zip || community.zipCode) {
+-      schema.address.postalCode = community.zip || community.zipCode || undefined;
++    const postalCode = getResolvedZip(community);
++    if (postalCode) {
++      schema.address.postalCode = postalCode;
+     }
+   }
+ 
+   // Add geo coordinates
+   const lat = community.lat || community.latitude;
+   const lng = community.lng || community.longitude;
+   if (lat && lng) {
+     schema.geo = {
+       "@type": "GeoCoordinates",
+       latitude: String(lat),
+       longitude: String(lng),
+     };
+   }
+ 
+   // Add contact information
+-  if (community.phoneDisplay || community.phone) {
+-    schema.telephone = community.phoneDisplay || community.phone || undefined;
++  const telephone = getPrimaryPhoneDisplay(community);
++  if (telephone) {
++    schema.telephone = telephone;
+   }
+ 
+-  if (community.email) {
+-    schema.email = community.email;
++  const email = getCommunityEmail(community);
++  if (email) {
++    schema.email = email;
+   }
+ 
+   // Add price range
+   if (community.startingPrice) {
+     if (community.startingPrice < 3000) {
+       schema.priceRange = "$";
+     } else if (community.startingPrice < 5000) {
+       schema.priceRange = "$$";
+     } else if (community.startingPrice < 7000) {
+       schema.priceRange = "$$$";
+     } else {
+       schema.priceRange = "$$$$";
+     }
+   } else if (community.startingRateDisplay) {
+     schema.priceRange = "$$-$$$";
+   }
+ 
+   // Add aggregate rating only if available
+   if (community.rating && community.reviewCount) {
+     const rating = parseFloat(String(community.rating));
+     schema.aggregateRating = {
+       "@type": "AggregateRating",
+       ratingValue: String(rating),
+       reviewCount: community.reviewCount,
+     };
+diff --git a/client/src/pages/DynamicLandingPage.tsx b/client/src/pages/DynamicLandingPage.tsx
+index 6dcd3c4b4e790c0dc578fc11d2f59b6ccbfa8709..b880998a61b9fb1a460d79b51e5edc2a625d4977 100644
+--- a/client/src/pages/DynamicLandingPage.tsx
++++ b/client/src/pages/DynamicLandingPage.tsx
+@@ -1,47 +1,54 @@
+ import { useParams, useLocation } from "wouter";
+ import { useQuery } from "@tanstack/react-query";
+ import { useEffect, useState } from "react";
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent } from "@/components/ui/card";
+ import { Badge } from "@/components/ui/badge";
+ import { Skeleton } from "@/components/ui/skeleton";
+ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+ import { PageHero } from "@/components/PageHero";
+ import TestimonialSection from "@/components/TestimonialSection";
+ import { TeamCarousel } from "@/components/TeamCarousel";
+ import GalleryModal from "@/components/GalleryModal";
+ import FloorPlanModal from "@/components/FloorPlanModal";
+ import LeadCaptureForm from "@/components/LeadCaptureForm";
+ import PageSectionRenderer from "@/components/PageSectionRenderer";
+ import { ExitIntentPopup, useExitIntent } from "@/components/ExitIntentPopup";
+ import CommunityMap from "@/components/CommunityMap";
+ import { useScheduleTour } from "@/hooks/useScheduleTour";
+ import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+ import NotFound from "@/pages/not-found";
+ import { generateSchemaOrgData } from "@/lib/schemaOrg";
+ import { toTitleCase, cn } from "@/lib/utils";
++import {
++  getAddressLines,
++  getCityStateZip,
++  getDirectionsQuery,
++  getPrimaryPhoneDisplay,
++  getPrimaryPhoneHref,
++} from "@/lib/communityContact";
+ import FadeIn from "@/components/animations/FadeIn";
+ import ScaleHeader from "@/components/animations/ScaleHeader";
+ import StaggerContainer from "@/components/animations/StaggerContainer";
+ import StaggerItem from "@/components/animations/StaggerItem";
+ import {
+   Calendar,
+   MapPin,
+   Phone,
+   Mail,
+   Star,
+   Image as ImageIcon,
+   Users,
+   Home,
+   CheckCircle,
+   ArrowRight,
+   Sparkles,
+   Heart,
+   Bed,
+   Bath,
+   Square,
+   Shield,
+   Award,
+   Clock,
+   TrendingUp,
+   Download,
+@@ -442,50 +449,59 @@ export default function DynamicLandingPage() {
+     allCommunities: Community[];
+     highlights: CommunityHighlight[];
+     amenities: Amenity[];
+     careTypes: CareType[];
+     galleries?: Gallery[];
+     testimonials?: Testimonial[];
+     teamMembers?: TeamMember[];
+     faqs?: Faq[];
+     floorPlans?: FloorPlan[];
+   }>({
+     queryKey: ["/api/landing-page-templates/resolve/full", pathname],
+     queryFn: async () => {
+       const response = await fetch(`/api/landing-page-templates/resolve/full?url=${encodeURIComponent(pathname)}`);
+ 
+       if (!response.ok) {
+         throw new Error("Template not found");
+       }
+ 
+       return response.json();
+     },
+   });
+ 
+   const template = pageData?.template;
+   const urlParams = pageData?.params || {};
+   const primaryCommunity = pageData?.primaryCommunity;
++  const primaryContactDetails = primaryCommunity || {};
++  const primaryAddressLines = getAddressLines(primaryContactDetails);
++  const primaryCityStateZip = getCityStateZip(primaryContactDetails);
++  const primaryPhoneDisplay = getPrimaryPhoneDisplay(primaryContactDetails);
++  const primaryPhoneHref = getPrimaryPhoneHref(primaryContactDetails);
++  const primaryDirectionsQuery = getDirectionsQuery(primaryContactDetails);
++  const primaryDirectionsUrl = primaryDirectionsQuery
++    ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(primaryDirectionsQuery)}`
++    : "";
+   const communityHighlights = pageData?.highlights || [];
+   const communityAmenities = pageData?.amenities || [];
+   const communityCareTypes = pageData?.careTypes || [];
+   const galleries = pageData?.galleries || [];
+   const testimonials = pageData?.testimonials || [];
+   const teamMembers = pageData?.teamMembers || [];
+ 
+   // Extract care type from URL pattern and params
+   const getCareTypeSlug = (): string | null => {
+     // Try URL pattern first
+     if (template?.urlPattern) {
+       if (template.urlPattern.includes('assisted-living')) return 'assisted-living';
+       if (template.urlPattern.includes('memory-care')) return 'memory-care';
+       if (template.urlPattern.includes('independent-living')) return 'independent-living';
+       if (template.urlPattern.includes('skilled-nursing')) return 'skilled-nursing';
+     }
+ 
+     // Try URL params
+     if (urlParams.careType) return urlParams.careType.toLowerCase();
+ 
+     return null;
+   };
+ 
+   const careTypeSlug = getCareTypeSlug();
+ 
+@@ -836,165 +852,159 @@ export default function DynamicLandingPage() {
+           </h2>
+           {subheading && (
+             <p className={`text-lg md:text-xl mb-8 max-w-3xl mx-auto ${variant === "primary" ? "text-white/90" : "text-muted-foreground"}`}>
+               {subheading}
+             </p>
+           )}
+           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+             <Button
+               size="lg"
+               onClick={() =>
+                 openScheduleTour({
+                   communityId: primaryCommunity?.id,
+                   communityName: primaryCommunity?.name,
+                   title: `Schedule a Tour${primaryCommunity?.name ? ` at ${primaryCommunity.name}` : ""}`,
+                 })
+               }
+               className={`min-h-[44px] w-full sm:w-auto talkfurther-schedule-tour ${primaryCommunity?.slug ? `community-${primaryCommunity.slug}` : ''} ${variant === "primary" ? "bg-white text-primary hover:bg-white/90" : ""}`}
+               data-community-id={primaryCommunity?.id}
+               data-community-slug={primaryCommunity?.slug}
+               data-community-name={primaryCommunity?.name}
+               data-testid={`button-cta-${variant}`}
+             >
+               <Calendar className="w-5 h-5 mr-2" />
+               {ctaText}
+             </Button>
+-            {primaryCommunity?.phoneDisplay && (
+-              <Button
+-                size="lg"
+-                asChild
+-                className={`min-h-[44px] w-full sm:w-auto ${variant === "primary" ? "bg-white text-primary hover:bg-white/90" : "variant-outline"}`}
+-                data-testid={`button-phone-${variant}`}
+-              >
+-                <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
+-                  <Phone className="w-5 h-5 mr-2" />
+-                  {primaryCommunity.phoneDisplay}
+-                </a>
+-              </Button>
+-            )}
++            <Button
++              size="lg"
++              asChild
++              className={`min-h-[44px] w-full sm:w-auto ${variant === "primary" ? "bg-white text-primary hover:bg-white/90" : "variant-outline"}`}
++              data-testid={`button-phone-${variant}`}
++            >
++              <a href={primaryPhoneHref}>
++                <Phone className="w-5 h-5 mr-2" />
++                {primaryPhoneDisplay}
++              </a>
++            </Button>
+           </div>
+         </div>
+       </section>
+     );
+   };
+ 
+   const StickyMobileCTA = () => {
+     if (!showStickyMobileCTA) return null;
+ 
+     return (
+       <div 
+         className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white shadow-2xl border-t border-gray-200 pb-safe"
+         data-testid="sticky-mobile-cta"
+       >
+         <div className="grid grid-cols-2 gap-2 p-3">
+           <Button
+             size="lg"
+             onClick={() =>
+               openScheduleTour({
+                 communityId: primaryCommunity?.id,
+                 communityName: primaryCommunity?.name,
+                 title: `Schedule a Tour${primaryCommunity?.name ? ` at ${primaryCommunity.name}` : ""}`,
+               })
+             }
+             className={`min-h-[44px] w-full talkfurther-schedule-tour ${primaryCommunity?.slug ? `community-${primaryCommunity.slug}` : ''}`}
+             data-community-id={primaryCommunity?.id}
+             data-community-slug={primaryCommunity?.slug}
+             data-community-name={primaryCommunity?.name}
+             data-testid="button-sticky-schedule-tour"
+           >
+             <Calendar className="w-4 h-4 mr-2" />
+             Schedule Tour
+           </Button>
+-          {primaryCommunity?.phoneDisplay && (
+-            <Button
+-              size="lg"
+-              variant="outline"
+-              asChild
+-              className="min-h-[44px] w-full"
+-              data-testid="button-sticky-call"
+-            >
+-              <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
+-                <Phone className="w-4 h-4 mr-2" />
+-                Call Now
+-              </a>
+-            </Button>
+-          )}
++          <Button
++            size="lg"
++            variant="outline"
++            asChild
++            className="min-h-[44px] w-full"
++            data-testid="button-sticky-call"
++          >
++            <a href={primaryPhoneHref}>
++              <Phone className="w-4 h-4 mr-2" />
++              Call Now
++            </a>
++          </Button>
+         </div>
+       </div>
+     );
+   };
+ 
+   return (
+     <div className="min-h-screen bg-white" data-testid="dynamic-landing-page">
+       {/* 1. Hero Section with CTA Overlay */}
+       <div className="relative">
+         <PageHero
+           pagePath={pathname}
+           defaultTitle={replaceTokens(pageTitle, tokens)}
+           defaultSubtitle={pageSubtitle ? replaceTokens(pageSubtitle, tokens) : undefined}
+           defaultBackgroundImage={heroImageUrl || undefined}
+           logoUrl={communityLogoUrl || undefined}
+           logoAlt={`${primaryCommunity?.name} logo`}
+         />
+         
+         {/* CTA Overlay - Bottom of hero */}
+         <FadeIn direction="up" delay={0.3}>
+           <div className="absolute bottom-0 left-0 right-0 w-full z-30 py-6 md:py-8" data-testid="hero-cta-overlay">
+             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+               <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
+                 <Button
+                   size="lg"
+                   onClick={() =>
+                     openScheduleTour({
+                       communityId: primaryCommunity?.id,
+                       communityName: primaryCommunity?.name,
+                       title: `Schedule a Tour${primaryCommunity?.name ? ` at ${primaryCommunity.name}` : ""}`,
+                     })
+                   }
+                   className={`min-h-[56px] px-8 text-lg w-full md:w-auto shadow-lg hover:shadow-xl transition-shadow talkfurther-schedule-tour ${primaryCommunity?.slug ? `community-${primaryCommunity.slug}` : ''}`}
+                   data-community-id={primaryCommunity?.id}
+                   data-community-slug={primaryCommunity?.slug}
+                   data-community-name={primaryCommunity?.name}
+                   data-testid="button-hero-cta-schedule"
+                 >
+                   <Calendar className="w-5 h-5 mr-2" />
+                   {template.heroCtaText || "Schedule Your Free Tour"}
+                 </Button>
+-                {primaryCommunity?.phoneDisplay && (
+-                  <Button
+-                    size="lg"
+-                    variant="outline"
+-                    asChild
+-                    className="min-h-[56px] px-8 text-lg w-full md:w-auto border-2 border-white text-white hover:bg-white/20"
+-                    data-testid="button-hero-cta-phone"
+-                  >
+-                    <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
+-                      <Phone className="w-5 h-5 mr-2" />
+-                      {primaryCommunity.phoneDisplay}
+-                    </a>
+-                  </Button>
+-                )}
++                <Button
++                  size="lg"
++                  variant="outline"
++                  asChild
++                  className="min-h-[56px] px-8 text-lg w-full md:w-auto border-2 border-white text-white hover:bg-white/20"
++                  data-testid="button-hero-cta-phone"
++                >
++                  <a href={primaryPhoneHref}>
++                    <Phone className="w-5 h-5 mr-2" />
++                    {primaryPhoneDisplay}
++                  </a>
++                </Button>
+               </div>
+               <p className="text-center text-sm text-white/90 mt-4">
+                 <Clock className="w-4 h-4 inline mr-1" />
+                 Same-day tours available • No obligation • Free parking
+               </p>
+             </div>
+           </div>
+         </FadeIn>
+       </div>
+ 
+       {/* 1b. Map Section - Show on "near me" and "best" pages */}
+       {template.urlPattern && (template.urlPattern.includes('-near-me') || template.urlPattern.includes('/best-')) && filteredCommunities.length > 0 && (
+         <FadeIn direction="up" delay={0.2}>
+           <section className="w-full" data-testid="section-community-map" style={{ height: '500px' }}>
+             <CommunityMap 
+               communities={filteredCommunities}
+               selectedCommunityId={primaryCommunity?.id}
+             />
+           </section>
+         </FadeIn>
+       )}
+ 
+       {/* Sticky Navigation Bar */}
+       {(() => {
+         const navSections = [];
+@@ -1448,132 +1458,129 @@ export default function DynamicLandingPage() {
+               {targetCommunities.map((comm) => (
+                 <StaggerItem key={comm.id}>
+                   <CommunityCardLP community={comm} />
+                 </StaggerItem>
+               ))}
+             </StaggerContainer>
+           </div>
+         </section>
+       )}
+ 
+       {/* 12. Location & Map - Find and visit us */}
+       {primaryCommunity && (primaryCommunity.street || primaryCommunity.lat) && (
+         <section id="location" className="py-12 md:py-16" data-testid="section-location">
+           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+             <div className="text-center mb-8 md:mb-12">
+               <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
+                 <MapPin className="w-4 h-4 md:w-5 md:h-5" />
+                 <span className="text-sm md:text-base font-semibold">Visit Us</span>
+               </div>
+               <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 md:mb-4">
+                   Find {primaryCommunity.name}
+                 </h2>
+               </ScaleHeader>
+               <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+-                Conveniently located in {primaryCommunity.city}, {primaryCommunity.state}
++                Conveniently located in {primaryCityStateZip}
+               </p>
+             </div>
+ 
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+               {/* Map */}
+               <div className="order-2 lg:order-1">
+                 <Card className="overflow-hidden h-full min-h-[400px]">
+                   {primaryCommunity.lat && primaryCommunity.lng ? (
+                     <iframe
+                       src={`https://www.google.com/maps?q=${primaryCommunity.lat},${primaryCommunity.lng}&hl=es;z=14&output=embed`}
+                       width="100%"
+                       height="100%"
+                       style={{ border: 0, minHeight: "400px" }}
+                       allowFullScreen
+                       loading="lazy"
+                       referrerPolicy="no-referrer-when-downgrade"
+                       title={`Map of ${primaryCommunity.name}`}
+                       data-testid="location-map"
+                     />
+                   ) : (
+                     <div className="w-full h-full min-h-[400px] bg-gray-100 flex items-center justify-center">
+                       <MapPin className="w-12 h-12 text-gray-400" />
+                     </div>
+                   )}
+                 </Card>
+               </div>
+ 
+               {/* Contact Information */}
+               <div className="order-1 lg:order-2 flex flex-col justify-center">
+                 <Card className="p-6 md:p-8">
+                   <CardContent className="p-0 space-y-6">
+                     {/* Address */}
+-                    {primaryCommunity.street && (
++                    {primaryAddressLines.length > 0 && (
+                       <div className="flex items-start gap-4">
+                         <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                           <MapPin className="w-6 h-6 text-primary" />
+                         </div>
+                         <div className="flex-1">
+                           <h3 className="font-semibold text-lg mb-2">Address</h3>
+                           <p className="text-muted-foreground">
+-                            {primaryCommunity.street}
+-                            <br />
+-                            {primaryCommunity.city}, {primaryCommunity.state} {primaryCommunity.zip || primaryCommunity.zipCode}
++                            {primaryAddressLines.map((line, index) => (
++                              <span key={`landing-address-${index}`}>
++                                {line}
++                                {index < primaryAddressLines.length - 1 && <><br /></>}
++                              </span>
++                            ))}
+                           </p>
+                         </div>
+                       </div>
+                     )}
+ 
+                     {/* Phone */}
+-                    {primaryCommunity.phoneDisplay && (
+-                      <div className="flex items-start gap-4">
+-                        <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+-                          <Phone className="w-6 h-6 text-primary" />
+-                        </div>
+-                        <div className="flex-1">
+-                          <h3 className="font-semibold text-lg mb-2">Phone</h3>
+-                          <a
+-                            href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}
+-                            className="text-muted-foreground hover:text-primary transition-colors text-lg"
+-                            data-testid="phone-link"
+-                          >
+-                            {primaryCommunity.phoneDisplay}
+-                          </a>
+-                        </div>
++                    <div className="flex items-start gap-4">
++                      <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
++                        <Phone className="w-6 h-6 text-primary" />
+                       </div>
+-                    )}
++                      <div className="flex-1">
++                        <h3 className="font-semibold text-lg mb-2">Phone</h3>
++                        <a
++                          href={primaryPhoneHref}
++                          className="text-muted-foreground hover:text-primary transition-colors text-lg"
++                          data-testid="phone-link"
++                        >
++                          {primaryPhoneDisplay}
++                        </a>
++                      </div>
++                    </div>
+ 
+                     {/* Get Directions Button */}
+-                    {primaryCommunity.lat && primaryCommunity.lng && (
++                    {primaryDirectionsUrl && (
+                       <div className="pt-4">
+                         <Button
+                           asChild
+                           size="lg"
+                           className="w-full min-h-[44px]"
+                           data-testid="button-get-directions"
+                         >
+-                          <a
+-                            href={`https://www.google.com/maps/dir/?api=1&destination=${primaryCommunity.lat},${primaryCommunity.lng}`}
+-                            target="_blank"
+-                            rel="noopener noreferrer"
+-                          >
++                          <a href={primaryDirectionsUrl} target="_blank" rel="noopener noreferrer">
+                             <Navigation className="w-5 h-5 mr-2" />
+                             Get Directions
+                           </a>
+                         </Button>
+                       </div>
+                     )}
+ 
+                     {/* Schedule Tour CTA */}
+                     <div className="pt-2">
+                       <Button
+                         variant="outline"
+                         size="lg"
+                         className={`w-full min-h-[44px] talkfurther-schedule-tour ${primaryCommunity?.slug ? `community-${primaryCommunity.slug}` : ''}`}
+                         onClick={() =>
+                           openScheduleTour({
+                             communityId: primaryCommunity?.id,
+                             communityName: primaryCommunity?.name,
+                             title: `Schedule a Tour at ${primaryCommunity?.name}`,
+                           })
+                         }
+                         data-community-id={primaryCommunity?.id}
+                         data-community-slug={primaryCommunity?.slug}
+                         data-community-name={primaryCommunity?.name}
+                         data-testid="button-schedule-tour-location"
+                       >
+@@ -1642,63 +1649,61 @@ export default function DynamicLandingPage() {
+               <p className="text-lg md:text-xl text-white/90 mb-6 md:mb-8">
+                 Schedule a tour today and discover why families choose{" "}
+                 {primaryCommunity?.name || "our community"} for their loved ones.
+               </p>
+               <div className="flex flex-col sm:flex-row gap-4">
+                 <Button
+                   size="lg"
+                   onClick={() =>
+                     openScheduleTour({
+                       communityId: primaryCommunity?.id,
+                       communityName: primaryCommunity?.name,
+                       title: `Schedule a Tour${
+                         primaryCommunity?.name ? ` at ${primaryCommunity.name}` : ""
+                       }`,
+                     })
+                   }
+                   className={`bg-white text-primary hover:bg-white/90 min-h-[44px] w-full sm:w-auto talkfurther-schedule-tour ${primaryCommunity?.slug ? `community-${primaryCommunity.slug}` : ''}`}
+                   data-community-id={primaryCommunity?.id}
+                   data-community-slug={primaryCommunity?.slug}
+                   data-community-name={primaryCommunity?.name}
+                   data-testid="button-schedule-tour-cta"
+                 >
+                   <Calendar className="w-5 h-5 mr-2" />
+                   Schedule a Tour
+                 </Button>
+-                {primaryCommunity?.phoneDisplay && (
+-                  <Button
+-                    size="lg"
+-                    asChild
+-                    className="bg-white text-primary hover:bg-white/90 min-h-[44px] w-full sm:w-auto"
+-                    data-testid="button-call-cta"
+-                  >
+-                    <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
+-                      <Phone className="w-5 h-5 mr-2" />
+-                      {primaryCommunity.phoneDisplay}
+-                    </a>
+-                  </Button>
+-                )}
++                <Button
++                  size="lg"
++                  asChild
++                  className="bg-white text-primary hover:bg-white/90 min-h-[44px] w-full sm:w-auto"
++                  data-testid="button-call-cta"
++                >
++                  <a href={primaryPhoneHref}>
++                    <Phone className="w-5 h-5 mr-2" />
++                    {primaryPhoneDisplay}
++                  </a>
++                </Button>
+               </div>
+             </div>
+ 
+             <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+               <CardContent className="p-6 md:p-8">
+                 <h3 className="text-xl md:text-2xl font-bold text-white mb-4 md:mb-6">Request Information</h3>
+                 <LeadCaptureForm
+                   communityId={primaryCommunity?.id}
+                   variant="sidebar"
+                 />
+               </CardContent>
+             </Card>
+           </div>
+         </div>
+       </section>
+ 
+       {/* Modals */}
+       {selectedGallery && (
+         <GalleryModal
+           isOpen={!!selectedGallery}
+           onClose={() => setSelectedGallery(null)}
+           gallery={{
+             ...selectedGallery,
+             description: selectedGallery.description || undefined,
+             images: selectedGallery.images || undefined,
+diff --git a/client/src/pages/ForProfessionals.tsx b/client/src/pages/ForProfessionals.tsx
+index 4c9b2abedf171fcc0099577d0a011731f2115ec5..dcfbeb9fc27d41153d5a03cf46c4520712ebf8e9 100644
+--- a/client/src/pages/ForProfessionals.tsx
++++ b/client/src/pages/ForProfessionals.tsx
+@@ -1,50 +1,51 @@
+ import { useEffect, useState } from "react";
+ import { useQuery } from "@tanstack/react-query";
+ import { useForm } from "react-hook-form";
+ import { zodResolver } from "@hookform/resolvers/zod";
+ import { useMutation, useQueryClient } from "@tanstack/react-query";
+ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+ import { Button } from "@/components/ui/button";
+ import { Badge } from "@/components/ui/badge";
+ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+ import { Input } from "@/components/ui/input";
+ import { Textarea } from "@/components/ui/textarea";
+ import { Skeleton } from "@/components/ui/skeleton";
+ import { 
+   Form, 
+   FormControl, 
+   FormField, 
+   FormItem, 
+   FormLabel, 
+   FormMessage,
+   FormDescription 
+ } from "@/components/ui/form";
+ import CommunityMap from "@/components/CommunityMap";
+ import { PageHero } from "@/components/PageHero";
+ import { useToast } from "@/hooks/use-toast";
+ import { apiRequest } from "@/lib/queryClient";
++import { getCityStateZip, getPrimaryPhoneDisplay, getPrimaryPhoneHref } from "@/lib/communityContact";
+ import { insertTourRequestSchema, type InsertTourRequest, type Community, type Testimonial } from "@shared/schema";
+ import {
+   Phone,
+   Mail,
+   MapPin,
+   CheckCircle,
+   FileText,
+   Users,
+   Clock,
+   Shield,
+   ArrowRight,
+   Stethoscope,
+   ClipboardList,
+   Heart,
+   Building2,
+   AlertCircle,
+   Briefcase,
+   Star,
+   Quote,
+   Loader2,
+ } from "lucide-react";
+ 
+ type FormData = InsertTourRequest & {
+   referrerFacility?: string;
+   patientName?: string;
+@@ -352,75 +353,73 @@ ${data.message}
+           ) : (
+             <Card className="overflow-hidden" data-testid="card-availability-table">
+               <Table>
+                 <TableHeader>
+                   <TableRow>
+                     <TableHead className="font-bold">Community</TableHead>
+                     <TableHead className="font-bold">Location</TableHead>
+                     <TableHead className="font-bold">Care Types</TableHead>
+                     <TableHead className="font-bold">Contact</TableHead>
+                     <TableHead className="font-bold text-right">Action</TableHead>
+                   </TableRow>
+                 </TableHeader>
+                 <TableBody>
+                   {communities.map((community) => (
+                     <TableRow key={community.id} data-testid={`row-community-${community.slug}`}>
+                       <TableCell className="font-semibold">
+                         {community.name}
+                         {community.featured && (
+                           <Badge className="ml-2" variant="secondary">Featured</Badge>
+                         )}
+                       </TableCell>
+                       <TableCell>
+                         <div className="flex items-start gap-2">
+                           <MapPin className="w-4 h-4 mt-1 text-muted-foreground flex-shrink-0" />
+                           <div className="text-sm">
+-                            {community.city}, {community.state}
++                            {getCityStateZip(community)}
+                           </div>
+                         </div>
+                       </TableCell>
+                       <TableCell>
+                         <div className="flex flex-wrap gap-1">
+                           {(community.careTypes || []).slice(0, 2).map((careType, idx) => (
+                             <Badge key={idx} variant="outline" className="text-xs">
+                               {careType.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
+                             </Badge>
+                           ))}
+                         </div>
+                       </TableCell>
+                       <TableCell>
+                         <div className="space-y-1">
+-                          {community.phoneDisplay && (
+-                            <a
+-                              href={`tel:${community.phoneDial || community.phoneDisplay}`}
+-                              className="flex items-center gap-1 text-sm text-primary hover:underline"
+-                              data-testid={`link-phone-${community.slug}`}
+-                            >
+-                              <Phone className="w-3 h-3" />
+-                              {community.phoneDisplay}
+-                            </a>
+-                          )}
++                          <a
++                            href={getPrimaryPhoneHref(community)}
++                            className="flex items-center gap-1 text-sm text-primary hover:underline"
++                            data-testid={`link-phone-${community.slug}`}
++                          >
++                            <Phone className="w-3 h-3" />
++                            {getPrimaryPhoneDisplay(community)}
++                          </a>
+                         </div>
+                       </TableCell>
+                       <TableCell className="text-right">
+                         <Button
+                           size="sm"
+                           variant="outline"
+                           asChild
+                           data-testid={`button-view-details-${community.slug}`}
+                         >
+                           <a href={`/communities/${community.slug}`}>
+                             View Details
+                             <ArrowRight className="w-4 h-4 ml-2" />
+                           </a>
+                         </Button>
+                       </TableCell>
+                     </TableRow>
+                   ))}
+                 </TableBody>
+               </Table>
+             </Card>
+           )}
+         </div>
+       </section>
+ 
+       {/* Clinical Acceptance Criteria */}
+diff --git a/client/src/pages/PricingAvailability.tsx b/client/src/pages/PricingAvailability.tsx
+index be7b838229a53e2edf9d1c743c6b19e6d5233ab3..11cd1522d80acf2ef5e44c7bee1bf4f73608da36 100644
+--- a/client/src/pages/PricingAvailability.tsx
++++ b/client/src/pages/PricingAvailability.tsx
+@@ -1,38 +1,39 @@
+ import { useEffect } from "react";
+ import { useQuery } from "@tanstack/react-query";
+ import { PageHero } from "@/components/PageHero";
+ import PricingRangeEstimator from "@/components/landing-sections/PricingRangeEstimator";
+ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+ import { Button } from "@/components/ui/button";
+ import { Badge } from "@/components/ui/badge";
+ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+ import { Link } from "wouter";
+ import { MapPin, Phone, CheckCircle, Clock, Home } from "lucide-react";
+ import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+ import { useScheduleTour } from "@/hooks/useScheduleTour";
+ import type { Community, FloorPlan, PageContentSection } from "@shared/schema";
++import { getCityStateZip, getPrimaryPhoneDisplay, getPrimaryPhoneHref } from "@/lib/communityContact";
+ 
+ export default function PricingAvailability() {
+   const { openScheduleTour } = useScheduleTour();
+ 
+   useEffect(() => {
+     document.title = "Transparent Pricing & Current Availability | Stage Senior";
+     
+     const metaDescription = document.querySelector('meta[name="description"]');
+     if (metaDescription) {
+       metaDescription.setAttribute('content', 'View current pricing and availability for Stage Senior communities. Get transparent pricing ranges by care level and see real-time apartment availability.');
+     } else {
+       const meta = document.createElement('meta');
+       meta.name = 'description';
+       meta.content = 'View current pricing and availability for Stage Senior communities. Get transparent pricing ranges by care level and see real-time apartment availability.';
+       document.head.appendChild(meta);
+     }
+   }, []);
+ 
+   const { data: communities = [], isLoading: communitiesLoading } = useQuery<Community[]>({
+     queryKey: ["/api/communities", { active: true }],
+     queryFn: async () => {
+       const response = await fetch("/api/communities?active=true");
+       if (!response.ok) throw new Error("Failed to fetch communities");
+       return response.json();
+     },
+@@ -254,60 +255,59 @@ function CommunityPricingCard({ community, floorPlans }: CommunityPricingCardPro
+     <Card className="overflow-hidden hover:shadow-lg transition-shadow" data-testid={`pricing-card-${community.slug}`}>
+       <div className="aspect-video overflow-hidden">
+         {imageUrl ? (
+           <img
+             src={imageUrl}
+             alt={community.name}
+             className="w-full h-full object-cover"
+           />
+         ) : (
+           <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+             <Home className="w-12 h-12 text-primary/30" />
+           </div>
+         )}
+       </div>
+       <CardHeader>
+         <CardTitle className="flex items-start justify-between">
+           <span>{community.name}</span>
+           {availableCount > 0 && (
+             <Badge variant="default" className="ml-2">
+               {availableCount} Available
+             </Badge>
+           )}
+         </CardTitle>
+         <div className="flex items-center gap-1 text-sm text-muted-foreground">
+           <MapPin className="w-3 h-3" />
+-          {community.city}, {community.state}
++          {getCityStateZip(community)}
+         </div>
+       </CardHeader>
+       <CardContent>
+         <div className="mb-4">
+           {lowestPrice || community.startingPrice ? (
+             <p className="text-2xl font-bold text-primary">
+               Starting at ${(lowestPrice || community.startingPrice)!.toLocaleString()}/mo
+             </p>
+           ) : community.startingRateDisplay ? (
+             <p className="text-2xl font-bold text-primary">
+               {community.startingRateDisplay}
+             </p>
+           ) : (
+             <p className="text-lg text-muted-foreground">Contact for pricing</p>
+           )}
+         </div>
+         <div className="flex gap-2">
+           <Button variant="outline" className="flex-1" asChild data-testid={`button-details-${community.slug}`}>
+             <Link href={`/communities/${community.slug}`}>
+               View Details
+             </Link>
+           </Button>
+-          {community.phoneDisplay && (
+-            <Button variant="outline" size="icon" asChild data-testid={`button-phone-${community.slug}`}>
+-              <a href={`tel:${community.phoneDial || community.phoneDisplay}`}>
+-                <Phone className="w-4 h-4" />
+-              </a>
+-            </Button>
+-          )}
++          <Button variant="outline" size="icon" asChild data-testid={`button-phone-${community.slug}`}>
++            <a href={getPrimaryPhoneHref(community)}>
++              <Phone className="w-4 h-4" />
++              <span className="sr-only">Call {getPrimaryPhoneDisplay(community)}</span>
++            </a>
++          </Button>
+         </div>
+       </CardContent>
+     </Card>
+   );
+ }
+diff --git a/client/src/pages/VirtualTours.tsx b/client/src/pages/VirtualTours.tsx
+index b4abc3af896c8415bfa1231611e5f718cbd46491..38d395b01ef963f1a2f7ad890b7775fa1de3789d 100644
+--- a/client/src/pages/VirtualTours.tsx
++++ b/client/src/pages/VirtualTours.tsx
+@@ -1,37 +1,38 @@
+ import { useEffect, useState } from "react";
+ import { useQuery } from "@tanstack/react-query";
+ import { PageHero } from "@/components/PageHero";
+ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+ import { Button } from "@/components/ui/button";
+ import { Badge } from "@/components/ui/badge";
+ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+ import FloorPlanModal from "@/components/FloorPlanModal";
+ import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+ import { Link } from "wouter";
+ import { BedDouble, Bath, Square, MapPin, ArrowRight, Home } from "lucide-react";
+ import type { Community, FloorPlan } from "@shared/schema";
++import { getCityStateZip, getPrimaryPhoneDisplay, getPrimaryPhoneHref } from "@/lib/communityContact";
+ 
+ export default function VirtualTours() {
+   const [selectedFloorPlan, setSelectedFloorPlan] = useState<FloorPlan | null>(null);
+   const [selectedCommunity, setSelectedCommunity] = useState<Community | null>(null);
+ 
+   useEffect(() => {
+     document.title = "Virtual Tours & Floor Plans | Explore Stage Senior Communities";
+     
+     const metaDescription = document.querySelector('meta[name="description"]');
+     if (metaDescription) {
+       metaDescription.setAttribute('content', 'Explore our senior living communities virtually. View detailed floor plans, photos, and layouts for independent living, assisted living, and memory care apartments.');
+     } else {
+       const meta = document.createElement('meta');
+       meta.name = 'description';
+       meta.content = 'Explore our senior living communities virtually. View detailed floor plans, photos, and layouts for independent living, assisted living, and memory care apartments.';
+       document.head.appendChild(meta);
+     }
+   }, []);
+ 
+   const { data: communities = [], isLoading: communitiesLoading } = useQuery<Community[]>({
+     queryKey: ["/api/communities", { active: true }],
+     queryFn: async () => {
+       const response = await fetch("/api/communities?active=true");
+       if (!response.ok) throw new Error("Failed to fetch communities");
+       return response.json();
+@@ -120,69 +121,67 @@ interface CommunitySectionProps {
+ 
+ function CommunitySection({ community, floorPlans, onFloorPlanClick }: CommunitySectionProps) {
+   const heroImageUrl = useResolveImageUrl(community.imageId || community.heroImageUrl);
+ 
+   return (
+     <div className="space-y-8">
+       <Card className="overflow-hidden" data-testid={`community-card-${community.slug}`}>
+         <div className="grid md:grid-cols-2 gap-6">
+           <div className="aspect-video md:aspect-auto">
+             {heroImageUrl ? (
+               <img
+                 src={heroImageUrl}
+                 alt={community.name}
+                 className="w-full h-full object-cover"
+               />
+             ) : (
+               <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                 <Home className="w-16 h-16 text-primary/30" />
+               </div>
+             )}
+           </div>
+           <div className="p-6 flex flex-col justify-center">
+             <h2 className="text-3xl font-bold text-foreground mb-4">{community.name}</h2>
+             <div className="flex items-center gap-2 text-muted-foreground mb-4">
+               <MapPin className="w-4 h-4" />
+-              <span>{community.city}, {community.state}</span>
++              <span>{getCityStateZip(community)}</span>
+             </div>
+             <p className="text-muted-foreground mb-6 leading-relaxed">
+               {community.description || community.overview || "Explore our beautiful community and find the perfect living space for your needs."}
+             </p>
+             <div className="flex gap-4">
+               <Button asChild data-testid={`button-view-community-${community.slug}`}>
+                 <Link href={`/communities/${community.slug}`}>
+                   View Full Community
+                   <ArrowRight className="w-4 h-4 ml-2" />
+                 </Link>
+               </Button>
+-              {community.phoneDisplay && (
+-                <Button variant="outline" asChild data-testid={`button-call-${community.slug}`}>
+-                  <a href={`tel:${community.phoneDial || community.phoneDisplay}`}>
+-                    Call {community.phoneDisplay}
+-                  </a>
+-                </Button>
+-              )}
++              <Button variant="outline" asChild data-testid={`button-call-${community.slug}`}>
++                <a href={getPrimaryPhoneHref(community)}>
++                  Call {getPrimaryPhoneDisplay(community)}
++                </a>
++              </Button>
+             </div>
+           </div>
+         </div>
+       </Card>
+ 
+       {floorPlans.length > 0 ? (
+         <>
+           <h3 className="text-2xl font-bold text-foreground mb-6">Available Floor Plans</h3>
+           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-testid={`floor-plans-grid-${community.slug}`}>
+             {floorPlans.map((floorPlan) => (
+               <FloorPlanCard
+                 key={floorPlan.id}
+                 floorPlan={floorPlan}
+                 onClick={() => onFloorPlanClick(floorPlan, community)}
+               />
+             ))}
+           </div>
+         </>
+       ) : (
+         <div className="text-center py-12 bg-muted/20 rounded-lg">
+           <p className="text-lg text-muted-foreground">
+             Floor plans coming soon. Contact us for more information.
+           </p>
+         </div>
+       )}
+diff --git a/client/src/pages/community-detail.tsx b/client/src/pages/community-detail.tsx
+index b9ef2f4245dc926cd2e9b7e0a849a93e9aa15add..30792deb9786bf5abaffb49d52b10f1653aade97 100644
+--- a/client/src/pages/community-detail.tsx
++++ b/client/src/pages/community-detail.tsx
+@@ -36,50 +36,58 @@ import {
+   MessageSquare,
+   Wifi,
+   Car,
+   Coffee,
+   Heart,
+   Activity,
+   BookOpen,
+   Clock,
+   DollarSign,
+   CheckCircle,
+   ChevronRight,
+   Bath,
+   Bed,
+   Square,
+   Download,
+   ArrowRight,
+   Trees,
+   User,
+   Navigation,
+   Video,
+   Play
+ } from "lucide-react";
+ import { Link } from "wouter";
+ import { cn } from "@/lib/utils";
+ import { getCommunityFurtherClass } from "@/lib/furtherWidgetUtils";
++import {
++  getAddressLines,
++  getCityStateZip,
++  getCommunityEmail,
++  getDirectionsQuery,
++  getPrimaryPhoneDisplay,
++  getPrimaryPhoneHref,
++} from "@/lib/communityContact";
+ import ScrollToTop from "@/components/ScrollToTop";
+ import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+ import { useScheduleTour } from "@/hooks/useScheduleTour";
+ import stageSeniorLogo from "@/assets/stage-logo.webp";
+ import defaultBrochureImage from "@/assets/community-brochure-default.png";
+ import NewsletterCard from "@/components/NewsletterCard";
+ import type { 
+   Community, 
+   Event, 
+   Faq, 
+   Gallery, 
+   FloorPlan, 
+   Testimonial, 
+   GalleryImageWithDetails, 
+   Post, 
+   BlogPost,
+   CommunityHighlight,
+   TeamMember 
+ } from "@shared/schema";
+ import {
+   Carousel,
+   CarouselContent,
+   CarouselItem,
+   CarouselNext,
+   CarouselPrevious,
+@@ -754,50 +762,56 @@ const BlogPostCard = ({ post }: { post: BlogPost }) => {
+             {post.summary || post.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'}
+           </p>
+           <div className="flex items-center justify-between">
+             <div className="flex gap-1">
+               {post.tags && post.tags.slice(0, 2).map((tag, idx) => (
+                 <Badge key={idx} variant="secondary" className="text-xs bg-gray-100 text-gray-600">
+                   {tag}
+                 </Badge>
+               ))}
+             </div>
+             <div className="flex items-center text-primary text-sm font-medium group/btn">
+               <span className="mr-1">Read More</span>
+               <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+             </div>
+           </div>
+         </CardContent>
+       </Card>
+     </Link>
+   );
+ };
+ 
+ // Local subcomponent: Action Panel
+ const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: any; teamMembers: TeamMember[]; handleNavClick: (sectionId: string) => void }) => {
+   // Get the primary contact (first team member)
+   const primaryContact = teamMembers[0];
++
++  const contactDetails = community || {};
++  const addressLines = getAddressLines(contactDetails);
++  const primaryPhoneDisplay = getPrimaryPhoneDisplay(contactDetails);
++  const primaryPhoneHref = getPrimaryPhoneHref(contactDetails);
++  const communityEmail = getCommunityEmail(contactDetails);
+   
+   // Resolve avatar image URL - pass ID directly without /api/images prefix
+   const avatarImageUrl = useResolveImageUrl(primaryContact?.avatarImageId || null);
+ 
+   // Resolve image URLs
+   const resolvedBrochureUrl = useResolveImageUrl(community?.brochureImageId);
+   const resolvedContactUrl = useResolveImageUrl(community?.contactImageId);
+   const resolvedPricingUrl = useResolveImageUrl(community?.pricingImageId);
+ 
+   // Determine grid columns based on whether we have a team member
+   const gridCols = primaryContact ? "md:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-3";
+ 
+   return (
+     <section className="bg-gradient-to-br from-gray-50 to-white py-16">
+       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+         <div className={`grid grid-cols-1 ${gridCols} gap-6`}>
+           {/* Pricing Card */}
+           <Card className="shadow-lg border-2 border-primary/20 overflow-hidden">
+             <div className="h-48 overflow-hidden">
+               <img
+                 src={resolvedPricingUrl || "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2000"}
+                 alt="Comfortable senior living apartment"
+                 className="w-full h-full object-cover"
+                 loading="lazy"
+               />
+@@ -893,62 +907,66 @@ const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: an
+                 </Button>
+               </CardContent>
+             </Card>
+           )}
+ 
+           {/* Contact Information */}
+           <Card className="shadow-lg overflow-hidden">
+             <div className="h-48 overflow-hidden">
+               <img
+                 src={resolvedContactUrl || "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=2000"}
+                 alt="Friendly staff ready to help"
+                 className="w-full h-full object-cover"
+                 loading="lazy"
+               />
+             </div>
+             <CardHeader>
+               <CardTitle className="text-xl">Contact Us</CardTitle>
+               <CardDescription>Get in touch with our team</CardDescription>
+             </CardHeader>
+             <CardContent className="space-y-4">
+               <div className="space-y-3">
+                 <div className="flex items-start gap-3">
+                   <Phone className="w-5 h-5 text-primary mt-0.5" />
+                   <div>
+                     <p className="font-medium">Call Us</p>
+-                    <a href={`tel:${community.phoneDial || community.phone || '+1-970-444-4689'}`} className="text-primary hover:underline">
+-                      {community.phoneDisplay || community.phone || "(970) 444-4689"}
++                    <a href={primaryPhoneHref} className="text-primary hover:underline">
++                      {primaryPhoneDisplay}
+                     </a>
+                   </div>
+                 </div>
+                 <div className="flex items-start gap-3">
+                   <MapPin className="w-5 h-5 text-primary mt-0.5" />
+                   <div>
+                     <p className="font-medium">Visit Us</p>
+                     <p className="text-sm text-muted-foreground">
+-                      {community.address}<br />
+-                      {community.city}, {community.state} {community.zipCode}
++                      {addressLines.map((line, index) => (
++                        <span key={`${line}-${index}`}>
++                          {line}
++                          {index < addressLines.length - 1 && <br />}
++                        </span>
++                      ))}
+                     </p>
+                   </div>
+                 </div>
+                 <div className="flex items-start gap-3">
+                   <Clock className="w-5 h-5 text-primary mt-0.5" />
+                   <div>
+                     <p className="font-medium">Office Hours</p>
+                     <p className="text-sm text-muted-foreground">
+                       Mon-Fri: 9:00 AM - 6:00 PM<br />
+                       Sat-Sun: 10:00 AM - 5:00 PM
+                     </p>
+                   </div>
+                 </div>
+               </div>
+             </CardContent>
+           </Card>
+ 
+           {/* Download Brochure */}
+           <Card className="shadow-lg border-primary/20 overflow-hidden">
+             <div className="h-48 overflow-hidden">
+               <img
+                 src={resolvedBrochureUrl || defaultBrochureImage}
+                 alt="Community brochure preview"
+                 className="w-full h-full object-cover"
+                 loading="lazy"
+@@ -987,50 +1005,53 @@ const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: an
+                     View PDF Brochure
+                   </a>
+                 </Button>
+               ) : (
+                 <Button 
+                   className="w-full" 
+                   data-testid="button-download-brochure"
+                   disabled
+                 >
+                   <Download className="w-4 h-4 mr-2" />
+                   Brochure Not Available
+                 </Button>
+               )}
+             </CardContent>
+           </Card>
+         </div>
+       </div>
+     </section>
+   );
+ };
+ 
+ // Local subcomponent: Enhanced Bottom CTA
+ const EnhancedBottomCTA = ({ community }: { community: any }) => {
+   const { openScheduleTour } = useScheduleTour();
+   const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
++  const contactDetails = community || {};
++  const primaryPhoneDisplay = getPrimaryPhoneDisplay(contactDetails);
++  const primaryPhoneHref = getPrimaryPhoneHref(contactDetails);
+   
+   // Check if we're resolving an image ID (UUID pattern)
+   const isHeroImageId = community?.heroImageUrl && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(community.heroImageUrl);
+   
+   // Only use resolved URL when ready (prevents flash), otherwise use fallback or show gradient
+   const finalHeroImageUrl = (isHeroImageId && heroImageUrl === null) 
+     ? undefined // Still loading - show gradient instead
+     : (heroImageUrl || 'https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?q=80&w=2000');
+   
+   return (
+     <section className="relative py-24 overflow-hidden">
+       {/* Background Image with Overlay */}
+       <div className="absolute inset-0">
+         {finalHeroImageUrl ? (
+           <>
+             <img
+               src={finalHeroImageUrl}
+               alt="Community background"
+               className="w-full h-full object-cover"
+             />
+             <div className="absolute inset-0 bg-gradient-to-r from-blue-900/60 via-blue-800/60 to-blue-600/60" />
+           </>
+         ) : (
+           <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600" />
+         )}
+@@ -1050,60 +1071,60 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
+         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+           Ready to Experience {community.name}?
+         </h2>
+         <p className="text-lg md:text-xl text-white/90 mb-12 max-w-3xl mx-auto">
+           Join our community of residents who are living their best life. Schedule a personalized tour today.
+         </p>
+ 
+         <div className="flex flex-col sm:flex-row gap-4 justify-center">
+           <Button 
+             size="lg" 
+             className={cn("text-lg px-8 py-6 shadow-2xl bg-white text-primary hover:bg-gray-100 talkfurther-schedule-tour", getCommunityFurtherClass(community.slug || ''), community.slug ? `community-${community.slug}` : '')}
+             onClick={() => openScheduleTour({
+               communityId: community.id,
+               communityName: community.name,
+               title: `Schedule a Tour at ${community.name}`,
+               description: `Visit ${community.name} in ${community.city} to experience our exceptional community and amenities firsthand.`
+             })}
+             data-community-id={community.id}
+             data-community-slug={community.slug}
+             data-community-name={community.name}
+             data-testid="button-schedule-tour-hero"
+           >
+             <Calendar className="w-5 h-5 mr-2" />
+             Schedule Your Tour Today
+           </Button>
+-          <Button 
+-            size="lg" 
++          <Button
++            size="lg"
+             variant="outline"
+             className="border-white text-white bg-transparent hover:bg-white hover:text-gray-900 px-8 py-6 text-lg"
+             asChild
+             data-testid="button-call-hero"
+           >
+-            <a href={`tel:${community.phoneDial || community.phone || '+1-970-444-4689'}`}>
++            <a href={primaryPhoneHref}>
+               <Phone className="w-5 h-5 mr-2" />
+-              Call {community.phoneDisplay || community.phone || "(970) 444-4689"}
++              Call {primaryPhoneDisplay}
+             </a>
+           </Button>
+         </div>
+       </div>
+     </section>
+   );
+ };
+ 
+ // Helper function to extract YouTube video ID from various URL formats
+ const extractYouTubeVideoId = (url: string): string | null => {
+   if (!url) return null;
+   
+   // Handle different YouTube URL formats
+   const patterns = [
+     /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+     /^([a-zA-Z0-9_-]{11})$/ // Direct video ID
+   ];
+   
+   for (const pattern of patterns) {
+     const match = url.match(pattern);
+     if (match && match[1]) {
+       return match[1];
+     }
+   }
+   
+@@ -1164,50 +1185,59 @@ export default function CommunityDetail() {
+     queryKey: [`/api/communities/${slug}/full`],
+     enabled: !!slug,
+     staleTime: 5 * 60 * 1000, // 5 minutes
+   });
+ 
+   // Extract data from composite response
+   const community = fullData?.community;
+   const events = fullData?.events || [];
+   const faqs = fullData?.faqs || [];
+   const rawGalleries = fullData?.galleries || [];
+   const floorPlans = fullData?.floorPlans || [];
+   const testimonials = fullData?.testimonials || [];
+   const galleryImages = fullData?.galleryImages || [];
+   const posts = fullData?.posts || [];
+   const blogPosts = fullData?.blogPosts || [];
+   const highlights = fullData?.highlights || [];
+ 
+   // Merge gallery images into galleries
+   const galleries = useMemo(() => {
+     return rawGalleries.map(gallery => ({
+       ...gallery,
+       images: galleryImages.filter(img => img.galleryId === gallery.id)
+     }));
+   }, [rawGalleries, galleryImages]);
+ 
++  const contactDetails = community || {};
++  const cityStateZip = getCityStateZip(contactDetails);
++  const addressLines = getAddressLines(contactDetails);
++  const directionsQueryRaw = getDirectionsQuery(contactDetails);
++  const directionsQuery = directionsQueryRaw ? encodeURIComponent(directionsQueryRaw) : "";
++  const primaryPhoneDisplay = getPrimaryPhoneDisplay(contactDetails);
++  const primaryPhoneHref = getPrimaryPhoneHref(contactDetails);
++  const communityEmail = getCommunityEmail(contactDetails);
++
+   // Resolve hero image URL (handle both image ID and full URL)
+   const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
+ 
+   // Resolve experience image URL from experienceImageId field
+   const experienceImageUrl = useResolveImageUrl(community?.experienceImageId);
+ 
+   // Resolve private dining image URL from privateDiningImageId field
+   const privateDiningImageUrl = useResolveImageUrl(community?.privateDiningImageId);
+ 
+   // Computed values based on query data
+   const galleryCategories = Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean)));
+ 
+   const hasAmenities = Boolean(
+     (community as any)?.amenitiesData?.length || community?.amenities?.length
+   );
+   const hasFloorPlans = floorPlans.length > 0;
+   const hasGallery = galleries.length > 0 && galleries.some(g => g.images && g.images.length > 0);
+   const hasEvents = events.length > 0;
+   const hasTestimonials = testimonials.length > 0;
+   const hasPosts = posts.length > 0;
+   const hasFaqs = faqs.length > 0;
+ 
+   // Navigation sections memoization
+   const navSections = useMemo(() => {
+     const sections: { id: string; label: string }[] = [
+@@ -1464,66 +1494,64 @@ export default function CommunityDetail() {
+           <div className="absolute top-6 right-6 md:top-10 md:right-10 z-20">
+             <div className="bg-white rounded-2xl shadow-lg px-4 py-3 md:px-6 md:py-4 border border-gray-300">
+               <img
+                 src={heroLogoSrc}
+                 alt={heroLogoAlt}
+                 className="h-12 md:h-16 w-auto object-contain"
+                 data-testid="community-hero-logo"
+               />
+             </div>
+           </div>
+         )}
+ 
+         {/* Hero Content */}
+         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16">
+           <div className="max-w-7xl mx-auto">
+             <ParallaxText speed={0.5}>
+               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4" data-testid="community-name">
+                 {community.name}
+               </h1>
+             </ParallaxText>
+             <FadeIn direction="up" delay={0.3}>
+               <div className="flex flex-wrap items-start gap-6 text-white/90 text-lg mb-4">
+                 <div className="flex items-start" data-testid="community-location">
+                   <MapPin className="w-5 h-5 mr-2 mt-1 flex-shrink-0" />
+                   <div>
+-                    {community.street || community.address}
+-                    {(community.street || community.address) && <br />}
+-                    {community.city}, {community.state} {community.zipCode}
++                    {addressLines.map((line, index) => (
++                      <span key={`hero-address-${index}`}>
++                        {line}
++                        {index < addressLines.length - 1 && <br />}
++                      </span>
++                    ))}
+                   </div>
+                 </div>
+-                {(community.phoneDisplay || community.phone) && (
+-                  <div className="flex items-center" data-testid="community-phone">
+-                    <Phone className="w-5 h-5 mr-2 flex-shrink-0" />
+-                    <a 
+-                      href={`tel:${community.phoneDial || community.phoneDisplay || community.phone}`}
+-                      className="hover:text-white transition-colors"
+-                    >
+-                      {community.phoneDisplay || community.phone}
+-                    </a>
+-                  </div>
+-                )}
++                <div className="flex items-center" data-testid="community-phone">
++                  <Phone className="w-5 h-5 mr-2 flex-shrink-0" />
++                  <a href={primaryPhoneHref} className="hover:text-white transition-colors">
++                    {primaryPhoneDisplay}
++                  </a>
++                </div>
+               </div>
+             </FadeIn>
+             {community.careTypes && community.careTypes.length > 0 && (
+               <FadeIn direction="up" delay={0.4}>
+                 <div className="flex flex-wrap gap-2">
+                   {community.careTypes.map((careType) => (
+                     <Badge 
+                       key={careType} 
+                       variant="secondary"
+                       className="bg-white/20 text-white border-white/30 backdrop-blur-sm text-sm px-3 py-1"
+                       data-testid={`care-type-${careType}`}
+                     >
+                       {careType.split('-').map(word => 
+                         word.charAt(0).toUpperCase() + word.slice(1)
+                       ).join(' ')}
+                     </Badge>
+                   ))}
+                 </div>
+               </FadeIn>
+             )}
+           </div>
+         </div>
+       </ParallaxHero>
+ 
+       {/* Static Navigation Bar - Always visible below hero */}
+@@ -1559,68 +1587,66 @@ export default function CommunityDetail() {
+         )}
+         data-community-sticky-nav
+       >
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+           {/* Top Section with Logo and Contact */}
+           <div className="flex items-center justify-between py-4">
+             {/* Community Branding */}
+             <div className="flex items-center gap-4">
+               {heroLogoSrc ? (
+                 <img
+                   src={heroLogoSrc}
+                   alt={heroLogoAlt}
+                   className="h-10 md:h-12 w-auto object-contain"
+                   data-testid="nav-community-logo"
+                 />
+               ) : (
+                 <div className="flex items-center gap-3">
+                   <div 
+                     className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center shadow-sm"
+                     style={{ backgroundColor: (community as any)?.mainColorHex || '#2563eb' }}
+                   >
+                     <Home className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                   </div>
+                   <div>
+                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">{community.name}</h2>
+-                    <p className="text-xs text-gray-600 hidden md:block">{community.city}, {community.state}</p>
++                    <p className="text-xs text-gray-600 hidden md:block">{cityStateZip}</p>
+                   </div>
+                 </div>
+               )}
+             </div>
+ 
+             {/* Contact Actions */}
+             <div className="flex items-center gap-2 md:gap-4">
+-              {community.phoneDisplay && (
+-                <a
+-                  href={`tel:${community.phoneDial || community.phoneDisplay}`}
+-                  className="hidden md:flex items-center gap-2 text-gray-700 hover:text-primary transition-colors"
+-                  data-testid="nav-phone"
+-                >
+-                  <Phone className="w-4 h-4" />
+-                  <span className="text-sm font-medium">{community.phoneDisplay}</span>
+-                </a>
+-              )}
++              <a
++                href={primaryPhoneHref}
++                className="hidden md:flex items-center gap-2 text-gray-700 hover:text-primary transition-colors"
++                data-testid="nav-phone"
++              >
++                <Phone className="w-4 h-4" />
++                <span className="text-sm font-medium">{primaryPhoneDisplay}</span>
++              </a>
+               <Button 
+                 size="sm"
+                 className={cn("shadow-sm talkfurther-schedule-tour", getCommunityFurtherClass(community.slug || ''), community.slug ? `community-${community.slug}` : '')}
+                 style={{ 
+                   backgroundColor: (community as any)?.ctaColorHex || '#f59e0b',
+                   color: (community as any)?.ctaColorHex ? getAccessibleTextColor((community as any).ctaColorHex) : '#ffffff'
+                 }}
+                 onClick={() => openScheduleTour({
+                   communityId: community.id,
+                   communityName: community.name,
+                   title: `Schedule a Tour at ${community.name}`,
+                   description: `Visit ${community.name} in ${community.city} to see our beautiful community and amenities in person.`
+                 })}
+                 data-community-id={community.id}
+                 data-community-slug={community.slug}
+                 data-community-name={community.name}
+                 data-testid="nav-schedule-tour"
+               >
+                 <Calendar className="w-4 h-4 mr-1 md:mr-2" />
+                 <span className="hidden md:inline">Schedule</span> Tour
+               </Button>
+               <Button 
+                 variant="ghost"
+                 size="sm"
+                 asChild
+@@ -1942,93 +1968,94 @@ export default function CommunityDetail() {
+                     className={cn("w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white talkfurther-schedule-tour", getCommunityFurtherClass(community.slug || ''), community.slug ? `community-${community.slug}` : '')} 
+                     onClick={() => openScheduleTour({
+                       communityId: community.id,
+                       communityName: community.name,
+                       title: `Schedule Your Visit to ${community.name}`,
+                       description: `Tour our community in ${community.city} and meet our caring team.`
+                     })}
+                     data-community-id={community.id}
+                     data-community-slug={community.slug}
+                     data-community-name={community.name}
+                     data-testid="button-schedule-tour"
+                   >
+                     <Calendar className="w-4 h-4 mr-2" />
+                     Schedule Your Tour
+                   </Button>
+                 </CardContent>
+               </Card>
+ 
+               {/* Contact Information */}
+               <Card className="shadow-lg">
+                 <CardHeader>
+                   <CardTitle>Contact Information</CardTitle>
+                 </CardHeader>
+                 <CardContent className="space-y-4">
+                   <Button variant="outline" className="w-full justify-start" asChild data-testid="button-call-community">
+-                    <a href={`tel:${community.phoneDial || community.phoneDisplay || '+1-800-555-0123'}`}>
++                    <a href={primaryPhoneHref}>
+                       <Phone className="w-4 h-4 mr-2" />
+-                      {community.phoneDisplay || community.phone || '(800) 555-0123'}
++                      {primaryPhoneDisplay}
+                     </a>
+                   </Button>
+                   <Separator />
+                   <div className="space-y-2">
+-                    <div className="flex items-start gap-3">
+-                      <MapPin className="w-4 h-4 text-muted-foreground mt-1" />
+-                      <div className="text-sm">
+-                        <p className="font-medium">Address</p>
+-                        <p className="text-muted-foreground">
+-                          {community.address}<br />
+-                          {community.city}, {community.state} {community.zipCode}
+-                        </p>
++                      <div className="flex items-start gap-3">
++                        <MapPin className="w-4 h-4 text-muted-foreground mt-1" />
++                        <div className="text-sm">
++                          <p className="font-medium">Address</p>
++                          <p className="text-muted-foreground">
++                            {addressLines.map((line, index) => (
++                              <span key={`details-address-${index}`}>
++                                {line}
++                                {index < addressLines.length - 1 && <br />}
++                              </span>
++                            ))}
++                          </p>
++                        </div>
+                       </div>
+-                    </div>
+                     <Button 
+                       variant="outline" 
+                       size="sm"
+                       className="w-full justify-start text-sm"
+                       asChild
+                       data-testid="button-get-directions"
+                     >
+-                      <a 
+-                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(community.address + ', ' + community.city + ', ' + community.state + ' ' + community.zipCode)}`}
+-                        target="_blank"
+-                        rel="noopener noreferrer"
+-                      >
++                        <a
++                          href={`https://www.google.com/maps/dir/?api=1&destination=${directionsQuery}`}
++                          target="_blank"
++                          rel="noopener noreferrer"
++                        >
+                         <Navigation className="w-3 h-3 mr-2" />
+                         Get Directions
+                       </a>
+                     </Button>
+                     <Separator className="my-2" />
+                     <div className="flex items-start gap-3">
+                       <Mail className="w-4 h-4 text-muted-foreground mt-1" />
+                       <div className="text-sm">
+                         <p className="font-medium">Email</p>
+-                        <a 
+-                          href={`mailto:${community.email || 'info@example.com'}`}
+-                          className="text-primary hover:underline"
+-                        >
+-                          {community.email || 'info@example.com'}
++                        <a href={`mailto:${communityEmail}`} className="text-primary hover:underline">
++                          {communityEmail}
+                         </a>
+                       </div>
+                     </div>
+                     <div className="flex items-start gap-3">
+                       <Clock className="w-4 h-4 text-muted-foreground mt-1" />
+                       <div className="text-sm">
+                         <p className="font-medium">Office Hours</p>
+                         <p className="text-muted-foreground">
+                           Mon-Fri: 9:00 AM - 6:00 PM<br />
+                           Sat-Sun: 10:00 AM - 5:00 PM
+                         </p>
+                       </div>
+                     </div>
+                   </div>
+                 </CardContent>
+               </Card>
+ 
+               {/* Download Brochure */}
+               <Card className="shadow-lg bg-primary/5 border-primary/20 overflow-hidden">
+                 {(resolvedBrochureUrl || defaultBrochureImage) && (
+                   <AspectRatio ratio={4 / 3}>
+                     <img
+                       src={resolvedBrochureUrl || defaultBrochureImage}
+                       alt={`${community.name} Brochure`}
+                       className="w-full h-full object-cover"
+@@ -2316,71 +2343,74 @@ export default function CommunityDetail() {
+                         {faq.answer}
+                       </AccordionContent>
+                     </AccordionItem>
+                   ))}
+                 </Accordion>
+                 {faqs.length > 6 && (
+                   <div className="text-center mt-8">
+                     <Button variant="outline" size="lg" asChild data-testid="button-view-all-faqs">
+                       <Link href="/faqs">
+                         View All FAQs
+                         <ChevronRight className="w-4 h-4 ml-2" />
+                       </Link>
+                     </Button>
+                   </div>
+                 )}
+               </section>
+             )}
+ 
+             {/* Location & Neighborhood */}
+             <section id="neighborhood" className="scroll-mt-24">
+               <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Location & Neighborhood</h2>
+               </ScaleHeader>
+               <FadeIn direction="up" delay={0.1}>
+                 <Card className="mb-6 overflow-hidden">
+-                <CardContent className="p-0">
+-                  <div className="h-96" data-testid="community-map">
+-                    {community.latitude && community.longitude ? (
+-                      <CommunityMap 
+-                        communities={[community]}
+-                        selectedCommunityId={community.id}
+-                        showPopups={false}
+-                      />
+-                    ) : (
+-                      <div className="bg-gray-100 rounded-xl h-full flex items-center justify-center text-gray-500">
+-                        <div className="text-center">
+-                          <MapPin className="w-12 h-12 mx-auto mb-4" />
+-                          <p className="text-lg font-medium">{community.address}</p>
+-                          <p>{community.city}, {community.state} {community.zipCode}</p>
+-                          <p className="text-sm mt-2">Map coordinates not available</p>
++                  <CardContent className="p-0">
++                    <div className="h-96" data-testid="community-map">
++                      {community.latitude && community.longitude ? (
++                        <CommunityMap
++                          communities={[community]}
++                          selectedCommunityId={community.id}
++                          showPopups={false}
++                        />
++                      ) : (
++                        <div className="bg-gray-100 rounded-xl h-full flex items-center justify-center text-gray-500">
++                          <div className="text-center">
++                            <MapPin className="w-12 h-12 mx-auto mb-4" />
++                            {addressLines.map((line, index) => (
++                              <p key={`map-address-${index}`} className={index === 0 ? "text-lg font-medium" : undefined}>
++                                {line}
++                              </p>
++                            ))}
++                            <p className="text-sm mt-2">Map coordinates not available</p>
++                          </div>
+                         </div>
+-                      </div>
+-                    )}
+-                  </div>
+-                </CardContent>
+-              </Card>
++                      )}
++                    </div>
++                  </CardContent>
++                </Card>
+               </FadeIn>
+               <FadeIn direction="up" delay={0.2}>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <Card>
+                   <CardContent className="p-6">
+                     <h3 className="text-xl font-semibold mb-3">Nearby Healthcare</h3>
+                     <ul className="space-y-2 text-gray-600">
+                       <li>• St. Joseph Hospital - 5 miles</li>
+                       <li>• Kaiser Permanente - 3 miles</li>
+                       <li>• CVS Pharmacy - 0.5 miles</li>
+                     </ul>
+                   </CardContent>
+                 </Card>
+                 <Card>
+                   <CardContent className="p-6">
+                     <h3 className="text-xl font-semibold mb-3">Local Amenities</h3>
+                     <ul className="space-y-2 text-gray-600">
+                       <li>• King Soopers - 1 mile</li>
+                       <li>• Parks & Recreation - 2 miles</li>
+                       <li>• Shopping Centers - 3 miles</li>
+                     </ul>
+                   </CardContent>
+                 </Card>
+               </div>
+               </FadeIn>
+diff --git a/client/src/pages/contact.tsx b/client/src/pages/contact.tsx
+index 4b9ca70a30c52e9622979dd84b3527bbb870709e..bc51e5bbda134c35f94a011e5ef4bc4f15c21b0f 100644
+--- a/client/src/pages/contact.tsx
++++ b/client/src/pages/contact.tsx
+@@ -1,35 +1,41 @@
+ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+ import { Button } from "@/components/ui/button";
+ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+ import LeadCaptureForm from "@/components/LeadCaptureForm";
+ import { PageHero } from "@/components/PageHero";
+ import { Link } from "wouter";
+ import { useEffect, useState } from "react";
+ import { useQuery } from "@tanstack/react-query";
+ import CommunitySelectionModal from "@/components/CommunitySelectionModal";
+ import type { Community } from "@shared/schema";
++import {
++  getAddressLines,
++  getGoogleMapsDirectionsUrl,
++  getPrimaryPhoneDisplay,
++  getPrimaryPhoneHref,
++} from "@/lib/communityContact";
+ import { 
+   Phone, 
+   Mail, 
+   MapPin, 
+   Clock,
+   MessageSquare,
+   Building2,
+   CheckCircle,
+   Navigation
+ } from "lucide-react";
+ 
+ export default function Contact() {
+   const [showCommunityModal, setShowCommunityModal] = useState(false);
+   const [showContactForm, setShowContactForm] = useState(false);
+   
+   const { data: communities = [] } = useQuery<Community[]>({
+     queryKey: ["/api/communities"],
+     staleTime: 5 * 60 * 1000,
+   });
+ 
+   useEffect(() => {
+     document.title = "Contact Us | Stage Senior";
+     
+     // Add meta description
+     const metaDescription = document.querySelector('meta[name="description"]');
+@@ -195,91 +201,106 @@ export default function Contact() {
+                     <strong>Weekend Tours:</strong> Available by appointment at all communities
+                   </p>
+                   <p className="text-muted-foreground">
+                     <strong>Virtual Tours:</strong> Schedule a video walkthrough if you can't visit in person
+                   </p>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </section>
+ 
+       {/* Community Locations */}
+       <section className="py-16">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+           <div className="text-center mb-12">
+             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+               Our Community Locations
+             </h2>
+             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+               Visit any of our four Colorado communities to experience the Stage Senior difference
+             </p>
+           </div>
+ 
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+-            {communities.map((community) => (
+-              <Card key={community.id} className="hover:shadow-lg transition-shadow">
+-                <CardHeader>
+-                  <CardTitle>{community.name}</CardTitle>
+-                </CardHeader>
+-                <CardContent>
+-                  <div className="space-y-4">
+-                    <div className="flex items-start gap-3">
+-                      <MapPin className="w-5 h-5 text-primary mt-1" />
+-                      <div>
+-                        <p className="text-muted-foreground">
+-                          {community.street}<br />
+-                          {community.city}, {community.state} {community.zip}
+-                        </p>
++            {communities.map((community) => {
++              const contactDetails = community || {};
++              const addressLines = getAddressLines(contactDetails);
++              const phoneDisplay = getPrimaryPhoneDisplay(contactDetails);
++              const phoneHref = getPrimaryPhoneHref(contactDetails);
++              const directionsUrl = getGoogleMapsDirectionsUrl(contactDetails);
++
++              return (
++                <Card key={community.id} className="hover:shadow-lg transition-shadow">
++                  <CardHeader>
++                    <CardTitle>{community.name}</CardTitle>
++                  </CardHeader>
++                  <CardContent>
++                    <div className="space-y-4">
++                      <div className="flex items-start gap-3">
++                        <MapPin className="w-5 h-5 text-primary mt-1" />
++                        <div>
++                          <p className="text-muted-foreground">
++                            {addressLines.map((line, index) => (
++                              <span key={`contact-address-${community.slug}-${index}`}>
++                                {line}
++                                {index < addressLines.length - 1 && <br />}
++                              </span>
++                            ))}
++                          </p>
++                        </div>
+                       </div>
++                      <div className="flex items-center gap-3">
++                        <Phone className="w-5 h-5 text-primary" />
++                        <a href={phoneHref} className="text-muted-foreground hover:text-primary">
++                          {phoneDisplay}
++                        </a>
++                      </div>
++                      {directionsUrl ? (
++                        <Button
++                          asChild
++                          className="w-full"
++                          variant="outline"
++                          data-testid={`button-directions-${community.slug}`}
++                        >
++                          <a href={directionsUrl} target="_blank" rel="noopener noreferrer">
++                            <Navigation className="w-4 h-4 mr-2" />
++                            Get Directions
++                          </a>
++                        </Button>
++                      ) : (
++                        <Button className="w-full" variant="outline" disabled>
++                          <Navigation className="w-4 h-4 mr-2" />
++                          Get Directions
++                        </Button>
++                      )}
+                     </div>
+-                    <div className="flex items-center gap-3">
+-                      <Phone className="w-5 h-5 text-primary" />
+-                      <a href={`tel:${community.phoneDial}`} className="text-muted-foreground hover:text-primary">
+-                        {community.phoneDisplay}
+-                      </a>
+-                    </div>
+-                    <Button 
+-                      asChild 
+-                      className="w-full"
+-                      variant="outline"
+-                      data-testid={`button-directions-${community.slug}`}
+-                    >
+-                      <a 
+-                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${community.street}, ${community.city}, ${community.state} ${community.zip}`)}`}
+-                        target="_blank"
+-                        rel="noopener noreferrer"
+-                      >
+-                        <Navigation className="w-4 h-4 mr-2" />
+-                        Get Directions
+-                      </a>
+-                    </Button>
+-                  </div>
+-                </CardContent>
+-              </Card>
+-            ))}
++                  </CardContent>
++                </Card>
++              );
++            })}
+           </div>
+         </div>
+       </section>
+ 
+       {/* Lead Generation Panel - Same as Homepage */}
+       <section className="py-16 bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] relative overflow-hidden">
+         <div className="absolute inset-0 bg-black/10"></div>
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+             <div>
+               <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+                 Talk to a real local advisor today
+               </h2>
+               <p className="text-xl text-white/90 mb-6">
+                 Get a callback today
+               </p>
+               <div className="flex flex-wrap gap-4 mb-8">
+                 <Button 
+                   size="lg" 
+                   className="bg-[var(--deep-blue)] text-white hover:bg-gradient-to-r hover:from-[var(--deep-blue)] hover:to-[var(--bright-blue)]"
+                   asChild
+                   data-testid="button-call-now"
+                 >
+                   <a href="tel:+1-970-444-4689">
+                     <Phone className="w-5 h-5 mr-2" />
+diff --git a/client/src/pages/tour-scheduled.tsx b/client/src/pages/tour-scheduled.tsx
+index 1dedbb5e380397acc4497bea39849eb0218ecbc2..553522951c6f90dd972c788ca79646f51e0679ad 100644
+--- a/client/src/pages/tour-scheduled.tsx
++++ b/client/src/pages/tour-scheduled.tsx
+@@ -1,36 +1,42 @@
+ import { useEffect, useState } from 'react';
+ import { useLocation, useSearch } from 'wouter';
+ import { useQuery, useMutation } from '@tanstack/react-query';
+ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+ import { Button } from '@/components/ui/button';
+ import { Skeleton } from '@/components/ui/skeleton';
+ import { CheckCircle, Phone, Mail, MapPin, ArrowRight, Home } from 'lucide-react';
+ import { fireScheduleTour, getMetaCookies, getClickIdsFromUrl, generateEventId } from '@/lib/tracking';
+ import { apiRequest } from '@/lib/queryClient';
+ import { useResolveImageUrl } from '@/hooks/useResolveImageUrl';
+ import type { Community } from '@shared/schema';
++import {
++  getAddressLines,
++  getCommunityEmail,
++  getPrimaryPhoneDisplay,
++  getPrimaryPhoneHref,
++} from '@/lib/communityContact';
+ 
+ interface GalleryImage {
+   id: string;
+   imageUrl: string;
+   alt?: string;
+   caption?: string;
+ }
+ 
+ interface Gallery {
+   id: string;
+   title: string;
+   images?: GalleryImage[];
+ }
+ 
+ // Component to render a single gallery image with URL resolution
+ function GalleryImageItem({ image, index }: { image: GalleryImage; index: number }) {
+   const resolvedUrl = useResolveImageUrl(image.imageUrl);
+   
+   // Show skeleton while loading
+   if (resolvedUrl === null) {
+     return (
+       <div 
+         className="aspect-square rounded-lg overflow-hidden"
+         data-testid={`image-gallery-${index}`}
+       >
+@@ -59,53 +65,58 @@ function GalleryImageItem({ image, index }: { image: GalleryImage; index: number
+ }
+ 
+ export default function TourScheduled() {
+   const searchParams = useSearch();
+   const [, navigate] = useLocation();
+   const [tier2Fired, setTier2Fired] = useState(false);
+   
+   // Parse URL parameters
+   const params = new URLSearchParams(searchParams);
+   const transactionId = params.get('txn') || params.get('transactionId');
+   const communitySlug = params.get('community');
+   const tourDate = params.get('date');
+   const name = params.get('name');
+   
+   // Fetch community data if available
+   const { data: community, isLoading: isCommunityLoading } = useQuery<Community>({
+     queryKey: [`/api/communities/${communitySlug}`],
+     enabled: !!communitySlug,
+   });
+   
+   // Fetch galleries for this community
+   const { data: galleries = [] } = useQuery<Gallery[]>({
+     queryKey: [`/api/galleries?communityId=${community?.id}&active=true`],
+     enabled: !!community?.id,
+   });
+-  
++
+   // Resolve hero image URL
+   const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
++  const contactDetails = community || {};
++  const addressLines = getAddressLines(contactDetails);
++  const primaryPhoneDisplay = getPrimaryPhoneDisplay(contactDetails);
++  const primaryPhoneHref = getPrimaryPhoneHref(contactDetails);
++  const communityEmail = getCommunityEmail(contactDetails);
+   
+   // Mutation to send conversion to server
+   const conversionMutation = useMutation({
+     mutationFn: async (payload: any) => {
+       return apiRequest('POST', '/api/conversions', payload);
+     },
+     onSuccess: () => {
+       console.log('[Success Page] Server-side conversion sent successfully');
+     },
+     onError: (error) => {
+       console.error('[Success Page] Failed to send server-side conversion:', error);
+     },
+   });
+   
+   // Fire ScheduleTour conversion once on page load
+   // Handles both native form (with transactionId) and TalkFurther (may not have transactionId) redirects
+   useEffect(() => {
+     if (!tier2Fired) {
+       // If we have a community slug but community is still loading, wait
+       if (communitySlug && isCommunityLoading) {
+         return;
+       }
+       
+       const metaCookies = getMetaCookies();
+       const clickIds = getClickIdsFromUrl();
+@@ -322,106 +333,104 @@ export default function TourScheduled() {
+           {/* Right Column - 1/3 width, sticky */}
+           <div className="lg:col-span-1">
+             <div className="sticky top-24 space-y-6">
+               {/* Contact Card */}
+               {community && (
+                 <Card className="border-2 border-[var(--foothill-sage)]">
+                   <CardHeader>
+                     <CardTitle className="text-xl" data-testid="text-contact-title">
+                       Contact Information
+                     </CardTitle>
+                   </CardHeader>
+                   <CardContent className="space-y-4">
+                     {/* Community Name */}
+                     <div>
+                       <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-1" data-testid="text-community-name">
+                         {community.name}
+                       </h3>
+                     </div>
+ 
+                     {/* Address */}
+                     <div className="flex items-start gap-3">
+                       <MapPin className="w-5 h-5 text-[var(--stage-copper)] mt-0.5 flex-shrink-0" />
+                       <div>
+                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Address</p>
+                         <p className="text-gray-900 dark:text-gray-100" data-testid="text-community-address">
+-                          {community.street && <>{community.street}<br /></>}
+-                          {community.city}, {community.state} {community.zip}
++                          {addressLines.map((line, index) => (
++                            <span key={`tour-address-${index}`}>
++                              {line}
++                              {index < addressLines.length - 1 && <br />}
++                            </span>
++                          ))}
+                         </p>
+                       </div>
+                     </div>
+ 
+                     {/* Phone */}
+-                    {community.phoneDisplay && (
+-                      <div className="flex items-start gap-3">
+-                        <Phone className="w-5 h-5 text-[var(--stage-copper)] mt-0.5 flex-shrink-0" />
+-                        <div>
+-                          <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Phone</p>
+-                          <a
+-                            href={`tel:${community.phoneDial || community.phoneDisplay}`}
+-                            className="text-[var(--deep-blue)] hover:text-[var(--bright-blue)] hover:underline font-medium"
+-                            data-testid="link-community-phone"
+-                          >
+-                            {community.phoneDisplay}
+-                          </a>
+-                        </div>
++                    <div className="flex items-start gap-3">
++                      <Phone className="w-5 h-5 text-[var(--stage-copper)] mt-0.5 flex-shrink-0" />
++                      <div>
++                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Phone</p>
++                        <a
++                          href={primaryPhoneHref}
++                          className="text-[var(--deep-blue)] hover:text-[var(--bright-blue)] hover:underline font-medium"
++                          data-testid="link-community-phone"
++                        >
++                          {primaryPhoneDisplay}
++                        </a>
+                       </div>
+-                    )}
++                    </div>
+ 
+                     {/* Email */}
+-                    {community.email && (
+-                      <div className="flex items-start gap-3">
+-                        <Mail className="w-5 h-5 text-[var(--stage-copper)] mt-0.5 flex-shrink-0" />
+-                        <div>
+-                          <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Email</p>
+-                          <a
+-                            href={`mailto:${community.email}`}
+-                            className="text-[var(--deep-blue)] hover:text-[var(--bright-blue)] hover:underline font-medium break-all"
+-                            data-testid="link-community-email"
+-                          >
+-                            {community.email}
+-                          </a>
+-                        </div>
++                    <div className="flex items-start gap-3">
++                      <Mail className="w-5 h-5 text-[var(--stage-copper)] mt-0.5 flex-shrink-0" />
++                      <div>
++                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Email</p>
++                        <a
++                          href={`mailto:${communityEmail}`}
++                          className="text-[var(--deep-blue)] hover:text-[var(--bright-blue)] hover:underline font-medium break-all"
++                          data-testid="link-community-email"
++                        >
++                          {communityEmail}
++                        </a>
+                       </div>
+-                    )}
++                    </div>
+ 
+                     {/* Call Us Anytime CTA */}
+-                    {community.phoneDisplay && (
+-                      <div className="pt-4">
+-                        <Button
+-                          asChild
+-                          className="w-full"
+-                          size="lg"
+-                          data-testid="button-call-now"
+-                        >
+-                          <a href={`tel:${community.phoneDial || community.phoneDisplay}`}>
+-                            <Phone className="w-4 h-4 mr-2" />
+-                            Call Us Anytime
+-                          </a>
+-                        </Button>
+-                      </div>
+-                    )}
++                    <div className="pt-4">
++                      <Button
++                        asChild
++                        className="w-full"
++                        size="lg"
++                        data-testid="button-call-now"
++                      >
++                        <a href={primaryPhoneHref}>
++                          <Phone className="w-4 h-4 mr-2" />
++                          Call Us Anytime
++                        </a>
++                      </Button>
++                    </div>
+                   </CardContent>
+                 </Card>
+               )}
+ 
+               {/* Reference Number */}
+               <Card className="bg-[var(--mist-white)] dark:bg-[var(--pine-shadow)]">
+                 <CardContent className="pt-6">
+                   <p className="text-sm text-gray-600 dark:text-gray-400 text-center mb-1">
+                     Reference Number
+                   </p>
+                   <p className="font-mono font-semibold text-center text-gray-900 dark:text-gray-100" data-testid="text-transaction-id">
+                     {transactionId}
+                   </p>
+                 </CardContent>
+               </Card>
+ 
+               {/* Action Buttons */}
+               <div className="space-y-3">
+                 {community && (
+                   <Button
+                     onClick={() => navigate(`/communities/${community.slug}`)}
+                     className="w-full gap-2"
+                     size="lg"
+                     variant="copper"
+                     data-testid="button-view-community"
+ 
+EOF
+)
