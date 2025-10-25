@@ -1,5 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
+import express from "express";
+import path from "path";
 import { storage } from "./storage";
 import { db } from "./db";
 import { setupAuth } from "./auth";
@@ -129,6 +131,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+
+  // Serve static files from attached_assets directory
+  // This allows frontend to access generated images and other assets
+  const attachedAssetsPath = path.resolve(import.meta.dirname, "..", "attached_assets");
+  app.use("/attached_assets", express.static(attachedAssetsPath));
 
   // Robots.txt - SEO crawling instructions
   app.get("/robots.txt", (_req, res) => {
