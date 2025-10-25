@@ -1482,13 +1482,26 @@ export default function CommunityDetail() {
               </h1>
             </ParallaxText>
             <FadeIn direction="up" delay={0.3}>
-              <div className="flex items-start text-white/90 text-lg mb-4" data-testid="community-location">
-                <MapPin className="w-5 h-5 mr-2 mt-1" />
-                <div>
-                  {community.street || community.address}
-                  {(community.street || community.address) && <br />}
-                  {community.city}, {community.state} {community.zipCode}
+              <div className="flex flex-wrap items-start gap-6 text-white/90 text-lg mb-4">
+                <div className="flex items-start" data-testid="community-location">
+                  <MapPin className="w-5 h-5 mr-2 mt-1 flex-shrink-0" />
+                  <div>
+                    {community.street || community.address}
+                    {(community.street || community.address) && <br />}
+                    {community.city}, {community.state} {community.zipCode}
+                  </div>
                 </div>
+                {(community.phone || community.phoneDial) && (
+                  <div className="flex items-center" data-testid="community-phone">
+                    <Phone className="w-5 h-5 mr-2 flex-shrink-0" />
+                    <a 
+                      href={`tel:${community.phoneDial || community.phone}`}
+                      className="hover:text-white transition-colors"
+                    >
+                      {community.phone}
+                    </a>
+                  </div>
+                )}
               </div>
             </FadeIn>
             {community.careTypes && community.careTypes.length > 0 && (
