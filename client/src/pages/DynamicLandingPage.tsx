@@ -937,7 +937,7 @@ export default function DynamicLandingPage() {
         
         {/* CTA Overlay - Bottom of hero */}
         <FadeIn direction="up" delay={0.3}>
-          <div className="absolute bottom-0 left-0 right-0 w-full bg-white/95 backdrop-blur-sm shadow-2xl py-6 md:py-8" data-testid="hero-cta-overlay">
+          <div className="absolute bottom-0 left-0 right-0 w-full z-30 py-6 md:py-8" data-testid="hero-cta-overlay">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
                 <Button
