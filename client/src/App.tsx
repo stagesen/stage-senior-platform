@@ -52,6 +52,7 @@ const FamilyStories = lazy(() => import("@/pages/FamilyStories"));
 const VirtualTours = lazy(() => import("@/pages/VirtualTours"));
 const PricingAvailability = lazy(() => import("@/pages/PricingAvailability"));
 const CareNavigator = lazy(() => import("@/pages/care-navigator"));
+const Resources = lazy(() => import("@/pages/resources"));
 
 function Router() {
   // Check if we're on a community detail page
@@ -110,6 +111,7 @@ function Router() {
           <Route path="/virtual-tour-and-floorplans" component={VirtualTours} />
           <Route path="/pricing-and-availability" component={PricingAvailability} />
           <Route path="/care-navigator" component={CareNavigator} />
+          <Route path="/resources" component={Resources} />
           <Route path="/admin">
             <RequireAuth>
               <Admin />
