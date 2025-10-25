@@ -96,6 +96,24 @@ import {
   exitIntentSubmissions,
   type ExitIntentSubmission,
   type InsertExitIntentSubmission,
+  quizzes,
+  quizQuestions,
+  quizAnswerOptions,
+  quizResponses,
+  contentAssets,
+  assetDownloads,
+  type Quiz,
+  type InsertQuiz,
+  type QuizQuestion,
+  type InsertQuizQuestion,
+  type QuizAnswerOption,
+  type InsertQuizAnswerOption,
+  type QuizResponse,
+  type InsertQuizResponse,
+  type ContentAsset,
+  type InsertContentAsset,
+  type AssetDownload,
+  type InsertAssetDownload,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm";
@@ -417,6 +435,44 @@ export interface IStorage {
   createGoogleAdsAd(ad: InsertGoogleAdsAd): Promise<GoogleAdsAd>;
   updateGoogleAdsAd(id: string, ad: Partial<InsertGoogleAdsAd>): Promise<GoogleAdsAd>;
   deleteGoogleAdsAd(id: string): Promise<void>;
+
+  // Quiz operations
+  getQuizzes(filters?: { activeOnly?: boolean }): Promise<Quiz[]>;
+  getQuiz(slug: string): Promise<Quiz | undefined>;
+  getQuizById(id: string): Promise<Quiz | undefined>;
+  getQuizWithQuestions(slug: string): Promise<Quiz & { questions: (QuizQuestion & { answerOptions: QuizAnswerOption[] })[] } | undefined>;
+  createQuiz(quiz: InsertQuiz): Promise<Quiz>;
+  updateQuiz(id: string, quiz: Partial<InsertQuiz>): Promise<Quiz>;
+  deleteQuiz(id: string): Promise<void>;
+  
+  // Quiz question operations
+  getQuizQuestions(quizId: string): Promise<QuizQuestion[]>;
+  createQuizQuestion(question: InsertQuizQuestion): Promise<QuizQuestion>;
+  updateQuizQuestion(id: string, question: Partial<InsertQuizQuestion>): Promise<QuizQuestion>;
+  deleteQuizQuestion(id: string): Promise<void>;
+  
+  // Quiz answer option operations
+  getQuizAnswerOptions(questionId: string): Promise<QuizAnswerOption[]>;
+  createQuizAnswerOption(option: InsertQuizAnswerOption): Promise<QuizAnswerOption>;
+  updateQuizAnswerOption(id: string, option: Partial<InsertQuizAnswerOption>): Promise<QuizAnswerOption>;
+  deleteQuizAnswerOption(id: string): Promise<void>;
+  
+  // Quiz response operations
+  getQuizResponses(quizId?: string): Promise<QuizResponse[]>;
+  createQuizResponse(response: InsertQuizResponse): Promise<QuizResponse>;
+  
+  // Content asset operations
+  getContentAssets(filters?: { activeOnly?: boolean; category?: string }): Promise<ContentAsset[]>;
+  getContentAsset(slug: string): Promise<ContentAsset | undefined>;
+  getContentAssetById(id: string): Promise<ContentAsset | undefined>;
+  createContentAsset(asset: InsertContentAsset): Promise<ContentAsset>;
+  updateContentAsset(id: string, asset: Partial<InsertContentAsset>): Promise<ContentAsset>;
+  deleteContentAsset(id: string): Promise<void>;
+  incrementAssetDownloadCount(assetId: string): Promise<void>;
+  
+  // Asset download tracking operations
+  getAssetDownloads(assetId?: string): Promise<AssetDownload[]>;
+  createAssetDownload(download: InsertAssetDownload): Promise<AssetDownload>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -2888,6 +2944,281 @@ export class DatabaseStorage implements IStorage {
 
   async deleteGoogleAdsAd(id: string): Promise<void> {
     await db.delete(googleAdsAds).where(eq(googleAdsAds.id, id));
+  }
+
+  // Quiz operations
+  async getQuizzes(filters?: { activeOnly?: boolean }): Promise<Quiz[]> {
+    const conditions = [];
+    if (filters?.activeOnly) {
+      conditions.push(eq(quizzes.active, true));
+    }
+    
+    if (conditions.length > 0) {
+      return await db
+        .select()
+        .from(quizzes)
+        .where(and(...conditions))
+        .orderBy(desc(quizzes.createdAt));
+    }
+    
+    return await db
+      .select()
+      .from(quizzes)
+      .orderBy(desc(quizzes.createdAt));
+  }
+
+  async getQuiz(slug: string): Promise<Quiz | undefined> {
+    const [quiz] = await db
+      .select()
+      .from(quizzes)
+      .where(eq(quizzes.slug, slug));
+    return quiz;
+  }
+
+  async getQuizById(id: string): Promise<Quiz | undefined> {
+    const [quiz] = await db
+      .select()
+      .from(quizzes)
+      .where(eq(quizzes.id, id));
+    return quiz;
+  }
+
+  async getQuizWithQuestions(slug: string): Promise<(Quiz & { questions: Array<QuizQuestion & { answerOptions: QuizAnswerOption[] }> }) | undefined> {
+    const quiz = await this.getQuiz(slug);
+    if (!quiz) return undefined;
+
+    const questions = await db
+      .select()
+      .from(quizQuestions)
+      .where(eq(quizQuestions.quizId, quiz.id))
+      .orderBy(asc(quizQuestions.sortOrder));
+
+    const questionsWithAnswers = await Promise.all(
+      questions.map(async (question) => {
+        const answerOptions = await db
+          .select()
+          .from(quizAnswerOptions)
+          .where(eq(quizAnswerOptions.questionId, question.id))
+          .orderBy(asc(quizAnswerOptions.sortOrder));
+        
+        return {
+          ...question,
+          answerOptions
+        };
+      })
+    );
+
+    return {
+      ...quiz,
+      questions: questionsWithAnswers
+    };
+  }
+
+  async createQuiz(quiz: InsertQuiz): Promise<Quiz> {
+    const [created] = await db
+      .insert(quizzes)
+      .values(quiz)
+      .returning();
+    return created;
+  }
+
+  async updateQuiz(id: string, quiz: Partial<InsertQuiz>): Promise<Quiz> {
+    const [updated] = await db
+      .update(quizzes)
+      .set({
+        ...quiz,
+        updatedAt: new Date()
+      })
+      .where(eq(quizzes.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteQuiz(id: string): Promise<void> {
+    await db.delete(quizzes).where(eq(quizzes.id, id));
+  }
+
+  // Quiz question operations
+  async getQuizQuestions(quizId: string): Promise<QuizQuestion[]> {
+    return await db
+      .select()
+      .from(quizQuestions)
+      .where(eq(quizQuestions.quizId, quizId))
+      .orderBy(asc(quizQuestions.sortOrder));
+  }
+
+  async createQuizQuestion(question: InsertQuizQuestion): Promise<QuizQuestion> {
+    const [created] = await db
+      .insert(quizQuestions)
+      .values(question)
+      .returning();
+    return created;
+  }
+
+  async updateQuizQuestion(id: string, question: Partial<InsertQuizQuestion>): Promise<QuizQuestion> {
+    const [updated] = await db
+      .update(quizQuestions)
+      .set({
+        ...question,
+        updatedAt: new Date()
+      })
+      .where(eq(quizQuestions.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteQuizQuestion(id: string): Promise<void> {
+    await db.delete(quizQuestions).where(eq(quizQuestions.id, id));
+  }
+
+  // Quiz answer option operations
+  async getQuizAnswerOptions(questionId: string): Promise<QuizAnswerOption[]> {
+    return await db
+      .select()
+      .from(quizAnswerOptions)
+      .where(eq(quizAnswerOptions.questionId, questionId))
+      .orderBy(asc(quizAnswerOptions.sortOrder));
+  }
+
+  async createQuizAnswerOption(option: InsertQuizAnswerOption): Promise<QuizAnswerOption> {
+    const [created] = await db
+      .insert(quizAnswerOptions)
+      .values(option)
+      .returning();
+    return created;
+  }
+
+  async updateQuizAnswerOption(id: string, option: Partial<InsertQuizAnswerOption>): Promise<QuizAnswerOption> {
+    const [updated] = await db
+      .update(quizAnswerOptions)
+      .set(option)
+      .where(eq(quizAnswerOptions.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteQuizAnswerOption(id: string): Promise<void> {
+    await db.delete(quizAnswerOptions).where(eq(quizAnswerOptions.id, id));
+  }
+
+  // Quiz response operations
+  async getQuizResponses(quizId?: string): Promise<QuizResponse[]> {
+    if (quizId) {
+      return await db
+        .select()
+        .from(quizResponses)
+        .where(eq(quizResponses.quizId, quizId))
+        .orderBy(desc(quizResponses.createdAt));
+    }
+    return await db
+      .select()
+      .from(quizResponses)
+      .orderBy(desc(quizResponses.createdAt));
+  }
+
+  async createQuizResponse(response: InsertQuizResponse): Promise<QuizResponse> {
+    const [created] = await db
+      .insert(quizResponses)
+      .values(response)
+      .returning();
+    return created;
+  }
+
+  // Content asset operations
+  async getContentAssets(filters?: { activeOnly?: boolean; category?: string }): Promise<ContentAsset[]> {
+    const conditions = [];
+    if (filters?.activeOnly) {
+      conditions.push(eq(contentAssets.active, true));
+    }
+    if (filters?.category) {
+      conditions.push(eq(contentAssets.category, filters.category));
+    }
+    
+    if (conditions.length > 0) {
+      return await db
+        .select()
+        .from(contentAssets)
+        .where(and(...conditions))
+        .orderBy(desc(contentAssets.createdAt));
+    }
+    
+    return await db
+      .select()
+      .from(contentAssets)
+      .orderBy(desc(contentAssets.createdAt));
+  }
+
+  async getContentAsset(slug: string): Promise<ContentAsset | undefined> {
+    const [asset] = await db
+      .select()
+      .from(contentAssets)
+      .where(eq(contentAssets.slug, slug));
+    return asset;
+  }
+
+  async getContentAssetById(id: string): Promise<ContentAsset | undefined> {
+    const [asset] = await db
+      .select()
+      .from(contentAssets)
+      .where(eq(contentAssets.id, id));
+    return asset;
+  }
+
+  async createContentAsset(asset: InsertContentAsset): Promise<ContentAsset> {
+    const [created] = await db
+      .insert(contentAssets)
+      .values(asset)
+      .returning();
+    return created;
+  }
+
+  async updateContentAsset(id: string, asset: Partial<InsertContentAsset>): Promise<ContentAsset> {
+    const [updated] = await db
+      .update(contentAssets)
+      .set({
+        ...asset,
+        updatedAt: new Date()
+      })
+      .where(eq(contentAssets.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteContentAsset(id: string): Promise<void> {
+    await db.delete(contentAssets).where(eq(contentAssets.id, id));
+  }
+
+  async incrementAssetDownloadCount(assetId: string): Promise<void> {
+    await db
+      .update(contentAssets)
+      .set({
+        downloadCount: sql`${contentAssets.downloadCount} + 1`,
+        updatedAt: new Date()
+      })
+      .where(eq(contentAssets.id, assetId));
+  }
+
+  // Asset download operations
+  async getAssetDownloads(assetId?: string): Promise<AssetDownload[]> {
+    if (assetId) {
+      return await db
+        .select()
+        .from(assetDownloads)
+        .where(eq(assetDownloads.assetId, assetId))
+        .orderBy(desc(assetDownloads.createdAt));
+    }
+    return await db
+      .select()
+      .from(assetDownloads)
+      .orderBy(desc(assetDownloads.createdAt));
+  }
+
+  async createAssetDownload(download: InsertAssetDownload): Promise<AssetDownload> {
+    const [created] = await db
+      .insert(assetDownloads)
+      .values(download)
+      .returning();
+    return created;
   }
 }
 

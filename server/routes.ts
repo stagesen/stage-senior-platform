@@ -53,6 +53,12 @@ import {
   insertGoogleAdsAdSchema,
   insertExitIntentPopupSchema,
   insertExitIntentSubmissionSchema,
+  insertQuizSchema,
+  insertQuizQuestionSchema,
+  insertQuizAnswerOptionSchema,
+  insertQuizResponseSchema,
+  insertContentAssetSchema,
+  insertAssetDownloadSchema,
   googleAdsConversionActions,
   googleAdsCampaigns,
   googleAdsAdGroups,
@@ -3975,6 +3981,341 @@ Disallow: /admin/
     } catch (error) {
       console.error("Error importing database:", error);
       res.status(500).json({ message: "Failed to import database", error: error instanceof Error ? error.message : String(error) });
+    }
+  });
+
+  // ======================
+  // QUIZ ROUTES
+  // ======================
+
+  // Admin Quiz Management Routes (require auth)
+  
+  // GET /api/quizzes - List all quizzes
+  app.get("/api/quizzes", requireAuth, async (req, res) => {
+    try {
+      const activeOnly = req.query.activeOnly !== 'false';
+      const quizzes = await storage.getQuizzes({ activeOnly });
+      res.json(quizzes);
+    } catch (error) {
+      console.error("Error fetching quizzes:", error);
+      res.status(500).json({ message: "Failed to fetch quizzes" });
+    }
+  });
+
+  // GET /api/quizzes/:id - Get quiz by ID with questions/answers
+  app.get("/api/quizzes/:id", requireAuth, async (req, res) => {
+    try {
+      const quiz = await storage.getQuizById(req.params.id);
+      if (!quiz) {
+        return res.status(404).json({ message: "Quiz not found" });
+      }
+      
+      // Get quiz with questions and answers
+      const quizWithQuestions = await storage.getQuizWithQuestions(quiz.slug);
+      res.json(quizWithQuestions);
+    } catch (error) {
+      console.error("Error fetching quiz:", error);
+      res.status(500).json({ message: "Failed to fetch quiz" });
+    }
+  });
+
+  // POST /api/quizzes - Create quiz
+  app.post("/api/quizzes", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertQuizSchema.parse(req.body);
+      const quiz = await storage.createQuiz(validatedData);
+      res.status(201).json(quiz);
+    } catch (error) {
+      console.error("Error creating quiz:", error);
+      res.status(400).json({ message: "Failed to create quiz" });
+    }
+  });
+
+  // PATCH /api/quizzes/:id - Update quiz
+  app.patch("/api/quizzes/:id", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertQuizSchema.partial().parse(req.body);
+      const quiz = await storage.updateQuiz(req.params.id, validatedData);
+      res.json(quiz);
+    } catch (error) {
+      console.error("Error updating quiz:", error);
+      res.status(400).json({ message: "Failed to update quiz" });
+    }
+  });
+
+  // DELETE /api/quizzes/:id - Delete quiz
+  app.delete("/api/quizzes/:id", requireAuth, async (req, res) => {
+    try {
+      await storage.deleteQuiz(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting quiz:", error);
+      res.status(500).json({ message: "Failed to delete quiz" });
+    }
+  });
+
+  // POST /api/quizzes/:quizId/questions - Create question
+  app.post("/api/quizzes/:quizId/questions", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertQuizQuestionSchema.parse({
+        ...req.body,
+        quizId: req.params.quizId,
+      });
+      const question = await storage.createQuizQuestion(validatedData);
+      res.status(201).json(question);
+    } catch (error) {
+      console.error("Error creating quiz question:", error);
+      res.status(400).json({ message: "Failed to create quiz question" });
+    }
+  });
+
+  // PATCH /api/quizzes/:quizId/questions/:questionId - Update question
+  app.patch("/api/quizzes/:quizId/questions/:questionId", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertQuizQuestionSchema.partial().parse(req.body);
+      const question = await storage.updateQuizQuestion(req.params.questionId, validatedData);
+      res.json(question);
+    } catch (error) {
+      console.error("Error updating quiz question:", error);
+      res.status(400).json({ message: "Failed to update quiz question" });
+    }
+  });
+
+  // DELETE /api/quizzes/:quizId/questions/:questionId - Delete question
+  app.delete("/api/quizzes/:quizId/questions/:questionId", requireAuth, async (req, res) => {
+    try {
+      await storage.deleteQuizQuestion(req.params.questionId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting quiz question:", error);
+      res.status(500).json({ message: "Failed to delete quiz question" });
+    }
+  });
+
+  // POST /api/quizzes/:quizId/questions/:questionId/answers - Create answer option
+  app.post("/api/quizzes/:quizId/questions/:questionId/answers", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertQuizAnswerOptionSchema.parse({
+        ...req.body,
+        questionId: req.params.questionId,
+      });
+      const answer = await storage.createQuizAnswerOption(validatedData);
+      res.status(201).json(answer);
+    } catch (error) {
+      console.error("Error creating quiz answer option:", error);
+      res.status(400).json({ message: "Failed to create quiz answer option" });
+    }
+  });
+
+  // PATCH /api/quizzes/:quizId/questions/:questionId/answers/:answerId - Update answer option
+  app.patch("/api/quizzes/:quizId/questions/:questionId/answers/:answerId", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertQuizAnswerOptionSchema.partial().parse(req.body);
+      const answer = await storage.updateQuizAnswerOption(req.params.answerId, validatedData);
+      res.json(answer);
+    } catch (error) {
+      console.error("Error updating quiz answer option:", error);
+      res.status(400).json({ message: "Failed to update quiz answer option" });
+    }
+  });
+
+  // DELETE /api/quizzes/:quizId/questions/:questionId/answers/:answerId - Delete answer option
+  app.delete("/api/quizzes/:quizId/questions/:questionId/answers/:answerId", requireAuth, async (req, res) => {
+    try {
+      await storage.deleteQuizAnswerOption(req.params.answerId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting quiz answer option:", error);
+      res.status(500).json({ message: "Failed to delete quiz answer option" });
+    }
+  });
+
+  // GET /api/quiz-responses - Get all quiz responses
+  app.get("/api/quiz-responses", requireAuth, async (req, res) => {
+    try {
+      const quizId = req.query.quizId as string | undefined;
+      const responses = await storage.getQuizResponses(quizId);
+      res.json(responses);
+    } catch (error) {
+      console.error("Error fetching quiz responses:", error);
+      res.status(500).json({ message: "Failed to fetch quiz responses" });
+    }
+  });
+
+  // Public Quiz Routes (no auth)
+
+  // GET /api/public/quizzes/:slug - Get quiz with questions for public use
+  app.get("/api/public/quizzes/:slug", async (req, res) => {
+    try {
+      const quiz = await storage.getQuizWithQuestions(req.params.slug);
+      if (!quiz) {
+        return res.status(404).json({ message: "Quiz not found" });
+      }
+      
+      // Only return active quizzes to public
+      if (!quiz.active) {
+        return res.status(404).json({ message: "Quiz not found" });
+      }
+      
+      res.json(quiz);
+    } catch (error) {
+      console.error("Error fetching public quiz:", error);
+      res.status(500).json({ message: "Failed to fetch quiz" });
+    }
+  });
+
+  // POST /api/quiz-responses - Submit quiz response
+  app.post("/api/quiz-responses", async (req, res) => {
+    try {
+      const validatedData = insertQuizResponseSchema.parse(req.body);
+      
+      // Add UTM tracking data from session
+      const enrichedResponseData = {
+        ...validatedData,
+        utmSource: req.session.utm?.utm_source,
+        utmMedium: req.session.utm?.utm_medium,
+        utmCampaign: req.session.utm?.utm_campaign,
+        utmTerm: req.session.utm?.utm_term,
+        utmContent: req.session.utm?.utm_content,
+      };
+      
+      const response = await storage.createQuizResponse(enrichedResponseData);
+      res.status(201).json(response);
+    } catch (error) {
+      console.error("Error creating quiz response:", error);
+      res.status(400).json({ message: "Failed to create quiz response" });
+    }
+  });
+
+  // ======================
+  // CONTENT ASSET ROUTES
+  // ======================
+
+  // Admin Content Asset Routes (require auth)
+
+  // GET /api/content-assets - List assets
+  app.get("/api/content-assets", requireAuth, async (req, res) => {
+    try {
+      const activeOnly = req.query.activeOnly !== 'false';
+      const category = req.query.category as string | undefined;
+      const assets = await storage.getContentAssets({ activeOnly, category });
+      res.json(assets);
+    } catch (error) {
+      console.error("Error fetching content assets:", error);
+      res.status(500).json({ message: "Failed to fetch content assets" });
+    }
+  });
+
+  // GET /api/content-assets/:id - Get asset by ID
+  app.get("/api/content-assets/:id", requireAuth, async (req, res) => {
+    try {
+      const asset = await storage.getContentAssetById(req.params.id);
+      if (!asset) {
+        return res.status(404).json({ message: "Content asset not found" });
+      }
+      res.json(asset);
+    } catch (error) {
+      console.error("Error fetching content asset:", error);
+      res.status(500).json({ message: "Failed to fetch content asset" });
+    }
+  });
+
+  // POST /api/content-assets - Create asset
+  app.post("/api/content-assets", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertContentAssetSchema.parse(req.body);
+      const asset = await storage.createContentAsset(validatedData);
+      res.status(201).json(asset);
+    } catch (error) {
+      console.error("Error creating content asset:", error);
+      res.status(400).json({ message: "Failed to create content asset" });
+    }
+  });
+
+  // PATCH /api/content-assets/:id - Update asset
+  app.patch("/api/content-assets/:id", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertContentAssetSchema.partial().parse(req.body);
+      const asset = await storage.updateContentAsset(req.params.id, validatedData);
+      res.json(asset);
+    } catch (error) {
+      console.error("Error updating content asset:", error);
+      res.status(400).json({ message: "Failed to update content asset" });
+    }
+  });
+
+  // DELETE /api/content-assets/:id - Delete asset
+  app.delete("/api/content-assets/:id", requireAuth, async (req, res) => {
+    try {
+      await storage.deleteContentAsset(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting content asset:", error);
+      res.status(500).json({ message: "Failed to delete content asset" });
+    }
+  });
+
+  // GET /api/asset-downloads - Get download tracking
+  app.get("/api/asset-downloads", requireAuth, async (req, res) => {
+    try {
+      const assetId = req.query.assetId as string | undefined;
+      const downloads = await storage.getAssetDownloads(assetId);
+      res.json(downloads);
+    } catch (error) {
+      console.error("Error fetching asset downloads:", error);
+      res.status(500).json({ message: "Failed to fetch asset downloads" });
+    }
+  });
+
+  // Public Asset Routes (no auth)
+
+  // GET /api/public/content-assets - List active assets only
+  app.get("/api/public/content-assets", async (req, res) => {
+    try {
+      const category = req.query.category as string | undefined;
+      const assets = await storage.getContentAssets({ activeOnly: true, category });
+      res.json(assets);
+    } catch (error) {
+      console.error("Error fetching public content assets:", error);
+      res.status(500).json({ message: "Failed to fetch content assets" });
+    }
+  });
+
+  // GET /api/public/content-assets/:slug - Get asset by slug
+  app.get("/api/public/content-assets/:slug", async (req, res) => {
+    try {
+      const asset = await storage.getContentAsset(req.params.slug);
+      if (!asset) {
+        return res.status(404).json({ message: "Content asset not found" });
+      }
+      
+      // Only return active assets to public
+      if (!asset.active) {
+        return res.status(404).json({ message: "Content asset not found" });
+      }
+      
+      res.json(asset);
+    } catch (error) {
+      console.error("Error fetching public content asset:", error);
+      res.status(500).json({ message: "Failed to fetch content asset" });
+    }
+  });
+
+  // POST /api/asset-downloads - Track asset download
+  app.post("/api/asset-downloads", async (req, res) => {
+    try {
+      const validatedData = insertAssetDownloadSchema.parse(req.body);
+      
+      // Create download record
+      const download = await storage.createAssetDownload(validatedData);
+      
+      // Increment the download count on the asset
+      await storage.incrementAssetDownloadCount(validatedData.assetId);
+      
+      res.status(201).json(download);
+    } catch (error) {
+      console.error("Error tracking asset download:", error);
+      res.status(400).json({ message: "Failed to track asset download" });
     }
   });
 

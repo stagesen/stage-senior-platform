@@ -1383,3 +1383,87 @@ export const insertExitIntentSubmissionSchema = createInsertSchema(exitIntentSub
 
 export type ExitIntentSubmission = typeof exitIntentSubmissions.$inferSelect;
 export type InsertExitIntentSubmission = z.infer<typeof insertExitIntentSubmissionSchema>;
+
+// Quiz schemas and types
+export const insertQuizSchema = createInsertSchema(quizzes, {
+  slug: z.string().min(1).max(255).regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens only"),
+  title: z.string().min(1).max(255),
+  description: z.string().optional(),
+  resultTitle: z.string().max(255).optional(),
+  resultMessage: z.string().optional(),
+  active: z.boolean().default(true),
+  sortOrder: z.number().int().default(0),
+}).omit({ id: true, createdAt: true, updatedAt: true });
+
+export type Quiz = typeof quizzes.$inferSelect;
+export type InsertQuiz = z.infer<typeof insertQuizSchema>;
+
+export const insertQuizQuestionSchema = createInsertSchema(quizQuestions, {
+  quizId: z.string().uuid(),
+  questionText: z.string().min(1),
+  questionType: z.enum(["multiple_choice", "text", "scale"]).default("multiple_choice"),
+  sortOrder: z.number().int().default(0),
+  required: z.boolean().default(true),
+}).omit({ id: true, createdAt: true, updatedAt: true });
+
+export type QuizQuestion = typeof quizQuestions.$inferSelect;
+export type InsertQuizQuestion = z.infer<typeof insertQuizQuestionSchema>;
+
+export const insertQuizAnswerOptionSchema = createInsertSchema(quizAnswerOptions, {
+  questionId: z.string().uuid(),
+  answerText: z.string().min(1),
+  resultCategory: z.string().max(100).optional(),
+  sortOrder: z.number().int().default(0),
+}).omit({ id: true, createdAt: true });
+
+export type QuizAnswerOption = typeof quizAnswerOptions.$inferSelect;
+export type InsertQuizAnswerOption = z.infer<typeof insertQuizAnswerOptionSchema>;
+
+export const insertQuizResponseSchema = createInsertSchema(quizResponses, {
+  quizId: z.string().uuid(),
+  email: z.string().email(),
+  name: z.string().max(255).optional(),
+  phone: z.string().max(20).optional(),
+  zipCode: z.string().max(10).optional(),
+  timeline: z.string().max(100).optional(),
+  answers: z.array(z.object({
+    questionId: z.string().uuid(),
+    answerOptionId: z.string().uuid().optional(),
+    textAnswer: z.string().optional(),
+  })),
+  resultCategory: z.string().max(100).optional(),
+}).omit({ id: true, createdAt: true });
+
+export type QuizResponse = typeof quizResponses.$inferSelect;
+export type InsertQuizResponse = z.infer<typeof insertQuizResponseSchema>;
+
+// Content asset schemas and types
+export const insertContentAssetSchema = createInsertSchema(contentAssets, {
+  slug: z.string().min(1).max(255).regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens only"),
+  title: z.string().min(1).max(255),
+  description: z.string().optional(),
+  category: z.string().max(100).optional(),
+  fileUrl: z.string().optional(),
+  objectKey: z.string().optional(),
+  thumbnailImageId: z.string().optional(),
+  fileSize: z.number().int().optional(),
+  mimeType: z.string().max(100).optional(),
+  requiredFields: z.array(z.string()).default([]),
+  active: z.boolean().default(true),
+  sortOrder: z.number().int().default(0),
+}).omit({ id: true, downloadCount: true, createdAt: true, updatedAt: true });
+
+export type ContentAsset = typeof contentAssets.$inferSelect;
+export type InsertContentAsset = z.infer<typeof insertContentAssetSchema>;
+
+export const insertAssetDownloadSchema = createInsertSchema(assetDownloads, {
+  assetId: z.string().uuid(),
+  email: z.string().email(),
+  name: z.string().max(255).optional(),
+  phone: z.string().max(20).optional(),
+  zipCode: z.string().max(10).optional(),
+  timeline: z.string().max(100).optional(),
+}).omit({ id: true, createdAt: true });
+
+export type AssetDownload = typeof assetDownloads.$inferSelect;
+export type InsertAssetDownload = z.infer<typeof insertAssetDownloadSchema>;
