@@ -1,0 +1,57 @@
+# Top-of-Funnel Content & Paid Media Campaign Plan
+
+## 1. Audience & Buyer Journey Insight
+- **Primary personas:**
+  - *Adult children decision-makers* researching senior living options for parents; skew female, aged 45-64, college-educated, digitally savvy, emotionally overwhelmed.
+  - *Prospective residents* (active seniors 65+) evaluating lifestyle fit, affordability, and services.
+  - *Healthcare referrers* (social workers, discharge planners) seeking trusted partners to recommend post-acute transitions.
+- **Pain points & triggers:** confusion about levels of care, cost transparency, differentiating communities, urgency after medical events, fear of losing independence.
+- **Top-of-funnel goals:** build trust, educate on care journeys, capture intent signals (email, resource downloads, webinar sign-ups).
+- **Messaging map:**
+  | Persona | Key Questions | Emotional Drivers | Proof Points to Feature | CTA Angle |
+  | --- | --- | --- | --- | --- |
+  | Adult children | "How do I know which care level is right?" "What will this cost?" | Relief from guilt, desire for safety, time back | Care navigator quiz insights, testimonials from other families, transparent pricing ranges | "Find your family's care roadmap" |
+  | Prospective residents | "Will I fit in?" "What is daily life like?" | Community, independence, purposeful aging | Lifestyle microsite, activity calendars, resident-led videos | "Explore a day in the community" |
+  | Healthcare referrers | "Can I trust this partner with outcomes?" | Clinical excellence, reliable communication | Safety Benchmark data, care coordination workflows, case studies | "Access referral toolkit" |
+- **Journey alignment:** map each persona's awareness stage touchpoints (organic search, physician referral, social discovery), define nurture sequences that move them to consideration (retargeting, email education, webinar invites).
+
+## 2. Content Pillars & Flagship Assets
+| Pillar | Objective | Hero Asset | Supporting Assets |
+| --- | --- | --- | --- |
+| Navigating Senior Care | Simplify complex decisions, demystify care levels | **Interactive Senior Care Options Navigator** (quiz + personalized roadmap) | Blog series on care levels, downloadable care transition checklist, explainer video, FAQs |
+| Financial Planning | Address cost anxieties & funding options | **Comprehensive "Paying for Senior Living" Guide** (PDF + calculator template) | Infographics on funding sources, blog on insurance/VA benefits, ROI calculator landing page, email drip |
+| Lifestyle & Wellness | Showcase community experience & outcomes | **Virtual Life at Stage Senior Hub** (microsite with testimonials, 360° walkthrough snippets, activity calendar) | Resident story blog posts, podcast mini-series with wellness directors, social short-form video |
+| Trust & Safety | Highlight quality, staff expertise, clinical excellence | **Senior Living Safety Benchmark Report** (data from internal QA audits) | Nurse Q&A blog, infographic on safety protocols, webinar with medical director |
+
+- **Content briefs per hero asset:**
+  - *Navigator quiz*: include 15-question logic tree aligned to care levels, integrate CMS tagging for personalized email follow-up, design mobile-first UI with ADA compliance.
+  - *Financial guide*: 25-page PDF + interactive Google Sheet calculator, include state-by-state funding appendix, embed expert quotes from financial planner.
+  - *Lifestyle microsite*: modular sections (Wellness, Dining, Community Events, Resident Voices) each with 2 video clips, 3 photography assets, and CTA block; include schema markup for events.
+  - *Safety report*: compile data from last 4 quarters, benchmark against industry averages, include executive summary slide deck for PR.
+- **Production checklist:** assign owner, SME, designer, dev requirements, SEO keywords, compliance review status for every asset in Airtable tracker.
+
+## 3. Editorial Calendar (Quarterly Sprint)
+- **Month 1:** Launch Senior Care Navigator quiz, publish foundational blog posts (care levels 101, signs your loved one needs support), run paid amplification to quiz.
+- **Month 2:** Release Paying for Senior Living guide + calculator; host webinar with financial planner; nurture with email drip.
+- **Month 3:** Debut Safety Benchmark Report + companion PR pitch; launch lifestyle microsite refresh with new resident stories.
+- **Always-on:** Weekly blog cadence, monthly podcast episode, quarterly webinar, monthly resident spotlight video.
+
+- **Weekly cadence detail:**
+  | Week | Content Releases | Distribution Tasks | Owner |
+  | --- | --- | --- | --- |
+  | W1 | Blog: "Assisted Living vs. Memory Care"; Quiz launch email | Organic social teaser (Meta, LinkedIn), SEM landing page QA | Content strategist |
+  | W2 | Podcast Ep. 1 "Caregiver Burnout"; Infographic on transition checklist | Upload to YouTube, syndicate via newsletter, enable Pinterest pin | Multimedia producer |
+  | W3 | Blog: "Questions to Ask on a Senior Living Tour"; Paid search copy refresh | Publish on Medium partner, repurpose into LinkedIn article, launch Google RSA variants | Copywriter |
+  | W4 | Resident spotlight video; Webinar promotion | Schedule paid social ad set, add pop-up on microsite, update CRM nurture | Lifecycle marketer |
+- **Workflow milestones:** content briefing (Monday), SME interview (Tuesday), draft review (Thursday), compliance/legal review (Friday), design handoff (following Monday).
+
+## 4. Conversion Paths & Lead Magnets
+- Quiz results gated behind email capture with tailored nurture sequence.
+- Guide downloads tracked with progressive profiling (collect zip code, timeline).
+- Webinar registrations synced to CRM with automated reminder and follow-up sequences.
+- Microsite includes CTA blocks for virtual tour booking and consultation requests.
+- **Nurture blueprints:**
+  - *Quiz takers*: 4-part drip (care roadmap summary, resident story, financial planning CTA, tour invitation) with behavioral branching based on link clicks.
+  - *Guide downloaders*: 5-part series (budgeting worksheet prompt, testimonial, webinar invite, cost comparison tool, advisor call scheduling).
+  - *Webinar attendees*: Thank-you email with replay, follow-up survey, case study, referral program invitation.
+- **Lead scoring model:** +20 points guide download, +15 webinar attendance, +10 quiz completion, +5 email click; MQL threshold at 60 points.
