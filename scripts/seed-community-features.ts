@@ -101,7 +101,7 @@ const communitySpecificFeatures: Record<string, any[]> = {
     {
       eyebrow: 'Locally Owned',
       title: '20+ Years of Excellence',
-      body: 'With over 20 years as a locally owned community, we\'ve earned a 98%+ resident satisfaction rate. Our deep roots in Golden mean personalized care from people who truly know and care about our residents.',
+      body: 'With over 20 years as a locally owned community, our deep roots in Golden mean personalized care from people who truly know and care about our residents.',
       ctaLabel: 'Our Story',
       ctaHref: '/contact',
       sortOrder: 6,

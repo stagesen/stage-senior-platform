@@ -35,8 +35,6 @@ async function main() {
 
 Golden Pond is locally owned and managed, providing an upscale yet down-to-earth experience that feels like home. Most residents make Golden Pond their forever home — supported by compassionate staff, engaging activities, and chef-prepared dining.
 
-Our 98% resident satisfaction rate reflects what families already know: life here is golden.
-
 **Independent Living**
 
 Newly remodeled apartments feature granite countertops, stainless appliances, tile backsplash, and in-unit washer and dryer. Enjoy spacious one- and two-bedroom floor plans with community-wide Wi-Fi, Comcast Xfinity HD cable TV, and free transportation to doctor appointments.
@@ -74,10 +72,10 @@ A sensory room offers a calming, multisensory environment. The courtyard feature
 Restaurant-style dining seven days a week features chef-prepared meals using fresh, seasonal ingredients. Friday happy hour runs 4–5 p.m. with wine, beer, and cocktails available with meals.
 
 Monthly food committee meetings with residents, weekly chef specials, a la carte menu options, and holiday menus and themed dining events make every meal special.`,
-      shortDescription: "Locally owned senior living in Golden, CO since 2004. Independent, assisted, and memory care with 98% resident satisfaction.",
+      shortDescription: "Locally owned senior living in Golden, CO since 2004. Independent, assisted, and memory care.",
       startingRateDisplay: "Starting at $4,600/month",
       seoTitle: "Golden Pond Retirement Community | Senior Living in Golden, CO Since 2004",
-      seoDescription: "Golden Pond offers locally owned independent living, assisted living, and memory care in Golden, CO. 98% resident satisfaction. Call (303) 271-0430.",
+      seoDescription: "Golden Pond offers locally owned independent living, assisted living, and memory care in Golden, CO. Call (303) 271-0430.",
     })
     .where(eq(communities.id, COMMUNITY_ID));
   console.log("✅ Community information updated\n");
@@ -146,8 +144,8 @@ Monthly food committee meetings with residents, weekly chef specials, a la carte
       sortOrder: 1
     },
     {
-      eyebrow: "98% Satisfaction",
-      title: "Your Forever Home",
+      eyebrow: "Forever Home",
+      title: "Care That Grows With You",
       body: "Most residents make Golden Pond their forever home. With care that grows with you — from independent living to assisted living and memory care — you can age in place with dignity and compassion.",
       imageLeft: false,
       sortOrder: 2
@@ -182,18 +180,18 @@ Monthly food committee meetings with residents, weekly chef specials, a la carte
 
   const highlights = [
     {
-      title: "98% Resident Satisfaction",
-      description: "Families know what we know: life here is golden.",
-      sortOrder: 1
-    },
-    {
       title: "Locally Owned Since 2004",
       description: "Personal touch, responsive leadership, family feel.",
-      sortOrder: 2
+      sortOrder: 1
     },
     {
       title: "Care That Grows With You",
       description: "Independent, assisted, and memory care options.",
+      sortOrder: 2
+    },
+    {
+      title: "Beautiful Golden, CO Location",
+      description: "Scenic mountain views and community connections.",
       sortOrder: 3
     }
   ];

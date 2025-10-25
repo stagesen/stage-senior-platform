@@ -83,10 +83,10 @@ function generateCustomContent(urlPattern: string, careTypeId: string | null) {
   // Adjust for "best" comparison variants
   if (urlPattern.includes('/best-')) {
     customContent.introSection.heading = `Compare the Best {careType} in {city}`;
-    customContent.introSection.content = `Finding the best {careType} in {city} means comparing care quality, resident satisfaction, amenities, and value. Our locally owned communities consistently rank among {city}'s top senior living options, with 98%+ resident satisfaction and families who trust us with their loved ones.`;
+    customContent.introSection.content = `Finding the best {careType} in {city} means comparing care quality, resident reviews, amenities, and value. Our locally owned communities consistently rank among {city}'s top senior living options, with families who trust us with their loved ones.`;
     customContent.whyChooseSection.heading = `What Makes Us {city}'s Best {careType}`;
-    customContent.whyChooseSection.reasons[0].title = "98%+ Resident Satisfaction";
-    customContent.whyChooseSection.reasons[0].description = "Our residents and families rate us consistently higher than corporate chains. This isn't marketing—it's measurable satisfaction from real families who chose us and would choose us again.";
+    customContent.whyChooseSection.reasons[0].title = "Locally Owned Excellence";
+    customContent.whyChooseSection.reasons[0].description = "Our residents and families appreciate the personal touch of local ownership. This isn't a corporate chain—it's personalized care from people who know and care about each resident.";
     customContent.whyChooseSection.reasons[1].title = "Award-Winning Care Standards";
     customContent.whyChooseSection.reasons[1].description = "We maintain staffing ratios above industry standards, invest in ongoing staff training, and prioritize quality over profit margins. Our executive directors have decision-making authority to put residents first.";
   }
