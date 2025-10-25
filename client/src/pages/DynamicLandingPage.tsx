@@ -980,32 +980,14 @@ export default function DynamicLandingPage() {
 
       {/* 1bb. Community Locations Map - Show on "near me" and "best" pages */}
       {template.urlPattern && (template.urlPattern.includes('-near-me') || template.urlPattern.includes('/best-')) && filteredCommunities.length > 0 && (
-        <section className="bg-gray-50 py-12 md:py-16" data-testid="section-community-map">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Our Community Locations
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                {filteredCommunities.length === 1 
-                  ? `Visit our ${filteredCommunities[0].name} community` 
-                  : `Explore our ${filteredCommunities.length} communities near you`}
-              </p>
-            </div>
-            <div className="rounded-lg overflow-hidden shadow-lg border border-gray-200" style={{ height: '500px' }}>
-              <CommunityMap 
-                communities={filteredCommunities}
-                selectedCommunityId={primaryCommunity?.id}
-              />
-            </div>
-            <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                <MapPin className="w-4 h-4 inline mr-1" />
-                Click on map markers to view community details and get directions
-              </p>
-            </div>
-          </div>
-        </section>
+        <FadeIn direction="up" delay={0.2}>
+          <section className="w-full" data-testid="section-community-map" style={{ height: '500px' }}>
+            <CommunityMap 
+              communities={filteredCommunities}
+              selectedCommunityId={primaryCommunity?.id}
+            />
+          </section>
+        </FadeIn>
       )}
 
       {/* 1c. Page Content Sections - Dynamic sections from database */}
