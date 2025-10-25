@@ -478,6 +478,21 @@ export default function CareNavigator() {
               </CardContent>
             </Card>
 
+            {/* Assessment Disclaimer */}
+            <Card className="mb-8 border-blue-200 bg-blue-50/50">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-3">
+                  <HelpCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm text-blue-900">
+                    <p className="font-medium mb-1">Next Step: Personalized Assessment</p>
+                    <p className="text-blue-800">
+                      These recommendations are based on your quiz responses. Our experienced care advisors will conduct a comprehensive assessment of your loved one's specific needs, medical requirements, and preferences to ensure the perfect care match. Every individual's situation is unique, and we're here to provide personalized guidance every step of the way.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Recommended Communities */}
             {recommendedCommunities.length > 0 && (
               <div className="mb-12">
@@ -554,6 +569,23 @@ export default function CareNavigator() {
 
       <div className="max-w-4xl mx-auto px-4 py-12">
         <FadeIn>
+          {/* Disclaimer Card */}
+          {currentQuestionIndex === 0 && (
+            <Card className="mb-8 border-blue-200 bg-blue-50/50">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-3">
+                  <HelpCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm text-blue-900">
+                    <p className="font-medium mb-1">This is a General Assessment Tool</p>
+                    <p className="text-blue-800">
+                      This quiz provides preliminary guidance based on your answers. Our care team will conduct a comprehensive, personalized assessment to understand your loved one's specific needs and recommend the most appropriate care level and services.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
@@ -687,7 +719,7 @@ export default function CareNavigator() {
           <DialogHeader>
             <DialogTitle className="text-2xl">Just One More Step!</DialogTitle>
             <DialogDescription className="text-base">
-              Enter your contact information to see your personalized community recommendations.
+              Enter your contact information to see your personalized community recommendations. Our care advisors will follow up with a comprehensive assessment to ensure we find the perfect care solution for your loved one.
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4">

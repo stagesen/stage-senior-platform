@@ -132,10 +132,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Serve static files from attached_assets directory
-  // This allows frontend to access generated images and other assets
-  const attachedAssetsPath = path.resolve(import.meta.dirname, "..", "attached_assets");
-  app.use("/attached_assets", express.static(attachedAssetsPath));
+  // Serve ONLY generated images directory (not entire attached_assets)
+  // This prevents exposure of sensitive files like CSV exports, admin guides, etc.
+  const generatedImagesPath = path.join(import.meta.dirname, "..", "attached_assets", "generated_images");
+  app.use("/attached_assets/generated_images", express.static(generatedImagesPath));
+  
+  // SECURITY: Block all other attached_assets requests (CSV files, admin docs, etc.)
+  // This catch-all blocks any /attached_assets requests that weren't served by generated_images
+  app.use("/attached_assets", (req, res, next) => {
+    // If we're here, the file wasn't in generated_images, so block it
+    console.log(`[SECURITY] Blocked access to: ${req.path}`);
+    return res.status(403).json({ 
+      error: "Forbidden",
+      message: "Access denied. Only /attached_assets/generated_images/* files are publicly accessible."
+    });
+  });
 
   // Robots.txt - SEO crawling instructions
   app.get("/robots.txt", (_req, res) => {
