@@ -18,6 +18,7 @@ import PageGalleryAdmin from "@/components/PageGalleryAdmin";
 import PageContentManager from "@/components/PageContentManager";
 import GoogleAdsManager from "@/components/GoogleAdsManager";
 import ExitIntentPopupManager from "@/components/ExitIntentPopupManager";
+import RichTextEditor from "@/components/RichTextEditor";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -1558,6 +1559,9 @@ function ResourceManagement() {
     fileSize: 0,
     mimeType: "",
     requiredFields: [],
+    articleContent: "",
+    featuredImageId: "",
+    authorId: "",
     active: true,
     sortOrder: 0,
   });
@@ -1574,6 +1578,14 @@ function ResourceManagement() {
   const { data: downloads = [] } = useQuery<AssetDownload[]>({
     queryKey: ["/api/content-assets", selectedResource?.id, "downloads"],
     enabled: viewMode === "downloads" && !!selectedResource?.id,
+  });
+
+  const { data: images = [] } = useQuery({
+    queryKey: ["/api/images"],
+  });
+
+  const { data: teamMembers = [] } = useQuery<TeamMember[]>({
+    queryKey: ["/api/team-members"],
   });
 
   const createResourceMutation = useMutation({
@@ -1649,6 +1661,9 @@ function ResourceManagement() {
       fileSize: 0,
       mimeType: "",
       requiredFields: [],
+      articleContent: "",
+      featuredImageId: "",
+      authorId: "",
       active: true,
       sortOrder: 0,
     });
@@ -1675,6 +1690,9 @@ function ResourceManagement() {
       fileSize: resource.fileSize || 0,
       mimeType: resource.mimeType || "",
       requiredFields: resource.requiredFields || [],
+      articleContent: resource.articleContent || "",
+      featuredImageId: resource.featuredImageId || "",
+      authorId: resource.authorId || "",
       active: resource.active ?? true,
       sortOrder: resource.sortOrder ?? 0,
     });
@@ -1847,6 +1865,63 @@ function ResourceManagement() {
                 rows={3}
                 data-testid="input-resource-description"
               />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="articleContent">Article Content (Optional)</Label>
+              <RichTextEditor
+                value={editingResource.articleContent || ""}
+                onChange={(value) => setEditingResource({ ...editingResource, articleContent: value })}
+                placeholder="Write your article content here..."
+                data-testid="editor-article-content"
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="featuredImage">Featured Image (Optional)</Label>
+              <Select
+                value={editingResource.featuredImageId || ""}
+                onValueChange={(value) => setEditingResource({ ...editingResource, featuredImageId: value })}
+              >
+                <SelectTrigger id="featuredImage" data-testid="select-featured-image">
+                  <SelectValue placeholder="Select featured image" />
+                </SelectTrigger>
+                <SelectContent>
+                  {images.map((image: any) => (
+                    <SelectItem key={image.id} value={image.id}>
+                      <div className="flex items-center gap-2">
+                        {image.thumbnailUrl && (
+                          <img
+                            src={image.thumbnailUrl}
+                            alt={image.title || "Image"}
+                            className="w-8 h-8 object-cover rounded"
+                          />
+                        )}
+                        <span>{image.title || image.alt || "Untitled Image"}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="author">Author (Optional)</Label>
+              <Select
+                value={editingResource.authorId || ""}
+                onValueChange={(value) => setEditingResource({ ...editingResource, authorId: value })}
+              >
+                <SelectTrigger id="author" data-testid="select-author">
+                  <SelectValue placeholder="Select author" />
+                </SelectTrigger>
+                <SelectContent>
+                  {teamMembers.map((member) => (
+                    <SelectItem key={member.id} value={member.id}>
+                      {member.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">

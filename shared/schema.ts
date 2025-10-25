@@ -1473,6 +1473,9 @@ export const insertContentAssetSchema = createInsertSchema(contentAssets, {
   fileSize: z.number().int().optional(),
   mimeType: z.string().max(100).optional(),
   requiredFields: z.array(z.string()).default([]),
+  articleContent: z.string().optional(),
+  featuredImageId: z.string().optional(),
+  authorId: z.string().uuid().optional(),
   active: z.boolean().default(true),
   sortOrder: z.number().int().default(0),
 }).omit({ id: true, downloadCount: true, createdAt: true, updatedAt: true });
