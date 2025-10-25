@@ -1773,6 +1773,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all generated landing page URLs
+  app.get("/api/landing-page-templates/all-urls", async (req, res) => {
+    try {
+      const templates = await storage.getLandingPageTemplates({ active: true });
+      const urls: Array<{ url: string; title: string; templateSlug: string }> = [];
+      
+      templates.forEach((template) => {
+        const pattern = template.urlPattern || '';
+        const cities = template.cities || [];
+        const title = template.title || '';
+        
+        // Handle templates with no dynamic parts (static landing pages)
+        if (!pattern.includes(':')) {
+          urls.push({
+            url: pattern,
+            title: title,
+            templateSlug: template.slug
+          });
+          return;
+        }
+        
+        // Handle city-based templates
+        if (pattern.includes(':city') && cities.length > 0) {
+          cities.forEach((city) => {
+            const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+            const url = pattern.replace(':city', citySlug);
+            const expandedTitle = title.replace(/{city}/gi, city);
+            urls.push({
+              url,
+              title: expandedTitle,
+              templateSlug: template.slug
+            });
+          });
+          return;
+        }
+        
+        // Handle care level + city templates (e.g., /:careLevel/:city)
+        if (pattern.includes(':careLevel') && pattern.includes(':city')) {
+          const careLevels = ['assisted-living', 'memory-care', 'independent-living'];
+          cities.forEach((city) => {
+            careLevels.forEach((careLevel) => {
+              const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+              const url = pattern
+                .replace(':careLevel', careLevel)
+                .replace(':city', citySlug);
+              const expandedTitle = title
+                .replace(/{city}/gi, city)
+                .replace(/{careType}/gi, careLevel.replace(/-/g, ' '));
+              urls.push({
+                url,
+                title: expandedTitle,
+                templateSlug: template.slug
+              });
+            });
+          });
+          return;
+        }
+      });
+      
+      // Sort by URL
+      urls.sort((a, b) => a.url.localeCompare(b.url));
+      
+      res.json(urls);
+    } catch (error) {
+      console.error("Error generating landing page URLs:", error);
+      res.status(500).json({ message: "Failed to generate landing page URLs" });
+    }
+  });
+
   app.get("/api/landing-page-templates/resolve", async (req, res) => {
     try {
       const url = (req.query.url as string) || '/';

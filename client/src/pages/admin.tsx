@@ -81,6 +81,11 @@ export default function Admin() {
     queryKey: ["/api/landing-pages"],
   });
 
+  // Fetch all expanded landing page URLs
+  const { data: allLandingPageUrls = [] } = useQuery<Array<{ url: string; title: string; templateSlug: string }>>({
+    queryKey: ["/api/landing-page-templates/all-urls"],
+  });
+
   // Calculate stats
   const stats = {
     totalCommunities: communities.length,
@@ -542,19 +547,19 @@ export default function Admin() {
                     <AccordionTrigger>
                       <span className="flex items-center gap-2">
                         Google Ads Landing Pages 
-                        <Badge variant="secondary">{landingPages.length}</Badge>
+                        <Badge variant="secondary">{allLandingPageUrls.length} URLs</Badge>
                       </span>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <div className="space-y-2">
-                        {landingPages.map((page) => (
+                      <div className="space-y-2 max-h-96 overflow-y-auto">
+                        {allLandingPageUrls.map((page, index) => (
                           <a
-                            key={page.id}
-                            href={`/lp/${page.slug}`}
+                            key={`${page.templateSlug}-${index}`}
+                            href={page.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center justify-between p-2 hover:bg-muted rounded-md transition-colors group"
-                            data-testid={`link-landing-${page.slug}`}
+                            data-testid={`link-landing-${page.url.replace(/\//g, '-')}`}
                           >
                             <span className="text-sm">{page.title}</span>
                             <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
