@@ -1491,14 +1491,14 @@ export default function CommunityDetail() {
                     {community.city}, {community.state} {community.zipCode}
                   </div>
                 </div>
-                {(community.phone || community.phoneDial) && (
+                {(community.phoneDisplay || community.phone) && (
                   <div className="flex items-center" data-testid="community-phone">
                     <Phone className="w-5 h-5 mr-2 flex-shrink-0" />
                     <a 
-                      href={`tel:${community.phoneDial || community.phone}`}
+                      href={`tel:${community.phoneDial || community.phoneDisplay || community.phone}`}
                       className="hover:text-white transition-colors"
                     >
-                      {community.phone}
+                      {community.phoneDisplay || community.phone}
                     </a>
                   </div>
                 )}
