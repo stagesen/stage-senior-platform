@@ -994,56 +994,7 @@ export default function DynamicLandingPage() {
         </FadeIn>
       )}
 
-
-
-      {/* 1c. Page Content Sections - Dynamic sections from database */}
-      {activeSections.length > 0 && activeSections
-        .filter(section => section.sectionType !== 'cta_row') // Skip CTARow since we have hero overlay
-        .map((section) => {
-          // Pass currentCareType prop to CareComparisonTool sections
-          if (section.sectionType === 'care_comparison_tool') {
-            return (
-              <PageSectionRenderer 
-                key={section.id} 
-                section={section}
-                currentCareType={careTypeSlug || undefined}
-              />
-            );
-          }
-          
-          return (
-            <PageSectionRenderer 
-              key={section.id} 
-              section={section}
-            />
-          );
-        })}
-
-      {/* 1a. Care Type Focus - Show specific care type if landing page is for a specific care type */}
-      {careTypeSlug && getCareTypeName() !== "Senior Living" && (
-        <section className="py-8 md:py-12 bg-primary/5" data-testid="section-care-type-focus">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <Badge
-                variant="secondary"
-                className="px-6 py-3 text-base md:text-lg font-semibold inline-flex items-center gap-2"
-                data-testid="care-type-focus-badge"
-              >
-                <Heart className="w-5 h-5" />
-                Specializing in {getCareTypeName()}
-              </Badge>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 2. Trust Badge Bar - Builds credibility immediately */}
-      <TrustBadgeBar />
-
-      {/* 3. Stats Strip - Social proof numbers */}
-      <StatsStrip />
-
-      {/* 3a. Custom Content Sections - Template-specific helpful content */}
+      {/* 1c. Custom Content Sections - Template-specific helpful content (MOVED UP) */}
       {template.customContent && (
         <>
           {/* Intro Section */}
@@ -1180,6 +1131,53 @@ export default function DynamicLandingPage() {
           )}
         </>
       )}
+
+      {/* 1d. Page Content Sections - Dynamic sections from database */}
+      {activeSections.length > 0 && activeSections
+        .filter(section => section.sectionType !== 'cta_row') // Skip CTARow since we have hero overlay
+        .map((section) => {
+          // Pass currentCareType prop to CareComparisonTool sections
+          if (section.sectionType === 'care_comparison_tool') {
+            return (
+              <PageSectionRenderer 
+                key={section.id} 
+                section={section}
+                currentCareType={careTypeSlug || undefined}
+              />
+            );
+          }
+          
+          return (
+            <PageSectionRenderer 
+              key={section.id} 
+              section={section}
+            />
+          );
+        })}
+
+      {/* 1a. Care Type Focus - Show specific care type if landing page is for a specific care type */}
+      {careTypeSlug && getCareTypeName() !== "Senior Living" && (
+        <section className="py-8 md:py-12 bg-primary/5" data-testid="section-care-type-focus">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <Badge
+                variant="secondary"
+                className="px-6 py-3 text-base md:text-lg font-semibold inline-flex items-center gap-2"
+                data-testid="care-type-focus-badge"
+              >
+                <Heart className="w-5 h-5" />
+                Specializing in {getCareTypeName()}
+              </Badge>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 2. Trust Badge Bar - Builds credibility immediately */}
+      <TrustBadgeBar />
+
+      {/* 3. Stats Strip - Social proof numbers */}
+      <StatsStrip />
 
       {/* 4. Community Highlights - What makes this community special (alternating feature sections) */}
       {communityHighlights.length > 0 && (
