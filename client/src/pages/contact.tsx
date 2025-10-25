@@ -7,6 +7,7 @@ import { Link } from "wouter";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CommunitySelectionModal from "@/components/CommunitySelectionModal";
+import { getPrimaryPhoneDisplay, getPrimaryPhoneHref, getCityStateZip } from "@/lib/communityContact";
 import type { Community } from "@shared/schema";
 import { 
   Phone, 
@@ -229,14 +230,14 @@ export default function Contact() {
                       <div>
                         <p className="text-muted-foreground">
                           {community.street}<br />
-                          {community.city}, {community.state} {community.zip}
+                          {getCityStateZip(community)}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <Phone className="w-5 h-5 text-primary" />
-                      <a href={`tel:${community.phoneDial}`} className="text-muted-foreground hover:text-primary">
-                        {community.phoneDisplay}
+                      <a href={getPrimaryPhoneHref(community)} className="text-muted-foreground hover:text-primary">
+                        {getPrimaryPhoneDisplay(community)}
                       </a>
                     </div>
                     <Button 

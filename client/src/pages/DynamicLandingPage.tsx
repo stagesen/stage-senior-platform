@@ -19,6 +19,7 @@ import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import NotFound from "@/pages/not-found";
 import { generateSchemaOrgData } from "@/lib/schemaOrg";
+import { getPrimaryPhoneDisplay, getPrimaryPhoneHref, getCityState } from "@/lib/communityContact";
 import { toTitleCase, cn } from "@/lib/utils";
 import FadeIn from "@/components/animations/FadeIn";
 import ScaleHeader from "@/components/animations/ScaleHeader";
@@ -245,7 +246,7 @@ const CommunityCardLP = ({ community }: { community: Community }) => {
         <div className="flex items-center gap-2 text-muted-foreground mb-3">
           <MapPin className="w-4 h-4" />
           <span className="text-sm">
-            {community.city}, {community.state}
+            {getCityState(community)}
           </span>
         </div>
         {community.shortDescription && (
@@ -865,9 +866,9 @@ export default function DynamicLandingPage() {
                 className={`min-h-[44px] w-full sm:w-auto ${variant === "primary" ? "bg-white text-primary hover:bg-white/90" : "variant-outline"}`}
                 data-testid={`button-phone-${variant}`}
               >
-                <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
+                <a href={getPrimaryPhoneHref(primaryCommunity)}>
                   <Phone className="w-5 h-5 mr-2" />
-                  {primaryCommunity.phoneDisplay}
+                  {getPrimaryPhoneDisplay(primaryCommunity)}
                 </a>
               </Button>
             )}
@@ -912,7 +913,7 @@ export default function DynamicLandingPage() {
               className="min-h-[44px] w-full"
               data-testid="button-sticky-call"
             >
-              <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
+              <a href={getPrimaryPhoneHref(primaryCommunity)}>
                 <Phone className="w-4 h-4 mr-2" />
                 Call Now
               </a>
@@ -967,9 +968,9 @@ export default function DynamicLandingPage() {
                     className="min-h-[56px] px-8 text-lg w-full md:w-auto border-2 border-white text-white hover:bg-white/20"
                     data-testid="button-hero-cta-phone"
                   >
-                    <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
+                    <a href={getPrimaryPhoneHref(primaryCommunity)}>
                       <Phone className="w-5 h-5 mr-2" />
-                      {primaryCommunity.phoneDisplay}
+                      {getPrimaryPhoneDisplay(primaryCommunity)}
                     </a>
                   </Button>
                 )}
@@ -1528,11 +1529,11 @@ export default function DynamicLandingPage() {
                         <div className="flex-1">
                           <h3 className="font-semibold text-lg mb-2">Phone</h3>
                           <a
-                            href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}
+                            href={getPrimaryPhoneHref(primaryCommunity)}
                             className="text-muted-foreground hover:text-primary transition-colors text-lg"
                             data-testid="phone-link"
                           >
-                            {primaryCommunity.phoneDisplay}
+                            {getPrimaryPhoneDisplay(primaryCommunity)}
                           </a>
                         </div>
                       </div>
@@ -1671,9 +1672,9 @@ export default function DynamicLandingPage() {
                     className="bg-white text-primary hover:bg-white/90 min-h-[44px] w-full sm:w-auto"
                     data-testid="button-call-cta"
                   >
-                    <a href={`tel:${primaryCommunity.phoneDial || primaryCommunity.phoneDisplay}`}>
+                    <a href={getPrimaryPhoneHref(primaryCommunity)}>
                       <Phone className="w-5 h-5 mr-2" />
-                      {primaryCommunity.phoneDisplay}
+                      {getPrimaryPhoneDisplay(primaryCommunity)}
                     </a>
                   </Button>
                 )}

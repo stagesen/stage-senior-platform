@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { getCityState } from '@/lib/communityContact';
 import type { Community } from '@shared/schema';
 import { useResolveImageUrl } from '@/hooks/useResolveImageUrl';
 
@@ -145,7 +146,7 @@ export default function CommunityMap({
       // City name - centered
       const location = document.createElement('p');
       location.className = 'text-sm text-gray-600 mb-3 text-center';
-      location.textContent = `${community.city}, ${community.state}`;
+      location.textContent = getCityState(community);
       contentDiv.appendChild(location);
 
       // View Details button with community color

@@ -8,6 +8,7 @@ import { CheckCircle, Phone, Mail, MapPin, ArrowRight, Home } from 'lucide-react
 import { fireScheduleTour, getMetaCookies, getClickIdsFromUrl, generateEventId } from '@/lib/tracking';
 import { apiRequest } from '@/lib/queryClient';
 import { useResolveImageUrl } from '@/hooks/useResolveImageUrl';
+import { getPrimaryPhoneDisplay, getPrimaryPhoneHref, getCityStateZip } from '@/lib/communityContact';
 import type { Community } from '@shared/schema';
 
 interface GalleryImage {
@@ -345,7 +346,7 @@ export default function TourScheduled() {
                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Address</p>
                         <p className="text-gray-900 dark:text-gray-100" data-testid="text-community-address">
                           {community.street && <>{community.street}<br /></>}
-                          {community.city}, {community.state} {community.zip}
+                          {getCityStateZip(community)}
                         </p>
                       </div>
                     </div>
@@ -357,11 +358,11 @@ export default function TourScheduled() {
                         <div>
                           <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Phone</p>
                           <a
-                            href={`tel:${community.phoneDial || community.phoneDisplay}`}
+                            href={getPrimaryPhoneHref(community)}
                             className="text-[var(--deep-blue)] hover:text-[var(--bright-blue)] hover:underline font-medium"
                             data-testid="link-community-phone"
                           >
-                            {community.phoneDisplay}
+                            {getPrimaryPhoneDisplay(community)}
                           </a>
                         </div>
                       </div>
@@ -393,7 +394,7 @@ export default function TourScheduled() {
                           size="lg"
                           data-testid="button-call-now"
                         >
-                          <a href={`tel:${community.phoneDial || community.phoneDisplay}`}>
+                          <a href={getPrimaryPhoneHref(community)}>
                             <Phone className="w-4 h-4 mr-2" />
                             Call Us Anytime
                           </a>

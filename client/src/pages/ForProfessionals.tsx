@@ -23,6 +23,7 @@ import CommunityMap from "@/components/CommunityMap";
 import { PageHero } from "@/components/PageHero";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { getPrimaryPhoneDisplay, getPrimaryPhoneHref, getCityState } from "@/lib/communityContact";
 import { insertTourRequestSchema, type InsertTourRequest, type Community, type Testimonial } from "@shared/schema";
 import {
   Phone,
@@ -374,7 +375,7 @@ ${data.message}
                         <div className="flex items-start gap-2">
                           <MapPin className="w-4 h-4 mt-1 text-muted-foreground flex-shrink-0" />
                           <div className="text-sm">
-                            {community.city}, {community.state}
+                            {getCityState(community)}
                           </div>
                         </div>
                       </TableCell>
@@ -391,12 +392,12 @@ ${data.message}
                         <div className="space-y-1">
                           {community.phoneDisplay && (
                             <a
-                              href={`tel:${community.phoneDial || community.phoneDisplay}`}
+                              href={getPrimaryPhoneHref(community)}
                               className="flex items-center gap-1 text-sm text-primary hover:underline"
                               data-testid={`link-phone-${community.slug}`}
                             >
                               <Phone className="w-3 h-3" />
-                              {community.phoneDisplay}
+                              {getPrimaryPhoneDisplay(community)}
                             </a>
                           )}
                         </div>

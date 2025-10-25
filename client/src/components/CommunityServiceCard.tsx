@@ -1,6 +1,7 @@
 import { MapPin, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { getCityState } from "@/lib/communityContact";
 import type { Community } from "@shared/schema";
 
 interface CommunityServiceCardProps {
@@ -34,7 +35,7 @@ export default function CommunityServiceCard({ community }: CommunityServiceCard
           
           <p className="text-sm text-muted-foreground mb-3 flex items-center" data-testid={`location-${community.slug}`}>
             <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
-            {community.city}, {community.state}
+            {getCityState(community)}
           </p>
           
           {community.shortDescription && (

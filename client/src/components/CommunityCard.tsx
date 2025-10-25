@@ -20,6 +20,7 @@ import {
 import LeadCaptureForm from "@/components/LeadCaptureForm";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { getCommunityFurtherClass } from "@/lib/furtherWidgetUtils";
+import { getPrimaryPhoneDisplay, getPrimaryPhoneHref, getCityState } from "@/lib/communityContact";
 import { cn } from "@/lib/utils";
 import type { Community } from "@shared/schema";
 
@@ -94,7 +95,7 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
                 </Link>
                 <p className="text-muted-foreground flex items-center" data-testid={`location-${community.slug}`}>
                   <MapPin className="w-4 h-4 mr-1" />
-                  {community.city}, {community.state}
+                  {getCityState(community)}
                 </p>
               </div>
               <div className="text-right">
@@ -176,9 +177,9 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
                   asChild
                   data-testid={`button-call-${community.slug}`}
                 >
-                  <a href={`tel:${community.phoneDial || community.phone || '+19704444689'}`}>
+                  <a href={getPrimaryPhoneHref(community)}>
                     <Phone className="w-4 h-4 mr-2" />
-                    {community.phoneDisplay || community.phone || '(970) 444-4689'}
+                    {getPrimaryPhoneDisplay(community)}
                   </a>
                 </Button>
               </div>

@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Phone } from "lucide-react";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
+import { getPrimaryPhoneDisplay, getPrimaryPhoneHref } from "@/lib/communityContact";
 import type { Community } from "@shared/schema";
 
 interface BlogCommunityCTAProps {
@@ -149,13 +150,13 @@ export default function BlogCommunityCTA({ community }: BlogCommunityCTAProps) {
                 Have questions? We're here to help!
               </p>
               <a 
-                href={`tel:${community.phoneDial || community.phoneDisplay}`}
+                href={getPrimaryPhoneHref(community)}
                 className="flex items-center gap-2 px-6 py-3 bg-accent/20 hover:bg-accent/30 rounded-lg transition-colors group border border-accent/40"
                 data-testid="link-phone"
               >
                 <Phone className="w-5 h-5 text-foreground" />
                 <span className="font-bold text-foreground text-base sm:text-lg">
-                  {community.phoneDisplay}
+                  {getPrimaryPhoneDisplay(community)}
                 </span>
               </a>
             </div>

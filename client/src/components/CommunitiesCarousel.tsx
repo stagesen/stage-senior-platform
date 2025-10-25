@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { getCityState } from "@/lib/communityContact";
 import type { Community } from "@shared/schema";
 
 interface CarouselCommunityCardProps {
@@ -71,7 +72,7 @@ const CarouselCommunityCard = ({
             <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-md">
               <MapPin className="w-3.5 h-3.5 text-primary" />
               <span className="text-xs font-medium text-gray-700" data-testid={`carousel-location-${community.id}`}>
-                {community.city}, {community.state}
+                {getCityState(community)}
               </span>
             </div>
           </div>

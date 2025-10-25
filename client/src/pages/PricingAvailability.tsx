@@ -10,6 +10,7 @@ import { Link } from "wouter";
 import { MapPin, Phone, CheckCircle, Clock, Home } from "lucide-react";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
+import { getPrimaryPhoneHref, getCityState } from "@/lib/communityContact";
 import type { Community, FloorPlan, PageContentSection } from "@shared/schema";
 
 export default function PricingAvailability() {
@@ -276,7 +277,7 @@ function CommunityPricingCard({ community, floorPlans }: CommunityPricingCardPro
         </CardTitle>
         <div className="flex items-center gap-1 text-sm text-muted-foreground">
           <MapPin className="w-3 h-3" />
-          {community.city}, {community.state}
+          {getCityState(community)}
         </div>
       </CardHeader>
       <CardContent>
@@ -301,7 +302,7 @@ function CommunityPricingCard({ community, floorPlans }: CommunityPricingCardPro
           </Button>
           {community.phoneDisplay && (
             <Button variant="outline" size="icon" asChild data-testid={`button-phone-${community.slug}`}>
-              <a href={`tel:${community.phoneDial || community.phoneDisplay}`}>
+              <a href={getPrimaryPhoneHref(community)}>
                 <Phone className="w-4 h-4" />
               </a>
             </Button>

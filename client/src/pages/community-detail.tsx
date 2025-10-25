@@ -58,6 +58,7 @@ import {
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
 import { getCommunityFurtherClass } from "@/lib/furtherWidgetUtils";
+import { getPrimaryPhoneDisplay, getPrimaryPhoneHref, getCityStateZip, getCityState } from "@/lib/communityContact";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
@@ -915,8 +916,8 @@ const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: an
                   <Phone className="w-5 h-5 text-primary mt-0.5" />
                   <div>
                     <p className="font-medium">Call Us</p>
-                    <a href={`tel:${community.phoneDial || community.phone || '+1-970-444-4689'}`} className="text-primary hover:underline">
-                      {community.phoneDisplay || community.phone || "(970) 444-4689"}
+                    <a href={getPrimaryPhoneHref(community)} className="text-primary hover:underline">
+                      {getPrimaryPhoneDisplay(community)}
                     </a>
                   </div>
                 </div>
@@ -926,7 +927,7 @@ const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: an
                     <p className="font-medium">Visit Us</p>
                     <p className="text-sm text-muted-foreground">
                       {community.address}<br />
-                      {community.city}, {community.state} {community.zipCode}
+                      {getCityStateZip(community)}
                     </p>
                   </div>
                 </div>
@@ -1079,9 +1080,9 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
             asChild
             data-testid="button-call-hero"
           >
-            <a href={`tel:${community.phoneDial || community.phone || '+1-970-444-4689'}`}>
+            <a href={getPrimaryPhoneHref(community)}>
               <Phone className="w-5 h-5 mr-2" />
-              Call {community.phoneDisplay || community.phone || "(970) 444-4689"}
+              Call {getPrimaryPhoneDisplay(community)}
             </a>
           </Button>
         </div>
@@ -1488,17 +1489,17 @@ export default function CommunityDetail() {
                   <div>
                     {community.street || community.address}
                     {(community.street || community.address) && <br />}
-                    {community.city}, {community.state} {community.zipCode}
+                    {getCityStateZip(community)}
                   </div>
                 </div>
                 {(community.phoneDisplay || community.phone) && (
                   <div className="flex items-center" data-testid="community-phone">
                     <Phone className="w-5 h-5 mr-2 flex-shrink-0" />
                     <a 
-                      href={`tel:${community.phoneDial || community.phoneDisplay || community.phone}`}
+                      href={getPrimaryPhoneHref(community)}
                       className="hover:text-white transition-colors"
                     >
-                      {community.phoneDisplay || community.phone}
+                      {getPrimaryPhoneDisplay(community)}
                     </a>
                   </div>
                 )}
@@ -1581,7 +1582,7 @@ export default function CommunityDetail() {
                   </div>
                   <div>
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">{community.name}</h2>
-                    <p className="text-xs text-gray-600 hidden md:block">{community.city}, {community.state}</p>
+                    <p className="text-xs text-gray-600 hidden md:block">{getCityState(community)}</p>
                   </div>
                 </div>
               )}
@@ -1591,12 +1592,12 @@ export default function CommunityDetail() {
             <div className="flex items-center gap-2 md:gap-4">
               {community.phoneDisplay && (
                 <a
-                  href={`tel:${community.phoneDial || community.phoneDisplay}`}
+                  href={getPrimaryPhoneHref(community)}
                   className="hidden md:flex items-center gap-2 text-gray-700 hover:text-primary transition-colors"
                   data-testid="nav-phone"
                 >
                   <Phone className="w-4 h-4" />
-                  <span className="text-sm font-medium">{community.phoneDisplay}</span>
+                  <span className="text-sm font-medium">{getPrimaryPhoneDisplay(community)}</span>
                 </a>
               )}
               <Button 
@@ -1964,9 +1965,9 @@ export default function CommunityDetail() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <Button variant="outline" className="w-full justify-start" asChild data-testid="button-call-community">
-                    <a href={`tel:${community.phoneDial || community.phoneDisplay || '+1-800-555-0123'}`}>
+                    <a href={getPrimaryPhoneHref(community)}>
                       <Phone className="w-4 h-4 mr-2" />
-                      {community.phoneDisplay || community.phone || '(800) 555-0123'}
+                      {getPrimaryPhoneDisplay(community)}
                     </a>
                   </Button>
                   <Separator />
@@ -1977,7 +1978,7 @@ export default function CommunityDetail() {
                         <p className="font-medium">Address</p>
                         <p className="text-muted-foreground">
                           {community.address}<br />
-                          {community.city}, {community.state} {community.zipCode}
+                          {getCityStateZip(community)}
                         </p>
                       </div>
                     </div>

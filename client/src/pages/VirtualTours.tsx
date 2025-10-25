@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FloorPlanModal from "@/components/FloorPlanModal";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { getPrimaryPhoneDisplay, getPrimaryPhoneHref, getCityState } from "@/lib/communityContact";
 import { Link } from "wouter";
 import { BedDouble, Bath, Square, MapPin, ArrowRight, Home } from "lucide-react";
 import type { Community, FloorPlan } from "@shared/schema";
@@ -142,7 +143,7 @@ function CommunitySection({ community, floorPlans, onFloorPlanClick }: Community
             <h2 className="text-3xl font-bold text-foreground mb-4">{community.name}</h2>
             <div className="flex items-center gap-2 text-muted-foreground mb-4">
               <MapPin className="w-4 h-4" />
-              <span>{community.city}, {community.state}</span>
+              <span>{getCityState(community)}</span>
             </div>
             <p className="text-muted-foreground mb-6 leading-relaxed">
               {community.description || community.overview || "Explore our beautiful community and find the perfect living space for your needs."}
@@ -156,8 +157,8 @@ function CommunitySection({ community, floorPlans, onFloorPlanClick }: Community
               </Button>
               {community.phoneDisplay && (
                 <Button variant="outline" asChild data-testid={`button-call-${community.slug}`}>
-                  <a href={`tel:${community.phoneDial || community.phoneDisplay}`}>
-                    Call {community.phoneDisplay}
+                  <a href={getPrimaryPhoneHref(community)}>
+                    Call {getPrimaryPhoneDisplay(community)}
                   </a>
                 </Button>
               )}

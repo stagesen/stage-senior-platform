@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { getPrimaryPhoneDisplay, getCityState } from "@/lib/communityContact";
 import type { Community, CommunityCard } from "@shared/schema";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 
@@ -58,7 +59,7 @@ export default function CommunitySelectionModal({
                   data-testid={`community-location-${community.slug}`}
                 >
                   <MapPin className="w-4 h-4 mr-1" />
-                  {community.city}{'state' in community && community.state ? `, ${community.state}` : ', CO'}
+                  {getCityState(community)}
                 </div>
               </CardHeader>
               
@@ -77,7 +78,7 @@ export default function CommunitySelectionModal({
                     className="text-sm text-muted-foreground mb-4"
                     data-testid={`community-phone-${community.slug}`}
                   >
-                    Call: {community.phoneDisplay}
+                    Call: {getPrimaryPhoneDisplay(community)}
                   </p>
                 )}
                 
