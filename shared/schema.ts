@@ -10,7 +10,8 @@ import {
   jsonb,
   uuid,
   serial,
-  bigint
+  bigint,
+  date
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -108,6 +109,12 @@ export const communities = pgTable("communities", {
   talkFurtherId: text("talk_further_id"),
   videoUrl: text("video_url"),
   cluster: varchar("cluster", { length: 100 }), // Geographic cluster for landing page recommendations: 'littleton', 'arvada', 'golden'
+  // Community credentials and verified stats
+  yearEstablished: integer("year_established"),
+  licensedSince: date("licensed_since"),
+  residentCapacity: integer("resident_capacity"),
+  specialCertifications: jsonb("special_certifications").$type<string[]>().default([]),
+  verifiedStats: jsonb("verified_stats").$type<Record<string, number | string>>().default({}),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -931,6 +938,11 @@ export const insertCommunitySchema = createInsertSchema(communities).omit({
 }).extend({
   mainColorHex: z.string().regex(/^#([0-9a-fA-F]{6})$/, "Invalid hex color format (use #RRGGBB)").optional(),
   ctaColorHex: z.string().regex(/^#([0-9a-fA-F]{6})$/, "Invalid hex color format (use #RRGGBB)").optional(),
+  yearEstablished: z.number().min(1800).max(new Date().getFullYear()).optional(),
+  licensedSince: z.string().optional(), // Date string in ISO format
+  residentCapacity: z.number().min(1).optional(),
+  specialCertifications: z.array(z.string()).optional(),
+  verifiedStats: z.record(z.union([z.number(), z.string()])).optional(),
 });
 
 export const insertCommunityCareTypeSchema = createInsertSchema(communitiesCareTypes).omit({

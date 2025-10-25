@@ -1,0 +1,429 @@
+{
+  "main-landing-care-city": {
+    "introSection": {
+      "heading": "Welcome to {careType} in {city}",
+      "content": {
+        "default": "{city} is home to a thriving senior community, and finding the right care close to home makes all the difference. Whether you're exploring options for yourself or a loved one, our locally owned communities combine personalized care with the comfort of staying connected to your {city} neighborhood.",
+        "variants": [
+          {
+            "variantId": "metro-competitive",
+            "marketSize": ["metro"],
+            "marketCharacteristics": {
+              "competitive": ["high"]
+            },
+            "content": "In the heart of {city}'s vibrant senior living market, finding quality care that feels personal can be challenging. Our family-owned communities stand apart from corporate chains by offering genuine relationships, flexible care plans, and the warmth of true community. Discover why discerning families choose us over larger competitors.",
+            "weight": 2
+          },
+          {
+            "variantId": "suburban-family-focused",
+            "marketSize": ["suburban"],
+            "marketCharacteristics": {
+              "demographics": ["middle-class", "affluent"]
+            },
+            "content": "Your {city} community is more than just a place—it's where memories live, friendships thrive, and family gathers. Our locally owned {careType} communities help your loved one stay rooted in the neighborhood they know while receiving compassionate, personalized care that adapts to their unique needs.",
+            "weight": 2
+          },
+          {
+            "variantId": "premium-market",
+            "marketCharacteristics": {
+              "pricing": ["premium"],
+              "demographics": ["affluent"]
+            },
+            "content": "{city} families expect excellence in senior care—and we deliver it through meticulous attention to detail, superior amenities, and personalized service that honors each resident's individual preferences. Our {careType} communities offer the refined living experience your loved one deserves, without the impersonal feel of corporate facilities.",
+            "weight": 3
+          }
+        ]
+      },
+      "highlights": {
+        "default": [
+          "Close to family and familiar neighborhoods",
+          "Same-day tours with no obligation",
+          "Personalized care plans tailored to individual needs",
+          "Licensed & insured communities"
+        ],
+        "variants": [
+          {
+            "variantId": "premium-highlights",
+            "marketCharacteristics": {
+              "pricing": ["premium"]
+            },
+            "content": [
+              "Boutique communities with elevated amenities",
+              "White-glove concierge service available",
+              "Personalized care plans created by licensed professionals",
+              "Award-winning facilities with pristine maintenance"
+            ],
+            "weight": 2
+          },
+          {
+            "variantId": "value-highlights",
+            "marketCharacteristics": {
+              "pricing": ["budget-friendly", "mid-range"]
+            },
+            "content": [
+              "Transparent pricing with no hidden fees",
+              "Same-day tours with honest conversations",
+              "Care plans that fit your budget and needs",
+              "Family-owned with personal accountability"
+            ],
+            "weight": 2
+          }
+        ]
+      }
+    },
+    "whyChooseSection": {
+      "heading": "Why Families Choose {careType} in {city}",
+      "reasons": {
+        "default": [
+          {
+            "title": "Stay Close to What Matters",
+            "description": "Your loved one stays connected to their {city} community, friends, and faith community. Family can visit easily, and grandchildren can stop by after school."
+          },
+          {
+            "title": "Locally Owned & Operated",
+            "description": "We're not a corporate chain. Our team lives in {city} and the surrounding areas, and we know the local hospitals, doctors, and community resources that matter to you."
+          },
+          {
+            "title": "Personalized Care Plans",
+            "description": "Every resident is unique. We create individualized care plans that adjust as needs change, ensuring your loved one gets exactly the support they need—nothing more, nothing less."
+          },
+          {
+            "title": "Peace of Mind for Families",
+            "description": "24-hour staff, medication management, nutritious meals, and engaging activities mean you can focus on being family, not a full-time caregiver."
+          }
+        ],
+        "variants": [
+          {
+            "variantId": "metro-differentiation",
+            "marketSize": ["metro"],
+            "marketCharacteristics": {
+              "competitive": ["high"]
+            },
+            "content": [
+              {
+                "title": "Escape the Corporate Feel",
+                "description": "Unlike the large corporate chains dominating {city}, we're locally owned and make decisions based on what's best for residents—not shareholders. You'll notice the difference in responsiveness, flexibility, and genuine care."
+              },
+              {
+                "title": "Stay Connected to {city}",
+                "description": "Don't relocate your loved one across town to an unfamiliar neighborhood. Our communities keep them rooted in the {city} area they know, near the shops, parks, and places that hold decades of memories."
+              },
+              {
+                "title": "Personalized Care, Not Cookie-Cutter",
+                "description": "We reject one-size-fits-all care models. Each resident receives a customized care plan created by our licensed team, with adjustments made as needs evolve—never forcing unnecessary services or charges."
+              },
+              {
+                "title": "True Transparency in Pricing",
+                "description": "No surprise fees, hidden charges, or mandatory add-ons. We provide clear, honest pricing upfront and work with your budget to create a care plan that makes financial sense for your family."
+              }
+            ],
+            "weight": 3
+          },
+          {
+            "variantId": "suburban-community",
+            "marketSize": ["suburban"],
+            "content": [
+              {
+                "title": "Part of Your {city} Neighborhood",
+                "description": "Our communities are woven into the fabric of {city}. Your loved one can continue visiting their favorite local coffee shop, attend services at their church, and see familiar faces from the neighborhood."
+              },
+              {
+                "title": "Family-Owned, Neighbor-Operated",
+                "description": "We're your neighbors. Our team members live in {city}, shop at the same stores, and send our kids to the same schools. This isn't just business—it's personal."
+              },
+              {
+                "title": "Flexible Care That Grows With You",
+                "description": "Life changes, and care needs change. We adjust services as your loved one's needs evolve, whether that means scaling back after recovery or increasing support during health transitions."
+              },
+              {
+                "title": "Small-Town Service, Professional Care",
+                "description": "Experience the warmth and personal attention of a small community combined with licensed, professional care. We know every resident by name and celebrate their individual stories."
+              }
+            ],
+            "weight": 3
+          }
+        ]
+      }
+    },
+    "localContextSection": {
+      "heading": "Living in {city}, Colorado",
+      "content": {
+        "default": "{city} offers seniors a wonderful blend of community, accessibility, and Colorado charm. With excellent healthcare facilities nearby and a strong sense of neighborhood connection, it's an ideal place to enjoy retirement while receiving the care and support you need.",
+        "variants": [
+          {
+            "variantId": "metro-context",
+            "marketSize": ["metro"],
+            "content": "{city}'s vibrant urban environment offers seniors unparalleled access to world-class healthcare, cultural attractions, and diverse dining options. Despite the bustling city atmosphere, our communities provide peaceful, residential settings where your loved one can enjoy metropolitan amenities while maintaining the tranquility essential for quality senior living.",
+            "weight": 2
+          },
+          {
+            "variantId": "suburban-context",
+            "marketSize": ["suburban"],
+            "content": "{city} combines the best of both worlds—peaceful suburban living with quick access to Denver's resources. Tree-lined streets, family-friendly parks, and a tight-knit community atmosphere make {city} a comforting place for seniors to call home, surrounded by neighbors who care.",
+            "weight": 2
+          },
+          {
+            "variantId": "affluent-context",
+            "marketCharacteristics": {
+              "demographics": ["affluent"],
+              "pricing": ["premium"]
+            },
+            "content": "{city} is recognized for its exceptional quality of life, outstanding schools, and upscale amenities. Seniors in {city} enjoy access to premier healthcare providers, fine dining establishments, cultural events, and beautifully maintained public spaces—all contributing to an elevated retirement experience.",
+            "weight": 3
+          }
+        ]
+      },
+      "features": {
+        "default": [
+          "Easy access to top-rated hospitals and medical centers",
+          "Beautiful parks, walking trails, and outdoor spaces",
+          "Close proximity to Denver for cultural events and family visits",
+          "Strong senior community with 55+ activities and programs",
+          "Safe, walkable neighborhoods with local shops and restaurants"
+        ],
+        "variants": [
+          {
+            "variantId": "metro-features",
+            "marketSize": ["metro"],
+            "content": [
+              "Multiple Level I trauma centers and specialty hospitals within 15 minutes",
+              "World-class museums, theaters, and performing arts venues nearby",
+              "Diverse culinary scene with hundreds of restaurant options",
+              "Public transportation and light rail access for independence",
+              "Urban parks, greenways, and recreation centers throughout the city"
+            ],
+            "weight": 2
+          },
+          {
+            "variantId": "suburban-features",
+            "marketSize": ["suburban"],
+            "content": [
+              "Excellent local hospitals with senior-focused care programs",
+              "Community parks, trails, and open spaces perfect for walks",
+              "Short drive to Denver while maintaining peaceful neighborhood feel",
+              "Active senior center with classes, events, and social programs",
+              "Family-friendly environment where grandchildren love to visit"
+            ],
+            "weight": 2
+          }
+        ]
+      }
+    },
+    "careDetailsSection": {
+      "heading": "What {careType} Includes",
+      "content": {
+        "default": "Our {careType} communities provide comprehensive support designed to help residents live with dignity, independence, and joy. From daily assistance to engaging activities, we handle the details so your loved one can focus on what brings them happiness.",
+        "variants": [
+          {
+            "variantId": "assisted-living-detail",
+            "careTypes": ["assisted-living"],
+            "content": "Assisted living bridges the gap between independent living and full-time nursing care. Our communities provide personalized assistance with daily activities while encouraging independence, social engagement, and active lifestyles. It's the perfect solution for seniors who need help with daily tasks but want to maintain their autonomy.",
+            "weight": 3
+          },
+          {
+            "variantId": "memory-care-detail",
+            "careTypes": ["memory-care"],
+            "content": "Memory care requires specialized training, secure environments, and compassionate understanding of dementia and Alzheimer's disease. Our dedicated memory care neighborhoods provide structured routines, cognitive stimulation, and person-centered care that honors each resident's life story while ensuring safety and dignity.",
+            "weight": 3
+          },
+          {
+            "variantId": "independent-living-detail",
+            "careTypes": ["independent-living"],
+            "content": "Independent living is designed for active seniors who don't need daily assistance but want freedom from home maintenance, access to engaging activities, and a vibrant social community. Enjoy resort-style amenities, chef-prepared meals, and peace of mind knowing care is available if needs change.",
+            "weight": 3
+          }
+        ]
+      },
+      "keyPoints": {
+        "default": [
+          "Assistance with daily activities like bathing, dressing, and medication management",
+          "Three chef-prepared meals daily in restaurant-style dining",
+          "Housekeeping, laundry, and maintenance-free living",
+          "24-hour awake staff for emergencies and peace of mind",
+          "Social activities, fitness classes, and cultural outings",
+          "Scheduled transportation to appointments and errands",
+          "Emergency call systems in every apartment",
+          "Coordination with healthcare providers and family"
+        ],
+        "variants": [
+          {
+            "variantId": "assisted-living-points",
+            "careTypes": ["assisted-living"],
+            "content": [
+              "Personalized assistance with bathing, dressing, grooming, and mobility",
+              "Medication management and reminders by trained staff",
+              "Three nutritious meals daily plus snacks available 24/7",
+              "Weekly housekeeping and laundry services included",
+              "24-hour staffing with emergency response systems",
+              "Engaging activities designed to promote physical and cognitive health",
+              "Transportation to medical appointments and shopping",
+              "Care plans that adjust as needs change"
+            ],
+            "weight": 4
+          },
+          {
+            "variantId": "memory-care-points",
+            "careTypes": ["memory-care"],
+            "content": [
+              "Secured environments designed specifically for dementia and Alzheimer's",
+              "Specially trained staff certified in memory care techniques",
+              "Structured daily routines that reduce confusion and anxiety",
+              "Memory-enhancing activities and cognitive stimulation programs",
+              "Nutritious meals with assistance for those with eating challenges",
+              "Wandering prevention and GPS monitoring for safety",
+              "Family communication and support groups",
+              "Person-centered care honoring life histories and preferences"
+            ],
+            "weight": 4
+          },
+          {
+            "variantId": "independent-living-points",
+            "careTypes": ["independent-living"],
+            "content": [
+              "Maintenance-free apartment living with full kitchens available",
+              "Chef-prepared meals in restaurant-style dining rooms",
+              "Fitness centers and wellness programs led by professionals",
+              "Social activities, clubs, and lifelong learning opportunities",
+              "Housekeeping and laundry services for convenience",
+              "Scheduled transportation for errands and appointments",
+              "Emergency response systems for added security",
+              "Access to higher levels of care on-site if needs change"
+            ],
+            "weight": 4
+          }
+        ]
+      }
+    },
+    "faqPreview": [
+      {
+        "question": "How do I know if {careType} is the right choice?",
+        "answer": "If daily tasks like cooking, cleaning, or managing medications are becoming challenging, or if social isolation is affecting quality of life, {careType} can help. We offer same-day tours so you can see our community, meet our team, and ask questions. There's no pressure—just honest conversation about what's best for your family."
+      },
+      {
+        "question": "Can my loved one age in place if their needs change?",
+        "answer": "Yes. Many of our communities offer multiple levels of care, from independent living to memory care. As needs change, we adjust the care plan rather than requiring a move to a new facility. This continuity provides stability and comfort during life transitions."
+      },
+      {
+        "question": "What makes your communities different from corporate chains?",
+        "answer": "We're locally owned and operated in Colorado. Our executive director lives in {city}, our staff are your neighbors, and we make decisions based on what's best for residents—not corporate profit targets. You'll notice the difference in personalized attention, flexibility, and genuine care."
+      },
+      {
+        "question": "How quickly can someone move in?",
+        "answer": "We can often accommodate move-ins within days, depending on availability. Some families tour in the morning and move in the same week. We understand that senior living decisions are sometimes urgent, and we're here to help make transitions as smooth as possible."
+      },
+      {
+        "question": "What's included in the monthly rate?",
+        "answer": "Monthly fees cover your apartment, all meals, housekeeping, laundry, activities, scheduled transportation, utilities, and basic care services. Additional care needs (like medication management or specialized assistance) may have tiered pricing. We'll provide transparent pricing during your tour with no hidden fees."
+      }
+    ]
+  },
+  "cost-landing-care-city": {
+    "introSection": {
+      "heading": "Understanding {careType} Costs in {city}",
+      "content": {
+        "default": "Choosing senior living is a big decision, and cost is an important factor. We believe in transparent pricing with no surprises. Here's what you need to know about {careType} costs in {city}, what's included in monthly fees, and how to make it work with your family's budget.",
+        "variants": [
+          {
+            "variantId": "premium-pricing-intro",
+            "marketCharacteristics": {
+              "pricing": ["premium"]
+            },
+            "content": "Quality {careType} in {city} represents an investment in your loved one's wellbeing, safety, and happiness. While our communities reflect premium pricing, families consistently tell us the value far exceeds the cost—from superior care and upscale amenities to genuine peace of mind. Let's explore what makes the investment worthwhile.",
+            "weight": 3
+          },
+          {
+            "variantId": "value-pricing-intro",
+            "marketCharacteristics": {
+              "pricing": ["budget-friendly", "mid-range"]
+            },
+            "content": "Finding quality {careType} in {city} that fits your budget shouldn't mean compromising on care. We're committed to transparent, fair pricing that reflects the true value of our services—without hidden fees, surprise charges, or pressure tactics. Here's an honest breakdown of costs and how to make senior living work financially.",
+            "weight": 3
+          }
+        ]
+      },
+      "highlights": {
+        "default": [
+          "Transparent, all-inclusive pricing",
+          "Multiple payment and financing options available",
+          "Often comparable to in-home care costs",
+          "No hidden fees or surprise charges"
+        ]
+      }
+    },
+    "whyChooseSection": {
+      "heading": "The Value of {careType} in {city}",
+      "reasons": {
+        "default": [
+          {
+            "title": "Predictable Monthly Costs",
+            "description": "One monthly fee covers rent, meals, utilities, housekeeping, activities, and care services. No more budgeting for property taxes, maintenance emergencies, or rising utility bills."
+          },
+          {
+            "title": "Compare Total Cost of Home Care",
+            "description": "In-home care agencies charge $25-35/hour. At 4 hours/day, that's $3,000-4,200/month—without meals, housekeeping, or social activities. {careType} often costs the same or less while providing comprehensive support."
+          },
+          {
+            "title": "What's Included",
+            "description": "Restaurant-style dining (3 meals daily), private or semi-private apartment, all utilities, housekeeping, laundry, scheduled transportation, activities, emergency response systems, and personalized care assistance."
+          },
+          {
+            "title": "Flexible Care Levels",
+            "description": "Pay only for the level of care needed. Basic care costs less than advanced care. As needs change, pricing adjusts accordingly—you're never paying for services you don't use."
+          }
+        ]
+      }
+    },
+    "careDetailsSection": {
+      "heading": "Breaking Down {careType} Costs",
+      "content": "Pricing varies based on apartment size, care level needed, and community amenities. Here's what to expect and how to evaluate true value beyond the monthly number.",
+      "keyPoints": {
+        "default": [
+          "Studio apartments typically range $3,500-5,500/month depending on care level",
+          "One-bedroom apartments typically range $4,500-7,000/month",
+          "Care levels: Basic (minimal assistance) to Advanced (comprehensive daily help)",
+          "Second person in same apartment adds $500-1,500/month",
+          "Pet fees (if applicable): usually $25-50/month per pet",
+          "Most communities offer month-to-month agreements (no long-term contracts)",
+          "Some communities have entrance fees, others are rental-only",
+          "Veterans benefits (Aid & Attendance) can offset $1,200-2,400/month"
+        ],
+        "variants": [
+          {
+            "variantId": "premium-pricing-breakdown",
+            "marketCharacteristics": {
+              "pricing": ["premium"]
+            },
+            "content": [
+              "Premium studio apartments range $5,000-7,500/month with elevated care",
+              "Luxury one-bedroom suites range $6,500-10,000/month",
+              "Care levels include concierge services and specialized programs",
+              "Companion suites for couples start at additional $1,500-2,500/month",
+              "Premium amenities included: chef-prepared gourmet meals, fitness classes, cultural outings",
+              "Flexible month-to-month agreements with no long-term commitments",
+              "Optional entrance fees provide priority placement and locked-in rates",
+              "Long-term care insurance and VA benefits can offset significant costs"
+            ],
+            "weight": 4
+          },
+          {
+            "variantId": "value-pricing-breakdown",
+            "marketCharacteristics": {
+              "pricing": ["budget-friendly", "mid-range"]
+            },
+            "content": [
+              "Affordable studio apartments start at $3,200-4,800/month",
+              "One-bedroom apartments range $3,800-5,500/month",
+              "Transparent care level pricing: Basic ($500), Standard ($1,000), Advanced ($1,500)",
+              "Shared apartments available for additional savings",
+              "All essentials included: meals, housekeeping, activities, basic care",
+              "No entrance fees—simple monthly rental agreements",
+              "Payment plans available for those transitioning from home sales",
+              "We help maximize VA benefits, insurance, and Medicaid planning"
+            ],
+            "weight": 4
+          }
+        ]
+      }
+    }
+  }
+}

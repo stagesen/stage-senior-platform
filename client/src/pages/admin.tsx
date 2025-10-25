@@ -1,15 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import AdminDashboard from "@/components/AdminDashboard";
 import PageGalleryAdmin from "@/components/PageGalleryAdmin";
 import PageContentManager from "@/components/PageContentManager";
 import GoogleAdsManager from "@/components/GoogleAdsManager";
 import ExitIntentPopupManager from "@/components/ExitIntentPopupManager";
 import { useAuth } from "@/lib/auth";
+import { useToast } from "@/hooks/use-toast";
+import { queryClient, apiRequest } from "@/lib/queryClient";
 import { 
   Users, 
   Calendar, 
@@ -24,10 +35,18 @@ import {
   Image,
   Target,
   ExternalLink,
-  Globe
+  Globe,
+  ClipboardList,
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import type { Community, Post, Event, TourRequest, Faq, Gallery, Testimonial, PageHero, FloorPlan, TeamMember, LandingPageTemplate } from "@shared/schema";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import type { Community, Post, Event, TourRequest, Faq, Gallery, Testimonial, PageHero, FloorPlan, TeamMember, LandingPageTemplate, Quiz, QuizQuestion, QuizAnswerOption, QuizResponse, InsertQuiz, InsertQuizQuestion, InsertQuizAnswerOption } from "@shared/schema";
+import { insertQuizSchema } from "@shared/schema";
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -170,6 +189,7 @@ export default function Admin() {
             <TabsTrigger value="exit-intent-popup" data-testid="tab-exit-intent-popup" className="bg-primary text-primary-foreground hover:bg-primary/90">
               Exit Intent Popup
             </TabsTrigger>
+            <TabsTrigger value="quizzes" data-testid="tab-quizzes">Quizzes</TabsTrigger>
             <TabsTrigger value="image-gallery" data-testid="tab-image-gallery">
               <Image className="h-4 w-4 mr-1" />
               Image Gallery
@@ -585,6 +605,10 @@ export default function Admin() {
             <ExitIntentPopupManager />
           </TabsContent>
 
+          <TabsContent value="quizzes" className="space-y-6">
+            <QuizManagement />
+          </TabsContent>
+
           <TabsContent value="image-gallery">
             <PageGalleryAdmin />
           </TabsContent>
@@ -595,5 +619,914 @@ export default function Admin() {
         </Tabs>
       </main>
     </div>
+  );
+}
+
+interface QuizWithRelations extends Quiz {
+  questions?: (QuizQuestion & { answerOptions?: QuizAnswerOption[] })[];
+}
+
+function QuizManagement() {
+  const { toast } = useToast();
+  const [viewMode, setViewMode] = useState<"list" | "editor" | "responses">("list");
+  const [selectedQuiz, setSelectedQuiz] = useState<QuizWithRelations | null>(null);
+  const [editingQuiz, setEditingQuiz] = useState<Partial<InsertQuiz> | null>(null);
+  const [questions, setQuestions] = useState<(Partial<InsertQuizQuestion> & { id?: string; answerOptions?: (Partial<InsertQuizAnswerOption> & { id?: string })[] })[]>([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [quizToDelete, setQuizToDelete] = useState<Quiz | null>(null);
+  const [expandedResponses, setExpandedResponses] = useState<Set<string>>(new Set());
+
+  const { data: quizzes = [], isLoading: quizzesLoading } = useQuery<Quiz[]>({
+    queryKey: ["/api/quizzes"],
+  });
+
+  const { data: responses = [] } = useQuery<QuizResponse[]>({
+    queryKey: ["/api/quizzes", selectedQuiz?.id, "responses"],
+    enabled: viewMode === "responses" && !!selectedQuiz?.id,
+  });
+
+  const { data: quizWithQuestions, isLoading: quizDataLoading } = useQuery<QuizWithRelations>({
+    queryKey: ["/api/quizzes", selectedQuiz?.id],
+    enabled: viewMode === "editor" && !!selectedQuiz?.id,
+  });
+
+  // Load quiz data into form when fetched
+  useEffect(() => {
+    if (quizWithQuestions && selectedQuiz?.id) {
+      setQuestions(quizWithQuestions.questions?.map((q) => ({
+        id: q.id,
+        questionText: q.questionText,
+        questionType: q.questionType as "multiple_choice" | "text" | "scale",
+        sortOrder: q.sortOrder ?? 0,
+        required: q.required ?? true,
+        answerOptions: q.answerOptions?.map((a) => ({
+          id: a.id,
+          answerText: a.answerText,
+          resultCategory: a.resultCategory || "",
+          sortOrder: a.sortOrder ?? 0,
+        })) || [],
+      })) || []);
+    }
+  }, [quizWithQuestions, selectedQuiz?.id]);
+
+  const createQuizMutation = useMutation({
+    mutationFn: async (data: InsertQuiz) => {
+      const res = await apiRequest("POST", "/api/quizzes", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Quiz created successfully" });
+      queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
+      setViewMode("list");
+      setEditingQuiz(null);
+      setQuestions([]);
+    },
+    onError: () => {
+      toast({ title: "Failed to create quiz", variant: "destructive" });
+    },
+  });
+
+  const updateQuizMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<InsertQuiz> }) => {
+      const res = await apiRequest("PATCH", `/api/quizzes/${id}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Quiz updated successfully" });
+      queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
+      setViewMode("list");
+      setSelectedQuiz(null);
+      setEditingQuiz(null);
+      setQuestions([]);
+    },
+    onError: () => {
+      toast({ title: "Failed to update quiz", variant: "destructive" });
+    },
+  });
+
+  const deleteQuizMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/quizzes/${id}`);
+    },
+    onSuccess: () => {
+      toast({ title: "Quiz deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
+      setDeleteDialogOpen(false);
+      setQuizToDelete(null);
+    },
+    onError: () => {
+      toast({ title: "Failed to delete quiz", variant: "destructive" });
+    },
+  });
+
+  const toggleActiveQMutation = useMutation({
+    mutationFn: async ({ id, active }: { id: string; active: boolean }) => {
+      const res = await apiRequest("PATCH", `/api/quizzes/${id}`, { active });
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Quiz status updated" });
+      queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
+    },
+    onError: () => {
+      toast({ title: "Failed to update quiz status", variant: "destructive" });
+    },
+  });
+
+  const createQuestionMutation = useMutation({
+    mutationFn: async ({ quizId, data }: { quizId: string; data: InsertQuizQuestion }) => {
+      const res = await apiRequest("POST", `/api/quizzes/${quizId}/questions`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
+    },
+  });
+
+  const updateQuestionMutation = useMutation({
+    mutationFn: async ({ quizId, questionId, data }: { quizId: string; questionId: string; data: Partial<InsertQuizQuestion> }) => {
+      const res = await apiRequest("PATCH", `/api/quizzes/${quizId}/questions/${questionId}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
+    },
+  });
+
+  const deleteQuestionMutation = useMutation({
+    mutationFn: async ({ quizId, questionId }: { quizId: string; questionId: string }) => {
+      await apiRequest("DELETE", `/api/quizzes/${quizId}/questions/${questionId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
+    },
+  });
+
+  const createAnswerMutation = useMutation({
+    mutationFn: async ({ quizId, questionId, data }: { quizId: string; questionId: string; data: InsertQuizAnswerOption }) => {
+      const res = await apiRequest("POST", `/api/quizzes/${quizId}/questions/${questionId}/answers`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
+    },
+  });
+
+  const updateAnswerMutation = useMutation({
+    mutationFn: async ({ quizId, questionId, answerId, data }: { quizId: string; questionId: string; answerId: string; data: Partial<InsertQuizAnswerOption> }) => {
+      const res = await apiRequest("PATCH", `/api/quizzes/${quizId}/questions/${questionId}/answers/${answerId}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
+    },
+  });
+
+  const deleteAnswerMutation = useMutation({
+    mutationFn: async ({ quizId, questionId, answerId }: { quizId: string; questionId: string; answerId: string }) => {
+      await apiRequest("DELETE", `/api/quizzes/${quizId}/questions/${questionId}/answers/${answerId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
+    },
+  });
+
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .trim();
+  };
+
+  const handleCreateNew = () => {
+    setEditingQuiz({
+      title: "",
+      slug: "",
+      description: "",
+      resultTitle: "",
+      resultMessage: "",
+      active: true,
+      sortOrder: 0,
+    });
+    setQuestions([]);
+    setSelectedQuiz(null);
+    setViewMode("editor");
+  };
+
+  const handleEdit = (quiz: Quiz) => {
+    setSelectedQuiz(quiz as QuizWithRelations);
+    setEditingQuiz({
+      title: quiz.title,
+      slug: quiz.slug,
+      description: quiz.description || "",
+      resultTitle: quiz.resultTitle || "",
+      resultMessage: quiz.resultMessage || "",
+      active: quiz.active ?? true,
+      sortOrder: quiz.sortOrder ?? 0,
+    });
+    // Don't reset questions here - they will be loaded via useEffect when quizWithQuestions is fetched
+    setViewMode("editor");
+  };
+
+  const handleSaveQuiz = async () => {
+    if (!editingQuiz?.title || !editingQuiz?.slug) {
+      toast({ title: "Please fill in required fields", variant: "destructive" });
+      return;
+    }
+
+    try {
+      const validatedData = insertQuizSchema.parse(editingQuiz);
+
+      if (selectedQuiz?.id) {
+        // UPDATE MODE: Update the quiz
+        await updateQuizMutation.mutateAsync({ id: selectedQuiz.id, data: validatedData });
+        
+        // Process each question
+        for (const question of questions) {
+          if (question.id) {
+            // UPDATE existing question
+            if (question.questionText) {
+              await updateQuestionMutation.mutateAsync({
+                quizId: selectedQuiz.id,
+                questionId: question.id,
+                data: {
+                  questionText: question.questionText,
+                  questionType: question.questionType || "multiple_choice",
+                  sortOrder: question.sortOrder || 0,
+                  required: question.required ?? true,
+                },
+              });
+
+              // Process answer options for this question
+              if (question.answerOptions) {
+                for (const answer of question.answerOptions) {
+                  if (answer.id) {
+                    // UPDATE existing answer
+                    if (answer.answerText) {
+                      await updateAnswerMutation.mutateAsync({
+                        quizId: selectedQuiz.id,
+                        questionId: question.id,
+                        answerId: answer.id,
+                        data: {
+                          answerText: answer.answerText,
+                          resultCategory: answer.resultCategory || "",
+                          sortOrder: answer.sortOrder || 0,
+                        },
+                      });
+                    }
+                  } else {
+                    // CREATE new answer
+                    if (answer.answerText) {
+                      await createAnswerMutation.mutateAsync({
+                        quizId: selectedQuiz.id,
+                        questionId: question.id,
+                        data: {
+                          answerText: answer.answerText,
+                          resultCategory: answer.resultCategory || "",
+                          sortOrder: answer.sortOrder || 0,
+                        } as InsertQuizAnswerOption,
+                      });
+                    }
+                  }
+                }
+              }
+            }
+          } else {
+            // CREATE new question
+            if (question.questionText) {
+              const createdQ = await createQuestionMutation.mutateAsync({
+                quizId: selectedQuiz.id,
+                data: {
+                  questionText: question.questionText,
+                  questionType: question.questionType || "multiple_choice",
+                  sortOrder: question.sortOrder || 0,
+                  required: question.required ?? true,
+                } as InsertQuizQuestion,
+              });
+
+              // Create answer options for new question
+              if (question.answerOptions) {
+                for (const answer of question.answerOptions) {
+                  if (answer.answerText) {
+                    await createAnswerMutation.mutateAsync({
+                      quizId: selectedQuiz.id,
+                      questionId: createdQ.id,
+                      data: {
+                        answerText: answer.answerText,
+                        resultCategory: answer.resultCategory || "",
+                        sortOrder: answer.sortOrder || 0,
+                      } as InsertQuizAnswerOption,
+                    });
+                  }
+                }
+              }
+            }
+          }
+        }
+      } else {
+        // CREATE MODE: Create new quiz and all questions/answers
+        const createdQuiz = await createQuizMutation.mutateAsync(validatedData);
+        
+        for (const question of questions) {
+          if (question.questionText) {
+            const createdQ = await createQuestionMutation.mutateAsync({
+              quizId: createdQuiz.id,
+              data: {
+                questionText: question.questionText,
+                questionType: question.questionType || "multiple_choice",
+                sortOrder: question.sortOrder || 0,
+                required: question.required ?? true,
+              } as InsertQuizQuestion,
+            });
+
+            if (question.answerOptions) {
+              for (const answer of question.answerOptions) {
+                if (answer.answerText) {
+                  await createAnswerMutation.mutateAsync({
+                    quizId: createdQuiz.id,
+                    questionId: createdQ.id,
+                    data: {
+                      answerText: answer.answerText,
+                      resultCategory: answer.resultCategory || "",
+                      sortOrder: answer.sortOrder || 0,
+                    } as InsertQuizAnswerOption,
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Invalidate queries and show success message
+      await queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
+      toast({ title: selectedQuiz ? "Quiz updated successfully" : "Quiz created successfully" });
+      
+    } catch (error) {
+      console.error("Error saving quiz:", error);
+      toast({ title: "Failed to save quiz", variant: "destructive" });
+    }
+  };
+
+  const handleAddQuestion = () => {
+    setQuestions([
+      ...questions,
+      {
+        questionText: "",
+        questionType: "multiple_choice",
+        sortOrder: questions.length,
+        required: true,
+        answerOptions: [],
+      },
+    ]);
+  };
+
+  const handleAddAnswer = (questionIndex: number) => {
+    const newQuestions = [...questions];
+    if (!newQuestions[questionIndex].answerOptions) {
+      newQuestions[questionIndex].answerOptions = [];
+    }
+    newQuestions[questionIndex].answerOptions!.push({
+      answerText: "",
+      resultCategory: "",
+      sortOrder: newQuestions[questionIndex].answerOptions!.length,
+    });
+    setQuestions(newQuestions);
+  };
+
+  const handleDeleteQuestion = async (questionIndex: number, questionId?: string) => {
+    if (questionId && selectedQuiz?.id) {
+      await deleteQuestionMutation.mutateAsync({ quizId: selectedQuiz.id, questionId });
+    }
+    setQuestions(questions.filter((_, i) => i !== questionIndex));
+  };
+
+  const handleDeleteAnswer = async (questionIndex: number, answerIndex: number, answerId?: string, questionId?: string) => {
+    if (answerId && questionId && selectedQuiz?.id) {
+      await deleteAnswerMutation.mutateAsync({ quizId: selectedQuiz.id, questionId, answerId });
+    }
+    const newQuestions = [...questions];
+    newQuestions[questionIndex].answerOptions = newQuestions[questionIndex].answerOptions?.filter((_, i) => i !== answerIndex);
+    setQuestions(newQuestions);
+  };
+
+  const toggleResponseExpanded = (responseId: string) => {
+    const newExpanded = new Set(expandedResponses);
+    if (newExpanded.has(responseId)) {
+      newExpanded.delete(responseId);
+    } else {
+      newExpanded.add(responseId);
+    }
+    setExpandedResponses(newExpanded);
+  };
+
+  if (viewMode === "editor") {
+    // Show loading skeleton while fetching quiz data in edit mode
+    if (selectedQuiz?.id && quizDataLoading) {
+      return (
+        <Card>
+          <CardHeader>
+            <CardTitle data-testid="quiz-editor-title">Loading Quiz Data...</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-64 w-full" />
+          </CardContent>
+        </Card>
+      );
+    }
+
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle data-testid="quiz-editor-title">
+            {selectedQuiz ? "Edit Quiz" : "Create New Quiz"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="quiz-title">Title *</Label>
+              <Input
+                id="quiz-title"
+                value={editingQuiz?.title || ""}
+                onChange={(e) => {
+                  const title = e.target.value;
+                  setEditingQuiz({
+                    ...editingQuiz,
+                    title,
+                    slug: generateSlug(title),
+                  });
+                }}
+                placeholder="e.g., Senior Care Navigator"
+                data-testid="input-quiz-title"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="quiz-slug">Slug *</Label>
+              <Input
+                id="quiz-slug"
+                value={editingQuiz?.slug || ""}
+                onChange={(e) => setEditingQuiz({ ...editingQuiz, slug: e.target.value })}
+                placeholder="e.g., senior-care-navigator"
+                data-testid="input-quiz-slug"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="quiz-description">Description</Label>
+            <Textarea
+              id="quiz-description"
+              value={editingQuiz?.description || ""}
+              onChange={(e) => setEditingQuiz({ ...editingQuiz, description: e.target.value })}
+              placeholder="Quiz description"
+              rows={3}
+              data-testid="input-quiz-description"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="quiz-result-title">Result Title</Label>
+              <Input
+                id="quiz-result-title"
+                value={editingQuiz?.resultTitle || ""}
+                onChange={(e) => setEditingQuiz({ ...editingQuiz, resultTitle: e.target.value })}
+                placeholder="Title shown on results page"
+                data-testid="input-quiz-result-title"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="quiz-sort-order">Sort Order</Label>
+              <Input
+                id="quiz-sort-order"
+                type="number"
+                value={editingQuiz?.sortOrder || 0}
+                onChange={(e) => setEditingQuiz({ ...editingQuiz, sortOrder: parseInt(e.target.value) || 0 })}
+                data-testid="input-quiz-sort-order"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="quiz-result-message">Result Message</Label>
+            <Textarea
+              id="quiz-result-message"
+              value={editingQuiz?.resultMessage || ""}
+              onChange={(e) => setEditingQuiz({ ...editingQuiz, resultMessage: e.target.value })}
+              placeholder="General message shown with results"
+              rows={3}
+              data-testid="input-quiz-result-message"
+            />
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="quiz-active"
+              checked={editingQuiz?.active ?? true}
+              onCheckedChange={(checked) => setEditingQuiz({ ...editingQuiz, active: checked })}
+              data-testid="switch-quiz-active"
+            />
+            <Label htmlFor="quiz-active">Active</Label>
+          </div>
+
+          <div className="border-t pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Questions</h3>
+              <Button onClick={handleAddQuestion} size="sm" data-testid="button-add-question">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Question
+              </Button>
+            </div>
+
+            <div className="space-y-6">
+              {questions.map((question, qIndex) => (
+                <Card key={qIndex} data-testid={`question-${qIndex}`}>
+                  <CardContent className="pt-6 space-y-4">
+                    <div className="flex items-start gap-4">
+                      <div className="flex-1 space-y-4">
+                        <div className="space-y-2">
+                          <Label>Question Text *</Label>
+                          <Input
+                            value={question.questionText || ""}
+                            onChange={(e) => {
+                              const newQuestions = [...questions];
+                              newQuestions[qIndex].questionText = e.target.value;
+                              setQuestions(newQuestions);
+                            }}
+                            placeholder="Enter question"
+                            data-testid={`input-question-text-${qIndex}`}
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="space-y-2">
+                            <Label>Question Type</Label>
+                            <Select
+                              value={question.questionType || "multiple_choice"}
+                              onValueChange={(value) => {
+                                const newQuestions = [...questions];
+                                newQuestions[qIndex].questionType = value as "multiple_choice" | "text" | "scale";
+                                setQuestions(newQuestions);
+                              }}
+                            >
+                              <SelectTrigger data-testid={`select-question-type-${qIndex}`}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="multiple_choice">Multiple Choice</SelectItem>
+                                <SelectItem value="text">Text</SelectItem>
+                                <SelectItem value="scale">Scale</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label>Sort Order</Label>
+                            <Input
+                              type="number"
+                              value={question.sortOrder || 0}
+                              onChange={(e) => {
+                                const newQuestions = [...questions];
+                                newQuestions[qIndex].sortOrder = parseInt(e.target.value) || 0;
+                                setQuestions(newQuestions);
+                              }}
+                              data-testid={`input-question-sort-${qIndex}`}
+                            />
+                          </div>
+
+                          <div className="flex items-center space-x-2 pt-6">
+                            <Switch
+                              checked={question.required ?? true}
+                              onCheckedChange={(checked) => {
+                                const newQuestions = [...questions];
+                                newQuestions[qIndex].required = checked;
+                                setQuestions(newQuestions);
+                              }}
+                              data-testid={`switch-question-required-${qIndex}`}
+                            />
+                            <Label>Required</Label>
+                          </div>
+                        </div>
+
+                        {question.questionType === "multiple_choice" && (
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <Label>Answer Options</Label>
+                              <Button
+                                onClick={() => handleAddAnswer(qIndex)}
+                                size="sm"
+                                variant="outline"
+                                data-testid={`button-add-answer-${qIndex}`}
+                              >
+                                <Plus className="h-4 w-4 mr-2" />
+                                Add Answer
+                              </Button>
+                            </div>
+
+                            <div className="space-y-2 pl-4 border-l-2">
+                              {question.answerOptions?.map((answer, aIndex) => (
+                                <div key={aIndex} className="flex items-center gap-2" data-testid={`answer-${qIndex}-${aIndex}`}>
+                                  <Input
+                                    value={answer.answerText || ""}
+                                    onChange={(e) => {
+                                      const newQuestions = [...questions];
+                                      newQuestions[qIndex].answerOptions![aIndex].answerText = e.target.value;
+                                      setQuestions(newQuestions);
+                                    }}
+                                    placeholder="Answer text"
+                                    data-testid={`input-answer-text-${qIndex}-${aIndex}`}
+                                  />
+                                  <Input
+                                    value={answer.resultCategory || ""}
+                                    onChange={(e) => {
+                                      const newQuestions = [...questions];
+                                      newQuestions[qIndex].answerOptions![aIndex].resultCategory = e.target.value;
+                                      setQuestions(newQuestions);
+                                    }}
+                                    placeholder="Result category"
+                                    className="w-48"
+                                    data-testid={`input-answer-category-${qIndex}-${aIndex}`}
+                                  />
+                                  <Input
+                                    type="number"
+                                    value={answer.sortOrder || 0}
+                                    onChange={(e) => {
+                                      const newQuestions = [...questions];
+                                      newQuestions[qIndex].answerOptions![aIndex].sortOrder = parseInt(e.target.value) || 0;
+                                      setQuestions(newQuestions);
+                                    }}
+                                    className="w-20"
+                                    data-testid={`input-answer-sort-${qIndex}-${aIndex}`}
+                                  />
+                                  <Button
+                                    onClick={() => handleDeleteAnswer(qIndex, aIndex, answer.id, question.id)}
+                                    size="sm"
+                                    variant="ghost"
+                                    data-testid={`button-delete-answer-${qIndex}-${aIndex}`}
+                                  >
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <Button
+                        onClick={() => handleDeleteQuestion(qIndex, question.id)}
+                        size="sm"
+                        variant="ghost"
+                        data-testid={`button-delete-question-${qIndex}`}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4 border-t">
+            <Button
+              onClick={() => {
+                setViewMode("list");
+                setEditingQuiz(null);
+                setSelectedQuiz(null);
+                setQuestions([]);
+              }}
+              variant="outline"
+              data-testid="button-cancel-quiz"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveQuiz}
+              disabled={createQuizMutation.isPending || updateQuizMutation.isPending}
+              data-testid="button-save-quiz"
+            >
+              {selectedQuiz ? "Update Quiz" : "Create Quiz"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (viewMode === "responses") {
+    return (
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle data-testid="quiz-responses-title">
+              Quiz Responses: {selectedQuiz?.title}
+            </CardTitle>
+            <Button
+              onClick={() => {
+                setViewMode("list");
+                setSelectedQuiz(null);
+              }}
+              variant="outline"
+              size="sm"
+              data-testid="button-back-to-list"
+            >
+              Back to List
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {responses.length === 0 ? (
+            <p className="text-muted-foreground text-center py-8" data-testid="no-responses">
+              No responses yet.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {responses.map((response) => (
+                <Card key={response.id} data-testid={`response-${response.id}`}>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between cursor-pointer" onClick={() => toggleResponseExpanded(response.id)}>
+                      <div className="grid grid-cols-5 gap-4 flex-1">
+                        <div>
+                          <span className="text-sm font-medium" data-testid={`response-name-${response.id}`}>
+                            {response.name || "N/A"}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-sm" data-testid={`response-email-${response.id}`}>
+                            {response.email}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-sm" data-testid={`response-phone-${response.id}`}>
+                            {response.phone || "N/A"}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-sm text-muted-foreground">
+                            {new Date(response.createdAt || new Date()).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div>
+                          <Badge variant="secondary" data-testid={`response-category-${response.id}`}>
+                            {response.resultCategory || "N/A"}
+                          </Badge>
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="sm">
+                        {expandedResponses.has(response.id) ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                    
+                    {expandedResponses.has(response.id) && (
+                      <div className="mt-4 pt-4 border-t space-y-2">
+                        <h4 className="font-medium mb-2">Answers:</h4>
+                        {response.answers && Array.isArray(response.answers) && response.answers.map((answer: any, idx: number) => (
+                          <div key={idx} className="text-sm">
+                            <span className="font-medium">Q{idx + 1}: </span>
+                            {answer.textAnswer || answer.answerOptionId || "N/A"}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center" data-testid="quiz-list-title">
+            <ClipboardList className="w-5 h-5 mr-2" />
+            Quizzes
+          </CardTitle>
+          <Button onClick={handleCreateNew} data-testid="button-create-quiz">
+            <Plus className="h-4 w-4 mr-2" />
+            Create New Quiz
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {quizzesLoading ? (
+          <div className="space-y-4">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </div>
+        ) : quizzes.length === 0 ? (
+          <p className="text-muted-foreground text-center py-8" data-testid="no-quizzes">
+            No quizzes yet. Create one to get started.
+          </p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead>Slug</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Questions</TableHead>
+                <TableHead>Responses</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {quizzes.map((quiz) => (
+                <TableRow key={quiz.id} data-testid={`quiz-row-${quiz.id}`}>
+                  <TableCell className="font-medium" data-testid={`quiz-title-${quiz.id}`}>
+                    {quiz.title}
+                  </TableCell>
+                  <TableCell data-testid={`quiz-slug-${quiz.id}`}>{quiz.slug}</TableCell>
+                  <TableCell>
+                    <Badge variant={quiz.active ? "default" : "secondary"} data-testid={`quiz-status-${quiz.id}`}>
+                      {quiz.active ? "Active" : "Inactive"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell data-testid={`quiz-questions-count-${quiz.id}`}>
+                    {(quiz as QuizWithRelations).questions?.length || 0}
+                  </TableCell>
+                  <TableCell data-testid={`quiz-responses-count-${quiz.id}`}>0</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        onClick={() => handleEdit(quiz)}
+                        size="sm"
+                        variant="ghost"
+                        data-testid={`button-edit-quiz-${quiz.id}`}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setSelectedQuiz(quiz as QuizWithRelations);
+                          setViewMode("responses");
+                        }}
+                        size="sm"
+                        variant="ghost"
+                        data-testid={`button-view-responses-${quiz.id}`}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Switch
+                        checked={quiz.active ?? false}
+                        onCheckedChange={(checked) => toggleActiveQMutation.mutate({ id: quiz.id, active: checked })}
+                        data-testid={`switch-quiz-active-${quiz.id}`}
+                      />
+                      <Button
+                        onClick={() => {
+                          setQuizToDelete(quiz);
+                          setDeleteDialogOpen(true);
+                        }}
+                        size="sm"
+                        variant="ghost"
+                        data-testid={`button-delete-quiz-${quiz.id}`}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </CardContent>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete the quiz "{quizToDelete?.title}" and all its questions, answers, and responses. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => quizToDelete && deleteQuizMutation.mutate(quizToDelete.id)}
+              className="bg-destructive hover:bg-destructive/90"
+              data-testid="button-confirm-delete"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </Card>
   );
 }

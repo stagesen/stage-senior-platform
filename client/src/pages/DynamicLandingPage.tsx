@@ -15,6 +15,7 @@ import LeadCaptureForm from "@/components/LeadCaptureForm";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
 import { ExitIntentPopup, useExitIntent } from "@/components/ExitIntentPopup";
 import CommunityMap from "@/components/CommunityMap";
+import CommunityCredentials from "@/components/landing-sections/CommunityCredentials";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import NotFound from "@/pages/not-found";
@@ -22,6 +23,11 @@ import { generateSchemaOrgData } from "@/lib/schemaOrg";
 import { getPrimaryPhoneDisplay, getPrimaryPhoneHref, getCityState } from "@/lib/communityContact";
 import { toTitleCase, cn } from "@/lib/utils";
 import { setMetaTags, getCanonicalUrl, formatCareType } from "@/lib/metaTags";
+import {
+  getMarketCharacteristics,
+  processContentSection,
+  type MarketCharacteristics
+} from "@/lib/contentVariantSelector";
 import stageLogo from '@/assets/stage-logo.webp';
 import FadeIn from "@/components/animations/FadeIn";
 import ScaleHeader from "@/components/animations/ScaleHeader";
@@ -96,17 +102,159 @@ const mapCityToCluster = (city: string | undefined): string | undefined => {
   return clusterMap[cityLower];
 };
 
-// Helper function to replace tokens in text
+// Token replacement configuration and fallbacks
+interface TokenConfig {
+  value: string;
+  fallback: string;
+  isRequired?: boolean;
+}
+
+interface TokenValidationResult {
+  hasErrors: boolean;
+  missingTokens: string[];
+  processedText: string;
+}
+
+// Default fallback values for common tokens
+const TOKEN_FALLBACKS: Record<string, string> = {
+  city: "Colorado",
+  careType: "Senior Living",
+  communityName: "Stage Senior",
+  location: "Colorado",
+};
+
+// Helper function to replace tokens in text with validation and fallbacks
 const replaceTokens = (
   text: string,
   tokens: Record<string, string>
 ): string => {
+  const result = replaceTokensWithValidation(text, tokens);
+
+  // Log warnings for missing tokens in development
+  if (result.hasErrors && result.missingTokens.length > 0) {
+    console.warn(
+      `[Token Replacement Warning] Missing or empty tokens detected:`,
+      result.missingTokens.join(", "),
+      `\nOriginal text: "${text}"`
+    );
+  }
+
+  return result.processedText;
+};
+
+// Advanced token replacement with validation and smart fallbacks
+const replaceTokensWithValidation = (
+  text: string,
+  tokens: Record<string, string>
+): TokenValidationResult => {
   let result = text;
+  const missingTokens: string[] = [];
+  let hasErrors = false;
+
+  // Build token configs with fallbacks
+  const tokenConfigs: Record<string, TokenConfig> = {};
   Object.entries(tokens).forEach(([key, value]) => {
-    const regex = new RegExp(`\\{${key}\\}`, "gi");
-    result = result.replace(regex, value);
+    tokenConfigs[key] = {
+      value: value?.trim() || "",
+      fallback: TOKEN_FALLBACKS[key] || "",
+      isRequired: ["city", "careType"].includes(key),
+    };
   });
-  return result;
+
+  // First pass: Detect empty tokens and track issues
+  Object.entries(tokenConfigs).forEach(([key, config]) => {
+    const regex = new RegExp(`\\{${key}\\}`, "gi");
+
+    if (regex.test(text)) {
+      if (!config.value) {
+        hasErrors = true;
+        missingTokens.push(key);
+      }
+    }
+  });
+
+  // Second pass: Replace tokens with smart fallbacks
+  Object.entries(tokenConfigs).forEach(([key, config]) => {
+    const regex = new RegExp(`\\{${key}\\}`, "gi");
+    const replacementValue = config.value || config.fallback;
+
+    result = result.replace(regex, replacementValue);
+  });
+
+  // Third pass: Clean up awkward sentence structures
+  result = cleanUpTokenReplacementArtifacts(result);
+
+  return {
+    hasErrors,
+    missingTokens,
+    processedText: result,
+  };
+};
+
+// Clean up common artifacts from token replacement
+const cleanUpTokenReplacementArtifacts = (text: string): string => {
+  let cleaned = text;
+
+  // Remove awkward patterns like "in , Colorado" -> "in Colorado"
+  cleaned = cleaned.replace(/\bin\s*,\s*/gi, "in ");
+
+  // Remove patterns like "to in " -> "to "
+  cleaned = cleaned.replace(/\bto\s+in\s+$/gi, "to ");
+
+  // Remove double spaces
+  cleaned = cleaned.replace(/\s{2,}/g, " ");
+
+  // Remove trailing commas and spaces
+  cleaned = cleaned.replace(/,\s*$/, "");
+
+  // Remove patterns like "Living in ," -> "Living in Colorado"
+  // This catches cases where city was empty but we still have the structure
+  cleaned = cleaned.replace(/\bin\s*,/gi, "in");
+
+  // Clean up patterns like "Welcome to in" -> "Welcome to"
+  cleaned = cleaned.replace(/\bto\s+in\s*$/i, "to");
+
+  // Trim whitespace
+  cleaned = cleaned.trim();
+
+  return cleaned;
+};
+
+// SEO-friendly fallback content for pages with missing data
+interface FallbackContent {
+  title: string;
+  subtitle?: string;
+  metaDescription: string;
+}
+
+const getFallbackContent = (
+  pageType: "city" | "careType" | "generic",
+  tokens: Record<string, string>
+): FallbackContent => {
+  const careType = tokens.careType || "Senior Living";
+  const city = tokens.city || "Colorado";
+
+  switch (pageType) {
+    case "city":
+      return {
+        title: `${careType} in ${city}`,
+        subtitle: `Discover exceptional ${careType.toLowerCase()} communities in ${city}`,
+        metaDescription: `Explore top-rated ${careType.toLowerCase()} options in ${city}. Schedule a tour today and find the perfect community for your loved ones.`,
+      };
+    case "careType":
+      return {
+        title: `${careType} Communities`,
+        subtitle: `Experience compassionate ${careType.toLowerCase()} at Stage Senior`,
+        metaDescription: `Stage Senior offers exceptional ${careType.toLowerCase()} with personalized care, engaging activities, and comfortable living spaces. Schedule a tour today.`,
+      };
+    case "generic":
+    default:
+      return {
+        title: "Senior Living Communities in Colorado",
+        subtitle: "Discover Stage Senior's exceptional care and vibrant community life",
+        metaDescription: "Stage Senior provides exceptional senior living in Colorado with personalized care, engaging activities, and comfortable living spaces. Schedule a tour today.",
+      };
+  }
 };
 
 // Helper function for formatting prices
@@ -414,6 +562,26 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: Gallery[],
   );
 };
 
+// Export token utilities for testing and debugging
+// Can be accessed via window.tokenUtils in browser console
+if (typeof window !== 'undefined') {
+  (window as any).tokenUtils = {
+    replaceTokens,
+    replaceTokensWithValidation,
+    cleanUpTokenReplacementArtifacts,
+    TOKEN_FALLBACKS,
+    testTokenReplacement: (text: string, tokens: Record<string, string>) => {
+      console.log('Input text:', text);
+      console.log('Input tokens:', tokens);
+      const result = replaceTokensWithValidation(text, tokens);
+      console.log('Output:', result.processedText);
+      console.log('Has errors:', result.hasErrors);
+      console.log('Missing tokens:', result.missingTokens);
+      return result;
+    }
+  };
+}
+
 export default function DynamicLandingPage() {
   const params = useParams();
   const [location] = useLocation();
@@ -635,13 +803,86 @@ export default function DynamicLandingPage() {
       )
     : allFloorPlans;
 
-  // Build tokens for replacement (apply Title Case to all token values)
-  const tokens = {
-    city: toTitleCase(urlParams.city || primaryCommunity?.city || ""),
-    careType: toTitleCase(getCareTypeName()),
-    communityName: primaryCommunity?.name || "", // Community names are already properly cased
-    location: toTitleCase(urlParams.location || primaryCommunity?.city || ""),
+  // Build tokens for replacement with validation and smart defaults
+  const buildTokens = (): Record<string, string> => {
+    const cityValue = urlParams.city || primaryCommunity?.city || "";
+    const careTypeName = getCareTypeName();
+    const locationValue = urlParams.location || primaryCommunity?.city || "";
+
+    // Ensure we have sensible values - use fallbacks if primary values are empty
+    const city = toTitleCase(cityValue) || TOKEN_FALLBACKS.city;
+    const careType = toTitleCase(careTypeName) || TOKEN_FALLBACKS.careType;
+    const communityName = primaryCommunity?.name || TOKEN_FALLBACKS.communityName;
+    const location = toTitleCase(locationValue) || TOKEN_FALLBACKS.location;
+
+    return {
+      city,
+      careType,
+      communityName,
+      location,
+    };
   };
+
+  const tokens = buildTokens();
+
+  // Determine market characteristics for content variant selection
+  const cityValue = urlParams.city || primaryCommunity?.city;
+  const marketCharacteristics = getMarketCharacteristics(cityValue);
+
+  // Validate token health and log warnings for admins
+  useEffect(() => {
+    if (!template) return;
+
+    const validateTokens = () => {
+      const issues: string[] = [];
+
+      // Check if we're using fallback values (indicates missing data)
+      if (tokens.city === TOKEN_FALLBACKS.city && !primaryCommunity?.city) {
+        issues.push("City information is missing - using fallback: 'Colorado'");
+      }
+
+      if (tokens.careType === TOKEN_FALLBACKS.careType && !careTypeSlug) {
+        issues.push("Care type information is missing - using fallback: 'Senior Living'");
+      }
+
+      if (tokens.communityName === TOKEN_FALLBACKS.communityName && !primaryCommunity?.name) {
+        issues.push("Community name is missing - using fallback: 'Stage Senior'");
+      }
+
+      // Check if template has token placeholders that might not be filled
+      const templateTexts = [
+        template.title,
+        template.heroTitle,
+        template.heroSubtitle,
+        template.metaDescription,
+        template.h1Headline,
+        template.subheadline,
+      ].filter(Boolean) as string[];
+
+      const allTemplateText = templateTexts.join(" ");
+      const tokenPattern = /\{(\w+)\}/g;
+      const foundTokens = Array.from(allTemplateText.matchAll(tokenPattern)).map(m => m[1]);
+
+      foundTokens.forEach(tokenKey => {
+        if (!tokens[tokenKey] || tokens[tokenKey] === TOKEN_FALLBACKS[tokenKey]) {
+          issues.push(`Template uses token {${tokenKey}} but value is missing or using fallback`);
+        }
+      });
+
+      if (issues.length > 0) {
+        console.warn(
+          `[Page Token Validation] Landing page "${template.title || 'Unknown'}" has token issues:`,
+          issues
+        );
+        console.info(
+          `Current tokens:`,
+          tokens
+        );
+      }
+    };
+
+    validateTokens();
+  }, [template, tokens, primaryCommunity, careTypeSlug]);
 
   // Set page title and meta description with OG tags and canonical URL
   useEffect(() => {
@@ -749,6 +990,7 @@ export default function DynamicLandingPage() {
   const pageSubtitle = template.heroSubtitle || template.subheadline;
 
   // Inline Components
+  /* DEPRECATED: Hard-coded trust badges and stats - replaced with database-driven CommunityCredentials component
   const TrustBadgeBar = () => (
     <section className="bg-primary/5 border-y border-primary/10 py-6 md:py-4" data-testid="trust-badge-bar">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -794,6 +1036,7 @@ export default function DynamicLandingPage() {
       </div>
     </section>
   );
+  */
 
   const ScarcityNotice = () => (
     <section className="py-6 md:py-8 bg-amber-50 border-y border-amber-200" data-testid="scarcity-notice">
@@ -1080,107 +1323,143 @@ export default function DynamicLandingPage() {
       {template.customContent && (
         <>
           {/* Intro Section */}
-          {template.customContent.introSection && (
-            <FadeIn direction="up" delay={0.1}>
-              <section id="content" className="py-12 md:py-16 bg-white" data-testid="section-intro-custom">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-                    {replaceTokens(template.customContent.introSection.heading, tokens)}
-                  </h2>
-                  <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                    {replaceTokens(template.customContent.introSection.content, tokens)}
-                  </p>
-                  {template.customContent.introSection.highlights && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-                      {template.customContent.introSection.highlights.map((highlight: string, idx: number) => (
-                        <div key={idx} className="flex items-start gap-3" data-testid={`intro-highlight-${idx}`}>
-                          <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                          <span className="text-base">{replaceTokens(highlight, tokens)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </section>
-            </FadeIn>
-          )}
+          {template.customContent.introSection && (() => {
+            // Process intro section with smart content variant selection
+            const processedIntro = processContentSection(
+              template.customContent.introSection,
+              marketCharacteristics,
+              careTypeSlug || undefined
+            );
+
+            return (
+              <FadeIn direction="up" delay={0.1}>
+                <section id="content" className="py-12 md:py-16 bg-white" data-testid="section-intro-custom">
+                  <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
+                      {replaceTokens(processedIntro.heading || template.customContent.introSection.heading, tokens)}
+                    </h2>
+                    <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                      {replaceTokens(processedIntro.content || template.customContent.introSection.content, tokens)}
+                    </p>
+                    {processedIntro.highlights && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+                        {processedIntro.highlights.map((highlight: string, idx: number) => (
+                          <div key={idx} className="flex items-start gap-3" data-testid={`intro-highlight-${idx}`}>
+                            <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                            <span className="text-base">{replaceTokens(highlight, tokens)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </section>
+              </FadeIn>
+            );
+          })()}
 
           {/* Why Choose Section */}
-          {template.customContent.whyChooseSection && (
-            <section className="py-12 md:py-16 bg-gray-50" data-testid="section-why-choose-custom">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
-                  {replaceTokens(template.customContent.whyChooseSection.heading, tokens)}
-                </h2>
-                <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {template.customContent.whyChooseSection.reasons?.map((reason: any, idx: number) => (
-                    <StaggerItem key={idx}>
-                      <Card className="h-full hover:shadow-lg transition-shadow" data-testid={`why-choose-card-${idx}`}>
-                        <CardContent className="p-6">
-                          <h3 className="text-xl font-semibold mb-3">
-                            {replaceTokens(reason.title, tokens)}
-                          </h3>
-                          <p className="text-muted-foreground leading-relaxed">
-                            {replaceTokens(reason.description, tokens)}
-                          </p>
-                        </CardContent>
-                      </Card>
-                    </StaggerItem>
-                  ))}
-                </StaggerContainer>
-              </div>
-            </section>
-          )}
+          {template.customContent.whyChooseSection && (() => {
+            // Process why choose section with smart content variant selection
+            const processedWhyChoose = processContentSection(
+              template.customContent.whyChooseSection,
+              marketCharacteristics,
+              careTypeSlug || undefined
+            );
+
+            return (
+              <section className="py-12 md:py-16 bg-gray-50" data-testid="section-why-choose-custom">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+                    {replaceTokens(processedWhyChoose.heading || template.customContent.whyChooseSection.heading, tokens)}
+                  </h2>
+                  <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {processedWhyChoose.reasons?.map((reason: any, idx: number) => (
+                      <StaggerItem key={idx}>
+                        <Card className="h-full hover:shadow-lg transition-shadow" data-testid={`why-choose-card-${idx}`}>
+                          <CardContent className="p-6">
+                            <h3 className="text-xl font-semibold mb-3">
+                              {replaceTokens(reason.title, tokens)}
+                            </h3>
+                            <p className="text-muted-foreground leading-relaxed">
+                              {replaceTokens(reason.description, tokens)}
+                            </p>
+                          </CardContent>
+                        </Card>
+                      </StaggerItem>
+                    ))}
+                  </StaggerContainer>
+                </div>
+              </section>
+            );
+          })()}
 
           {/* Local Context Section */}
-          {template.customContent.localContextSection && (
-            <FadeIn direction="up" delay={0.2}>
-              <section className="py-12 md:py-16 bg-primary/5" data-testid="section-local-context-custom">
+          {template.customContent.localContextSection && (() => {
+            // Process local context section with smart content variant selection
+            const processedLocalContext = processContentSection(
+              template.customContent.localContextSection,
+              marketCharacteristics,
+              careTypeSlug || undefined
+            );
+
+            return (
+              <FadeIn direction="up" delay={0.2}>
+                <section className="py-12 md:py-16 bg-primary/5" data-testid="section-local-context-custom">
+                  <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
+                      {replaceTokens(processedLocalContext.heading || template.customContent.localContextSection.heading, tokens)}
+                    </h2>
+                    <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                      {replaceTokens(processedLocalContext.content || template.customContent.localContextSection.content, tokens)}
+                    </p>
+                    {processedLocalContext.features && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+                        {processedLocalContext.features.map((feature: string, idx: number) => (
+                          <div key={idx} className="flex items-start gap-3" data-testid={`local-feature-${idx}`}>
+                            <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                            <span className="text-base">{replaceTokens(feature, tokens)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </section>
+              </FadeIn>
+            );
+          })()}
+
+          {/* Care Details Section */}
+          {template.customContent.careDetailsSection && (() => {
+            // Process care details section with smart content variant selection
+            const processedCareDetails = processContentSection(
+              template.customContent.careDetailsSection,
+              marketCharacteristics,
+              careTypeSlug || undefined
+            );
+
+            return (
+              <section className="py-12 md:py-16 bg-white" data-testid="section-care-details-custom">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                   <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-                    {replaceTokens(template.customContent.localContextSection.heading, tokens)}
+                    {replaceTokens(processedCareDetails.heading || template.customContent.careDetailsSection.heading, tokens)}
                   </h2>
                   <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                    {replaceTokens(template.customContent.localContextSection.content, tokens)}
+                    {replaceTokens(processedCareDetails.content || template.customContent.careDetailsSection.content, tokens)}
                   </p>
-                  {template.customContent.localContextSection.features && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-                      {template.customContent.localContextSection.features.map((feature: string, idx: number) => (
-                        <div key={idx} className="flex items-start gap-3" data-testid={`local-feature-${idx}`}>
-                          <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                          <span className="text-base">{replaceTokens(feature, tokens)}</span>
+                  {processedCareDetails.keyPoints && (
+                    <div className="space-y-3 mt-8">
+                      {processedCareDetails.keyPoints.map((point: string, idx: number) => (
+                        <div key={idx} className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg" data-testid={`care-point-${idx}`}>
+                          <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                          <span className="text-base">{replaceTokens(point, tokens)}</span>
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
               </section>
-            </FadeIn>
-          )}
-
-          {/* Care Details Section */}
-          {template.customContent.careDetailsSection && (
-            <section className="py-12 md:py-16 bg-white" data-testid="section-care-details-custom">
-              <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-                  {replaceTokens(template.customContent.careDetailsSection.heading, tokens)}
-                </h2>
-                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                  {replaceTokens(template.customContent.careDetailsSection.content, tokens)}
-                </p>
-                {template.customContent.careDetailsSection.keyPoints && (
-                  <div className="space-y-3 mt-8">
-                    {template.customContent.careDetailsSection.keyPoints.map((point: string, idx: number) => (
-                      <div key={idx} className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg" data-testid={`care-point-${idx}`}>
-                        <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                        <span className="text-base">{replaceTokens(point, tokens)}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </section>
-          )}
+            );
+          })()}
 
           {/* FAQ Preview Section */}
           {template.customContent.faqPreview && template.customContent.faqPreview.length > 0 && (
@@ -1255,11 +1534,8 @@ export default function DynamicLandingPage() {
         </section>
       )}
 
-      {/* 2. Trust Badge Bar - Builds credibility immediately */}
-      <TrustBadgeBar />
-
-      {/* 3. Stats Strip - Social proof numbers */}
-      <StatsStrip />
+      {/* 2. & 3. Community Credentials - Database-driven trust badges and stats */}
+      <CommunityCredentials community={primaryCommunity} />
 
       {/* 4. Community Highlights - What makes this community special (alternating feature sections) */}
       {communityHighlights.length > 0 && (
