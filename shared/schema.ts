@@ -588,6 +588,13 @@ export const quizzes = pgTable("quizzes", {
   description: text("description"),
   resultTitle: varchar("result_title", { length: 255 }), // Title shown on results page
   resultMessage: text("result_message"), // General message shown with results
+  resultTiers: jsonb("result_tiers").$type<Array<{
+    name: string;
+    minScore: number;
+    maxScore: number;
+    description: string;
+    recommendations: string;
+  }>>(), // Score-based result tiers for weighted scoring
   active: boolean("active").default(true),
   sortOrder: integer("sort_order").default(0),
   createdAt: timestamp("created_at").defaultNow(),
@@ -611,6 +618,7 @@ export const quizAnswerOptions = pgTable("quiz_answer_options", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   questionId: uuid("question_id").notNull().references(() => quizQuestions.id, { onDelete: "cascade" }),
   answerText: text("answer_text").notNull(),
+  score: decimal("score", { precision: 5, scale: 2 }), // Weighted score value for this answer option
   resultCategory: varchar("result_category", { length: 100 }), // Used to categorize persona (adult_children, prospective_resident, healthcare_referrer)
   sortOrder: integer("sort_order").default(0),
   createdAt: timestamp("created_at").defaultNow(),
@@ -626,7 +634,8 @@ export const quizResponses = pgTable("quiz_responses", {
   zipCode: varchar("zip_code", { length: 10 }),
   timeline: varchar("timeline", { length: 100 }), // 'immediate', '1-3 months', '3-6 months', '6-12 months', '1+ years'
   answers: jsonb("answers").$type<Array<{ questionId: string; answerOptionId?: string; textAnswer?: string }>>().notNull(),
-  resultCategory: varchar("result_category", { length: 100 }), // Calculated persona based on answers
+  totalScore: decimal("total_score", { precision: 6, scale: 2 }), // Calculated total weighted score
+  resultCategory: varchar("result_category", { length: 100 }), // Calculated tier/persona based on score
   // UTM tracking
   utmSource: varchar("utm_source", { length: 255 }),
   utmMedium: varchar("utm_medium", { length: 255 }),
