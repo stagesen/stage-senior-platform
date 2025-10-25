@@ -997,25 +997,27 @@ export default function DynamicLandingPage() {
 
 
       {/* 1c. Page Content Sections - Dynamic sections from database */}
-      {activeSections.length > 0 && activeSections.map((section) => {
-        // Pass currentCareType prop to CareComparisonTool sections
-        if (section.sectionType === 'care_comparison_tool') {
+      {activeSections.length > 0 && activeSections
+        .filter(section => section.sectionType !== 'cta_row') // Skip CTARow since we have hero overlay
+        .map((section) => {
+          // Pass currentCareType prop to CareComparisonTool sections
+          if (section.sectionType === 'care_comparison_tool') {
+            return (
+              <PageSectionRenderer 
+                key={section.id} 
+                section={section}
+                currentCareType={careTypeSlug || undefined}
+              />
+            );
+          }
+          
           return (
             <PageSectionRenderer 
               key={section.id} 
               section={section}
-              currentCareType={careTypeSlug || undefined}
             />
           );
-        }
-        
-        return (
-          <PageSectionRenderer 
-            key={section.id} 
-            section={section}
-          />
-        );
-      })}
+        })}
 
       {/* 1a. Care Type Focus - Show specific care type if landing page is for a specific care type */}
       {careTypeSlug && getCareTypeName() !== "Senior Living" && (
