@@ -925,17 +925,41 @@ export default function DynamicLandingPage() {
   return (
     <div className="min-h-screen bg-white" data-testid="dynamic-landing-page">
       {/* 1. Hero Section - Always shown */}
-      <PageHero
-        pagePath={pathname}
-        defaultTitle={replaceTokens(pageTitle, tokens)}
-        defaultSubtitle={pageSubtitle ? replaceTokens(pageSubtitle, tokens) : undefined}
-        defaultBackgroundImage={heroImageUrl || undefined}
-        logoUrl={communityLogoUrl || undefined}
-        logoAlt={`${primaryCommunity?.name} logo`}
-      />
+      <div className="relative">
+        <PageHero
+          pagePath={pathname}
+          defaultTitle={replaceTokens(pageTitle, tokens)}
+          defaultSubtitle={pageSubtitle ? replaceTokens(pageSubtitle, tokens) : undefined}
+          defaultBackgroundImage={heroImageUrl || undefined}
+          logoUrl={communityLogoUrl || undefined}
+          logoAlt={`${primaryCommunity?.name} logo`}
+        />
+        
+        {/* Map Overlay - Show on "near me" and "best" pages */}
+        {template.urlPattern && (template.urlPattern.includes('-near-me') || template.urlPattern.includes('/best-')) && filteredCommunities.length > 0 && (
+          <FadeIn direction="up" delay={0.3}>
+            <div 
+              className="absolute bottom-0 left-0 right-0 w-full shadow-2xl" 
+              style={{ height: '400px' }}
+              data-testid="section-community-map-overlay"
+            >
+              <CommunityMap 
+                communities={filteredCommunities}
+                selectedCommunityId={primaryCommunity?.id}
+              />
+            </div>
+          </FadeIn>
+        )}
+      </div>
 
       {/* 1b. Hero CTA Section - Immediate conversion opportunity */}
-      <section className="bg-white py-8 md:py-12 border-b border-gray-100" data-testid="hero-cta-section">
+      <section 
+        className="bg-white py-8 md:py-12 border-b border-gray-100" 
+        style={{ 
+          marginTop: template.urlPattern && (template.urlPattern.includes('-near-me') || template.urlPattern.includes('/best-')) && filteredCommunities.length > 0 ? '400px' : '0' 
+        }}
+        data-testid="hero-cta-section"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
             <Button
@@ -978,17 +1002,6 @@ export default function DynamicLandingPage() {
         </div>
       </section>
 
-      {/* 1bb. Community Locations Map - Show on "near me" and "best" pages */}
-      {template.urlPattern && (template.urlPattern.includes('-near-me') || template.urlPattern.includes('/best-')) && filteredCommunities.length > 0 && (
-        <FadeIn direction="up" delay={0.2}>
-          <section className="w-full" data-testid="section-community-map" style={{ height: '500px' }}>
-            <CommunityMap 
-              communities={filteredCommunities}
-              selectedCommunityId={primaryCommunity?.id}
-            />
-          </section>
-        </FadeIn>
-      )}
 
       {/* 1c. Page Content Sections - Dynamic sections from database */}
       {activeSections.length > 0 && activeSections.map((section) => {
