@@ -982,9 +982,6 @@ export default function DynamicLandingPage() {
         </FadeIn>
       </div>
 
-      {/* Spacer to account for overlay */}
-      <div className="h-24 md:h-32" aria-hidden="true"></div>
-
       {/* 1b. Map Section - Show on "near me" and "best" pages */}
       {template.urlPattern && (template.urlPattern.includes('-near-me') || template.urlPattern.includes('/best-')) && filteredCommunities.length > 0 && (
         <FadeIn direction="up" delay={0.2}>
