@@ -1,0 +1,34 @@
+## Question Bank & Rationale
+| # | Domain | Question (Likert or multiple choice) | Insight captured | Recommended weighting |
+| --- | --- | --- | --- | --- |
+| 1 | Activities of Daily Living (ADLs) | How much assistance does your loved one need with bathing or dressing? (None / Occasional reminders / Hands-on help) | Gauges care intensity; higher need signals assisted living or memory care | 10% |
+| 2 | ADLs | Are there concerns about medication management? (No issues / Needs reminders / Misses doses despite reminders) | Medication adherence issues correlate with need for staff oversight | 6% |
+| 3 | Cognitive Health | Have you observed memory changes affecting safety (e.g., leaving stove on, wandering)? (No / Sometimes / Frequently) | Identifies dementia risk requiring memory care | 10% |
+| 4 | Cognitive Health | Recent clinical diagnoses? (None / Mild cognitive impairment / Alzheimer's or other dementia) | Determines specialty care level | 8% |
+| 5 | Medical Complexity | How many chronic conditions are being managed? (0-1 / 2-3 / 4+) | Higher comorbidity may need assisted living with clinical support | 6% |
+| 6 | Medical Complexity | Frequency of hospitalizations or ER visits in past 12 months? (0 / 1-2 / 3+) | High utilization suggests need for structured care | 6% |
+| 7 | Safety & Mobility | Have there been falls in the past year? (No / One / Two or more) | Fall risk indicator; repeated falls point to assisted living or memory care | 7% |
+| 8 | Safety & Mobility | Mobility status? (Independent / Uses assistive device / Requires support transferring) | Helps differentiate independent vs assisted living | 6% |
+| 9 | Social & Emotional | How often does your loved one engage in meaningful social activities? (Daily / Weekly / Rarely) | Loneliness risk; informs lifestyle support needs | 5% |
+| 10 | Social & Emotional | Caregiver stress level? (Manageable / Occasionally overwhelming / Constantly overwhelmed) | High stress suggests urgency and need for respite | 5% |
+| 11 | Home Environment | Is the current home environment safe and accessible? (Yes / Some modifications needed / Unsafe) | Flags necessity for community transition | 5% |
+| 12 | Financial Planning | Monthly budget range for care? (<$3K / $3K-$6K / $6K+) | Guides recommended solutions and CTA personalization | 4% |
+| 13 | Timing | When are you hoping to make a decision? (Exploring / 3-6 months / Within 30 days) | Captures urgency for nurture sequencing | 4% |
+| 14 | Support Network | Do you have a primary backup caregiver? (Yes / Limited / None) | Limited support drives recommendation toward staffed settings | 4% |
+| 15 | Preferences | Which matters most right now? (Maintaining independence / Specialized memory support / Clinical oversight / Budget-friendly options) | Tailors messaging and CTA emphasis | 4% |
+
+- **Scoring logic:**
+  - Weighted scoring to classify into four tiers:
+    - *Tier A (0-29%)* → Independent Living + concierge services; emphasize lifestyle programming and socialization.
+    - *Tier B (30-49%)* → Assisted Living recommendation; highlight daily living assistance, medication management, fall prevention programming.
+    - *Tier C (50-69%)* → Memory Care; emphasize secure environment, cognitive therapies, care partner coaching.
+    - *Tier D (70%+)* → Hybrid solution (memory care with clinical oversight or short-term skilled nursing); provide consult CTA with nurse assessment.
+  - Overlay urgency modifier: if Q13 indicates "Within 30 days" or Q10 "Constantly overwhelmed," trigger high-priority follow-up flag for sales counselors.
+
+### Result Personalization & Nurture Paths
+- **Dynamic insights:** show top three contributing factors (e.g., "Medication adherence challenges"), link to relevant blog posts, embed short video testimonial from similar family persona.
+- **CTA variants:**
+  - Independent living: "Schedule a lifestyle tour" + link to virtual events calendar.
+  - Assisted living: "Talk to a care advisor" + download "Daily Life in Assisted Living" guide.
+  - Memory care: "Download our Memory Care Playbook" + invite to caregiver support group webinar.
+  - Hybrid/high acuity: "Book a nurse consultation" + connect to respite stay information.
