@@ -21,6 +21,8 @@ import NotFound from "@/pages/not-found";
 import { generateSchemaOrgData } from "@/lib/schemaOrg";
 import { getPrimaryPhoneDisplay, getPrimaryPhoneHref, getCityState } from "@/lib/communityContact";
 import { toTitleCase, cn } from "@/lib/utils";
+import { setMetaTags, getCanonicalUrl, formatCareType } from "@/lib/metaTags";
+import stageLogo from '@/assets/stage-logo.webp';
 import FadeIn from "@/components/animations/FadeIn";
 import ScaleHeader from "@/components/animations/ScaleHeader";
 import StaggerContainer from "@/components/animations/StaggerContainer";
@@ -641,27 +643,32 @@ export default function DynamicLandingPage() {
     location: toTitleCase(urlParams.location || primaryCommunity?.city || ""),
   };
 
-  // Set page title and meta description
+  // Set page title and meta description with OG tags and canonical URL
   useEffect(() => {
     if (template) {
       const title = replaceTokens(template.title, tokens);
-      // Add " | Stage Senior" to title for branding (not in database to save SEO space)
-      document.title = title.includes('Stage Senior') ? title : `${title} | Stage Senior`;
+      const finalTitle = title.includes('Stage Senior') ? title : `${title} | Stage Senior`;
+      const description = template.metaDescription 
+        ? replaceTokens(template.metaDescription, tokens) 
+        : '';
+      
+      const heroImageUrl = primaryCommunity?.heroImageUrl 
+        ? (primaryCommunity.heroImageUrl.startsWith('http') 
+          ? primaryCommunity.heroImageUrl 
+          : `${window.location.origin}/api/images/${primaryCommunity.heroImageUrl}`)
+        : `${window.location.origin}${stageLogo}`;
 
-      if (template.metaDescription) {
-        let metaTag = document.querySelector('meta[name="description"]');
-        if (!metaTag) {
-          metaTag = document.createElement("meta");
-          metaTag.setAttribute("name", "description");
-          document.head.appendChild(metaTag);
-        }
-        metaTag.setAttribute(
-          "content",
-          replaceTokens(template.metaDescription, tokens)
-        );
-      }
+      setMetaTags({
+        title: finalTitle,
+        description: description,
+        canonicalUrl: getCanonicalUrl(pathname),
+        ogType: careTypeSlug ? "website" : "place",
+        ogImage: heroImageUrl,
+        ogLocality: tokens.city,
+        ogRegion: "CO",
+      });
     }
-  }, [template, tokens]);
+  }, [template, tokens, pathname, primaryCommunity, careTypeSlug]);
 
   // Inject Schema.org structured data for SEO
   useEffect(() => {

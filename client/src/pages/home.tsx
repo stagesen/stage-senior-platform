@@ -41,9 +41,11 @@ import {
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { setMetaTags, getCanonicalUrl } from "@/lib/metaTags";
 import type { CommunityCard, Community, HomepageSection, HomepageConfig } from "@shared/schema";
 import seniorCaregiverDocuments from '@/assets/senior-caregiver-documents.webp';
 import carePricingImage from '@/assets/cp-home.webp';
+import stageLogo from '@/assets/stage-logo.webp';
 
 // Subcomponent for carousel items that handles image resolution
 const CarouselCommunityCard = ({ 
@@ -127,6 +129,19 @@ export default function Home() {
   const [showCommunityModal, setShowCommunityModal] = useState(false);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // Set meta tags for SEO
+  useEffect(() => {
+    const logoUrl = `${window.location.origin}${stageLogo}`;
+    
+    setMetaTags({
+      title: "Stage Senior - Exceptional Senior Living in Colorado | Memory Care & Assisted Living",
+      description: "Discover Colorado's finest senior living communities with Stage Senior. Offering assisted living, memory care, and independent living with dignity, comfort, and joy. Schedule your tour today.",
+      canonicalUrl: getCanonicalUrl("/"),
+      ogType: "website",
+      ogImage: logoUrl,
+    });
+  }, []);
 
   // Track selected carousel index for visual emphasis
   useEffect(() => {

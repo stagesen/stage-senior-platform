@@ -62,6 +62,7 @@ import { getPrimaryPhoneDisplay, getPrimaryPhoneHref, getCityStateZip, getCitySt
 import ScrollToTop from "@/components/ScrollToTop";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
+import { setMetaTags, getCanonicalUrl, sanitizeMetaText } from "@/lib/metaTags";
 import stageSeniorLogo from "@/assets/stage-logo.webp";
 import defaultBrochureImage from "@/assets/community-brochure-default.png";
 import NewsletterCard from "@/components/NewsletterCard";
@@ -1195,6 +1196,83 @@ export default function CommunityDetail() {
 
   // Resolve private dining image URL from privateDiningImageId field
   const privateDiningImageUrl = useResolveImageUrl(community?.privateDiningImageId);
+
+  // Set meta tags and Schema.org markup
+  useEffect(() => {
+    if (!community) return;
+
+    const city = community.city || '';
+    const careTypes = community.careTypes?.join(', ') || 'Senior Living';
+    const description = community.shortDescription || community.description || '';
+    const descriptionExcerpt = sanitizeMetaText(description, 100);
+    const priceInfo = community.startingPrice 
+      ? ` Starting at $${community.startingPrice.toLocaleString()}/month.` 
+      : '';
+    
+    const metaDescription = `${community.name} offers ${careTypes} in ${city}, Colorado. ${descriptionExcerpt}.${priceInfo} Schedule your tour today.`;
+
+    setMetaTags({
+      title: `${community.name} - Senior Living in ${city}, CO | Stage Senior`,
+      description: metaDescription,
+      canonicalUrl: getCanonicalUrl(`/communities/${community.slug}`),
+      ogType: "place",
+      ogImage: heroImageUrl || `${window.location.origin}${stageSeniorLogo}`,
+      ogLocality: city,
+      ogRegion: "CO",
+    });
+
+    // Add LocalBusiness Schema.org markup
+    // Get phone number in international format (without tel: prefix)
+    const phoneHref = getPrimaryPhoneHref(community);
+    const telephone = phoneHref.replace('tel:', '');
+    
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "SeniorCare",
+      "name": community.name,
+      "image": heroImageUrl || '',
+      "description": sanitizeMetaText(description, 200),
+      "url": getCanonicalUrl(`/communities/${community.slug}`),
+      "telephone": telephone,
+      "priceRange": community.startingPrice 
+        ? `Starting at $${community.startingPrice.toLocaleString()}` 
+        : 'Contact for pricing',
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": community.street || '',
+        "addressLocality": city,
+        "addressRegion": "CO",
+        "postalCode": community.zip || community.zipCode || '',
+      },
+    };
+
+    // Add geo coordinates if available
+    if (community.latitude && community.longitude) {
+      (schema as any).geo = {
+        "@type": "GeoCoordinates",
+        "latitude": String(community.latitude),
+        "longitude": String(community.longitude),
+      };
+    }
+
+    // Inject Schema.org JSON-LD
+    let schemaScript = document.getElementById('community-schema');
+    if (!schemaScript) {
+      schemaScript = document.createElement('script');
+      schemaScript.id = 'community-schema';
+      schemaScript.type = 'application/ld+json';
+      document.head.appendChild(schemaScript);
+    }
+    schemaScript.textContent = JSON.stringify(schema);
+
+    // Cleanup function
+    return () => {
+      const script = document.getElementById('community-schema');
+      if (script) {
+        script.remove();
+      }
+    };
+  }, [community, heroImageUrl, slug]);
 
   // Computed values based on query data
   const galleryCategories = Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean)));

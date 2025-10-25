@@ -12,6 +12,7 @@ import { PageHero } from "@/components/PageHero";
 import { TeamCarousel } from "@/components/TeamCarousel";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { setMetaTags, getCanonicalUrl } from "@/lib/metaTags";
 import type { PageContentSection } from "@shared/schema";
 
 // Icon mapping helper
@@ -232,18 +233,12 @@ export default function AboutUs() {
   const resolvedHeroImage = useResolveImageUrl(heroContent?.imageUrl);
   
   useEffect(() => {
-    document.title = "About Us | Stage Senior";
-    
-    // Add meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Learn about Stage Senior Management - a locally owned, Colorado-based senior living management company founded in 2016. Discover our mission, values, leadership, and commitment to exceptional resident care.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Learn about Stage Senior Management - a locally owned, Colorado-based senior living management company founded in 2016. Discover our mission, values, leadership, and commitment to exceptional resident care.';
-      document.head.appendChild(meta);
-    }
+    setMetaTags({
+      title: "About Us | Stage Senior",
+      description: "Learn about Stage Senior Management - a locally owned, Colorado-based senior living management company founded in 2016. Discover our mission, values, leadership, and commitment to exceptional resident care.",
+      canonicalUrl: getCanonicalUrl("/about-us"),
+      ogType: "website",
+    });
   }, []);
 
   return (

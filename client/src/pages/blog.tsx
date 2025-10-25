@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 import { PageHero } from "@/components/PageHero";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { setMetaTags, getCanonicalUrl, sanitizeMetaText } from "@/lib/metaTags";
 import type { BlogPost, Community } from "@shared/schema";
 
 export default function Blog() {
@@ -45,6 +46,33 @@ export default function Blog() {
   // Resolve main image URL for current post
   const resolvedMainImage = useResolveImageUrl(currentPost?.mainImage);
   const resolvedAuthorAvatar = useResolveImageUrl(currentPost?.authorDetails?.avatarImageId);
+
+  // Set meta tags for individual blog posts
+  useEffect(() => {
+    if (currentPost && postSlug) {
+      const excerpt = currentPost.summary || sanitizeMetaText(currentPost.content || '', 155);
+      const publishedDate = currentPost.publishedAt ? new Date(currentPost.publishedAt).toISOString() : undefined;
+      const modifiedDate = currentPost.updatedAt ? new Date(currentPost.updatedAt).toISOString() : undefined;
+
+      setMetaTags({
+        title: `${currentPost.title} | Stage Senior Blog`,
+        description: excerpt,
+        canonicalUrl: getCanonicalUrl(`/blog/${postSlug}`),
+        ogType: "article",
+        ogImage: resolvedMainImage || `${window.location.origin}/assets/stage-logo.webp`,
+        articlePublishedTime: publishedDate,
+        articleModifiedTime: modifiedDate,
+      });
+    } else if (!postSlug) {
+      // Set meta tags for blog listing page
+      setMetaTags({
+        title: "Senior Living Blog | Stage Senior",
+        description: "Stay informed with Stage Senior's blog. Read about senior living, memory care, community events, and tips for families navigating senior care in Colorado.",
+        canonicalUrl: getCanonicalUrl("/blog"),
+        ogType: "website",
+      });
+    }
+  }, [currentPost, postSlug, resolvedMainImage]);
 
   // Get all unique tags
   const allTags = Array.from(

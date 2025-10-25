@@ -5,22 +5,17 @@ import { PageHero } from "@/components/PageHero";
 import { useQuery } from "@tanstack/react-query";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
+import { setMetaTags, getCanonicalUrl } from "@/lib/metaTags";
 import type { Community, PageContentSection } from "@shared/schema";
 
 export default function Services() {
   useEffect(() => {
-    document.title = "Our Services | Stage Senior";
-    
-    // Add meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Discover Stage Senior\'s comprehensive senior living management solutions, spiritual care programs, and long-term care insurance services across Colorado communities.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Discover Stage Senior\'s comprehensive senior living management solutions, spiritual care programs, and long-term care insurance services across Colorado communities.';
-      document.head.appendChild(meta);
-    }
+    setMetaTags({
+      title: "Our Services | Stage Senior",
+      description: "Discover Stage Senior's comprehensive senior living management solutions, spiritual care programs, and long-term care insurance services across Colorado communities.",
+      canonicalUrl: getCanonicalUrl("/services"),
+      ogType: "website",
+    });
   }, []);
 
   // Fetch content sections from API

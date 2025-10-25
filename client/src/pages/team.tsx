@@ -23,6 +23,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { setMetaTags, getCanonicalUrl } from "@/lib/metaTags";
 import type { TeamMember, Community } from "@shared/schema";
 
 // Tag priority configuration
@@ -304,23 +305,18 @@ export default function Team() {
     const title = communityName 
       ? `${communityName} Team | Stage Senior` 
       : "Our Team | Stage Senior";
-    document.title = title;
-    
-    // Add meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
     const description = communityName
       ? `Meet the dedicated professionals at ${communityName} who provide exceptional care and support to our residents.`
       : 'Meet the dedicated professionals at Stage Senior who provide exceptional care and support across our Colorado senior living communities.';
+    const path = communitySlug ? `/team?community=${communitySlug}` : '/team';
     
-    if (metaDescription) {
-      metaDescription.setAttribute('content', description);
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = description;
-      document.head.appendChild(meta);
-    }
-  }, [communityName]);
+    setMetaTags({
+      title,
+      description,
+      canonicalUrl: getCanonicalUrl(path),
+      ogType: "website",
+    });
+  }, [communityName, communitySlug]);
 
   // Fetch team members
   const { data: teamMembers = [], isLoading, error } = useQuery<TeamMember[]>({

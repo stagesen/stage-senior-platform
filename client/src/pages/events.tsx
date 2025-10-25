@@ -11,6 +11,7 @@ import EventCalendar from "@/components/EventCalendar";
 import EventDetailsModal from "@/components/EventDetailsModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHero } from "@/components/PageHero";
+import { setMetaTags, getCanonicalUrl } from "@/lib/metaTags";
 import type { Event, Community } from "@shared/schema";
 
 export default function Events() {
@@ -20,6 +21,16 @@ export default function Events() {
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
   const [calendarMode, setCalendarMode] = useState<"month" | "week">("month");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+
+  // Set meta tags
+  useEffect(() => {
+    setMetaTags({
+      title: "Community Events & Activities | Stage Senior",
+      description: "Explore upcoming events and activities at Stage Senior communities. Join us for social gatherings, wellness programs, and enriching experiences across Colorado.",
+      canonicalUrl: getCanonicalUrl("/events"),
+      ogType: "website",
+    });
+  }, []);
 
   // Handle URL query parameters for initial community selection
   useEffect(() => {

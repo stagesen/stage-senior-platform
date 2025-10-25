@@ -90,7 +90,7 @@ export function generateLocalBusinessSchema(params: SchemaOrgParams): LocalBusin
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://stagesenior.com";
   const schema: LocalBusinessSchema = {
     "@context": "https://schema.org",
-    "@type": "SeniorCenterOrCommunity",
+    "@type": "SeniorCare",
     name: community.name,
     url: `${baseUrl}${params.pathname}`,
   };
@@ -139,9 +139,21 @@ export function generateLocalBusinessSchema(params: SchemaOrgParams): LocalBusin
     };
   }
 
-  // Add contact information
-  if (community.phoneDisplay || community.phone) {
-    schema.telephone = community.phoneDisplay || community.phone || undefined;
+  // Add contact information (use international format without tel: prefix)
+  if (community.phoneDial) {
+    // phoneDial should already be in international format (+1...)
+    schema.telephone = community.phoneDial.startsWith('+') ? community.phoneDial : `+${community.phoneDial}`;
+  } else if (community.phoneDisplay || community.phone) {
+    // Extract digits and format as international
+    const phone = community.phoneDisplay || community.phone || '';
+    const digitsOnly = phone.replace(/\D/g, '');
+    if (digitsOnly.length === 10) {
+      schema.telephone = `+1${digitsOnly}`;
+    } else if (digitsOnly.length === 11 && digitsOnly.startsWith('1')) {
+      schema.telephone = `+${digitsOnly}`;
+    } else {
+      schema.telephone = phone;
+    }
   }
 
   if (community.email) {

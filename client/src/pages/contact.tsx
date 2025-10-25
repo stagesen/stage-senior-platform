@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CommunitySelectionModal from "@/components/CommunitySelectionModal";
 import { getPrimaryPhoneDisplay, getPrimaryPhoneHref, getCityStateZip } from "@/lib/communityContact";
+import { setMetaTags, getCanonicalUrl } from "@/lib/metaTags";
 import type { Community } from "@shared/schema";
 import { 
   Phone, 
@@ -30,18 +31,12 @@ export default function Contact() {
   });
 
   useEffect(() => {
-    document.title = "Contact Us | Stage Senior";
-    
-    // Add meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Contact Stage Senior today. Call (970) 444-4689 or visit one of our four Colorado communities. Schedule tours, get answers, and explore senior living options.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Contact Stage Senior today. Call (970) 444-4689 or visit one of our four Colorado communities. Schedule tours, get answers, and explore senior living options.';
-      document.head.appendChild(meta);
-    }
+    setMetaTags({
+      title: "Contact Us | Stage Senior",
+      description: "Contact Stage Senior today. Call (970) 444-4689 or visit one of our four Colorado communities. Schedule tours, get answers, and explore senior living options.",
+      canonicalUrl: getCanonicalUrl("/contact"),
+      ogType: "website",
+    });
   }, []);
 
   return (
