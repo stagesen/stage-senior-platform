@@ -33,6 +33,7 @@ interface CommunityCardProps {
 export default function CommunityCard({ community, isSelected, onSelect }: CommunityCardProps) {
   const [showLeadCapture, setShowLeadCapture] = useState(false);
   const heroImageUrl = useResolveImageUrl(community.heroImageUrl);
+  const logoImageUrl = useResolveImageUrl(community.logoImageUrl);
   const formatPrice = (price: number | null) => {
     if (!price) return "Contact for pricing";
     return `$${price.toLocaleString()}`;
@@ -71,7 +72,7 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
           {/* Image - Better aspect ratio */}
           <div className="md:col-span-2 relative">
             <Link href={`/communities/${community.slug}`}>
-              <div className="aspect-[4/3] md:aspect-auto md:h-full">
+              <div className="aspect-[4/3] md:aspect-auto md:h-full relative overflow-hidden">
                 <img
                   src={heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600`}
                   alt={`${community.name} - Senior Living Community`}
@@ -80,6 +81,18 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
                   decoding="async"
                   data-testid={`image-${community.slug}`}
                 />
+                
+                {/* Logo Overlay */}
+                {logoImageUrl && (
+                  <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-gray-200">
+                    <img
+                      src={logoImageUrl}
+                      alt={`${community.name} logo`}
+                      className="h-12 w-auto object-contain"
+                      data-testid={`logo-${community.slug}`}
+                    />
+                  </div>
+                )}
               </div>
             </Link>
           </div>
