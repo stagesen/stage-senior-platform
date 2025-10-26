@@ -950,6 +950,11 @@ export const insertCommunitySchema = createInsertSchema(communities).omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
+  // Only name is required, all other fields are optional
+  name: z.string().min(1, "Name is required"),
+  slug: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
   mainColorHex: z.string().regex(/^#([0-9a-fA-F]{6})$/, "Invalid hex color format (use #RRGGBB)").optional(),
   ctaColorHex: z.string().regex(/^#([0-9a-fA-F]{6})$/, "Invalid hex color format (use #RRGGBB)").optional(),
   yearEstablished: z.number().min(1800).max(new Date().getFullYear()).optional(),
