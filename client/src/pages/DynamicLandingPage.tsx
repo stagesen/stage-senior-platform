@@ -105,7 +105,9 @@ const mapCityToCluster = (city: string | undefined): string | undefined => {
 // Community Card Component
 function CommunityContactCard({ community }: { community: Community }) {
   const { openScheduleTour } = useScheduleTour();
-  const communityImageUrl = useResolveImageUrl(community.imageId);
+  // Use imageId first, fall back to heroImageUrl if imageId is not set
+  const imageIdToUse = community.imageId || community.heroImageUrl;
+  const communityImageUrl = useResolveImageUrl(imageIdToUse);
 
   return (
     <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300" data-testid={`community-contact-card-${community.id}`}>
