@@ -1522,39 +1522,36 @@ export default function DynamicLandingPage() {
             </FadeIn>
           )}
 
-          {/* Resources Section - Accordion with Card Content */}
+          {/* Resources Section - Main Heading as Accordion */}
           {template.customContent.resourcesSection && template.customContent.resourcesSection.resources && (
             <FadeIn direction="up" delay={0.2}>
               <section className="py-12 md:py-16 bg-white" data-testid="section-resources-custom">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
-                    {toTitleCase(replaceTokens(template.customContent.resourcesSection.heading, tokens))}
-                  </h2>
-                  <Accordion type="single" collapsible className="space-y-4">
-                    {template.customContent.resourcesSection.resources.map((resource: any, idx: number) => (
-                      <AccordionItem 
-                        key={idx} 
-                        value={`resource-${idx}`} 
-                        className="border-none"
-                        data-testid={`resource-card-${idx}`}
+                  <Accordion type="single" collapsible>
+                    <AccordionItem value="resources-main" className="border rounded-lg px-6">
+                      <AccordionTrigger 
+                        className="text-3xl md:text-4xl font-bold hover:no-underline py-6"
+                        data-testid="button-resources-section"
                       >
-                        <AccordionTrigger 
-                          className="text-left font-semibold hover:no-underline text-lg px-0"
-                          data-testid={`button-resource-${idx}`}
-                        >
-                          {replaceTokens(resource.name, tokens)}
-                        </AccordionTrigger>
-                        <AccordionContent className="pt-2 px-0">
-                          <Card className="bg-gray-50">
-                            <CardContent className="p-6">
-                              <p className="text-muted-foreground leading-relaxed">
-                                {replaceTokens(resource.description, tokens)}
-                              </p>
-                            </CardContent>
-                          </Card>
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
+                        {toTitleCase(replaceTokens(template.customContent.resourcesSection.heading, tokens))}
+                      </AccordionTrigger>
+                      <AccordionContent className="pt-4 pb-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {template.customContent.resourcesSection.resources.map((resource: any, idx: number) => (
+                            <Card key={idx} className="bg-gray-50" data-testid={`resource-card-${idx}`}>
+                              <CardContent className="p-6">
+                                <h3 className="text-lg font-semibold mb-3">
+                                  {replaceTokens(resource.name, tokens)}
+                                </h3>
+                                <p className="text-muted-foreground leading-relaxed">
+                                  {replaceTokens(resource.description, tokens)}
+                                </p>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
                   </Accordion>
                 </div>
               </section>
