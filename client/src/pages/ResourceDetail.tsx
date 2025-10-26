@@ -266,47 +266,10 @@ export default function ResourceDetail() {
         </div>
       </section>
 
-      {/* Author Section */}
-      {author && (
-        <section className="py-12 bg-gradient-to-br from-primary/5 to-accent/10">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <Card>
-              <CardContent className="pt-6">
-                <h2 className="text-2xl font-bold mb-6" data-testid="author-section-title">About the Author</h2>
-                <div className="flex items-start gap-6">
-                  {authorAvatarUrl ? (
-                    <img 
-                      src={authorAvatarUrl} 
-                      alt={author.name}
-                      className="w-20 h-20 rounded-full object-cover flex-shrink-0"
-                      data-testid="author-avatar"
-                    />
-                  ) : (
-                    <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0" data-testid="author-avatar-placeholder">
-                      <User className="w-10 h-10 text-primary/50" />
-                    </div>
-                  )}
-                  
-                  <div>
-                    <h3 className="text-xl font-semibold mb-1" data-testid="author-name">{author.name}</h3>
-                    {author.role && (
-                      <p className="text-muted-foreground mb-3" data-testid="author-role">{author.role}</p>
-                    )}
-                    {author.bio && (
-                      <p className="text-foreground" data-testid="author-bio">{author.bio}</p>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-      )}
-
       {/* Download CTA Section */}
       {resource.fileUrl && featuredImageUrl && (
-        <section className="py-16 lg:py-20 bg-gradient-to-br from-gray-50 to-white">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-12 lg:py-16 bg-background">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <Card className="overflow-hidden shadow-lg border border-gray-200">
               <div className="grid md:grid-cols-2 gap-0">
                 {/* Left side - Image with gradient overlay and icon */}
@@ -351,6 +314,43 @@ export default function ResourceDetail() {
                   )}
                 </div>
               </div>
+            </Card>
+          </div>
+        </section>
+      )}
+
+      {/* Author Section */}
+      {author && (
+        <section className="py-12 bg-gradient-to-br from-primary/5 to-accent/10">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Card>
+              <CardContent className="pt-6">
+                <h2 className="text-2xl font-bold mb-6" data-testid="author-section-title">About the Author</h2>
+                <div className="flex items-start gap-6">
+                  {authorAvatarUrl ? (
+                    <img 
+                      src={authorAvatarUrl} 
+                      alt={author.name}
+                      className="w-20 h-20 rounded-full object-cover flex-shrink-0"
+                      data-testid="author-avatar"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0" data-testid="author-avatar-placeholder">
+                      <User className="w-10 h-10 text-primary/50" />
+                    </div>
+                  )}
+                  
+                  <div>
+                    <h3 className="text-xl font-semibold mb-1" data-testid="author-name">{author.name}</h3>
+                    {author.role && (
+                      <p className="text-muted-foreground mb-3" data-testid="author-role">{author.role}</p>
+                    )}
+                    {author.bio && (
+                      <p className="text-foreground" data-testid="author-bio">{author.bio}</p>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
             </Card>
           </div>
         </section>
