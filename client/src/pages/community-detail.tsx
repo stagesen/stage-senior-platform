@@ -513,8 +513,8 @@ const TestimonialCarouselItem = ({ testimonial }: { testimonial: any }) => {
 
   return (
     <div className="px-8 py-12 text-center">
-      <blockquote className="text-xl md:text-2xl font-bold text-gray-900 mb-8 leading-tight" data-testid={`testimonial-quote-${testimonial.id}`}>
-        "{testimonial.content}"
+      <blockquote className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-8 leading-tight" data-testid={`testimonial-quote-${testimonial.id}`}>
+        "{testimonial.highlight || testimonial.content}"
       </blockquote>
       <div className="flex flex-col items-center space-y-3">
         {/* Avatar */}
