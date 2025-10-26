@@ -222,7 +222,33 @@ const cleanUpTokenReplacementArtifacts = (text: string): string => {
   // Trim whitespace
   cleaned = cleaned.trim();
 
+  // Capitalize common care types and terms
+  cleaned = capitalizeCommonTerms(cleaned);
+
   return cleaned;
+};
+
+// Capitalize common care types and other terms that should always be title case
+const capitalizeCommonTerms = (text: string): string => {
+  let result = text;
+
+  // Care types - case insensitive replacement
+  const careTypeMap: Record<string, string> = {
+    'assisted living': 'Assisted Living',
+    'memory care': 'Memory Care',
+    'independent living': 'Independent Living',
+    'skilled nursing': 'Skilled Nursing',
+    'senior living': 'Senior Living',
+  };
+
+  // Replace each care type with proper capitalization
+  Object.entries(careTypeMap).forEach(([lowercase, titleCase]) => {
+    // Use word boundary regex for accurate replacement
+    const regex = new RegExp(`\\b${lowercase}\\b`, 'gi');
+    result = result.replace(regex, titleCase);
+  });
+
+  return result;
 };
 
 // SEO-friendly fallback content for pages with missing data
