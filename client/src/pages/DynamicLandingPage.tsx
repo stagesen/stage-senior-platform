@@ -1522,7 +1522,7 @@ export default function DynamicLandingPage() {
             </FadeIn>
           )}
 
-          {/* Resources Section - Accordion Format */}
+          {/* Resources Section - Accordion with Card Content */}
           {template.customContent.resourcesSection && template.customContent.resourcesSection.resources && (
             <FadeIn direction="up" delay={0.2}>
               <section className="py-12 md:py-16 bg-white" data-testid="section-resources-custom">
@@ -1535,17 +1535,23 @@ export default function DynamicLandingPage() {
                       <AccordionItem 
                         key={idx} 
                         value={`resource-${idx}`} 
-                        className="bg-gray-50 border rounded-lg px-6"
+                        className="border-none"
                         data-testid={`resource-card-${idx}`}
                       >
                         <AccordionTrigger 
-                          className="text-left font-semibold hover:no-underline"
+                          className="text-left font-semibold hover:no-underline text-lg px-0"
                           data-testid={`button-resource-${idx}`}
                         >
                           {replaceTokens(resource.name, tokens)}
                         </AccordionTrigger>
-                        <AccordionContent className="text-muted-foreground leading-relaxed pt-2">
-                          {replaceTokens(resource.description, tokens)}
+                        <AccordionContent className="pt-2 px-0">
+                          <Card className="bg-gray-50">
+                            <CardContent className="p-6">
+                              <p className="text-muted-foreground leading-relaxed">
+                                {replaceTokens(resource.description, tokens)}
+                              </p>
+                            </CardContent>
+                          </Card>
                         </AccordionContent>
                       </AccordionItem>
                     ))}
