@@ -393,7 +393,7 @@ export interface IStorage {
   deleteEmailRecipient(id: string): Promise<void>;
 
   // Page content section operations
-  getPageContentSections(pagePath?: string, activeOnly?: boolean): Promise<PageContentSection[]>;
+  getPageContentSections(filters?: { pagePath?: string; landingPageTemplateId?: string; activeOnly?: boolean }): Promise<PageContentSection[]>;
   getPageContentSection(id: string): Promise<PageContentSection | undefined>;
   createPageContentSection(section: InsertPageContentSection): Promise<PageContentSection>;
   updatePageContentSection(id: string, section: Partial<InsertPageContentSection>): Promise<PageContentSection>;
@@ -2591,13 +2591,19 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Page content section operations
-  async getPageContentSections(pagePath?: string, activeOnly?: boolean): Promise<PageContentSection[]> {
+  async getPageContentSections(filters?: { pagePath?: string; landingPageTemplateId?: string; activeOnly?: boolean }): Promise<PageContentSection[]> {
     let query = db.select().from(pageContentSections);
     
     const conditions = [];
-    // Only filter by active status in the database query
-    if (activeOnly) {
+    
+    // Filter by active status if requested
+    if (filters?.activeOnly) {
       conditions.push(eq(pageContentSections.active, true));
+    }
+    
+    // Filter by landingPageTemplateId in database query (exact match)
+    if (filters?.landingPageTemplateId) {
+      conditions.push(eq(pageContentSections.landingPageTemplateId, filters.landingPageTemplateId));
     }
     
     if (conditions.length > 0) {
@@ -2606,14 +2612,14 @@ export class DatabaseStorage implements IStorage {
     
     const allSections = await query.orderBy(asc(pageContentSections.sortOrder));
     
-    // If no pagePath filter, return all sections
-    if (!pagePath) {
+    // If no pagePath filter, return all sections (already filtered by landingPageTemplateId if provided)
+    if (!filters?.pagePath) {
       return allSections;
     }
     
-    // Filter sections by pattern matching in memory
+    // Filter sections by pattern matching in memory for pagePath
     return allSections.filter(section => 
-      this.pathMatchesPattern(pagePath, section.pagePath)
+      section.pagePath && this.pathMatchesPattern(filters.pagePath!, section.pagePath)
     );
   }
 

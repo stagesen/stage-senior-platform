@@ -1947,11 +1947,12 @@ Disallow: /admin/
   // Page content section routes
   app.get("/api/page-content", async (req, res) => {
     try {
-      const { pagePath, active } = req.query;
-      const sections = await storage.getPageContentSections(
-        pagePath as string | undefined,
-        active === 'true'
-      );
+      const { pagePath, landingPageTemplateId, active } = req.query;
+      const sections = await storage.getPageContentSections({
+        pagePath: pagePath as string | undefined,
+        landingPageTemplateId: landingPageTemplateId as string | undefined,
+        activeOnly: active === 'true'
+      });
       res.json(sections);
     } catch (error) {
       console.error("Error fetching page content sections:", error);
@@ -1985,8 +1986,7 @@ Disallow: /admin/
 
   app.put("/api/page-content/:id", requireAuth, async (req, res) => {
     try {
-      const validatedData = insertPageContentSectionSchema.partial().parse(req.body);
-      const section = await storage.updatePageContentSection(req.params.id, validatedData);
+      const section = await storage.updatePageContentSection(req.params.id, req.body);
       res.json(section);
     } catch (error) {
       console.error("Error updating page content section:", error);
