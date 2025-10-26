@@ -681,13 +681,50 @@ export default function DynamicLandingPage() {
 
     // Then try to extract from the static URL pattern
     if (template?.urlPattern) {
-      // Check for specific care type patterns (including "best-" variants)
-      if (template.urlPattern.includes('/assisted-living') || template.urlPattern.includes('/best-assisted-living')) return 'assisted-living';
-      if (template.urlPattern.includes('/memory-care') || template.urlPattern.includes('/best-memory-care')) return 'memory-care';
-      if (template.urlPattern.includes('/alzheimers-care')) return 'alzheimers-care';
-      if (template.urlPattern.includes('/dementia-care')) return 'dementia-care';
-      if (template.urlPattern.includes('/independent-living')) return 'independent-living';
-      if (template.urlPattern.includes('/skilled-nursing')) return 'skilled-nursing';
+      const pattern = template.urlPattern.toLowerCase();
+      
+      // Extract the first segment after the leading slash, removing dynamic params
+      const segments = pattern.split('/').filter(s => s && !s.startsWith(':'));
+      
+      if (segments.length > 0) {
+        let careTypeCandidate = segments[0];
+        
+        // Remove common prefixes/suffixes
+        careTypeCandidate = careTypeCandidate.replace(/^best-/, '');
+        careTypeCandidate = careTypeCandidate.replace(/-near-me$/, '');
+        
+        // Map aliases and special cases to standard care types
+        const careTypeMap: Record<string, string | null> = {
+          'alzheimers-care': 'memory-care',
+          'dementia-care': 'memory-care',
+          'senior-living': null, // Generic - don't filter
+          'retirement-communities': null, // Generic - don't filter
+          'senior-apartments': 'independent-living',
+          'cost': null, // Cost pages - check second segment
+        };
+        
+        // Handle "cost" pages - check second segment
+        if (careTypeCandidate === 'cost' && segments.length > 1) {
+          return segments[1]; // Will be from :careLevel param, already handled above
+        }
+        
+        // Check if it's a mapped alias
+        if (careTypeCandidate in careTypeMap) {
+          return careTypeMap[careTypeCandidate];
+        }
+        
+        // Known care types - return as-is
+        const knownCareTypes = [
+          'assisted-living',
+          'memory-care',
+          'independent-living',
+          'skilled-nursing',
+        ];
+        
+        if (knownCareTypes.includes(careTypeCandidate)) {
+          return careTypeCandidate;
+        }
+      }
     }
 
     return null;
