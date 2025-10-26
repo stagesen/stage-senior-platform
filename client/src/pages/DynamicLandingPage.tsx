@@ -675,17 +675,20 @@ export default function DynamicLandingPage() {
 
   // Extract care type from URL pattern and params
   const getCareTypeSlug = (): string | null => {
-    // Try URL pattern first
-    if (template?.urlPattern) {
-      if (template.urlPattern.includes('assisted-living')) return 'assisted-living';
-      if (template.urlPattern.includes('memory-care')) return 'memory-care';
-      if (template.urlPattern.includes('independent-living')) return 'independent-living';
-      if (template.urlPattern.includes('skilled-nursing')) return 'skilled-nursing';
-    }
-
-    // Try URL params - check both careLevel and careType
+    // First check URL params - these take priority
     if (urlParams.careLevel) return urlParams.careLevel.toLowerCase();
     if (urlParams.careType) return urlParams.careType.toLowerCase();
+
+    // Then try to extract from the static URL pattern
+    if (template?.urlPattern) {
+      // Check for specific care type patterns
+      if (template.urlPattern.includes('/assisted-living')) return 'assisted-living';
+      if (template.urlPattern.includes('/memory-care')) return 'memory-care';
+      if (template.urlPattern.includes('/alzheimers-care')) return 'alzheimers-care';
+      if (template.urlPattern.includes('/dementia-care')) return 'dementia-care';
+      if (template.urlPattern.includes('/independent-living')) return 'independent-living';
+      if (template.urlPattern.includes('/skilled-nursing')) return 'skilled-nursing';
+    }
 
     return null;
   };
