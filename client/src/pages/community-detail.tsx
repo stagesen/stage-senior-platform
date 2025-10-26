@@ -2,7 +2,7 @@ import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -53,7 +53,9 @@ import {
   User,
   Navigation,
   Video,
-  Play
+  Play,
+  FileText,
+  Eye
 } from "lucide-react";
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -552,6 +554,70 @@ const TestimonialCarouselItem = ({ testimonial }: { testimonial: any }) => {
         )}
       </div>
     </div>
+  );
+};
+
+// Local subcomponent: Resource Card
+const ResourceCard = ({ resource }: { resource: ContentAsset }) => {
+  const featuredImageUrl = useResolveImageUrl(resource.featuredImageId);
+  
+  return (
+    <Card className="h-full flex flex-col hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden group" data-testid={`card-resource-${resource.id}`}>
+      <Link href={`/resources/${resource.slug}`} className="block">
+        <div className="relative w-full h-64 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 flex items-center justify-center overflow-hidden cursor-pointer">
+          {featuredImageUrl ? (
+            <img 
+              src={featuredImageUrl} 
+              alt={resource.title}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              data-testid={`img-resource-featured-${resource.id}`}
+            />
+          ) : (
+            <FileText className="w-20 h-20 text-blue-300 dark:text-blue-700 group-hover:scale-110 transition-transform duration-300" data-testid={`icon-resource-placeholder-${resource.id}`} />
+          )}
+        </div>
+      </Link>
+      
+      <CardHeader className="pb-4 pt-6">
+        {resource.category && (
+          <Badge 
+            className="w-fit mb-3 bg-white text-gray-900 border border-gray-200 hover:bg-white font-medium px-3 py-1" 
+            data-testid={`badge-category-${resource.id}`}
+          >
+            {resource.category}
+          </Badge>
+        )}
+        
+        <Link href={`/resources/${resource.slug}`}>
+          <CardTitle className="text-2xl sm:text-3xl font-bold line-clamp-2 hover:text-primary transition-colors cursor-pointer leading-tight" data-testid={`text-title-${resource.id}`}>
+            {resource.title}
+          </CardTitle>
+        </Link>
+      </CardHeader>
+      
+      <CardContent className="flex-grow pb-4">
+        {resource.description && (
+          <CardDescription className="line-clamp-3 text-base leading-relaxed" data-testid={`text-description-${resource.id}`}>
+            {resource.description}
+          </CardDescription>
+        )}
+      </CardContent>
+      
+      <CardFooter className="flex flex-col gap-3 pt-4 border-t">
+        <Button
+          variant="outline"
+          size="lg"
+          asChild
+          className="w-full text-base"
+          data-testid={`button-read-more-${resource.id}`}
+        >
+          <Link href={`/resources/${resource.slug}`}>
+            <Eye className="w-5 h-5 mr-2" />
+            Read More
+          </Link>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 
@@ -2341,46 +2407,10 @@ export default function CommunityDetail() {
                 <p className="text-lg text-gray-600 mb-8">
                   Free downloadable guides to help you make informed decisions about senior living.
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {resources.slice(0, 3).map((resource) => {
-                    const imageUrl = resource.featuredImageId 
-                      ? `/api/images/${resource.featuredImageId}`
-                      : null;
-                    
-                    return (
-                      <Link href={`/resources/${resource.slug}`} key={resource.id}>
-                        <Card className="hover:shadow-lg transition-shadow h-full" data-testid={`resource-${resource.id}`}>
-                          {imageUrl && (
-                            <div className="h-48 overflow-hidden bg-[#faf8f6]">
-                              <img
-                                src={imageUrl}
-                                alt={resource.title}
-                                className="w-full h-full object-cover"
-                                loading="lazy"
-                              />
-                            </div>
-                          )}
-                          <CardContent className="p-5">
-                            {resource.category && (
-                              <Badge variant="outline" className="text-xs mb-2">
-                                {resource.category}
-                              </Badge>
-                            )}
-                            <h3 className="text-lg font-semibold mb-2 line-clamp-2" data-testid={`resource-title-${resource.id}`}>
-                              {resource.title}
-                            </h3>
-                            <p className="text-sm text-gray-600 line-clamp-3 mb-4" data-testid={`resource-summary-${resource.id}`}>
-                              {resource.summary}
-                            </p>
-                            <div className="flex items-center text-primary text-sm font-medium">
-                              <Download className="w-4 h-4 mr-2" />
-                              Download Free Guide
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </Link>
-                    );
-                  })}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {resources.slice(0, 3).map((resource) => (
+                    <ResourceCard key={resource.id} resource={resource} />
+                  ))}
                 </div>
               </section>
             )}
