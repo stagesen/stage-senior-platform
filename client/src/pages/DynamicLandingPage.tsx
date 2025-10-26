@@ -102,6 +102,103 @@ const mapCityToCluster = (city: string | undefined): string | undefined => {
   return clusterMap[cityLower];
 };
 
+// Community Card Component
+function CommunityContactCard({ community }: { community: Community }) {
+  const { openScheduleTour } = useScheduleTour();
+  const communityImageUrl = useResolveImageUrl(community.imageId);
+
+  return (
+    <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300" data-testid={`community-contact-card-${community.id}`}>
+      {/* Community Image */}
+      {communityImageUrl && (
+        <div className="relative w-full h-64 overflow-hidden">
+          <img
+            src={communityImageUrl}
+            alt={community.name}
+            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            data-testid={`community-image-${community.id}`}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+          <div className="absolute bottom-4 left-4 right-4">
+            <h3 className="text-2xl font-bold text-white drop-shadow-lg">{community.name}</h3>
+          </div>
+        </div>
+      )}
+      
+      <CardContent className="p-6">
+        {/* Community name header if no image */}
+        {!communityImageUrl && (
+          <h3 className="text-2xl font-bold mb-4">{community.name}</h3>
+        )}
+        
+        {/* Address */}
+        {community.street && (
+          <div className="flex items-start gap-3 mb-4">
+            <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-muted-foreground">{community.street}</p>
+              <p className="text-muted-foreground">{getCityStateZip(community)}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Phone */}
+        {community.phoneDisplay && (
+          <div className="flex items-center gap-3 mb-4">
+            <Phone className="w-5 h-5 text-primary flex-shrink-0" />
+            <a
+              href={getPrimaryPhoneHref(community)}
+              className="text-lg font-semibold text-primary hover:underline"
+              data-testid={`phone-link-${community.id}`}
+            >
+              {getPrimaryPhoneDisplay(community)}
+            </a>
+          </div>
+        )}
+
+        {/* Short Description */}
+        {community.shortDescription && (
+          <p className="text-muted-foreground mb-6 line-clamp-3">
+            {community.shortDescription}
+          </p>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            className={`flex-1 talkfurther-schedule-tour ${community.slug ? `community-${community.slug}` : ''}`}
+            onClick={() =>
+              openScheduleTour({
+                communityId: community.id,
+                communityName: community.name,
+                title: `Schedule a Tour at ${community.name}`,
+              })
+            }
+            data-community-id={community.id}
+            data-community-slug={community.slug}
+            data-community-name={community.name}
+            data-testid={`button-schedule-tour-${community.id}`}
+          >
+            <Calendar className="w-4 h-4 mr-2" />
+            Schedule Tour
+          </Button>
+          <Button
+            variant="outline"
+            asChild
+            className="flex-1"
+            data-testid={`button-learn-more-${community.id}`}
+          >
+            <a href={`/communities/${community.slug}`}>
+              Learn More
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </a>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 // Token replacement configuration and fallbacks
 interface TokenConfig {
   value: string;
@@ -1325,75 +1422,7 @@ export default function DynamicLandingPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               {filteredCommunities.map((community) => (
-                <Card key={community.id} className="overflow-hidden hover:shadow-2xl transition-all duration-300" data-testid={`community-contact-card-${community.id}`}>
-                  <CardContent className="p-6">
-                    <h3 className="text-2xl font-bold mb-4">{community.name}</h3>
-                    
-                    {/* Address */}
-                    {community.street && (
-                      <div className="flex items-start gap-3 mb-4">
-                        <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-muted-foreground">{community.street}</p>
-                          <p className="text-muted-foreground">{getCityStateZip(community)}</p>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Phone */}
-                    {community.phoneDisplay && (
-                      <div className="flex items-center gap-3 mb-4">
-                        <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                        <a
-                          href={getPrimaryPhoneHref(community)}
-                          className="text-lg font-semibold text-primary hover:underline"
-                          data-testid={`phone-link-${community.id}`}
-                        >
-                          {getPrimaryPhoneDisplay(community)}
-                        </a>
-                      </div>
-                    )}
-
-                    {/* Short Description */}
-                    {community.shortDescription && (
-                      <p className="text-muted-foreground mb-6 line-clamp-3">
-                        {community.shortDescription}
-                      </p>
-                    )}
-
-                    {/* Action Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <Button
-                        className={`flex-1 talkfurther-schedule-tour ${community.slug ? `community-${community.slug}` : ''}`}
-                        onClick={() =>
-                          openScheduleTour({
-                            communityId: community.id,
-                            communityName: community.name,
-                            title: `Schedule a Tour at ${community.name}`,
-                          })
-                        }
-                        data-community-id={community.id}
-                        data-community-slug={community.slug}
-                        data-community-name={community.name}
-                        data-testid={`button-schedule-tour-${community.id}`}
-                      >
-                        <Calendar className="w-4 h-4 mr-2" />
-                        Schedule Tour
-                      </Button>
-                      <Button
-                        variant="outline"
-                        asChild
-                        className="flex-1"
-                        data-testid={`button-learn-more-${community.id}`}
-                      >
-                        <a href={`/communities/${community.slug}`}>
-                          Learn More
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </a>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                <CommunityContactCard key={community.id} community={community} />
               ))}
             </div>
           </div>
