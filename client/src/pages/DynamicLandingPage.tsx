@@ -125,9 +125,14 @@ const TOKEN_FALLBACKS: Record<string, string> = {
 
 // Helper function to replace tokens in text with validation and fallbacks
 const replaceTokens = (
-  text: string,
+  text: string | undefined | null,
   tokens: Record<string, string>
 ): string => {
+  // Handle undefined or null text
+  if (!text) {
+    return "";
+  }
+
   const result = replaceTokensWithValidation(text, tokens);
 
   // Log warnings for missing tokens in development
@@ -1490,6 +1495,118 @@ export default function DynamicLandingPage() {
               </section>
             </FadeIn>
           )}
+
+          {/* Costs Section */}
+          {template.customContent.costsSection && (
+            <FadeIn direction="up" delay={0.2}>
+              <section className="py-12 md:py-16 bg-white" data-testid="section-costs-custom">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
+                    {replaceTokens(template.customContent.costsSection.heading, tokens)}
+                  </h2>
+                  <p className="text-lg text-muted-foreground mb-4 leading-relaxed">
+                    {replaceTokens(template.customContent.costsSection.content, tokens)}
+                  </p>
+                  {template.customContent.costsSection.citation && (
+                    <p className="text-sm text-muted-foreground italic">
+                      Source: {template.customContent.costsSection.citation}
+                    </p>
+                  )}
+                </div>
+              </section>
+            </FadeIn>
+          )}
+
+          {/* Standards Section */}
+          {template.customContent.standardsSection && (
+            <section className="py-12 md:py-16 bg-gray-50" data-testid="section-standards-custom">
+              <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
+                  {replaceTokens(template.customContent.standardsSection.heading, tokens)}
+                </h2>
+                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                  {replaceTokens(template.customContent.standardsSection.content, tokens)}
+                </p>
+                {template.customContent.standardsSection.standards && (
+                  <div className="space-y-3 mt-8">
+                    {template.customContent.standardsSection.standards.map((standard: string, idx: number) => (
+                      <div key={idx} className="flex items-start gap-3 p-4 bg-white rounded-lg" data-testid={`standard-${idx}`}>
+                        <Shield className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                        <span className="text-base">{replaceTokens(standard, tokens)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* Resources Section */}
+          {template.customContent.resourcesSection && template.customContent.resourcesSection.resources && (
+            <FadeIn direction="up" delay={0.2}>
+              <section className="py-12 md:py-16 bg-white" data-testid="section-resources-custom">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+                    {replaceTokens(template.customContent.resourcesSection.heading, tokens)}
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {template.customContent.resourcesSection.resources.map((resource: any, idx: number) => (
+                      <Card key={idx} className="hover:shadow-lg transition-shadow" data-testid={`resource-card-${idx}`}>
+                        <CardContent className="p-6">
+                          <h3 className="font-bold text-lg mb-2">{replaceTokens(resource.name, tokens)}</h3>
+                          <p className="text-muted-foreground">{replaceTokens(resource.description, tokens)}</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            </FadeIn>
+          )}
+
+          {/* Communities Section */}
+          {template.customContent.communitiesSection && (
+            <section className="py-12 md:py-16 bg-gray-50" data-testid="section-communities-custom">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
+                  {replaceTokens(template.customContent.communitiesSection.heading, tokens)}
+                </h2>
+                {template.customContent.communitiesSection.content && (
+                  <p className="text-lg text-muted-foreground mb-8 text-center max-w-3xl mx-auto leading-relaxed">
+                    {replaceTokens(template.customContent.communitiesSection.content, tokens)}
+                  </p>
+                )}
+                {template.customContent.communitiesSection.communities && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                    {template.customContent.communitiesSection.communities.map((community: any, idx: number) => (
+                      <Card key={idx} className="hover:shadow-xl transition-shadow" data-testid={`community-info-${idx}`}>
+                        <CardContent className="p-6">
+                          <h3 className="font-bold text-xl mb-3">{replaceTokens(community.name, tokens)}</h3>
+                          {community.address && (
+                            <div className="flex items-start gap-2 mb-2">
+                              <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-1" />
+                              <p className="text-sm text-muted-foreground">{replaceTokens(community.address, tokens)}</p>
+                            </div>
+                          )}
+                          {community.phone && (
+                            <div className="flex items-center gap-2 mb-2">
+                              <Phone className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                              <a href={`tel:${community.phone}`} className="text-sm text-primary hover:underline">
+                                {community.phone}
+                              </a>
+                            </div>
+                          )}
+                          {community.description && (
+                            <p className="text-sm text-muted-foreground mt-3">{replaceTokens(community.description, tokens)}</p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
         </>
       )}
 
@@ -1535,7 +1652,7 @@ export default function DynamicLandingPage() {
       )}
 
       {/* 2. & 3. Community Credentials - Database-driven trust badges and stats */}
-      <CommunityCredentials community={primaryCommunity} />
+      {primaryCommunity && <CommunityCredentials community={primaryCommunity} />}
 
       {/* 4. Community Highlights - What makes this community special (alternating feature sections) */}
       {communityHighlights.length > 0 && (
