@@ -1338,7 +1338,8 @@ export type InsertEmailRecipient = z.infer<typeof insertEmailRecipientSchema>;
 // Page Content Sections table for managing dynamic page content
 export const pageContentSections = pgTable("page_content_sections", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
-  pagePath: varchar("page_path", { length: 255 }).notNull(), // e.g., '/courtyards-patios'
+  pagePath: varchar("page_path", { length: 255 }), // e.g., '/courtyards-patios' (optional if using landingPageTemplateId)
+  landingPageTemplateId: uuid("landing_page_template_id").references(() => landingPageTemplates.id, { onDelete: "cascade" }), // Link to landing page template
   sectionType: varchar("section_type", { length: 100 }).notNull(), // e.g., 'text_block', 'feature_list', 'benefit_cards'
   sectionKey: varchar("section_key", { length: 255 }).notNull(), // Unique identifier for the section
   title: text("title"),
@@ -1351,7 +1352,8 @@ export const pageContentSections = pgTable("page_content_sections", {
 });
 
 export const insertPageContentSectionSchema = createInsertSchema(pageContentSections, {
-  pagePath: z.string().min(1).max(255),
+  pagePath: z.string().min(1).max(255).optional(),
+  landingPageTemplateId: z.string().uuid().optional(),
   sectionType: z.string().min(1).max(100),
   sectionKey: z.string().min(1).max(255),
   title: z.string().optional(),
@@ -1359,7 +1361,10 @@ export const insertPageContentSectionSchema = createInsertSchema(pageContentSect
   content: z.record(z.any()).optional(),
   sortOrder: z.number().int().default(0),
   active: z.boolean().default(true),
-}).omit({ id: true, createdAt: true, updatedAt: true });
+}).omit({ id: true, createdAt: true, updatedAt: true }).refine(
+  (data) => data.pagePath || data.landingPageTemplateId,
+  { message: "Either pagePath or landingPageTemplateId must be provided" }
+);
 
 export type PageContentSection = typeof pageContentSections.$inferSelect;
 export type InsertPageContentSection = z.infer<typeof insertPageContentSectionSchema>;
