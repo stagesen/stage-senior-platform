@@ -184,7 +184,7 @@ export default function ImageUploader({
     } else if (imageIds.length === 0) {
       setPreviewImages([]);
     }
-  }, [multiple, existingImages, singleImage, imageIds.length, imageIds]);
+  }, [multiple, existingImages, singleImage, value]);
 
   // Validate file
   const validateFile = (file: File): string | null => {
