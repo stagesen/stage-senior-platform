@@ -681,9 +681,9 @@ export default function DynamicLandingPage() {
 
     // Then try to extract from the static URL pattern
     if (template?.urlPattern) {
-      // Check for specific care type patterns
-      if (template.urlPattern.includes('/assisted-living')) return 'assisted-living';
-      if (template.urlPattern.includes('/memory-care')) return 'memory-care';
+      // Check for specific care type patterns (including "best-" variants)
+      if (template.urlPattern.includes('/assisted-living') || template.urlPattern.includes('/best-assisted-living')) return 'assisted-living';
+      if (template.urlPattern.includes('/memory-care') || template.urlPattern.includes('/best-memory-care')) return 'memory-care';
       if (template.urlPattern.includes('/alzheimers-care')) return 'alzheimers-care';
       if (template.urlPattern.includes('/dementia-care')) return 'dementia-care';
       if (template.urlPattern.includes('/independent-living')) return 'independent-living';
