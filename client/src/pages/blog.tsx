@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Search, Filter, Calendar, User, ArrowLeft } from "lucide-react";
+import { Search, Filter, Calendar, User, ArrowLeft, FileText, Download } from "lucide-react";
 import BlogCard from "@/components/BlogCard";
 import BlogCommunityCTA from "@/components/BlogCommunityCTA";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -499,6 +499,37 @@ export default function Blog() {
                     Subscribe
                   </Button>
                 </CardContent>
+              </Card>
+
+              {/* Resources CTA */}
+              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 overflow-hidden">
+                <div className="relative">
+                  {/* Background decoration */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200/30 rounded-full -mr-16 -mt-16" />
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-200/20 rounded-full -ml-12 -mb-12" />
+                  
+                  <CardContent className="p-6 relative">
+                    <div className="flex items-center justify-center w-12 h-12 bg-blue-600 rounded-lg mb-4">
+                      <FileText className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2" data-testid="resources-cta-title">
+                      Need Planning Help?
+                    </h3>
+                    <p className="text-sm text-gray-700 mb-4" data-testid="resources-cta-description">
+                      Download our free guides with checklists, worksheets, and expert advice for senior living decisions.
+                    </p>
+                    <Button 
+                      asChild
+                      className="w-full bg-blue-600 text-white hover:bg-blue-700"
+                      data-testid="button-view-resources"
+                    >
+                      <Link href="/resources">
+                        <Download className="w-4 h-4 mr-2" />
+                        Browse Resources
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </div>
               </Card>
               
             </div>
