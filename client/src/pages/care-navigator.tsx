@@ -366,27 +366,39 @@ export default function CareNavigator() {
   // Render loading state
   if (quizLoading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-gradient-to-b from-primary/5 via-white to-white">
         <PageHero
           pagePath="/care-navigator"
           defaultTitle="Find Your Perfect Senior Care"
           defaultSubtitle="Take our quick quiz to discover the right senior living options"
         />
-        <div className="max-w-4xl mx-auto px-4 py-12">
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-8 w-3/4" />
-              <Skeleton className="h-4 w-1/2 mt-2" />
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-32 w-full" />
-              <div className="flex gap-4">
-                <Skeleton className="h-12 flex-1" />
-                <Skeleton className="h-12 flex-1" />
+        <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
+          <div className="mb-6 md:mb-8">
+            <Skeleton className="h-10 w-full max-w-md mb-3" />
+            <Skeleton className="h-3 w-full" />
+          </div>
+          <Card className="shadow-lg border-2 border-primary/10">
+            <div className="h-1.5 bg-gradient-to-r from-primary/50 via-primary/30 to-primary/20" />
+            <CardHeader className="pb-4 pt-6 md:pt-8">
+              <div className="flex items-start gap-3">
+                <Skeleton className="w-10 h-10 rounded-lg" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-7 w-full" />
+                  <Skeleton className="h-7 w-3/4" />
+                </div>
               </div>
+            </CardHeader>
+            <CardContent className="space-y-3 pt-2 pb-6 md:pb-8">
+              <Skeleton className="h-16 w-full rounded-xl" />
+              <Skeleton className="h-16 w-full rounded-xl" />
+              <Skeleton className="h-16 w-full rounded-xl" />
+              <Skeleton className="h-16 w-full rounded-xl" />
             </CardContent>
           </Card>
+          <div className="flex gap-4 mt-6">
+            <Skeleton className="h-14 flex-1 rounded-lg" />
+            <Skeleton className="h-14 flex-1 rounded-lg" />
+          </div>
         </div>
       </div>
     );
@@ -395,24 +407,42 @@ export default function CareNavigator() {
   // Render error state
   if (quizError || !quiz) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-gradient-to-b from-primary/5 via-white to-white">
         <PageHero
           pagePath="/care-navigator"
           defaultTitle="Find Your Perfect Senior Care"
           defaultSubtitle="Take our quick quiz to discover the right senior living options"
         />
         <div className="max-w-4xl mx-auto px-4 py-12">
-          <Card>
-            <CardContent className="text-center py-12">
-              <HelpCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Unable to load quiz</h3>
-              <p className="text-muted-foreground mb-6">
+          <Card className="shadow-xl border-2 border-orange-200">
+            <CardContent className="text-center py-16">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-orange-100 flex items-center justify-center">
+                <HelpCircle className="w-10 h-10 text-orange-600" />
+              </div>
+              <h3 className="text-2xl md:text-3xl font-bold mb-3 text-foreground">Unable to Load Quiz</h3>
+              <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
                 We're having trouble loading the quiz right now. Please try again later or contact us directly for assistance.
               </p>
-              <Button onClick={() => window.location.href = 'tel:+1-970-444-4689'} data-testid="button-call-support">
-                <Phone className="w-4 h-4 mr-2" />
-                Call (970) 444-4689
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button
+                  onClick={() => window.location.reload()}
+                  variant="outline"
+                  size="lg"
+                  className="px-6 h-12 border-2"
+                  data-testid="button-retry"
+                >
+                  Try Again
+                </Button>
+                <Button
+                  onClick={() => window.location.href = 'tel:+1-970-444-4689'}
+                  size="lg"
+                  className="px-6 h-12"
+                  data-testid="button-call-support"
+                >
+                  <Phone className="w-5 h-5 mr-2" />
+                  Call (970) 444-4689
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -423,53 +453,58 @@ export default function CareNavigator() {
   // Render results page
   if (showResults) {
     const recommendedCommunities = getRecommendedCommunities();
-    
+
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-gradient-to-b from-primary/5 via-white to-white">
         <PageHero
           pagePath="/care-navigator"
           defaultTitle="Your Personalized Recommendations"
           defaultSubtitle="Based on your answers, here are our top community suggestions"
         />
-        
-        <div className="max-w-6xl mx-auto px-4 py-12">
+
+        <div className="max-w-6xl mx-auto px-4 py-8 md:py-12">
           <FadeIn>
-            {/* Results Header */}
-            <Card className="mb-8 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-              <CardContent className="pt-8">
-                <div className="flex items-start gap-4">
+            {/* Enhanced Results Header */}
+            <Card className="mb-8 border-2 border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-white shadow-xl overflow-hidden">
+              <div className="h-2 bg-gradient-to-r from-green-500 via-primary to-primary" />
+              <CardContent className="pt-8 pb-8">
+                <div className="flex flex-col md:flex-row items-start gap-6">
                   <div className="flex-shrink-0">
-                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                      <CheckCircle className="w-8 h-8 text-primary" />
+                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg">
+                      <CheckCircle className="w-10 h-10 text-white" />
                     </div>
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold mb-2" data-testid="text-results-title">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent" data-testid="text-results-title">
                       {quiz.resultTitle || "Thank You for Completing the Quiz!"}
                     </h2>
-                    <p className="text-lg text-muted-foreground mb-4" data-testid="text-results-message">
+                    <p className="text-lg md:text-xl text-foreground mb-6 leading-relaxed" data-testid="text-results-message">
                       {quiz.resultMessage || "Based on your responses, we've identified the best communities for your needs."}
                     </p>
                     {/* Display score and tier info if available */}
                     {matchedTier && scorePercentage >= 0 && (
-                      <div className="mt-4 space-y-3">
-                        <div className="flex items-center gap-3">
-                          <Badge variant="outline" className="text-lg px-4 py-2">
+                      <div className="mt-6 space-y-4">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <Badge variant="outline" className="text-base md:text-lg px-5 py-2.5 bg-white border-2 border-primary/30">
                             Your Score: {Math.round(scorePercentage)}%
                           </Badge>
-                          <Badge className="text-lg px-4 py-2">
+                          <Badge className="text-base md:text-lg px-5 py-2.5 bg-primary shadow-md">
                             {matchedTier.name}
                           </Badge>
                         </div>
                         {matchedTier.description && (
-                          <p className="text-base text-muted-foreground" data-testid="text-tier-description">
-                            <strong>Assessment:</strong> {matchedTier.description}
-                          </p>
+                          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-primary/10">
+                            <p className="text-sm md:text-base text-foreground" data-testid="text-tier-description">
+                              <strong className="text-primary">Assessment:</strong> {matchedTier.description}
+                            </p>
+                          </div>
                         )}
                         {matchedTier.recommendations && (
-                          <p className="text-base text-muted-foreground" data-testid="text-tier-recommendations">
-                            <strong>Our Recommendations:</strong> {matchedTier.recommendations}
-                          </p>
+                          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-primary/10">
+                            <p className="text-sm md:text-base text-foreground" data-testid="text-tier-recommendations">
+                              <strong className="text-primary">Our Recommendations:</strong> {matchedTier.recommendations}
+                            </p>
+                          </div>
                         )}
                       </div>
                     )}
@@ -478,14 +513,16 @@ export default function CareNavigator() {
               </CardContent>
             </Card>
 
-            {/* Assessment Disclaimer */}
-            <Card className="mb-8 border-blue-200 bg-blue-50/50">
-              <CardContent className="pt-6">
-                <div className="flex items-start gap-3">
-                  <HelpCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-blue-900">
-                    <p className="font-medium mb-1">Next Step: Personalized Assessment</p>
-                    <p className="text-blue-800">
+            {/* Enhanced Assessment Disclaimer */}
+            <Card className="mb-10 border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-blue-50/30 shadow-md">
+              <CardContent className="pt-6 pb-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+                    <Users className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-blue-900 mb-2 text-lg">Next Step: Personalized Assessment</p>
+                    <p className="text-sm md:text-base text-blue-800 leading-relaxed">
                       These recommendations are based on your quiz responses. Our experienced care advisors will conduct a comprehensive assessment of your loved one's specific needs, medical requirements, and preferences to ensure the perfect care match. Every individual's situation is unique, and we're here to provide personalized guidance every step of the way.
                     </p>
                   </div>
@@ -493,24 +530,30 @@ export default function CareNavigator() {
               </CardContent>
             </Card>
 
-            {/* Recommended Communities */}
+            {/* Enhanced Recommended Communities */}
             {recommendedCommunities.length > 0 && (
               <div className="mb-12">
-                <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                  <Sparkles className="w-6 h-6 text-primary" />
-                  Recommended Communities
+                <div className="mb-8">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                      <Sparkles className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
+                      Recommended Communities
+                      {resultCategory && (
+                        <Badge variant="secondary" className="text-sm md:text-base px-3 py-1">
+                          {resultCategory.replace(/_/g, ' ')}
+                        </Badge>
+                      )}
+                    </h3>
+                  </div>
                   {resultCategory && (
-                    <Badge variant="secondary" className="ml-2 text-sm font-normal">
-                      {resultCategory.replace(/_/g, ' ')}
-                    </Badge>
+                    <p className="text-base md:text-lg text-muted-foreground ml-13" data-testid="text-category-message">
+                      Based on your answers, we've identified communities that specialize in {resultCategory.replace(/_/g, ' ').toLowerCase()} services.
+                    </p>
                   )}
-                </h3>
-                {resultCategory && (
-                  <p className="text-muted-foreground mb-6" data-testid="text-category-message">
-                    Based on your answers, we've identified communities that specialize in {resultCategory.replace(/_/g, ' ').toLowerCase()} services.
-                  </p>
-                )}
-                <div className="space-y-6">
+                </div>
+                <div className="grid gap-6">
                   {recommendedCommunities.map((community, index) => (
                     <ScaleIn key={community.id} delay={index * 0.1}>
                       <CommunityCard community={community} />
@@ -520,33 +563,36 @@ export default function CareNavigator() {
               </div>
             )}
 
-            {/* Next Steps CTA */}
-            <Card className="bg-gradient-to-br from-primary to-primary/90 text-white">
-              <CardContent className="py-12 text-center">
-                <Heart className="w-12 h-12 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold mb-4">Ready to Take the Next Step?</h3>
-                <p className="text-lg mb-8 max-w-2xl mx-auto opacity-95">
+            {/* Enhanced Next Steps CTA */}
+            <Card className="bg-gradient-to-br from-primary via-primary to-primary/80 text-white shadow-2xl overflow-hidden border-0">
+              <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5" />
+              <CardContent className="relative py-12 md:py-16 text-center">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                  <Heart className="w-9 h-9 text-white" />
+                </div>
+                <h3 className="text-3xl md:text-4xl font-bold mb-4">Ready to Take the Next Step?</h3>
+                <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto opacity-95 leading-relaxed">
                   Our senior living advisors are here to answer your questions and schedule personalized tours.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-2xl mx-auto">
                   <Button
                     size="lg"
                     variant="secondary"
                     onClick={() => navigate("/communities")}
-                    className="px-8"
+                    className="px-8 h-14 text-base font-semibold shadow-xl hover:shadow-2xl transition-all hover:scale-105"
                     data-testid="button-view-all-communities"
                   >
-                    <Home className="w-4 h-4 mr-2" />
+                    <Home className="w-5 h-5 mr-2" />
                     View All Communities
                   </Button>
                   <Button
                     size="lg"
                     variant="outline"
                     onClick={() => window.location.href = 'tel:+1-970-444-4689'}
-                    className="px-8 bg-white/10 hover:bg-white/20 border-white text-white"
+                    className="px-8 h-14 text-base font-semibold bg-white/10 hover:bg-white/20 border-2 border-white text-white backdrop-blur-sm transition-all hover:scale-105"
                     data-testid="button-call-now-results"
                   >
-                    <Phone className="w-4 h-4 mr-2" />
+                    <Phone className="w-5 h-5 mr-2" />
                     Call (970) 444-4689
                   </Button>
                 </div>
@@ -560,24 +606,26 @@ export default function CareNavigator() {
 
   // Render quiz questions
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-primary/5 via-white to-white">
       <PageHero
         pagePath="/care-navigator"
         defaultTitle="Find Your Perfect Senior Care"
         defaultSubtitle="Take our quick quiz to discover the right senior living options for your loved one"
       />
 
-      <div className="max-w-4xl mx-auto px-4 py-12">
+      <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
         <FadeIn>
           {/* Disclaimer Card */}
           {currentQuestionIndex === 0 && (
-            <Card className="mb-8 border-blue-200 bg-blue-50/50">
-              <CardContent className="pt-6">
+            <Card className="mb-6 md:mb-8 border-blue-200 bg-gradient-to-r from-blue-50 to-blue-50/30 shadow-sm">
+              <CardContent className="pt-5 pb-5">
                 <div className="flex items-start gap-3">
-                  <HelpCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-blue-900">
-                    <p className="font-medium mb-1">This is a General Assessment Tool</p>
-                    <p className="text-blue-800">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <HelpCircle className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-blue-900 mb-1.5">This is a General Assessment Tool</p>
+                    <p className="text-sm text-blue-800 leading-relaxed">
                       This quiz provides preliminary guidance based on your answers. Our care team will conduct a comprehensive, personalized assessment to understand your loved one's specific needs and recommend the most appropriate care level and services.
                     </p>
                   </div>
@@ -586,53 +634,73 @@ export default function CareNavigator() {
             </Card>
           )}
 
-          {/* Progress Bar */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-muted-foreground" data-testid="text-progress">
-                Question {currentQuestionIndex + 1} of {quiz.questions.length}
-              </span>
-              <Badge variant="secondary" className="text-sm" data-testid="badge-progress-percent">
+          {/* Enhanced Progress Section */}
+          <div className="mb-6 md:mb-8">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-sm font-bold text-primary">{currentQuestionIndex + 1}</span>
+                </div>
+                <span className="text-sm font-medium text-foreground">
+                  of {quiz.questions.length} Questions
+                </span>
+              </div>
+              <Badge variant="secondary" className="text-sm px-3 py-1" data-testid="badge-progress-percent">
                 {Math.round(progressPercentage)}% Complete
               </Badge>
             </div>
-            <Progress value={progressPercentage} className="h-2" data-testid="progress-bar" />
+            <Progress value={progressPercentage} className="h-3 bg-gray-100" data-testid="progress-bar" />
           </div>
 
-          {/* Question Card */}
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="text-2xl" data-testid={`text-question-${currentQuestionIndex}`}>
-                {currentQuestion?.questionText}
-                {currentQuestion?.required && <span className="text-destructive ml-1">*</span>}
-              </CardTitle>
+          {/* Enhanced Question Card */}
+          <Card className="mb-6 md:mb-8 shadow-lg border-2 border-primary/10 overflow-hidden">
+            <div className="h-1.5 bg-gradient-to-r from-primary via-primary/70 to-primary/50" />
+            <CardHeader className="pb-4 pt-6 md:pt-8">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <HelpCircle className="w-5 h-5 text-primary" />
+                </div>
+                <CardTitle className="text-xl md:text-2xl leading-tight flex-1" data-testid={`text-question-${currentQuestionIndex}`}>
+                  {currentQuestion?.questionText}
+                  {currentQuestion?.required && <span className="text-destructive ml-1">*</span>}
+                </CardTitle>
+              </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-2 pb-6 md:pb-8">
               {/* Multiple Choice Questions */}
               {currentQuestion?.questionType === "multiple_choice" && (
                 <div className="space-y-3" data-testid="question-multiple-choice">
-                  {currentQuestion.answerOptions.map((option) => {
+                  {currentQuestion.answerOptions.map((option, index) => {
                     const isSelected = getCurrentAnswer()?.answerOptionId === option.id;
                     return (
-                      <button
-                        key={option.id}
-                        onClick={() => handleAnswerSelect(option.id)}
-                        className={`w-full p-4 text-left rounded-lg border-2 transition-all hover:border-primary hover:bg-primary/5 ${
-                          isSelected 
-                            ? 'border-primary bg-primary/10 shadow-md' 
-                            : 'border-gray-200'
-                        }`}
-                        data-testid={`button-answer-${option.id}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                            isSelected ? 'border-primary bg-primary' : 'border-gray-300'
-                          }`}>
-                            {isSelected && <CheckCircle className="w-4 h-4 text-white" />}
+                      <ScaleIn key={option.id} delay={index * 0.05}>
+                        <button
+                          onClick={() => handleAnswerSelect(option.id)}
+                          className={`group w-full p-4 md:p-5 text-left rounded-xl border-2 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 ${
+                            isSelected
+                              ? 'border-primary bg-gradient-to-r from-primary/10 to-primary/5 shadow-md'
+                              : 'border-gray-200 hover:border-primary/50 bg-white'
+                          }`}
+                          data-testid={`button-answer-${option.id}`}
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                              isSelected
+                                ? 'border-primary bg-primary scale-110'
+                                : 'border-gray-300 group-hover:border-primary/50'
+                            }`}>
+                              {isSelected && (
+                                <div className="w-2 h-2 bg-white rounded-full" />
+                              )}
+                            </div>
+                            <span className={`text-base md:text-lg font-medium transition-colors ${
+                              isSelected ? 'text-primary' : 'text-foreground group-hover:text-primary'
+                            }`}>
+                              {option.answerText}
+                            </span>
                           </div>
-                          <span className="text-base font-medium">{option.answerText}</span>
-                        </div>
-                      </button>
+                        </button>
+                      </ScaleIn>
                     );
                   })}
                 </div>
@@ -645,71 +713,101 @@ export default function CareNavigator() {
                     placeholder="Type your answer here..."
                     value={getCurrentAnswer()?.textAnswer || ""}
                     onChange={(e) => handleTextAnswer(e.target.value)}
-                    className="min-h-32"
+                    className="min-h-36 text-base border-2 focus:border-primary rounded-xl resize-none"
                     data-testid="input-text-answer"
                   />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Share any additional details that will help us understand your needs better
+                  </p>
                 </div>
               )}
 
               {/* Scale Questions (1-5 rating) */}
               {currentQuestion?.questionType === "scale" && (
-                <div className="space-y-4" data-testid="question-scale">
-                  <div className="flex justify-between gap-2">
+                <div className="space-y-5" data-testid="question-scale">
+                  <div className="grid grid-cols-5 gap-2 md:gap-3">
                     {[1, 2, 3, 4, 5].map((value) => {
                       const isSelected = getCurrentAnswer()?.textAnswer === value.toString();
                       return (
-                        <button
-                          key={value}
-                          onClick={() => handleScaleAnswer(value)}
-                          className={`flex-1 aspect-square rounded-lg border-2 transition-all hover:border-primary hover:bg-primary/5 ${
-                            isSelected 
-                              ? 'border-primary bg-primary text-white' 
-                              : 'border-gray-200'
-                          }`}
-                          data-testid={`button-scale-${value}`}
-                        >
-                          <span className="text-2xl font-bold">{value}</span>
-                        </button>
+                        <ScaleIn key={value} delay={value * 0.05}>
+                          <button
+                            onClick={() => handleScaleAnswer(value)}
+                            className={`group aspect-square rounded-xl border-2 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${
+                              isSelected
+                                ? 'border-primary bg-primary text-white shadow-lg scale-105'
+                                : 'border-gray-200 hover:border-primary/50 bg-white'
+                            }`}
+                            data-testid={`button-scale-${value}`}
+                          >
+                            <div className="flex flex-col items-center justify-center h-full gap-1">
+                              <span className={`text-2xl md:text-3xl font-bold transition-colors ${
+                                isSelected ? 'text-white' : 'text-foreground group-hover:text-primary'
+                              }`}>
+                                {value}
+                              </span>
+                            </div>
+                          </button>
+                        </ScaleIn>
                       );
                     })}
                   </div>
-                  <div className="flex justify-between text-sm text-muted-foreground px-2">
-                    <span>Not at all</span>
-                    <span>Very much</span>
+                  <div className="flex justify-between text-sm font-medium px-1">
+                    <span className="text-muted-foreground">Not at all</span>
+                    <span className="text-muted-foreground">Very much</span>
                   </div>
                 </div>
               )}
             </CardContent>
           </Card>
 
-          {/* Navigation Buttons */}
-          <div className="flex gap-4">
+          {/* Enhanced Navigation Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
             <Button
               variant="outline"
               size="lg"
               onClick={handleBack}
               disabled={currentQuestionIndex === 0}
-              className="flex-1"
+              className="flex-1 h-12 md:h-14 text-base font-semibold border-2 hover:bg-gray-50 disabled:opacity-40"
               data-testid="button-back"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-5 h-5 mr-2" />
               Back
             </Button>
             <Button
               size="lg"
               onClick={handleNext}
-              className="flex-1"
+              className="flex-1 h-12 md:h-14 text-base font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
               data-testid="button-next"
             >
-              {isLastQuestion ? "See Results" : "Next"}
-              <ArrowRight className="w-4 h-4 ml-2" />
+              {isLastQuestion ? (
+                <>
+                  <CheckCircle className="w-5 h-5 mr-2" />
+                  See My Results
+                </>
+              ) : (
+                <>
+                  Continue
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </>
+              )}
             </Button>
           </div>
 
-          {/* Help Text */}
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            Need help? Call us at <a href="tel:+1-970-444-4689" className="text-primary hover:underline">(970) 444-4689</a>
-          </p>
+          {/* Enhanced Help Text */}
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <p className="text-center text-sm text-muted-foreground">
+              Need assistance? Our care advisors are here to help
+            </p>
+            <p className="text-center mt-2">
+              <a
+                href="tel:+1-970-444-4689"
+                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors"
+              >
+                <Phone className="w-4 h-4" />
+                (970) 444-4689
+              </a>
+            </p>
+          </div>
         </FadeIn>
       </div>
 
