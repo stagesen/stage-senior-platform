@@ -1496,27 +1496,6 @@ export default function DynamicLandingPage() {
             </FadeIn>
           )}
 
-          {/* Costs Section */}
-          {template.customContent.costsSection && (
-            <FadeIn direction="up" delay={0.2}>
-              <section className="py-12 md:py-16 bg-white" data-testid="section-costs-custom">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-                    {replaceTokens(template.customContent.costsSection.heading, tokens)}
-                  </h2>
-                  <p className="text-lg text-muted-foreground mb-4 leading-relaxed">
-                    {replaceTokens(template.customContent.costsSection.content, tokens)}
-                  </p>
-                  {template.customContent.costsSection.citation && (
-                    <p className="text-sm text-muted-foreground italic">
-                      Source: {template.customContent.costsSection.citation}
-                    </p>
-                  )}
-                </div>
-              </section>
-            </FadeIn>
-          )}
-
           {/* Standards Section */}
           {template.customContent.standardsSection && (
             <section className="py-12 md:py-16 bg-gray-50" data-testid="section-standards-custom">
@@ -1541,7 +1520,7 @@ export default function DynamicLandingPage() {
             </section>
           )}
 
-          {/* Resources Section */}
+          {/* Resources Section - Accordion Format */}
           {template.customContent.resourcesSection && template.customContent.resourcesSection.resources && (
             <FadeIn direction="up" delay={0.2}>
               <section className="py-12 md:py-16 bg-white" data-testid="section-resources-custom">
@@ -1549,63 +1528,29 @@ export default function DynamicLandingPage() {
                   <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
                     {replaceTokens(template.customContent.resourcesSection.heading, tokens)}
                   </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Accordion type="single" collapsible className="space-y-4">
                     {template.customContent.resourcesSection.resources.map((resource: any, idx: number) => (
-                      <Card key={idx} className="hover:shadow-lg transition-shadow" data-testid={`resource-card-${idx}`}>
-                        <CardContent className="p-6">
-                          <h3 className="font-bold text-lg mb-2">{replaceTokens(resource.name, tokens)}</h3>
-                          <p className="text-muted-foreground">{replaceTokens(resource.description, tokens)}</p>
-                        </CardContent>
-                      </Card>
+                      <AccordionItem 
+                        key={idx} 
+                        value={`resource-${idx}`} 
+                        className="bg-gray-50 border rounded-lg px-6"
+                        data-testid={`resource-card-${idx}`}
+                      >
+                        <AccordionTrigger 
+                          className="text-left font-semibold hover:no-underline"
+                          data-testid={`button-resource-${idx}`}
+                        >
+                          {replaceTokens(resource.name, tokens)}
+                        </AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground leading-relaxed pt-2">
+                          {replaceTokens(resource.description, tokens)}
+                        </AccordionContent>
+                      </AccordionItem>
                     ))}
-                  </div>
+                  </Accordion>
                 </div>
               </section>
             </FadeIn>
-          )}
-
-          {/* Communities Section */}
-          {template.customContent.communitiesSection && (
-            <section className="py-12 md:py-16 bg-gray-50" data-testid="section-communities-custom">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-                  {replaceTokens(template.customContent.communitiesSection.heading, tokens)}
-                </h2>
-                {template.customContent.communitiesSection.content && (
-                  <p className="text-lg text-muted-foreground mb-8 text-center max-w-3xl mx-auto leading-relaxed">
-                    {replaceTokens(template.customContent.communitiesSection.content, tokens)}
-                  </p>
-                )}
-                {template.customContent.communitiesSection.communities && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-                    {template.customContent.communitiesSection.communities.map((community: any, idx: number) => (
-                      <Card key={idx} className="hover:shadow-xl transition-shadow" data-testid={`community-info-${idx}`}>
-                        <CardContent className="p-6">
-                          <h3 className="font-bold text-xl mb-3">{replaceTokens(community.name, tokens)}</h3>
-                          {community.address && (
-                            <div className="flex items-start gap-2 mb-2">
-                              <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-1" />
-                              <p className="text-sm text-muted-foreground">{replaceTokens(community.address, tokens)}</p>
-                            </div>
-                          )}
-                          {community.phone && (
-                            <div className="flex items-center gap-2 mb-2">
-                              <Phone className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                              <a href={`tel:${community.phone}`} className="text-sm text-primary hover:underline">
-                                {community.phone}
-                              </a>
-                            </div>
-                          )}
-                          {community.description && (
-                            <p className="text-sm text-muted-foreground mt-3">{replaceTokens(community.description, tokens)}</p>
-                          )}
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </section>
           )}
         </>
       )}
@@ -1825,36 +1770,6 @@ export default function DynamicLandingPage() {
         subheading={`Schedule your personalized tour of ${primaryCommunity?.name || 'our community'} today. See firsthand why families choose us for their loved ones.`}
         ctaText="Schedule Your Tour"
       />
-
-      {/* 12. Alternative Communities - Only show if multiple communities match */}
-      {targetCommunities.length > 1 && (
-        <section className="py-12 md:py-16" data-testid="section-communities">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 md:mb-12">
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4 md:mb-6">
-                <Home className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="text-sm md:text-base font-semibold">Our Communities</span>
-              </div>
-              <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 md:mb-4">
-                  Find Your Perfect Home
-                </h2>
-              </ScaleHeader>
-              <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-                Explore our exceptional senior living communities across Colorado
-              </p>
-            </div>
-
-            <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {targetCommunities.map((comm) => (
-                <StaggerItem key={comm.id}>
-                  <CommunityCardLP community={comm} />
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
-          </div>
-        </section>
-      )}
 
       {/* 12. Location & Map - Find and visit us */}
       {primaryCommunity && (primaryCommunity.street || primaryCommunity.lat) && (

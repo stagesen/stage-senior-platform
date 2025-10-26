@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { CheckCircle, Home, Bed, DollarSign, TrendingDown } from "lucide-react";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 
@@ -200,7 +201,7 @@ export default function CarePointsPricingWidget() {
           </CardContent>
         </Card>
 
-        {/* Pricing Examples */}
+        {/* Pricing Examples - Accordion Format */}
         <div className="mb-8">
           <h3 className="text-2xl font-bold text-center text-foreground mb-3">
             Example Care Scenarios
@@ -210,22 +211,26 @@ export default function CarePointsPricingWidget() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Accordion type="single" collapsible className="space-y-4 max-w-4xl mx-auto">
           {careExamples.map((example, index) => {
             const pricing = calculateTotal(example.points);
             return (
-              <Card 
+              <AccordionItem 
                 key={index} 
-                className={`hover:shadow-xl transition-all ${example.isRecommended ? 'border-2 border-primary shadow-lg' : ''}`}
+                value={`example-${index}`}
+                className={`bg-white border rounded-lg px-6 ${example.isRecommended ? 'border-2 border-primary' : ''}`}
                 data-testid={`care-example-${index}`}
               >
-                <CardHeader className="pb-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
+                <AccordionTrigger 
+                  className="hover:no-underline"
+                  data-testid={`button-care-example-${index}`}
+                >
+                  <div className="flex items-center justify-between w-full pr-4">
+                    <div className="flex-1 text-left">
                       <div className="flex items-center gap-2 mb-1">
-                        <CardTitle className="text-xl" data-testid={`example-title-${index}`}>
+                        <span className="text-xl font-bold" data-testid={`example-title-${index}`}>
                           {example.title}
-                        </CardTitle>
+                        </span>
                         {example.isRecommended && (
                           <Badge variant="default" className="bg-green-600">Most Common</Badge>
                         )}
@@ -234,59 +239,66 @@ export default function CarePointsPricingWidget() {
                         "{example.subtitle}"
                       </p>
                     </div>
-                    <Badge variant="secondary" className="text-base px-3 py-1.5 ml-2" data-testid={`example-points-${index}`}>
-                      {example.points} pts
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Services */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
-                      Included Services
-                    </div>
-                    <ul className="space-y-2">
-                      {example.services.map((service, serviceIndex) => (
-                        <li key={serviceIndex} className="flex items-start gap-2" data-testid={`example-service-${index}-${serviceIndex}`}>
-                          <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                          <span className="text-sm text-foreground">{service}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Value Comparison */}
-                  {example.tierComparison && (
-                    <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3">
-                      <TrendingDown className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
-                      <p className="text-xs text-amber-900">
-                        <strong>Savings:</strong> {example.tierComparison}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Pricing Breakdown */}
-                  <div className="pt-4 border-t-2 space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Base Rent</span>
-                      <span className="font-semibold">${pricing.baseRent.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Care Points ({example.points} × $20)</span>
-                      <span className="font-semibold">${pricing.careAmount.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between text-xl font-bold pt-3 border-t-2">
-                      <span>Monthly Total</span>
-                      <span className="text-primary" data-testid={`example-total-${index}`}>
+                    <div className="flex items-center gap-3">
+                      <Badge variant="secondary" className="text-base px-3 py-1.5" data-testid={`example-points-${index}`}>
+                        {example.points} pts
+                      </Badge>
+                      <span className="text-xl font-bold text-primary" data-testid={`example-total-${index}`}>
                         ${pricing.total.toLocaleString()}
                       </span>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </AccordionTrigger>
+                <AccordionContent className="pt-4 pb-2">
+                  <div className="space-y-4">
+                    {/* Services */}
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
+                        Included Services
+                      </div>
+                      <ul className="space-y-2">
+                        {example.services.map((service, serviceIndex) => (
+                          <li key={serviceIndex} className="flex items-start gap-2" data-testid={`example-service-${index}-${serviceIndex}`}>
+                            <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                            <span className="text-sm text-foreground">{service}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Value Comparison */}
+                    {example.tierComparison && (
+                      <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                        <TrendingDown className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
+                        <p className="text-xs text-amber-900">
+                          <strong>Savings:</strong> {example.tierComparison}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Pricing Breakdown */}
+                    <div className="pt-4 border-t-2 space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Base Rent</span>
+                        <span className="font-semibold">${pricing.baseRent.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Care Points ({example.points} × $20)</span>
+                        <span className="font-semibold">${pricing.careAmount.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between text-xl font-bold pt-3 border-t-2">
+                        <span>Monthly Total</span>
+                        <span className="text-primary">
+                          ${pricing.total.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
             );
           })}
-        </div>
+        </Accordion>
 
         {/* CTA Section */}
         <Card className="mt-12 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
