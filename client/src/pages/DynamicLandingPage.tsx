@@ -1496,30 +1496,6 @@ export default function DynamicLandingPage() {
             </FadeIn>
           )}
 
-          {/* Standards Section */}
-          {template.customContent.standardsSection && (
-            <section className="py-12 md:py-16 bg-gray-50" data-testid="section-standards-custom">
-              <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-                  {replaceTokens(template.customContent.standardsSection.heading, tokens)}
-                </h2>
-                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                  {replaceTokens(template.customContent.standardsSection.content, tokens)}
-                </p>
-                {template.customContent.standardsSection.standards && (
-                  <div className="space-y-3 mt-8">
-                    {template.customContent.standardsSection.standards.map((standard: string, idx: number) => (
-                      <div key={idx} className="flex items-start gap-3 p-4 bg-white rounded-lg" data-testid={`standard-${idx}`}>
-                        <Shield className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                        <span className="text-base">{replaceTokens(standard, tokens)}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </section>
-          )}
-
           {/* Resources Section - Accordion Format */}
           {template.customContent.resourcesSection && template.customContent.resourcesSection.resources && (
             <FadeIn direction="up" delay={0.2}>
