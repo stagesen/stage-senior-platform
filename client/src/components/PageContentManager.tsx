@@ -41,8 +41,16 @@ import {
   heroSectionContentSchema,
 } from "@/lib/pageContentSections";
 
+interface LandingPageTemplate {
+  id: string;
+  title: string;
+  urlPattern: string;
+  active: boolean;
+}
+
 export default function PageContentManager() {
   const [selectedPagePath, setSelectedPagePath] = useState<string | null>(null);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [editingSection, setEditingSection] = useState<PageContentSection | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showInactive, setShowInactive] = useState(true);
@@ -54,28 +62,55 @@ export default function PageContentManager() {
     queryKey: ["/api/page-content"],
   });
 
-  // Get page counts
+  // Fetch all active landing page templates
+  const { data: landingPageTemplates = [] } = useQuery<LandingPageTemplate[]>({
+    queryKey: ["/api/landing-pages"],
+    select: (data: any[]) => data.filter(template => template.active).map(t => ({
+      id: t.id,
+      title: t.title,
+      urlPattern: t.urlPattern,
+      active: t.active
+    })),
+  });
+
+  // Get page counts for static pages
   const pageCounts = AVAILABLE_PAGES.map(page => ({
     ...page,
     count: allSections.filter(s => s.pagePath === page.path).length,
   }));
 
-  // Get sections for selected page
+  // Get template counts for landing page templates
+  const templateCounts = landingPageTemplates.map(template => ({
+    ...template,
+    count: allSections.filter(s => s.landingPageTemplateId === template.id).length,
+  }));
+
+  // Get sections for selected page or template
   const pageSections = selectedPagePath 
     ? allSections
         .filter(s => s.pagePath === selectedPagePath)
         .filter(s => showInactive || s.active)
         .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+    : selectedTemplateId
+    ? allSections
+        .filter(s => s.landingPageTemplateId === selectedTemplateId)
+        .filter(s => showInactive || s.active)
+        .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
     : [];
 
   const selectedPage = AVAILABLE_PAGES.find(p => p.path === selectedPagePath);
+  const selectedTemplate = landingPageTemplates.find(t => t.id === selectedTemplateId);
   
   // Count active and inactive sections
   const activeSectionCount = selectedPagePath 
     ? allSections.filter(s => s.pagePath === selectedPagePath && s.active).length
+    : selectedTemplateId
+    ? allSections.filter(s => s.landingPageTemplateId === selectedTemplateId && s.active).length
     : 0;
   const inactiveSectionCount = selectedPagePath 
     ? allSections.filter(s => s.pagePath === selectedPagePath && !s.active).length
+    : selectedTemplateId
+    ? allSections.filter(s => s.landingPageTemplateId === selectedTemplateId && !s.active).length
     : 0;
 
   // Create mutation
@@ -149,7 +184,8 @@ export default function PageContentManager() {
     mutationFn: async (section: PageContentSection) => {
       const timestamp = Date.now();
       const newSection: InsertPageContentSection = {
-        pagePath: section.pagePath,
+        ...(section.pagePath && { pagePath: section.pagePath }),
+        ...(section.landingPageTemplateId && { landingPageTemplateId: section.landingPageTemplateId }),
         sectionType: section.sectionType,
         sectionKey: `${section.sectionKey}_copy_${timestamp}`,
         title: `${section.title} (Copy)`,
@@ -253,39 +289,90 @@ export default function PageContentManager() {
   };
 
   // Page selection view
-  if (!selectedPagePath) {
+  if (!selectedPagePath && !selectedTemplateId) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>Page Content Manager</CardTitle>
-          <CardDescription>Select a page to manage its content sections</CardDescription>
+          <CardDescription>Select a page or landing page template to manage its content sections</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {pageCounts.map((page) => (
-              <Card 
-                key={page.path} 
-                className="cursor-pointer hover:border-primary transition-colors"
-                onClick={() => setSelectedPagePath(page.path)}
-                data-testid={`card-page-${page.path.replace(/\//g, '-')}`}
-              >
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between text-base">
-                    <span className="flex items-center gap-2">
-                      <span className="text-2xl">{page.emoji}</span>
-                      <span>{page.name}</span>
-                    </span>
-                    <Badge variant={page.count > 0 ? "default" : "secondary"}>
-                      {page.count}
-                    </Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">{page.description}</p>
-                </CardContent>
-              </Card>
-            ))}
+        <CardContent className="space-y-8">
+          {/* Static Pages Section */}
+          <div>
+            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+              📄 Static Pages
+              <Badge variant="outline" className="text-xs">{pageCounts.length} pages</Badge>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {pageCounts.map((page) => (
+                <Card 
+                  key={page.path} 
+                  className="cursor-pointer hover:border-primary transition-colors"
+                  onClick={() => {
+                    setSelectedPagePath(page.path);
+                    setSelectedTemplateId(null);
+                  }}
+                  data-testid={`card-page-${page.path.replace(/\//g, '-')}`}
+                >
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between text-base">
+                      <span className="flex items-center gap-2">
+                        <span className="text-2xl">{page.emoji}</span>
+                        <span>{page.name}</span>
+                      </span>
+                      <Badge variant={page.count > 0 ? "default" : "secondary"}>
+                        {page.count}
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">{page.description}</p>
+                    <p className="text-xs text-muted-foreground mt-1 font-mono">{page.path}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
+
+          {/* Landing Page Templates Section */}
+          {templateCounts.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                🎯 Landing Page Templates
+                <Badge variant="outline" className="text-xs">{templateCounts.length} templates</Badge>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {templateCounts.map((template) => (
+                  <Card 
+                    key={template.id} 
+                    className="cursor-pointer hover:border-primary transition-colors border-l-4 border-l-purple-500/50"
+                    onClick={() => {
+                      setSelectedTemplateId(template.id);
+                      setSelectedPagePath(null);
+                    }}
+                    data-testid={`card-template-${template.id}`}
+                  >
+                    <CardHeader>
+                      <CardTitle className="flex items-center justify-between text-base">
+                        <span className="flex items-center gap-2">
+                          <span className="text-2xl">🎯</span>
+                          <span>{template.title}</span>
+                        </span>
+                        <Badge variant={template.count > 0 ? "default" : "secondary"}>
+                          {template.count}
+                        </Badge>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-xs text-muted-foreground font-mono bg-purple-50 dark:bg-purple-950/20 px-2 py-1 rounded">
+                        {template.urlPattern}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     );
@@ -301,7 +388,10 @@ export default function PageContentManager() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setSelectedPagePath(null)}
+                onClick={() => {
+                  setSelectedPagePath(null);
+                  setSelectedTemplateId(null);
+                }}
                 data-testid="button-back-to-pages"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -309,11 +399,16 @@ export default function PageContentManager() {
               </Button>
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  <span className="text-2xl">{selectedPage?.emoji}</span>
-                  {selectedPage?.name}
+                  <span className="text-2xl">{selectedPage?.emoji || (selectedTemplate ? '🎯' : '')}</span>
+                  {selectedPage?.name || selectedTemplate?.title}
+                  {selectedTemplate && (
+                    <Badge variant="outline" className="ml-2 bg-purple-50 text-purple-700 border-purple-200">
+                      Landing Page Template
+                    </Badge>
+                  )}
                 </CardTitle>
                 <CardDescription>
-                  {selectedPage?.description} · {activeSectionCount} active, {inactiveSectionCount} inactive
+                  {selectedPage?.description || (selectedTemplate ? `URL Pattern: ${selectedTemplate.urlPattern}` : '')} · {activeSectionCount} active, {inactiveSectionCount} inactive
                 </CardDescription>
               </div>
             </div>
@@ -364,9 +459,16 @@ export default function PageContentManager() {
                           <div className="flex items-center gap-2 mb-2 flex-wrap">
                             {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
                             <Badge variant="outline">{metadata?.name || section.sectionType}</Badge>
-                            <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200">
-                              {section.pagePath}
-                            </Badge>
+                            {section.pagePath && (
+                              <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200">
+                                {section.pagePath}
+                              </Badge>
+                            )}
+                            {section.landingPageTemplateId && (
+                              <Badge variant="secondary" className="bg-purple-50 text-purple-700 border-purple-200">
+                                🎯 Template
+                              </Badge>
+                            )}
                             <span className="text-xs text-muted-foreground">Order: {section.sortOrder}</span>
                             {!section.active && (
                               <Badge variant="secondary" className="bg-muted">Inactive</Badge>
@@ -435,6 +537,7 @@ export default function PageContentManager() {
         }}
         section={editingSection}
         pagePath={selectedPagePath}
+        landingPageTemplateId={selectedTemplateId}
         onSave={(data) => {
           if (editingSection) {
             updateMutation.mutate({ id: editingSection.id, data });
@@ -453,12 +556,14 @@ function SectionEditorDialog({
   onClose, 
   section, 
   pagePath,
+  landingPageTemplateId,
   onSave 
 }: { 
   isOpen: boolean; 
   onClose: () => void; 
   section: PageContentSection | null;
-  pagePath: string;
+  pagePath: string | null;
+  landingPageTemplateId: string | null;
   onSave: (data: InsertPageContentSection) => void;
 }) {
   const [selectedType, setSelectedType] = useState(section?.sectionType || "text_block");
@@ -515,6 +620,7 @@ function SectionEditorDialog({
           sectionType={selectedType}
           section={section}
           pagePath={pagePath}
+          landingPageTemplateId={landingPageTemplateId}
           onSave={onSave}
           onCancel={onClose}
         />
@@ -528,12 +634,14 @@ function SectionForm({
   sectionType, 
   section, 
   pagePath,
+  landingPageTemplateId,
   onSave, 
   onCancel 
 }: { 
   sectionType: string;
   section: PageContentSection | null;
-  pagePath: string;
+  pagePath: string | null;
+  landingPageTemplateId: string | null;
   onSave: (data: InsertPageContentSection) => void;
   onCancel: () => void;
 }) {
@@ -580,7 +688,8 @@ function SectionForm({
     const sectionKey = section?.sectionKey || `${sectionType}_${Date.now()}`;
     
     const data: InsertPageContentSection = {
-      pagePath,
+      ...(pagePath && { pagePath }),
+      ...(landingPageTemplateId && { landingPageTemplateId }),
       sectionType,
       sectionKey,
       title: values.title,
