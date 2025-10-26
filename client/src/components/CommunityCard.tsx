@@ -33,7 +33,7 @@ interface CommunityCardProps {
 export default function CommunityCard({ community, isSelected, onSelect }: CommunityCardProps) {
   const [showLeadCapture, setShowLeadCapture] = useState(false);
   const heroImageUrl = useResolveImageUrl(community.heroImageUrl);
-  const logoImageUrl = useResolveImageUrl(community.logoImageId);
+  const logoImageUrl = useResolveImageUrl(community.invertedLogoImageId || community.logoImageId);
   const formatPrice = (price: number | null) => {
     if (!price) return "Contact for pricing";
     return `$${price.toLocaleString()}`;

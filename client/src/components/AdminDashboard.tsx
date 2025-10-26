@@ -2871,6 +2871,24 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
               />
               <FormField
                 control={communityForm.control}
+                name="invertedLogoImageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Inverted Community Logo</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload inverted logo (for display on community cards)"
+                        maxSize={10 * 1024 * 1024}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
                 name="contactImageId"
                 render={({ field }) => (
                   <FormItem>

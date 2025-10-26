@@ -162,7 +162,7 @@ const FloorPlanCard = ({ plan, onOpen }: { plan: any, onOpen: (plan: any) => voi
       data-testid={`floor-plan-${plan.id}`}
     >
       {finalImageUrl && (
-        <div className="relative overflow-hidden bg-gray-100">
+        <div className="relative overflow-hidden bg-[#faf8f6]">
           <AspectRatio ratio={16/10}>
             <img
               src={finalImageUrl}
@@ -397,7 +397,7 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
                 data-testid={`gallery-card-${gallery.id}`}
               >
                 {/* Gallery Preview Grid */}
-                <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
+                <div className="relative aspect-[16/9] overflow-hidden bg-[#faf8f6]">
                   {previewImages.length > 0 && (
                     <div className={`grid ${previewImages.length === 1 ? 'grid-cols-1' : previewImages.length === 2 ? 'grid-cols-2' : 'grid-cols-2'} gap-0.5 h-full`}>
                       {previewImages.map((image: { url: string; alt?: string }, idx: number) => (
@@ -758,7 +758,7 @@ const BlogPostCard = ({ post }: { post: BlogPost }) => {
           <div className="flex items-center justify-between">
             <div className="flex gap-1">
               {post.tags && post.tags.slice(0, 2).map((tag, idx) => (
-                <Badge key={idx} variant="secondary" className="text-xs bg-gray-100 text-gray-600">
+                <Badge key={idx} variant="secondary" className="text-xs bg-[#faf8f6] text-gray-600">
                   {tag}
                 </Badge>
               ))}
@@ -1059,7 +1059,7 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button 
             size="lg" 
-            className={cn("text-lg px-8 py-6 shadow-2xl bg-white text-primary hover:bg-gray-100 talkfurther-schedule-tour", getCommunityFurtherClass(community.slug || ''), community.slug ? `community-${community.slug}` : '')}
+            className={cn("text-lg px-8 py-6 shadow-2xl bg-white text-primary hover:bg-[#faf8f6] talkfurther-schedule-tour", getCommunityFurtherClass(community.slug || ''), community.slug ? `community-${community.slug}` : '')}
             onClick={() => openScheduleTour({
               communityId: community.id,
               communityName: community.name,
@@ -1860,7 +1860,7 @@ export default function CommunityDetail() {
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Amenities & Services</h2>
                 </ScaleHeader>
                 <FadeIn direction="up" delay={0.1}>
-                  <div className="bg-gray-50 rounded-2xl p-8">
+                  <div className="bg-[#f9fafb] rounded-2xl p-8">
                     <p className="text-lg text-gray-600 mb-8">
                       Step into a lifestyle where every day feels like a retreat. Our community is packed with thoughtful amenities designed to make life easier and more enjoyable.
                     </p>
@@ -2342,7 +2342,7 @@ export default function CommunityDetail() {
                   {posts.slice(0, 3).map((post) => (
                     <Card key={post.id} className="hover:shadow-lg transition-shadow" data-testid={`resource-${post.id}`}>
                       {post.heroImageUrl && (
-                        <div className="h-40 overflow-hidden bg-gray-100">
+                        <div className="h-40 overflow-hidden bg-[#faf8f6]">
                           <img
                             src={post.heroImageUrl}
                             alt={post.title}
@@ -2387,7 +2387,7 @@ export default function CommunityDetail() {
                 </ScaleHeader>
                 <Accordion type="single" collapsible className="space-y-4">
                   {faqs.slice(0, 6).map((faq) => (
-                    <AccordionItem key={faq.id} value={faq.id} className="border rounded-lg px-6 bg-gray-50" data-testid={`faq-${faq.id}`}>
+                    <AccordionItem key={faq.id} value={faq.id} className="border rounded-lg px-6 bg-[#f9fafb]" data-testid={`faq-${faq.id}`}>
                       <AccordionTrigger className="text-left hover:no-underline py-4 text-lg" data-testid={`faq-question-${faq.id}`}>
                         {faq.question}
                       </AccordionTrigger>
@@ -2426,7 +2426,7 @@ export default function CommunityDetail() {
                         showPopups={false}
                       />
                     ) : (
-                      <div className="bg-gray-100 rounded-xl h-full flex items-center justify-center text-gray-500">
+                      <div className="bg-[#faf8f6] rounded-xl h-full flex items-center justify-center text-gray-500">
                         <div className="text-center">
                           <MapPin className="w-12 h-12 mx-auto mb-4" />
                           <p className="text-lg font-medium">{community.address}</p>

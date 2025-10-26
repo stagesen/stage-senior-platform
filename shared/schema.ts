@@ -74,6 +74,7 @@ export const communities = pgTable("communities", {
   heroImageUrl: text("hero_image_url"), // Keep for backward compatibility
   imageId: varchar("image_id", { length: 255 }).references(() => images.id), // New image reference
   logoImageId: varchar("logo_image_id", { length: 255 }).references(() => images.id), // Logo image reference
+  invertedLogoImageId: varchar("inverted_logo_image_id", { length: 255 }).references(() => images.id), // Inverted logo image reference
   contactImageId: varchar("contact_image_id", { length: 255 }).references(() => images.id), // Contact Us card image reference
   pricingImageId: varchar("pricing_image_id", { length: 255 }).references(() => images.id), // Pricing card image reference
   brochureImageId: varchar("brochure_image_id", { length: 255 }).references(() => images.id), // Brochure card image reference
