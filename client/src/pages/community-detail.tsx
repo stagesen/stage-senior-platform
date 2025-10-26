@@ -77,7 +77,8 @@ import type {
   Post, 
   BlogPost,
   CommunityHighlight,
-  TeamMember 
+  TeamMember,
+  ContentAsset
 } from "@shared/schema";
 import {
   Carousel,
@@ -1179,6 +1180,7 @@ export default function CommunityDetail() {
   const posts = fullData?.posts || [];
   const blogPosts = fullData?.blogPosts || [];
   const highlights = fullData?.highlights || [];
+  const resources = fullData?.resources || [];
 
   // Merge gallery images into galleries
   const galleries = useMemo(() => {
@@ -2331,50 +2333,53 @@ export default function CommunityDetail() {
               </section>
             )}
 
-            {/* Resources Section - Regular Posts */}
-            {posts.length > 0 && (
+            {/* Resources Section - Content Assets */}
+            {resources.length > 0 && (
               <section className="py-8">
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Helpful Resources</h2>
                 <p className="text-lg text-gray-600 mb-8">
-                  Educational articles about senior living, health tips, and care guidance.
+                  Free downloadable guides to help you make informed decisions about senior living.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {posts.slice(0, 3).map((post) => (
-                    <Card key={post.id} className="hover:shadow-lg transition-shadow" data-testid={`resource-${post.id}`}>
-                      {post.heroImageUrl && (
-                        <div className="h-40 overflow-hidden bg-[#faf8f6]">
-                          <img
-                            src={post.heroImageUrl}
-                            alt={post.title}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                          />
-                        </div>
-                      )}
-                      <CardContent className="p-5">
-                        <div className="flex items-center gap-2 mb-2 text-xs text-gray-500">
-                          <Clock className="w-3 h-3" />
-                          <span>{new Date(post.publishedAt || post.createdAt || Date.now()).toLocaleDateString()}</span>
-                          {post.tags && post.tags[0] && (
-                            <Badge variant="outline" className="text-xs ml-auto">
-                              {post.tags[0]}
-                            </Badge>
+                  {resources.slice(0, 3).map((resource) => {
+                    const imageUrl = resource.featuredImageId 
+                      ? `/api/images/${resource.featuredImageId}`
+                      : null;
+                    
+                    return (
+                      <Link href={`/resources/${resource.slug}`} key={resource.id}>
+                        <Card className="hover:shadow-lg transition-shadow h-full" data-testid={`resource-${resource.id}`}>
+                          {imageUrl && (
+                            <div className="h-48 overflow-hidden bg-[#faf8f6]">
+                              <img
+                                src={imageUrl}
+                                alt={resource.title}
+                                className="w-full h-full object-cover"
+                                loading="lazy"
+                              />
+                            </div>
                           )}
-                        </div>
-                        <h3 className="text-lg font-semibold mb-2 line-clamp-2" data-testid={`resource-title-${post.id}`}>
-                          {post.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 line-clamp-2 mb-3" data-testid={`resource-summary-${post.id}`}>
-                          {post.summary || post.content.substring(0, 100) + '...'}
-                        </p>
-                        <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80" size="sm" asChild>
-                          <Link href={`/blog/${post.slug}`}>
-                            Learn More →
-                          </Link>
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
+                          <CardContent className="p-5">
+                            {resource.category && (
+                              <Badge variant="outline" className="text-xs mb-2">
+                                {resource.category}
+                              </Badge>
+                            )}
+                            <h3 className="text-lg font-semibold mb-2 line-clamp-2" data-testid={`resource-title-${resource.id}`}>
+                              {resource.title}
+                            </h3>
+                            <p className="text-sm text-gray-600 line-clamp-3 mb-4" data-testid={`resource-summary-${resource.id}`}>
+                              {resource.summary}
+                            </p>
+                            <div className="flex items-center text-primary text-sm font-medium">
+                              <Download className="w-4 h-4 mr-2" />
+                              Download Free Guide
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    );
+                  })}
                 </div>
               </section>
             )}

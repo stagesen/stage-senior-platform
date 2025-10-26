@@ -978,7 +978,8 @@ Disallow: /admin/
         blogPosts,
         highlights,
         features,
-        teamMembers
+        teamMembers,
+        resources
       ] = await Promise.all([
         storage.getCommunityCareTypes(community.id),
         storage.getCommunityAmenities(community.id),
@@ -992,7 +993,8 @@ Disallow: /admin/
         storage.getBlogPosts({ communityId: community.id, published: true }),
         storage.getCommunityHighlights(community.id),
         storage.getCommunityFeatures(community.id),
-        storage.getTeamMembersByCommunity(community.id)
+        storage.getTeamMembersByCommunity(community.id),
+        storage.getContentAssets({ activeOnly: true })
       ]);
 
       // Combine galleries with their images
@@ -1032,7 +1034,8 @@ Disallow: /admin/
         blogPosts,
         highlights,
         features,
-        teamMembers
+        teamMembers,
+        resources
       });
     } catch (error) {
       console.error("Error fetching community full data:", error);
