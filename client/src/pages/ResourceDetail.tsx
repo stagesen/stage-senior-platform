@@ -13,7 +13,7 @@ import { setMetaTags, getCanonicalUrl, sanitizeMetaText } from "@/lib/metaTags";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { getUtmParams, getClickIdsFromUrl, generateEventId } from "@/lib/tracking";
-import { ArrowLeft, Download, User, FileText } from "lucide-react";
+import { ArrowLeft, Download, User, FileText, CheckCircle, Lock, Mail, TrendingUp, Clock, Star } from "lucide-react";
 import type { ContentAsset, TeamMember } from "@shared/schema";
 
 interface DownloadFormData {
@@ -305,29 +305,97 @@ export default function ResourceDetail() {
 
       {/* Download CTA Section */}
       {resource.fileUrl && (
-        <section className="py-16 lg:py-20 bg-primary text-primary-foreground">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4" data-testid="download-cta-title">
-              Ready to Download?
-            </h2>
-            <p className="text-xl mb-8 opacity-90" data-testid="download-cta-description">
-              Get your free {resource.category || 'guide'} and start planning today.
-            </p>
-            <Button 
-              size="lg"
-              variant="secondary"
-              onClick={() => setShowDownloadDialog(true)}
-              className="text-lg px-8 py-6 h-auto"
-              data-testid="button-download-pdf"
-            >
-              <Download className="w-5 h-5 mr-2" />
-              Download PDF Guide
-            </Button>
-            {resource.downloadCount && resource.downloadCount > 0 && (
-              <p className="mt-4 text-sm opacity-75" data-testid="download-count">
-                Downloaded {resource.downloadCount.toLocaleString()} times
-              </p>
-            )}
+        <section className="py-16 lg:py-24 bg-gradient-to-br from-blue-50 via-white to-blue-50">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Main CTA Card */}
+            <Card className="overflow-hidden shadow-2xl border-2 border-primary/20 mb-8">
+              <div className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground p-8 lg:p-12">
+                <div className="max-w-3xl mx-auto text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-6">
+                    <FileText className="w-8 h-8" />
+                  </div>
+                  <h2 className="text-3xl lg:text-5xl font-bold mb-4" data-testid="download-cta-title">
+                    Get Your Free Complete Guide
+                  </h2>
+                  <p className="text-xl lg:text-2xl mb-8 opacity-95" data-testid="download-cta-description">
+                    Download the full PDF with actionable checklists, worksheets, and expert insights
+                  </p>
+                  <Button 
+                    size="lg"
+                    variant="secondary"
+                    onClick={() => setShowDownloadDialog(true)}
+                    className="text-lg px-10 py-7 h-auto text-primary hover:scale-105 transition-transform shadow-lg"
+                    data-testid="button-download-pdf"
+                  >
+                    <Download className="w-6 h-6 mr-3" />
+                    Download Full PDF Guide
+                  </Button>
+                  {resource.downloadCount && resource.downloadCount > 0 && (
+                    <p className="mt-6 text-sm opacity-90 flex items-center justify-center gap-2" data-testid="download-count">
+                      <TrendingUp className="w-4 h-4" />
+                      Trusted by {resource.downloadCount.toLocaleString()}+ families
+                    </p>
+                  )}
+                </div>
+              </div>
+              
+              {/* Benefits Grid */}
+              <div className="bg-white p-8 lg:p-12">
+                <h3 className="text-2xl font-bold text-center mb-8 text-gray-900">What You'll Get in the Full Guide</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="flex flex-col items-center text-center p-6 rounded-lg bg-gradient-to-br from-green-50 to-green-100 border border-green-200">
+                    <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-4">
+                      <CheckCircle className="w-6 h-6 text-white" />
+                    </div>
+                    <h4 className="font-bold text-lg mb-2 text-gray-900">Actionable Checklists</h4>
+                    <p className="text-gray-600 text-sm">Step-by-step guides you can use right away</p>
+                  </div>
+                  
+                  <div className="flex flex-col items-center text-center p-6 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200">
+                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mb-4">
+                      <Star className="w-6 h-6 text-white" />
+                    </div>
+                    <h4 className="font-bold text-lg mb-2 text-gray-900">Expert Insights</h4>
+                    <p className="text-gray-600 text-sm">Professional advice from senior care specialists</p>
+                  </div>
+                  
+                  <div className="flex flex-col items-center text-center p-6 rounded-lg bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200">
+                    <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mb-4">
+                      <Clock className="w-6 h-6 text-white" />
+                    </div>
+                    <h4 className="font-bold text-lg mb-2 text-gray-900">Time-Saving Tools</h4>
+                    <p className="text-gray-600 text-sm">Worksheets that simplify complex decisions</p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            {/* Trust Indicators */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              <Card className="text-center p-6 bg-white border-2 border-gray-100 hover:border-primary/30 transition-colors">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Lock className="w-6 h-6 text-blue-600" />
+                </div>
+                <h4 className="font-semibold mb-1 text-gray-900">100% Free</h4>
+                <p className="text-sm text-gray-600">No credit card required</p>
+              </Card>
+              
+              <Card className="text-center p-6 bg-white border-2 border-gray-100 hover:border-primary/30 transition-colors">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Mail className="w-6 h-6 text-green-600" />
+                </div>
+                <h4 className="font-semibold mb-1 text-gray-900">No Spam</h4>
+                <p className="text-sm text-gray-600">Only helpful resources</p>
+              </Card>
+              
+              <Card className="text-center p-6 bg-white border-2 border-gray-100 hover:border-primary/30 transition-colors">
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Download className="w-6 h-6 text-purple-600" />
+                </div>
+                <h4 className="font-semibold mb-1 text-gray-900">Instant Access</h4>
+                <p className="text-sm text-gray-600">Download immediately</p>
+              </Card>
+            </div>
           </div>
         </section>
       )}
