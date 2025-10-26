@@ -1580,7 +1580,7 @@ function ResourceManagement() {
     enabled: viewMode === "downloads" && !!selectedResource?.id,
   });
 
-  const { data: images = [] } = useQuery({
+  const { data: images = [] } = useQuery<any[]>({
     queryKey: ["/api/images"],
   });
 

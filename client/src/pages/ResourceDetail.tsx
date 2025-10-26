@@ -359,6 +359,26 @@ export default function ResourceDetail() {
       {/* Download Modal */}
       <Dialog open={showDownloadDialog} onOpenChange={setShowDownloadDialog}>
         <DialogContent className="sm:max-w-md" data-testid="dialog-download">
+          {/* Featured Image with PDF Icon */}
+          {featuredImageUrl && (
+            <div className="relative h-32 -mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg">
+              <img 
+                src={featuredImageUrl} 
+                alt={resource?.title}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/70 via-primary/60 to-primary/50" />
+              
+              {/* PDF Icon */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 border border-white/30">
+                  <BookOpen className="w-10 h-10 text-white" strokeWidth={1.5} />
+                </div>
+              </div>
+            </div>
+          )}
+          
           <DialogHeader>
             <DialogTitle data-testid="dialog-title">Download Resource</DialogTitle>
             <DialogDescription data-testid="dialog-description">
