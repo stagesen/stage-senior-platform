@@ -748,27 +748,14 @@ export default function DynamicLandingPage() {
     ? [primaryCommunity].filter(Boolean) as Community[]
     : filteredCommunities;
 
-  // Determine the page path pattern for fetching page content sections
-  const getPagePathPattern = (): string => {
-    // For /:careLevel/:city pages, use "/:careLevel/:city"
-    // For /cost/:careLevel/:city pages, use "/cost/:careLevel/:city"
-    if (template?.urlPattern) {
-      // Extract pattern by replacing dynamic segments
-      return template.urlPattern
-        .replace(':careLevel', urlParams.careLevel || careTypeSlug || 'assisted-living')
-        .replace(':city', urlParams.city || 'littleton');
-    }
-    return pathname;
-  };
-
-  const pagePathPattern = getPagePathPattern();
-
-  // Fetch page content sections for this page
-  const { data: pageSections = [] } = useQuery<PageContentSection[]>({
-    queryKey: ['/api/page-content', pagePathPattern],
+  // Fetch page content sections for this landing page template
+  const { data: pageSections = [], isLoading: sectionsLoading } = useQuery<PageContentSection[]>({
+    queryKey: ['/api/page-content', template?.id],
     queryFn: async () => {
+      if (!template?.id) return [];
+      
       const queryParams = new URLSearchParams({
-        pagePath: pagePathPattern,
+        landingPageTemplateId: template.id,
         active: 'true',
       });
       const response = await fetch(`/api/page-content?${queryParams}`);
@@ -782,7 +769,7 @@ export default function DynamicLandingPage() {
       return response.json();
     },
     throwOnError: false,
-    enabled: !!template,
+    enabled: !!template?.id,
   });
 
   // Sort page sections by sortOrder and filter for active sections
