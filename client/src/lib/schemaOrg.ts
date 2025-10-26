@@ -205,6 +205,8 @@ export function generateServiceSchema(params: SchemaOrgParams): ServiceSchema | 
   const careTypeNames: Record<string, string> = {
     "assisted-living": "Assisted Living",
     "memory-care": "Memory Care",
+    "alzheimers-care": "Memory Care",
+    "dementia-care": "Memory Care",
     "independent-living": "Independent Living",
     "skilled-nursing": "Skilled Nursing",
   };

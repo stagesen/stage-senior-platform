@@ -144,8 +144,24 @@ export function getCanonicalUrl(path?: string): string {
 
 /**
  * Helper function to format care types for display
+ * Maps alternative care type names to standard names
  */
 export function formatCareType(careType: string): string {
+  const careTypeMap: Record<string, string> = {
+    "assisted-living": "Assisted Living",
+    "memory-care": "Memory Care",
+    "alzheimers-care": "Memory Care",
+    "dementia-care": "Memory Care",
+    "independent-living": "Independent Living",
+    "skilled-nursing": "Skilled Nursing",
+  };
+
+  // If we have a direct mapping, use it
+  if (careTypeMap[careType]) {
+    return careTypeMap[careType];
+  }
+
+  // Otherwise, fall back to title-casing the slug
   return careType
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))

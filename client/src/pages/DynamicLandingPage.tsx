@@ -787,9 +787,12 @@ export default function DynamicLandingPage() {
     .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
   // Simple care type name mapping for token replacement
+  // Includes alternative names for Memory Care (alzheimers-care, dementia-care)
   const getCareTypeName = () => {
     if (careTypeSlug === 'assisted-living') return "Assisted Living";
     if (careTypeSlug === 'memory-care') return "Memory Care";
+    if (careTypeSlug === 'alzheimers-care') return "Memory Care";
+    if (careTypeSlug === 'dementia-care') return "Memory Care";
     if (careTypeSlug === 'independent-living') return "Independent Living";
     if (careTypeSlug === 'skilled-nursing') return "Skilled Nursing";
     return "Senior Living";
