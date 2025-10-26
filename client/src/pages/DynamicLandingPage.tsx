@@ -1367,7 +1367,7 @@ export default function DynamicLandingPage() {
                 <section id="content" className="py-12 md:py-16 bg-white" data-testid="section-intro-custom">
                   <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-                      {replaceTokens(processedIntro.heading || template.customContent.introSection.heading, tokens)}
+                      {toTitleCase(replaceTokens(processedIntro.heading || template.customContent.introSection.heading, tokens))}
                     </h2>
                     <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                       {replaceTokens(processedIntro.content || template.customContent.introSection.content, tokens)}
@@ -1401,7 +1401,7 @@ export default function DynamicLandingPage() {
               <section className="py-12 md:py-16 bg-gray-50" data-testid="section-why-choose-custom">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
-                    {replaceTokens(processedWhyChoose.heading || template.customContent.whyChooseSection.heading, tokens)}
+                    {toTitleCase(replaceTokens(processedWhyChoose.heading || template.customContent.whyChooseSection.heading, tokens))}
                   </h2>
                   <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {processedWhyChoose.reasons?.map((reason: any, idx: number) => (
@@ -1438,7 +1438,7 @@ export default function DynamicLandingPage() {
                 <section className="py-12 md:py-16 bg-primary/5" data-testid="section-local-context-custom">
                   <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-                      {replaceTokens(processedLocalContext.heading || template.customContent.localContextSection.heading, tokens)}
+                      {toTitleCase(replaceTokens(processedLocalContext.heading || template.customContent.localContextSection.heading, tokens))}
                     </h2>
                     <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                       {replaceTokens(processedLocalContext.content || template.customContent.localContextSection.content, tokens)}
@@ -1472,7 +1472,7 @@ export default function DynamicLandingPage() {
               <section className="py-12 md:py-16 bg-white" data-testid="section-care-details-custom">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                   <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-                    {replaceTokens(processedCareDetails.heading || template.customContent.careDetailsSection.heading, tokens)}
+                    {toTitleCase(replaceTokens(processedCareDetails.heading || template.customContent.careDetailsSection.heading, tokens))}
                   </h2>
                   <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                     {replaceTokens(processedCareDetails.content || template.customContent.careDetailsSection.content, tokens)}
@@ -1528,7 +1528,7 @@ export default function DynamicLandingPage() {
               <section className="py-12 md:py-16 bg-white" data-testid="section-resources-custom">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                   <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
-                    {replaceTokens(template.customContent.resourcesSection.heading, tokens)}
+                    {toTitleCase(replaceTokens(template.customContent.resourcesSection.heading, tokens))}
                   </h2>
                   <Accordion type="single" collapsible className="space-y-4">
                     {template.customContent.resourcesSection.resources.map((resource: any, idx: number) => (
