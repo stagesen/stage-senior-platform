@@ -59,29 +59,28 @@ function ResourceCard({ asset, onDownloadClick }: { asset: ContentAsset; onDownl
   const featuredImageUrl = useResolveImageUrl(asset.featuredImageId);
   
   return (
-    <Card className="h-full flex flex-col hover:shadow-lg transition-shadow" data-testid={`card-resource-${asset.id}`}>
-      <CardHeader className="pb-3">
-        {/* Featured image or placeholder */}
-        <Link href={`/resources/${asset.slug}`} className="block">
-          <div className="relative w-full h-48 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-lg mb-4 flex items-center justify-center overflow-hidden cursor-pointer group">
-            {featuredImageUrl ? (
-              <img 
-                src={featuredImageUrl} 
-                alt={asset.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                data-testid={`img-resource-featured-${asset.id}`}
-              />
-            ) : (
-              <FileText className="w-16 h-16 text-blue-300 dark:text-blue-700 group-hover:scale-110 transition-transform duration-300" data-testid={`icon-resource-placeholder-${asset.id}`} />
-            )}
-          </div>
-        </Link>
-        
+    <Card className="h-full flex flex-col hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden group" data-testid={`card-resource-${asset.id}`}>
+      {/* Featured image or placeholder */}
+      <Link href={`/resources/${asset.slug}`} className="block">
+        <div className="relative w-full h-64 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 flex items-center justify-center overflow-hidden cursor-pointer">
+          {featuredImageUrl ? (
+            <img 
+              src={featuredImageUrl} 
+              alt={asset.title}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              data-testid={`img-resource-featured-${asset.id}`}
+            />
+          ) : (
+            <FileText className="w-20 h-20 text-blue-300 dark:text-blue-700 group-hover:scale-110 transition-transform duration-300" data-testid={`icon-resource-placeholder-${asset.id}`} />
+          )}
+        </div>
+      </Link>
+      
+      <CardHeader className="pb-4 pt-6">
         {/* Category badge */}
         {asset.category && (
           <Badge 
-            className="w-fit mb-2" 
-            variant="secondary"
+            className="w-fit mb-3 bg-white text-gray-900 border border-gray-200 hover:bg-white font-medium px-3 py-1" 
             data-testid={`badge-category-${asset.id}`}
           >
             {asset.category}
@@ -89,55 +88,44 @@ function ResourceCard({ asset, onDownloadClick }: { asset: ContentAsset; onDownl
         )}
         
         <Link href={`/resources/${asset.slug}`}>
-          <CardTitle className="text-xl font-bold line-clamp-2 hover:text-primary transition-colors cursor-pointer" data-testid={`text-title-${asset.id}`}>
+          <CardTitle className="text-2xl sm:text-3xl font-bold line-clamp-2 hover:text-primary transition-colors cursor-pointer leading-tight" data-testid={`text-title-${asset.id}`}>
             {asset.title}
           </CardTitle>
         </Link>
       </CardHeader>
       
-      <CardContent className="flex-grow pb-3">
+      <CardContent className="flex-grow pb-4">
         {asset.description && (
-          <CardDescription className="line-clamp-3" data-testid={`text-description-${asset.id}`}>
+          <CardDescription className="line-clamp-3 text-base leading-relaxed" data-testid={`text-description-${asset.id}`}>
             {asset.description}
           </CardDescription>
         )}
       </CardContent>
       
-      <CardFooter className="flex flex-col gap-3 pt-3 border-t">
-        {/* Stats */}
-        <div className="flex items-center justify-between w-full text-sm text-muted-foreground">
-          <span className="flex items-center gap-1" data-testid={`text-downloads-${asset.id}`}>
-            <TrendingDown className="w-4 h-4" />
-            Downloaded {asset.downloadCount || 0} times
-          </span>
-          <span data-testid={`text-filesize-${asset.id}`}>
-            {formatFileSize(asset.fileSize)}
-          </span>
-        </div>
-        
+      <CardFooter className="flex flex-col gap-3 pt-4 border-t">
         {/* Action buttons */}
-        <div className="flex gap-2 w-full">
+        <div className="flex gap-3 w-full">
           <Button
             variant="outline"
-            size="sm"
+            size="lg"
             asChild
-            className="flex-1"
+            className="flex-1 text-base"
             data-testid={`button-read-more-${asset.id}`}
           >
             <Link href={`/resources/${asset.slug}`}>
-              <Eye className="w-4 h-4 mr-2" />
+              <Eye className="w-5 h-5 mr-2" />
               Read More
             </Link>
           </Button>
           {asset.fileUrl && (
             <Button
               variant="default"
-              size="sm"
+              size="lg"
               onClick={() => onDownloadClick(asset)}
-              className="flex-1"
+              className="flex-1 text-base"
               data-testid={`button-download-${asset.id}`}
             >
-              <Download className="w-4 h-4 mr-2" />
+              <Download className="w-5 h-5 mr-2" />
               Download
             </Button>
           )}
@@ -149,18 +137,23 @@ function ResourceCard({ asset, onDownloadClick }: { asset: ContentAsset; onDownl
 
 function ResourceCardSkeleton() {
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-3">
-        <Skeleton className="w-full h-48 rounded-lg mb-4" />
-        <Skeleton className="h-6 w-24 mb-2" />
-        <Skeleton className="h-7 w-full" />
+    <Card className="h-full flex flex-col overflow-hidden">
+      <Skeleton className="w-full h-64" />
+      <CardHeader className="pb-4 pt-6">
+        <Skeleton className="h-6 w-32 mb-3 rounded-full" />
+        <Skeleton className="h-8 w-full mb-2" />
+        <Skeleton className="h-8 w-3/4" />
       </CardHeader>
-      <CardContent className="flex-grow pb-3">
-        <Skeleton className="h-4 w-full mb-2" />
-        <Skeleton className="h-4 w-3/4" />
+      <CardContent className="flex-grow pb-4">
+        <Skeleton className="h-5 w-full mb-2" />
+        <Skeleton className="h-5 w-full mb-2" />
+        <Skeleton className="h-5 w-2/3" />
       </CardContent>
-      <CardFooter className="pt-3 border-t">
-        <Skeleton className="h-10 w-full" />
+      <CardFooter className="pt-4 border-t">
+        <div className="flex gap-3 w-full">
+          <Skeleton className="h-12 flex-1" />
+          <Skeleton className="h-12 flex-1" />
+        </div>
       </CardFooter>
     </Card>
   );
@@ -410,13 +403,13 @@ export default function Resources() {
           </FadeIn>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {[...Array(6)].map((_, i) => (
                 <ResourceCardSkeleton key={i} />
               ))}
             </div>
           ) : filteredAndSortedAssets.length > 0 ? (
-            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <StaggerContainer className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {filteredAndSortedAssets.map((asset) => (
                 <StaggerItem key={asset.id} className="h-full">
                   <ResourceCard 
