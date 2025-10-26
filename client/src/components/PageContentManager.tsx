@@ -64,7 +64,7 @@ export default function PageContentManager() {
 
   // Fetch all active landing page templates
   const { data: landingPageTemplates = [] } = useQuery<LandingPageTemplate[]>({
-    queryKey: ["/api/landing-pages"],
+    queryKey: ["/api/landing-page-templates"],
     select: (data: any[]) => data.filter(template => template.active).map(t => ({
       id: t.id,
       title: t.title,
