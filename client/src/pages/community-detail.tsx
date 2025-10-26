@@ -1163,6 +1163,7 @@ export default function CommunityDetail() {
     highlights: CommunityHighlight[];
     features: any[];
     teamMembers: TeamMember[];
+    resources: ContentAsset[];
   }>({
     queryKey: [`/api/communities/${slug}/full`],
     enabled: !!slug,
