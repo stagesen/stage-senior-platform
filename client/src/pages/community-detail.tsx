@@ -104,6 +104,129 @@ const formatPrice = (price: number | undefined | null): string => {
   }).format(price);
 };
 
+// Helper function for community-specific neighborhood information
+const getNeighborhoodInfo = (communitySlug: string) => {
+  const neighborhoods: Record<string, {
+    setting: string;
+    healthcare: string[];
+    transportation: string[];
+    amenities: string[];
+  }> = {
+    'stonebridge-senior': {
+      setting: "Stonebridge Senior sits in Arvada, a suburb just west of Denver that mixes urban conveniences with small‑town charm.",
+      healthcare: [
+        "Lutheran Medical Center",
+        "Denver Health",
+        "St. Joseph Hospital",
+        "Specialized care for stroke, dementia, Parkinson's and Alzheimer's",
+        "Mental‑health support through Rocky Mountain Crisis Partners and Jefferson Center"
+      ],
+      transportation: [
+        "RTD G Line - direct rail connection to Denver's Union Station",
+        "RTD Senior Ride and SeniorShopper",
+        "Access‑a‑Ride and VIA paratransit programs"
+      ],
+      amenities: [
+        "Apex Center fitness classes",
+        "Majestic View Nature Center",
+        "Ralston Creek Trail",
+        "Van Bibber Park (wheelchair‑accessible)",
+        "Three nearby golf courses",
+        "Arvada Center for Arts and Humanities",
+        "Historic Olde Town Arvada and Flour Mill Museum",
+        "Arvada Harvest Festival and summer farmers markets"
+      ]
+    },
+    'golden-pond': {
+      setting: "Golden Pond is centrally located at 1270 N Ford Street, roughly 1.8 miles from downtown Golden and about 15 miles from downtown Denver with quick access to Interstate 70 and Highway 93. Golden sits at the foot of the Rockies.",
+      healthcare: [
+        "Centura St. Anthony Hospital (Lakewood)",
+        "Emergency & Urgent Care Golden",
+        "VA Medical Center–Golden",
+        "Lutheran Medical Center (Wheat Ridge)",
+        "Specialized support for stroke, dementia, Parkinson's and Alzheimer's"
+      ],
+      transportation: [
+        "RTD W Line rail connects Golden to downtown Denver",
+        "DRMAC's mobility resources",
+        "IntelliRide and Access‑a‑Ride",
+        "RTD Senior Ride and SeniorShopper"
+      ],
+      amenities: [
+        "Clear Creek Trail & Lions Park",
+        "Parfet Park",
+        "Lookout Mountain and North & South Table Mountains for hiking",
+        "Fossil Trace Golf Club (featuring dinosaur footprints)",
+        "Applewood Golf Course",
+        "Coors Brewery and Golden History Museum",
+        "Golden Farmers Market, Golden Music Festival, Buffalo Bill Days",
+        "Golden Community Center with indoor pools and climbing wall"
+      ]
+    },
+    'gardens-at-columbine': {
+      setting: "Located at 5130 West Ken Caryl Avenue in Littleton, about 5 miles from downtown Littleton and 15 miles from downtown Denver, with convenient access to Santa Fe Drive and C‑470.",
+      healthcare: [
+        "Swedish/Craig Hospital",
+        "UCHealth Highlands Ranch Hospital",
+        "Centura Littleton Adventist Hospital",
+        "Mental‑health resources through Rocky Mountain Crisis Partners",
+        "SCL West Pines at Lutheran Medical Center",
+        "Specialized support for stroke, dementia, Parkinson's, and ALS"
+      ],
+      transportation: [
+        "DRMAC's regional transportation services",
+        "VIA's weekday mobility assistance",
+        "IntelliRide for non‑emergency medical transportation",
+        "Access‑a‑Ride for riders with disabilities",
+        "RTD Senior Ride for group excursions"
+      ],
+      amenities: [
+        "South Platte Park and Carson Nature Center trails",
+        "High Line Canal Trail",
+        "Chatfield State Park",
+        "Deer Creek Canyon Park",
+        "Littleton Golf and Tennis Club, Raccoon Creek Golf Course",
+        "University of Denver Golf Club, Columbine Country Club",
+        "Littleton Museum and Hudson Gardens & Event Center",
+        "Main Street Block Party, Western Welcome Week",
+        "Buck Recreation Center and South Suburban Senior's Club"
+      ]
+    },
+    'gardens-on-quail': {
+      setting: "Located at 6447 Quail Street in Arvada, a thriving suburb just outside Denver offering seniors a high quality of life with abundant housing options, healthcare and activities.",
+      healthcare: [
+        "Lutheran Medical Center",
+        "Denver Health",
+        "St. Joseph Hospital",
+        "North Suburban Medical Center",
+        "Specialized support for stroke, dementia, Parkinson's and Alzheimer's",
+        "Hospice care resources"
+      ],
+      transportation: [
+        "DRMAC regional services",
+        "VIA weekday mobility help",
+        "IntelliRide for non‑emergency medical rides",
+        "Access‑a‑Ride ADA‑compliant paratransit",
+        "RTD Senior Ride and SeniorShopper",
+        "RTD G Line links Arvada with Denver Union Station"
+      ],
+      amenities: [
+        "Mount Galbraith Park hiking",
+        "Ralston Creek Trail",
+        "Majestic View Nature Center",
+        "Van Bibber Park, Two Ponds National Wildlife Refuge",
+        "West Woods Golf Club, Indian Tree Golf Club",
+        "Lake Arbor Golf Course, Willis Case Golf Course",
+        "Arvada Center for the Arts and Humanities",
+        "Arvada Harvest Festival, Arvada Kite Festival, Arvada Days",
+        "SilverSneakers at the Apex Center"
+      ]
+    }
+  };
+
+  return neighborhoods[communitySlug] || null;
+};
+
 // Local subcomponent: Highlight Card
 const HighlightCard = ({ highlight, imageOnRight = false }: { highlight: { title: string; description: string; imageUrl?: string; imageId?: string; ctaLabel?: string; ctaHref?: string }; imageOnRight?: boolean }) => {
   // Pass imageId directly - useResolveImageUrl handles the API path internally
@@ -2475,30 +2598,111 @@ export default function CommunityDetail() {
                 </CardContent>
               </Card>
               </FadeIn>
-              <FadeIn direction="up" delay={0.2}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-3">Nearby Healthcare</h3>
-                    <ul className="space-y-2 text-gray-600">
-                      <li>• St. Joseph Hospital - 5 miles</li>
-                      <li>• Kaiser Permanente - 3 miles</li>
-                      <li>• CVS Pharmacy - 0.5 miles</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-3">Local Amenities</h3>
-                    <ul className="space-y-2 text-gray-600">
-                      <li>• King Soopers - 1 mile</li>
-                      <li>• Parks & Recreation - 2 miles</li>
-                      <li>• Shopping Centers - 3 miles</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
-              </FadeIn>
+              
+              {(() => {
+                const neighborhoodInfo = getNeighborhoodInfo(community.slug);
+                
+                if (neighborhoodInfo) {
+                  return (
+                    <>
+                      <FadeIn direction="up" delay={0.15}>
+                        <Card className="mb-6">
+                          <CardContent className="p-6">
+                            <h3 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+                              <Navigation className="w-6 h-6 text-primary" />
+                              About the Area
+                            </h3>
+                            <p className="text-gray-700 leading-relaxed">{neighborhoodInfo.setting}</p>
+                          </CardContent>
+                        </Card>
+                      </FadeIn>
+                      
+                      <FadeIn direction="up" delay={0.2}>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          <Card>
+                            <CardContent className="p-6">
+                              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                                <Heart className="w-5 h-5 text-primary" />
+                                Nearby Healthcare
+                              </h3>
+                              <ul className="space-y-2 text-gray-600">
+                                {neighborhoodInfo.healthcare.map((item, idx) => (
+                                  <li key={idx} className="flex items-start gap-2">
+                                    <CheckCircle className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
+                                    <span>{item}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </CardContent>
+                          </Card>
+                          
+                          <Card>
+                            <CardContent className="p-6">
+                              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                                <Car className="w-5 h-5 text-primary" />
+                                Transportation
+                              </h3>
+                              <ul className="space-y-2 text-gray-600">
+                                {neighborhoodInfo.transportation.map((item, idx) => (
+                                  <li key={idx} className="flex items-start gap-2">
+                                    <CheckCircle className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
+                                    <span>{item}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </CardContent>
+                          </Card>
+                          
+                          <Card>
+                            <CardContent className="p-6">
+                              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                                <Trees className="w-5 h-5 text-primary" />
+                                Local Amenities
+                              </h3>
+                              <ul className="space-y-2 text-gray-600">
+                                {neighborhoodInfo.amenities.slice(0, 8).map((item, idx) => (
+                                  <li key={idx} className="flex items-start gap-2">
+                                    <CheckCircle className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
+                                    <span>{item}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </FadeIn>
+                    </>
+                  );
+                }
+                
+                // Fallback for communities without specific neighborhood data
+                return (
+                  <FadeIn direction="up" delay={0.2}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <Card>
+                        <CardContent className="p-6">
+                          <h3 className="text-xl font-semibold mb-3">Nearby Healthcare</h3>
+                          <ul className="space-y-2 text-gray-600">
+                            <li>• Quality healthcare facilities nearby</li>
+                            <li>• Easy access to medical services</li>
+                            <li>• Pharmacy and urgent care available</li>
+                          </ul>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent className="p-6">
+                          <h3 className="text-xl font-semibold mb-3">Local Amenities</h3>
+                          <ul className="space-y-2 text-gray-600">
+                            <li>• Shopping centers nearby</li>
+                            <li>• Parks & Recreation</li>
+                            <li>• Dining and entertainment</li>
+                          </ul>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </FadeIn>
+                );
+              })()}
             </section>
 
             {/* Action Panel - Contact, Pricing, and Resources */}
