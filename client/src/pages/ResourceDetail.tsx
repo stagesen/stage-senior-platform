@@ -292,11 +292,14 @@ export default function ResourceDetail() {
                 
                 {/* Right side - Content */}
                 <div className="p-8 lg:p-12 flex flex-col justify-center bg-white">
-                  <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4" data-testid="download-cta-title">
-                    {resource.title}
+                  <p className="text-primary font-semibold mb-2 uppercase tracking-wide text-sm">
+                    Need More Information?
+                  </p>
+                  <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3" data-testid="download-cta-title">
+                    Get the Complete Guide
                   </h2>
-                  <p className="text-lg text-gray-600 mb-8" data-testid="download-cta-description">
-                    Download the complete PDF guide with actionable insights and expert advice
+                  <p className="text-base text-gray-600 mb-6" data-testid="download-cta-description">
+                    Access the full PDF with detailed checklists, worksheets, and step-by-step planning tools you can use right away.
                   </p>
                   <Button 
                     size="lg"
