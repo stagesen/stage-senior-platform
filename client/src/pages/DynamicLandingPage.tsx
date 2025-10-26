@@ -683,7 +683,8 @@ export default function DynamicLandingPage() {
       if (template.urlPattern.includes('skilled-nursing')) return 'skilled-nursing';
     }
 
-    // Try URL params
+    // Try URL params - check both careLevel and careType
+    if (urlParams.careLevel) return urlParams.careLevel.toLowerCase();
     if (urlParams.careType) return urlParams.careType.toLowerCase();
 
     return null;
