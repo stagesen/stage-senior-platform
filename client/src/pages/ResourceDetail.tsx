@@ -305,7 +305,7 @@ export default function ResourceDetail() {
                     data-testid="button-download-pdf"
                   >
                     <Download className="w-5 h-5 mr-2" />
-                    Download Free Guide
+                    {resource.ctaText || "Download Full Guide"}
                   </Button>
                   {resource.downloadCount && resource.downloadCount > 0 && (
                     <p className="mt-4 text-sm text-gray-500" data-testid="download-count">

@@ -1943,6 +1943,20 @@ function ResourceManagement() {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="ctaText">CTA Button Text</Label>
+              <Input
+                id="ctaText"
+                value={editingResource.ctaText || "Download Full Guide"}
+                onChange={(e) => setEditingResource({ ...editingResource, ctaText: e.target.value })}
+                placeholder="Download Full Guide"
+                data-testid="input-resource-cta-text"
+              />
+              <p className="text-xs text-muted-foreground">
+                Customize the download button text (default: "Download Full Guide")
+              </p>
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="sortOrder">Sort Order</Label>
               <Input
                 id="sortOrder"

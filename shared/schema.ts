@@ -666,6 +666,7 @@ export const contentAssets = pgTable("content_assets", {
   articleContent: text("article_content"), // Rich HTML content for article
   featuredImageId: varchar("featured_image_id", { length: 255 }).references(() => images.id),
   authorId: uuid("author_id").references(() => teamMembers.id),
+  ctaText: varchar("cta_text", { length: 100 }).default("Download Full Guide"), // Customizable CTA button text
   active: boolean("active").default(true),
   sortOrder: integer("sort_order").default(0),
   downloadCount: integer("download_count").default(0),
