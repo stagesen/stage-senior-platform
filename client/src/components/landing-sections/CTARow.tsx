@@ -27,10 +27,10 @@ export default function CTARow({ section }: CTARowProps) {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+        <div className="flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
           <Button
             size="lg"
-            className="w-full bg-primary hover:bg-primary/90 text-white font-semibold talkfurther-schedule-tour"
+            className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-white font-semibold talkfurther-schedule-tour"
             onClick={() => openScheduleTour()}
             data-testid={`${section.sectionKey}-button-schedule`}
           >
@@ -41,7 +41,7 @@ export default function CTARow({ section }: CTARowProps) {
           <Button
             size="lg"
             variant="outline"
-            className="w-full border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold transition-colors"
+            className="w-full sm:flex-1 border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold transition-colors"
             onClick={() => openScheduleTour()}
             data-testid={`${section.sectionKey}-button-pricing`}
           >
@@ -52,7 +52,7 @@ export default function CTARow({ section }: CTARowProps) {
           <Button
             size="lg"
             variant="outline"
-            className="w-full border-2 border-gray-300 text-gray-700 hover:bg-gray-100 font-semibold"
+            className="w-full sm:flex-1 border-2 border-gray-300 text-gray-700 hover:bg-gray-100 font-semibold"
             asChild
             data-testid={`${section.sectionKey}-button-call`}
           >
