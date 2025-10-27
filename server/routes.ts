@@ -2,6 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import express from "express";
 import path from "path";
+import { Storage } from "@google-cloud/storage";
 import { storage } from "./storage";
 import { db } from "./db";
 import { setupAuth } from "./auth";
@@ -142,10 +143,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/attached_assets", (req, res, next) => {
     // If we're here, the file wasn't in generated_images, so block it
     console.log(`[SECURITY] Blocked access to: ${req.path}`);
-    return res.status(403).json({ 
+    return res.status(403).json({
       error: "Forbidden",
       message: "Access denied. Only /attached_assets/generated_images/* files are publicly accessible."
     });
+  });
+
+  // Serve Replit Object Storage files
+  // This middleware proxies requests to the Google Cloud Storage bucket
+  app.get(/^\/replit-objstore-[^/]+\/public\/.+$/, async (req, res, next) => {
+    try {
+      // Extract bucket ID and file path from the URL
+      const urlPath = req.path;
+      const match = urlPath.match(/^\/([^/]+)\/public\/(.+)$/);
+
+      if (!match) {
+        return res.status(404).json({ error: "Invalid path" });
+      }
+
+      const [, bucketId, filename] = match;
+
+      // Verify this is the expected bucket
+      const expectedBucketId = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
+      if (bucketId !== expectedBucketId) {
+        return res.status(404).json({ error: "Bucket not found" });
+      }
+
+      // Initialize the object storage client
+      const REPLIT_SIDECAR_ENDPOINT = "http://127.0.0.1:1106";
+      const objectStorageClient = new Storage({
+        credentials: {
+          audience: "replit",
+          subject_token_type: "access_token",
+          token_url: `${REPLIT_SIDECAR_ENDPOINT}/token`,
+          type: "external_account",
+          credential_source: {
+            url: `${REPLIT_SIDECAR_ENDPOINT}/credential`,
+            format: {
+              type: "json",
+              subject_token_field_name: "access_token",
+            },
+          },
+          universe_domain: "googleapis.com",
+        },
+        projectId: "",
+      });
+
+      // Get the file from the bucket
+      const bucket = objectStorageClient.bucket(bucketId);
+      const file = bucket.file(`public/${filename}`);
+
+      // Check if file exists
+      const [exists] = await file.exists();
+      if (!exists) {
+        return res.status(404).json({ error: "File not found" });
+      }
+
+      // Get file metadata to set proper content type
+      const [metadata] = await file.getMetadata();
+
+      // Stream the file to the response
+      res.setHeader("Content-Type", metadata.contentType || "application/octet-stream");
+      res.setHeader("Cache-Control", "public, max-age=31536000"); // Cache for 1 year
+
+      file.createReadStream()
+        .on("error", (error) => {
+          console.error("Error streaming file:", error);
+          if (!res.headersSent) {
+            res.status(500).json({ error: "Failed to stream file" });
+          }
+        })
+        .pipe(res);
+    } catch (error) {
+      console.error("Error serving object storage file:", error);
+      if (!res.headersSent) {
+        res.status(500).json({ error: "Internal server error" });
+      }
+    }
   });
 
   // Robots.txt - SEO crawling instructions

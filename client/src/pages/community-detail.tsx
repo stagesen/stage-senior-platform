@@ -66,7 +66,7 @@ import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { setMetaTags, getCanonicalUrl, sanitizeMetaText } from "@/lib/metaTags";
 import stageSeniorLogo from "@/assets/stage-logo.webp";
-import defaultBrochureImage from "@/assets/community-brochure-default.png";
+import defaultBrochureImage from "@/assets/community-brochure-default.webp";
 import NewsletterCard from "@/components/NewsletterCard";
 import type { 
   Community, 
