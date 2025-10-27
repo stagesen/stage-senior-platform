@@ -2189,6 +2189,30 @@ export default function CommunityDetail() {
           {/* Sticky Sidebar - Only for Top Sections */}
           <div className="lg:col-span-1">
             <div className="lg:sticky lg:top-28 space-y-6">
+              {/* Hero Image Card */}
+              {finalHeroImageUrl && (
+                <Card className="overflow-hidden shadow-lg border-0">
+                  <div className="relative group">
+                    <AspectRatio ratio={16 / 10}>
+                      <img
+                        src={finalHeroImageUrl}
+                        alt={`${community.name} - Community View`}
+                        className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </AspectRatio>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                      <p className="text-sm font-medium drop-shadow-lg">
+                        {community.name}
+                      </p>
+                      <p className="text-xs opacity-90 drop-shadow-lg">
+                        {getCityState(community)}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              )}
+
               {/* Pricing Card */}
               <Card className="shadow-lg border-2 border-primary/20">
                 <CardHeader className="bg-primary/5">
