@@ -19,7 +19,8 @@ import StaggerItem from "@/components/animations/StaggerItem";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { getUtmParams, getClickIdsFromUrl, generateEventId } from "@/lib/tracking";
-import type { ContentAsset } from "@shared/schema";
+import CTARow from "@/components/landing-sections/CTARow";
+import type { ContentAsset, PageContentSection } from "@shared/schema";
 
 const CATEGORIES = [
   { value: "all", label: "All Resources" },
@@ -170,6 +171,11 @@ export default function Resources() {
   // Fetch resources
   const { data: assets = [], isLoading } = useQuery<ContentAsset[]>({
     queryKey: ["/api/public/content-assets"],
+  });
+
+  // Fetch page content sections for CTAs
+  const { data: pageSections = [] } = useQuery<PageContentSection[]>({
+    queryKey: ["/api/public/page-content-sections", { pagePath: "/resources" }],
   });
 
   // Filter and sort assets
@@ -430,6 +436,17 @@ export default function Resources() {
             </Card>
           )}
         </main>
+
+        {/* Page Content Sections (CTAs, etc.) */}
+        {pageSections
+          .filter(section => section.active)
+          .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+          .map((section) => {
+            if (section.sectionType === 'cta_row') {
+              return <CTARow key={section.id} section={section} />;
+            }
+            return null;
+          })}
 
         {/* Gated Download Dialog */}
         <Dialog open={showDownloadDialog} onOpenChange={setShowDownloadDialog}>

@@ -25,8 +25,8 @@ The system uses session-based authentication with `connect-pg-simple` for Postgr
 
 ### Content Management
 A comprehensive admin interface provides CRUD operations for:
-- **Community Management**: Includes details, amenities, care types, image uploads, `rating` fields, and active/inactive status. Supports cascade deletion for associated data.
-- **Content Systems**: Blog, team member, event, FAQ, gallery, and testimonial management with image uploads and community associations.
+- **Community Management**: Includes details, amenities, care types, image uploads, `rating` fields, property map URLs (for Sightmap iframe embeds), and active/inactive status. Supports cascade deletion for associated data.
+- **Content Systems**: Blog, team member, event, FAQ, gallery, and testimonial management with image uploads and community associations. Content assets (resource articles) support optional fields with proper nullable validation for `authorId`, `thumbnailImageId`, `featuredImageId`, and `fileSize`.
 - **Dynamic Content**: Management for page heroes, floor plans, community highlights, "Experience the Difference" features, and homepage sections.
 - **Lead Management**: Tour request system with automated email forwarding via Resend.
 - **Data Utilities**: Database sync system for exporting/importing data.
