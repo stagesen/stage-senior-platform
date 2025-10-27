@@ -75,19 +75,22 @@ export default function CommunityMap({
     });
     markersRef.current = [];
 
-    // Add markers for communities with coordinates
-    const validCommunities = communities.filter(
-      community => community.latitude && community.longitude
-    );
+    // Add markers for communities with valid coordinates
+    const validCommunities = communities.filter(community => {
+      if (!community.latitude || !community.longitude) return false;
+      const lat = parseFloat(community.latitude);
+      const lng = parseFloat(community.longitude);
+      return !isNaN(lat) && !isNaN(lng);
+    });
 
     if (validCommunities.length === 0) return;
 
     const markers: L.Marker[] = [];
+    const markerCommunityMap = new Map<L.Marker, Community>();
+    
     validCommunities.forEach(community => {
       const lat = parseFloat(community.latitude!);
       const lng = parseFloat(community.longitude!);
-
-      if (isNaN(lat) || isNaN(lng)) return;
 
       // Get community color (use mainColorHex or default to primary blue)
       const markerColor = community.mainColorHex || '#2563eb';
@@ -181,6 +184,7 @@ export default function CommunityMap({
       }
 
       markers.push(marker);
+      markerCommunityMap.set(marker, community);
     });
 
     markersRef.current = markers;
@@ -207,8 +211,8 @@ export default function CommunityMap({
         
         // If a community is selected, ensure it's visible and highlighted
         if (selectedCommunityId && showPopups) {
-          const selectedMarker = markers.find((_, idx) => 
-            validCommunities[idx]?.id === selectedCommunityId
+          const selectedMarker = markers.find(marker => 
+            markerCommunityMap.get(marker)?.id === selectedCommunityId
           );
           if (selectedMarker) {
             selectedMarker.openPopup();
