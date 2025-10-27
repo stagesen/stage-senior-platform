@@ -232,12 +232,27 @@ const HighlightCard = memo(({ highlight, imageOnRight = false }: { highlight: { 
   // Pass imageId directly - useResolveImageUrl handles the API path internally
   const resolvedImageUrl = useResolveImageUrl(highlight.imageId || highlight.imageUrl);
 
+  // Generate optimized image URLs with proper dimensions
+  const isObjectStorage = resolvedImageUrl && (resolvedImageUrl.includes('/replit-objstore-') || resolvedImageUrl.includes('/public/'));
+  const baseImageUrl = resolvedImageUrl || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80";
+
+  // For object storage images, use our resize API
+  const srcSet = isObjectStorage
+    ? `${encodeURI(`/api/images/resize?url=${baseImageUrl}&w=400&q=80`)} 400w, ${encodeURI(`/api/images/resize?url=${baseImageUrl}&w=800&q=80`)} 800w`
+    : undefined;
+
+  const optimizedSrc = isObjectStorage
+    ? `/api/images/resize?url=${encodeURIComponent(baseImageUrl)}&w=800&q=80`
+    : baseImageUrl;
+
   return (
     <Card className={cn("overflow-hidden flex flex-col md:flex-row", imageOnRight && "md:flex-row-reverse")}>
       <div className="w-full md:w-1/2">
         <AspectRatio ratio={16 / 9} className="md:h-full">
           <img
-            src={resolvedImageUrl || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"}
+            src={optimizedSrc}
+            srcSet={srcSet}
+            sizes="(max-width: 768px) 100vw, 50vw"
             alt={highlight.title}
             className="w-full h-full object-cover"
             width="800"
@@ -1243,7 +1258,7 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
               src={finalHeroImageUrl}
               alt="Community background"
               className="w-full h-full object-cover"
-              fetchpriority="high"
+              fetchPriority="high"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-blue-900/60 via-blue-800/60 to-blue-600/60" />
           </>
@@ -1256,11 +1271,15 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Logo */}
         {community.heroLogoSrc && (
-          <img 
-            src={community.heroLogoSrc} 
-            alt={`${community.name} logo`}
-            className="h-20 mx-auto mb-8"
-          />
+          <div className="w-[240px] h-[80px] mx-auto mb-8 flex items-center justify-center">
+            <img
+              src={community.heroLogoSrc}
+              alt={`${community.name} logo`}
+              className="max-h-20 w-auto object-contain"
+              width="240"
+              height="80"
+            />
+          </div>
         )}
 
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
@@ -1757,11 +1776,11 @@ export default function CommunityDetail() {
         {/* Hero Logo Overlay */}
         {heroLogoSrc && (
           <div className="absolute top-6 right-6 md:top-10 md:right-10 z-20">
-            <div className="bg-white rounded-2xl shadow-lg px-4 py-3 md:px-6 md:py-4 border border-gray-300">
+            <div className="bg-white rounded-2xl shadow-lg px-4 py-3 md:px-6 md:py-4 border border-gray-300 w-[200px] h-[80px] flex items-center justify-center">
               <img
                 src={heroLogoSrc}
                 alt={heroLogoAlt}
-                className="h-12 md:h-16 w-auto object-contain"
+                className="max-h-12 md:max-h-16 w-auto object-contain"
                 width="200"
                 height="80"
                 data-testid="community-hero-logo"
@@ -1862,12 +1881,16 @@ export default function CommunityDetail() {
             {/* Community Branding */}
             <div className="flex items-center gap-4">
               {heroLogoSrc ? (
-                <img
-                  src={heroLogoSrc}
-                  alt={heroLogoAlt}
-                  className="h-10 md:h-12 w-auto object-contain"
-                  data-testid="nav-community-logo"
-                />
+                <div className="w-[150px] h-[60px] flex items-center">
+                  <img
+                    src={heroLogoSrc}
+                    alt={heroLogoAlt}
+                    className="max-h-10 md:max-h-12 w-auto object-contain"
+                    width="150"
+                    height="60"
+                    data-testid="nav-community-logo"
+                  />
+                </div>
               ) : (
                 <div className="flex items-center gap-3">
                   <div 
@@ -2203,6 +2226,8 @@ export default function CommunityDetail() {
                         src={finalHeroImageUrl}
                         alt={`${community.name} - Community View`}
                         className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                        width="800"
+                        height="500"
                         loading="lazy"
                       />
                     </AspectRatio>

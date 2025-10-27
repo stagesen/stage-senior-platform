@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import express from "express";
 import path from "path";
 import { Storage } from "@google-cloud/storage";
+import sharp from "sharp";
 import { storage } from "./storage";
 import { db } from "./db";
 import { setupAuth } from "./auth";
@@ -103,12 +104,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use(clickIdCaptureMiddleware);
   
   // Root health check endpoint for deployment health checks (production only)
-  // In development, Vite middleware handles the root route
-  if (process.env.NODE_ENV === "production") {
-    app.get("/", (_req, res) => {
-      res.status(200).json({ status: "ok" });
-    });
-  }
+  // Root route will be handled by Vite middleware (dev) or static files (production)
+  // No explicit route needed - the setup in server/vite.ts handles this
   
   // Diagnostic endpoint for debugging production issues
   app.get("/api/health", async (_req, res) => {
@@ -147,6 +144,100 @@ export async function registerRoutes(app: Express): Promise<Server> {
       error: "Forbidden",
       message: "Access denied. Only /attached_assets/generated_images/* files are publicly accessible."
     });
+  });
+
+  // Image Resize API - Optimize and resize images on-the-fly
+  app.get("/api/images/resize", async (req, res) => {
+    try {
+      const { url, w, h, q } = req.query;
+
+      if (!url || typeof url !== 'string') {
+        return res.status(400).json({ error: "URL parameter is required" });
+      }
+
+      const width = w ? parseInt(w as string) : undefined;
+      const height = h ? parseInt(h as string) : undefined;
+      const quality = q ? parseInt(q as string) : 80;
+
+      // Validate dimensions
+      if (width && (width < 10 || width > 3000)) {
+        return res.status(400).json({ error: "Width must be between 10 and 3000" });
+      }
+      if (height && (height < 10 || height > 3000)) {
+        return res.status(400).json({ error: "Height must be between 10 and 3000" });
+      }
+
+      // Extract bucket ID and filename from URL
+      const match = url.match(/\/replit-objstore-([^/]+)\/public\/(.+)$/);
+      if (!match) {
+        return res.status(400).json({ error: "Invalid object storage URL" });
+      }
+
+      const [, bucketId, filename] = match;
+      const expectedBucketId = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
+
+      if (bucketId !== expectedBucketId) {
+        return res.status(404).json({ error: "Bucket not found" });
+      }
+
+      // Initialize object storage client
+      const REPLIT_SIDECAR_ENDPOINT = "http://127.0.0.1:1106";
+      const objectStorageClient = new Storage({
+        credentials: {
+          audience: "replit",
+          subject_token_type: "access_token",
+          token_url: `${REPLIT_SIDECAR_ENDPOINT}/token`,
+          type: "external_account",
+          credential_source: {
+            url: `${REPLIT_SIDECAR_ENDPOINT}/credential`,
+            format: {
+              type: "json",
+              subject_token_field_name: "access_token",
+            },
+          },
+          universe_domain: "googleapis.com",
+        },
+        projectId: "",
+      });
+
+      // Get file from bucket
+      const bucket = objectStorageClient.bucket(bucketId);
+      const file = bucket.file(`public/${filename}`);
+
+      const [exists] = await file.exists();
+      if (!exists) {
+        return res.status(404).json({ error: "Image not found" });
+      }
+
+      // Download image to buffer
+      const [buffer] = await file.download();
+
+      // Resize and optimize with Sharp
+      let transformer = sharp(buffer);
+
+      if (width || height) {
+        transformer = transformer.resize(width, height, {
+          fit: 'inside',
+          withoutEnlargement: true
+        });
+      }
+
+      // Apply quality and format optimization
+      transformer = transformer.webp({ quality });
+
+      // Process image
+      const optimizedBuffer = await transformer.toBuffer();
+
+      // Set cache headers (1 year)
+      res.setHeader("Content-Type", "image/webp");
+      res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+      res.setHeader("Content-Length", optimizedBuffer.length.toString());
+
+      res.send(optimizedBuffer);
+    } catch (error) {
+      console.error("Error resizing image:", error);
+      res.status(500).json({ error: "Failed to resize image" });
+    }
   });
 
   // Serve Replit Object Storage files
