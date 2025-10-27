@@ -1555,13 +1555,13 @@ function ResourceManagement() {
     category: undefined,
     fileUrl: "",
     objectKey: "",
-    thumbnailImageId: "",
+    thumbnailImageId: undefined,
     fileSize: 0,
     mimeType: "",
     requiredFields: [],
     articleContent: "",
-    featuredImageId: "",
-    authorId: "",
+    featuredImageId: undefined,
+    authorId: undefined,
     active: true,
     sortOrder: 0,
   });
@@ -1657,13 +1657,13 @@ function ResourceManagement() {
       category: undefined,
       fileUrl: "",
       objectKey: "",
-      thumbnailImageId: "",
+      thumbnailImageId: undefined,
       fileSize: 0,
       mimeType: "",
       requiredFields: [],
       articleContent: "",
-      featuredImageId: "",
-      authorId: "",
+      featuredImageId: undefined,
+      authorId: undefined,
       active: true,
       sortOrder: 0,
     });
@@ -1686,13 +1686,13 @@ function ResourceManagement() {
       category: resource.category || undefined,
       fileUrl: resource.fileUrl || "",
       objectKey: resource.objectKey || "",
-      thumbnailImageId: resource.thumbnailImageId || "",
+      thumbnailImageId: resource.thumbnailImageId || undefined,
       fileSize: resource.fileSize || 0,
       mimeType: resource.mimeType || "",
       requiredFields: resource.requiredFields || [],
       articleContent: resource.articleContent || "",
-      featuredImageId: resource.featuredImageId || "",
-      authorId: resource.authorId || "",
+      featuredImageId: resource.featuredImageId || undefined,
+      authorId: resource.authorId || undefined,
       active: resource.active ?? true,
       sortOrder: resource.sortOrder ?? 0,
     });
@@ -1881,7 +1881,7 @@ function ResourceManagement() {
               <Label htmlFor="featuredImage">Featured Image (Optional)</Label>
               <Select
                 value={editingResource.featuredImageId || ""}
-                onValueChange={(value) => setEditingResource({ ...editingResource, featuredImageId: value })}
+                onValueChange={(value) => setEditingResource({ ...editingResource, featuredImageId: value || undefined })}
               >
                 <SelectTrigger id="featuredImage" data-testid="select-featured-image">
                   <SelectValue placeholder="Select featured image" />
@@ -1909,7 +1909,7 @@ function ResourceManagement() {
               <Label htmlFor="author">Author (Optional)</Label>
               <Select
                 value={editingResource.authorId || ""}
-                onValueChange={(value) => setEditingResource({ ...editingResource, authorId: value })}
+                onValueChange={(value) => setEditingResource({ ...editingResource, authorId: value || undefined })}
               >
                 <SelectTrigger id="author" data-testid="select-author">
                   <SelectValue placeholder="Select author" />
