@@ -956,11 +956,12 @@ export const insertCommunitySchema = createInsertSchema(communities).omit({
   slug: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
+  propertyMapUrl: z.string().optional().nullable(),
   mainColorHex: z.string().regex(/^#([0-9a-fA-F]{6})$/, "Invalid hex color format (use #RRGGBB)").optional(),
   ctaColorHex: z.string().regex(/^#([0-9a-fA-F]{6})$/, "Invalid hex color format (use #RRGGBB)").optional(),
-  yearEstablished: z.number().min(1800).max(new Date().getFullYear()).optional(),
-  licensedSince: z.string().optional(), // Date string in ISO format
-  residentCapacity: z.number().min(1).optional(),
+  yearEstablished: z.number().min(1800).max(new Date().getFullYear()).optional().nullable(),
+  licensedSince: z.string().optional().nullable(), // Date string in ISO format
+  residentCapacity: z.number().min(1).optional().nullable(),
   specialCertifications: z.array(z.string()).optional(),
   verifiedStats: z.record(z.union([z.number(), z.string()])).optional(),
 });
