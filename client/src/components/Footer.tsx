@@ -36,6 +36,8 @@ export default function Footer() {
                   src={logoWhiteUrl} 
                   alt="Stage Senior"
                   className="w-auto object-contain min-w-[160px] h-14 sm:h-16 md:h-18"
+                  width="240"
+                  height="190"
                 />
               </div>
               <p className="text-[var(--mist-white)]/95 mb-4 text-lg leading-relaxed" data-testid="footer-description">
@@ -220,6 +222,8 @@ export default function Footer() {
                     src={ashaLogoUrl} 
                     alt="ASHA - Assisted Living Association"
                     className="w-auto h-10 sm:h-12"
+                    width="200"
+                    height="137"
                     data-testid="footer-asha-logo"
                   />
                 </a>

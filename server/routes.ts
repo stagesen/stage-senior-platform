@@ -3576,6 +3576,8 @@ Disallow: /admin/
       if (!image) {
         return res.status(404).json({ message: "Image not found" });
       }
+      // Cache image metadata for 1 hour
+      res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=7200');
       res.json(image);
     } catch (error) {
       console.error("Error fetching image:", error);
