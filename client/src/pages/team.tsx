@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useMemo, useEffect } from "react";
 import { Link, useSearch } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -17,8 +17,6 @@ import {
   Twitter,
   Star,
   Building,
-  ChevronDown,
-  ChevronUp,
   X,
   MapPin,
 } from "lucide-react";
@@ -68,7 +66,6 @@ const getCommunityColor = (tags?: string[]): string | null => {
 
 // Team member card component
 const TeamMemberCard = ({ member }: { member: TeamMember }) => {
-  const [expanded, setExpanded] = useState(false);
   const avatarUrl = useResolveImageUrl(member.avatarImageId);
   const communityColor = getCommunityColor(member.tags as string[]);
 
@@ -144,24 +141,8 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
         {member.bio && (
           <div className="text-center px-2">
             <p className="text-sm text-gray-600 leading-relaxed italic">
-              "{expanded ? member.bio : bioPreview}"
+              "{bioPreview}"
             </p>
-            {member.bio.length > 120 && (
-              <Button
-                variant="link"
-                size="sm"
-                className="p-0 h-auto font-medium mt-2"
-                style={{ color: communityColor || '#2B334B' }}
-                onClick={() => setExpanded(!expanded)}
-                data-testid={`team-member-bio-toggle-${member.id}`}
-              >
-                {expanded ? (
-                  <>Show less <ChevronUp className="w-4 h-4 ml-1" /></>
-                ) : (
-                  <>Read more <ChevronDown className="w-4 h-4 ml-1" /></>
-                )}
-              </Button>
-            )}
           </div>
         )}
 
