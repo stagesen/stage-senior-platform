@@ -49,6 +49,10 @@ export default function ParallaxHero({
             src={backgroundImage}
             alt="Hero background"
             className="w-full h-[120%] object-cover"
+            fetchPriority="high"
+            decoding="async"
+            width="1920"
+            height="1080"
             data-testid="parallax-hero-image"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-blue-900/60 via-blue-800/60 to-blue-600/60" />
