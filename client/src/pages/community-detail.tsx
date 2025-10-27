@@ -1759,6 +1759,8 @@ export default function CommunityDetail() {
                 src={heroLogoSrc}
                 alt={heroLogoAlt}
                 className="h-12 md:h-16 w-auto object-contain"
+                width="200"
+                height="80"
                 data-testid="community-hero-logo"
               />
             </div>

@@ -1,0 +1,165 @@
+Insights
+Render blocking requests Est savings of 1,070 ms
+Requests are blocking the page's initial render, which may delay LCP. Deferring or inlining can move these network requests out of the critical path.LCPFCPUnscored
+URL
+Transfer Size
+Duration
+replit.app 1st party
+22.3 KiB	760 ms
+/assets/index-DWWPyNYF.css(stagesenior.replit.app)
+22.3 KiB
+760 ms
+Google Fonts cdn 
+1.9 KiB	750 ms
+/css2?family=…(fonts.googleapis.com)
+1.9 KiB
+750 ms
+Improve image delivery Est savings of 644 KiB
+Reducing the download time of images can improve the perceived load time of the page and LCP. Learn more about optimizing image sizeLCPFCPUnscored
+URL
+Resource Size
+Est Savings
+replit.app 1st party
+749.3 KiB	644.5 KiB
+Lush Gardens & Outdoor Spaces
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1760542473050…" alt="Lush Gardens &amp; Outdoor Spaces" class="w-full h-full object-cover" width="800" height="450" data-testid="highlight-lush-gardens-&amp;-outdoor-spaces" loading="lazy" decoding="async">
+…public/176…-c89c6aa….webp(stagesenior.replit.app)
+253.3 KiB
+237.7 KiB
+Increasing the image compression factor could improve this image's download size.
+179.0 KiB
+This image file is larger than it needs to be (900x507) for its displayed dimensions (378x252). Use responsive images to reduce the image download size.
+200.4 KiB
+Full Spectrum of Support
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1760542579122…" alt="Full Spectrum of Support" class="w-full h-full object-cover" width="800" height="450" data-testid="highlight-full-spectrum-of-support" loading="lazy" decoding="async">
+…public/176…-1c48379….webp(stagesenior.replit.app)
+168.6 KiB
+153.1 KiB
+Increasing the image compression factor could improve this image's download size.
+94.6 KiB
+This image file is larger than it needs to be (900x505) for its displayed dimensions (378x252). Use responsive images to reduce the image download size.
+133.2 KiB
+Hero background
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1759937999938…" alt="Hero background" class="w-full h-[120%] object-cover" fetchpriority="high" decoding="async" width="1920" height="1080" data-testid="parallax-hero-image">
+…public/175…-b8dc121….webp(stagesenior.replit.app)
+168.3 KiB
+113.5 KiB
+Increasing the image compression factor could improve this image's download size.
+113.5 KiB
+Locally Owned & Independently Operated
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1760542426861…" alt="Locally Owned &amp; Independently Operated" class="w-full h-full object-cover" width="800" height="450" data-testid="highlight-locally-owned-&amp;-independently-operated" loading="lazy" decoding="async">
+…public/176…-f1632ad….webp(stagesenior.replit.app)
+99.6 KiB
+84.1 KiB
+Increasing the image compression factor could improve this image's download size.
+25.6 KiB
+This image file is larger than it needs to be (900x505) for its displayed dimensions (378x252). Use responsive images to reduce the image download size.
+78.7 KiB
+The Gardens at Columbine logo
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1760475176549…" alt="The Gardens at Columbine logo" class="h-12 md:h-16 w-auto object-contain" data-testid="community-hero-logo">
+/assets/stage-log….webp(stagesenior.replit.app)
+33.6 KiB
+32.1 KiB
+Increasing the image compression factor could improve this image's download size.
+13.7 KiB
+This image file is larger than it needs to be (700x175) for its displayed dimensions (192x48). Use responsive images to reduce the image download size.
+31.1 KiB
+The Gardens at Columbine logo
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1760475176549…" alt="The Gardens at Columbine logo" class="h-12 md:h-16 w-auto object-contain" data-testid="community-hero-logo">
+…public/176…-8906838….png(stagesenior.replit.app)
+13.9 KiB
+12.9 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+10.3 KiB
+This image file is larger than it needs to be (250x90) for its displayed dimensions (133x48). Use responsive images to reduce the image download size.
+10.0 KiB
+Stage Senior
+<img src="/assets/stage-logo-white-Dcoj2oCj.webp" alt="Stage Senior" class="w-auto object-contain min-w-[160px] h-14 sm:h-16 md:h-18" width="240" height="190">
+/assets/stage-log….webp(stagesenior.replit.app)
+7.3 KiB
+6.7 KiB
+This image file is larger than it needs to be (240x190) for its displayed dimensions (71x56). Use responsive images to reduce the image download size.
+6.7 KiB
+ASHA - Assisted Living Association
+<img src="/assets/asha-logo-white-Bk0Cij8d.webp" alt="ASHA - Assisted Living Association" class="w-auto h-10 sm:h-12" width="200" height="137" data-testid="footer-asha-logo">
+/assets/asha-logo….webp(stagesenior.replit.app)
+4.8 KiB
+4.4 KiB
+This image file is larger than it needs to be (200x137) for its displayed dimensions (58x40). Use responsive images to reduce the image download size.
+4.4 KiB
+Use efficient cache lifetimes Est savings of 301 KiB
+A long cache lifetime can speed up repeat visits to your page. Learn more about caching.LCPFCPUnscored
+Request
+Cache TTL
+Transfer Size
+talkfurther.com
+193 KiB
+/famchat.v3.js(vsa.talkfurther.com)
+2h
+171 KiB
+/talkfurther_init.min.js(js.talkfurther.com)
+None
+22 KiB
+openstreetmap.org
+405 KiB
+…213/388.png(b.tile.openstreetmap.org)
+1d 2h 53m 40s
+43 KiB
+…213/389.png(c.tile.openstreetmap.org)
+1d 1h 57m 27s
+36 KiB
+…212/388.png(a.tile.openstreetmap.org)
+1d 1h 33m 46s
+33 KiB
+…213/387.png(a.tile.openstreetmap.org)
+1d 8m 8s
+31 KiB
+…1704/3113.png(c.tile.openstreetmap.org)
+1d 1h 17m 6s
+31 KiB
+…1706/3113.png(b.tile.openstreetmap.org)
+1d 26m 51s
+29 KiB
+…1705/3113.png(a.tile.openstreetmap.org)
+1d 1h 28m 56s
+28 KiB
+…212/387.png(c.tile.openstreetmap.org)
+1d 6m 8s
+27 KiB
+…212/389.png(b.tile.openstreetmap.org)
+1d 1h 37m 58s
+24 KiB
+…1705/3114.png(b.tile.openstreetmap.org)
+1d 57m 30s
+21 KiB
+…214/388.png(c.tile.openstreetmap.org)
+1d 1h 11m 42s
+20 KiB
+…214/389.png(a.tile.openstreetmap.org)
+1d 2h 49m 17s
+17 KiB
+…214/387.png(b.tile.openstreetmap.org)
+1d 1h 7m 19s
+13 KiB
+…1706/3114.png(c.tile.openstreetmap.org)
+7d
+27 KiB
+…1704/3114.png(a.tile.openstreetmap.org)
+7d
+24 KiB
+Google CDN cdn 
+24 KiB
+/wcm/loader.js(www.gstatic.com)
+1h
+3 KiB
+/call-tracking/call-tracking_9.js(www.gstatic.com)
+7d
+21 KiB
+replit.app 1st party
+2 KiB
+…images/df4aa340-bc6f-4b2f-afd7-107376a3091b(stagesenior.replit.app)
+1h
+1 KiB
+…images/df4aa340-bc6f-4b2f-afd7-107376a3091b(stagesenior.replit.app)
+1h
+1 KiB
