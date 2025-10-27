@@ -118,6 +118,10 @@ function CommunityContactCard({ community }: { community: Community }) {
             src={communityImageUrl}
             alt={community.name}
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            loading="lazy"
+            decoding="async"
+            width="800"
+            height="600"
             data-testid={`community-image-${community.id}`}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -436,6 +440,9 @@ const FeatureSection = ({
               alt={highlight.title}
               className="w-full h-full object-cover rounded-2xl shadow-xl"
               loading="lazy"
+              decoding="async"
+              width="800"
+              height="600"
             />
           </AspectRatio>
         )}
@@ -459,6 +466,10 @@ const FloorPlanCard = ({ plan, onClick }: { plan: FloorPlan; onClick: () => void
           src={planImageUrl}
           alt={plan.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          loading="lazy"
+          decoding="async"
+          width="800"
+          height="600"
         />
       </AspectRatio>
       <CardContent className="p-4 md:p-6">
@@ -519,6 +530,10 @@ const CommunityCardLP = ({ community }: { community: Community }) => {
           src={communityImageUrl}
           alt={community.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          loading="lazy"
+          decoding="async"
+          width="1280"
+          height="720"
         />
       </AspectRatio>
       <CardContent className="p-4 md:p-6">
@@ -599,6 +614,9 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: Gallery[],
                             alt={image.alt || `${gallery.title} image ${idx + 1}`}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             loading="lazy"
+                            decoding="async"
+                            width="800"
+                            height="600"
                           />
                         </div>
                       ))}

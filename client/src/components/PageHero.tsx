@@ -105,16 +105,18 @@ export function PageHero({
       {/* Background - Image or Gradient */}
       {finalBackgroundImage ? (
         <>
-          <div
-            className="absolute inset-0 z-0"
-            style={{
-              backgroundImage: `url(${finalBackgroundImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-            }}
-            data-testid={`hero-background-${pagePath.replace(/\//g, "-") || "home"}`}
-          />
+          <div className="absolute inset-0 z-0">
+            <img
+              src={finalBackgroundImage}
+              alt={title || "Hero background"}
+              className="w-full h-full object-cover"
+              fetchPriority="high"
+              decoding="async"
+              width="1920"
+              height="1080"
+              data-testid={`hero-background-${pagePath.replace(/\//g, "-") || "home"}`}
+            />
+          </div>
           {/* Blue Overlay */}
           <div
             className="absolute inset-0 z-10 bg-gradient-to-t from-blue-900/60 to-blue-600/60"
@@ -147,6 +149,10 @@ export function PageHero({
               src={logoUrl}
               alt={logoAlt || "Community logo"}
               className="h-12 md:h-16 w-auto object-contain"
+              loading="lazy"
+              decoding="async"
+              width="200"
+              height="64"
               data-testid="hero-logo"
             />
           </div>
