@@ -240,8 +240,11 @@ const HighlightCard = ({ highlight, imageOnRight = false }: { highlight: { title
             src={resolvedImageUrl || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80"}
             alt={highlight.title}
             className="w-full h-full object-cover"
+            width="800"
+            height="450"
             data-testid={`highlight-${highlight.title.toLowerCase().replace(/\s+/g, '-')}`}
             loading="lazy"
+            decoding="async"
           />
         </AspectRatio>
       </div>
@@ -853,7 +856,10 @@ const FeatureSection = ({
             src={resolvedImageUrl || imageUrl}
             alt={imageAlt}
             className="w-full h-full object-cover rounded-2xl shadow-xl"
+            width="800"
+            height="600"
             loading="lazy"
+            decoding="async"
           />
         </AspectRatio>
       </div>
@@ -2318,6 +2324,10 @@ export default function CommunityDetail() {
                       src={resolvedBrochureUrl || defaultBrochureImage}
                       alt={`${community.name} Brochure`}
                       className="w-full h-full object-cover"
+                      width="900"
+                      height="675"
+                      loading="lazy"
+                      decoding="async"
                       data-testid="brochure-image"
                     />
                   </AspectRatio>
