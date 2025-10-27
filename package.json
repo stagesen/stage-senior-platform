@@ -10,7 +10,9 @@
     "check": "tsc",
     "db:push": "drizzle-kit push",
     "db:sync": "NODE_ENV=development ./scripts/sync-prod-to-dev-pgdump.sh",
-    "import:community-data": "tsx scripts/import-community-data.ts"
+    "import:community-data": "tsx scripts/import-community-data.ts",
+    "import:resource-articles": "tsx scripts/import-resource-articles.ts",
+    "import:resource-articles:prod": "NODE_ENV=production DATABASE_URL=$PROD_DATABASE_URL tsx scripts/import-resource-articles.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
