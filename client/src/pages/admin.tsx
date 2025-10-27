@@ -19,6 +19,7 @@ import PageContentManager from "@/components/PageContentManager";
 import GoogleAdsManager from "@/components/GoogleAdsManager";
 import ExitIntentPopupManager from "@/components/ExitIntentPopupManager";
 import RichTextEditor from "@/components/RichTextEditor";
+import ImageUploader from "@/components/ImageUploader";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -1878,31 +1879,33 @@ function ResourceManagement() {
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="featuredImage">Featured Image (Optional)</Label>
-              <Select
-                value={editingResource.featuredImageId || ""}
-                onValueChange={(value) => setEditingResource({ ...editingResource, featuredImageId: value || undefined })}
-              >
-                <SelectTrigger id="featuredImage" data-testid="select-featured-image">
-                  <SelectValue placeholder="Select featured image" />
-                </SelectTrigger>
-                <SelectContent>
-                  {images.map((image: any) => (
-                    <SelectItem key={image.id} value={image.id}>
-                      <div className="flex items-center gap-2">
-                        {image.thumbnailUrl && (
-                          <img
-                            src={image.thumbnailUrl}
-                            alt={image.title || "Image"}
-                            className="w-8 h-8 object-cover rounded"
-                          />
-                        )}
-                        <span>{image.title || image.alt || "Untitled Image"}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <ImageUploader
+                label="Thumbnail Image (Optional)"
+                value={editingResource.thumbnailImageId || undefined}
+                onChange={(value) => setEditingResource({ ...editingResource, thumbnailImageId: value as string | undefined })}
+                multiple={false}
+                accept="image/*"
+                maxSize={10 * 1024 * 1024}
+                disabled={isUploading}
+              />
+              <p className="text-xs text-muted-foreground">
+                Displayed on resource cards and listings
+              </p>
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <ImageUploader
+                label="Featured Image (Optional)"
+                value={editingResource.featuredImageId || undefined}
+                onChange={(value) => setEditingResource({ ...editingResource, featuredImageId: value as string | undefined })}
+                multiple={false}
+                accept="image/*"
+                maxSize={10 * 1024 * 1024}
+                disabled={isUploading}
+              />
+              <p className="text-xs text-muted-foreground">
+                Displayed at the top of the resource article page
+              </p>
             </div>
 
             <div className="space-y-2 md:col-span-2">

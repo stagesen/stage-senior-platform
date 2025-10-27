@@ -1472,7 +1472,7 @@ export default function DynamicLandingPage() {
         if (communityAmenities.length > 0) {
           navSections.push({ id: 'amenities', label: 'Amenities', icon: CheckCircle });
         }
-        if (primaryCommunity && (primaryCommunity.street || primaryCommunity.lat)) {
+        if (primaryCommunity && (primaryCommunity.street || primaryCommunity.latitude)) {
           navSections.push({ id: 'location', label: 'Location', icon: MapPin });
         }
 
@@ -1953,7 +1953,7 @@ export default function DynamicLandingPage() {
       />
 
       {/* 12. Location & Map - Find and visit us */}
-      {primaryCommunity && (primaryCommunity.street || primaryCommunity.lat) && (
+      {primaryCommunity && (primaryCommunity.street || primaryCommunity.latitude) && (
         <section id="location" className="py-12 md:py-16" data-testid="section-location">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 md:mb-12">
@@ -1975,9 +1975,9 @@ export default function DynamicLandingPage() {
               {/* Map */}
               <div className="order-2 lg:order-1">
                 <Card className="overflow-hidden h-full min-h-[400px]">
-                  {primaryCommunity.lat && primaryCommunity.lng ? (
+                  {primaryCommunity.latitude && primaryCommunity.longitude ? (
                     <iframe
-                      src={`https://www.google.com/maps?q=${primaryCommunity.lat},${primaryCommunity.lng}&hl=es;z=14&output=embed`}
+                      src={`https://www.google.com/maps?q=${primaryCommunity.latitude},${primaryCommunity.longitude}&hl=es;z=14&output=embed`}
                       width="100%"
                       height="100%"
                       style={{ border: 0, minHeight: "400px" }}
@@ -2036,7 +2036,7 @@ export default function DynamicLandingPage() {
                     )}
 
                     {/* Get Directions Button */}
-                    {primaryCommunity.lat && primaryCommunity.lng && (
+                    {primaryCommunity.latitude && primaryCommunity.longitude && (
                       <div className="pt-4">
                         <Button
                           asChild
@@ -2045,7 +2045,7 @@ export default function DynamicLandingPage() {
                           data-testid="button-get-directions"
                         >
                           <a
-                            href={`https://www.google.com/maps/dir/?api=1&destination=${primaryCommunity.lat},${primaryCommunity.lng}`}
+                            href={`https://www.google.com/maps/dir/?api=1&destination=${primaryCommunity.latitude},${primaryCommunity.longitude}`}
                             target="_blank"
                             rel="noopener noreferrer"
                           >

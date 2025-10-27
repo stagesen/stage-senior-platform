@@ -128,9 +128,9 @@ export function generateLocalBusinessSchema(params: SchemaOrgParams): LocalBusin
     }
   }
 
-  // Add geo coordinates
-  const lat = community.lat || community.latitude;
-  const lng = community.lng || community.longitude;
+  // Add geo coordinates (prefer latitude/longitude over lat/lng)
+  const lat = community.latitude || community.lat;
+  const lng = community.longitude || community.lng;
   if (lat && lng) {
     schema.geo = {
       "@type": "GeoCoordinates",
