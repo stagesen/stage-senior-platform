@@ -6,11 +6,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, RequireAuth } from "@/lib/auth";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import ScrollRestoration from "@/components/ScrollRestoration";
 import ScrollToTop from "@/components/ScrollToTop";
 import { ScheduleTourProvider } from "@/hooks/useScheduleTour";
 import ScheduleTourDialog from "@/components/ScheduleTourDialog";
+
+// Lazy load Footer for better initial page load
+const Footer = lazy(() => import("@/components/Footer"));
 
 // Lazy load all page components for code splitting
 const Home = lazy(() => import("@/pages/home"));
@@ -146,7 +148,11 @@ function Router() {
         </Suspense>
       </main>
       {/* Don't show main footer on in-home care page */}
-      {!isInHomeCare && <Footer />}
+      {!isInHomeCare && (
+        <Suspense fallback={<div className="h-96" />}>
+          <Footer />
+        </Suspense>
+      )}
       <ScrollToTop />
     </div>
   );

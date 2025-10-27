@@ -30,6 +30,36 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separate admin into its own chunk (large and rarely used)
+          'admin': [
+            './client/src/pages/admin.tsx'
+          ],
+          // Separate react-query and other heavy dependencies
+          'vendor-query': [
+            '@tanstack/react-query',
+            '@tanstack/query-core'
+          ],
+          // Separate chart/map libraries (heavy)
+          'vendor-maps': [
+            'leaflet',
+            'react-leaflet',
+            '@react-leaflet/core'
+          ],
+          // Separate UI components library
+          'vendor-ui': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-select',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-accordion',
+            '@radix-ui/react-toast'
+          ]
+        }
+      }
+    }
   },
   server: {
     fs: {
