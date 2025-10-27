@@ -110,11 +110,11 @@ export function PageHero({
               src={finalBackgroundImage}
               alt={title || "Hero background"}
               className="w-full h-full object-cover"
-              fetchPriority="high"
               decoding="async"
-              width="1920"
-              height="1080"
+              width={1920}
+              height={1080}
               data-testid={`hero-background-${pagePath.replace(/\//g, "-") || "home"}`}
+              {...({ fetchpriority: "high" } as any)}
             />
           </div>
           {/* Blue Overlay */}

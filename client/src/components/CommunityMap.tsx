@@ -43,14 +43,14 @@ export default function CommunityMap({
   useEffect(() => {
     if (!mapRef.current) return;
 
-    // Initialize map centered on Colorado with zoom disabled
+    // Initialize map centered on Denver metro area with a broader view
     const map = L.map(mapRef.current, {
       scrollWheelZoom: false,
       doubleClickZoom: false,
       touchZoom: false,
       zoomControl: false,
       dragging: true,
-    }).setView([39.6992, -104.9375], 11);
+    }).setView([39.7392, -104.9903], 10);
     mapInstanceRef.current = map;
 
     // Add OpenStreetMap tiles
@@ -185,10 +185,36 @@ export default function CommunityMap({
 
     markersRef.current = markers;
 
-    // Fit map to show all markers only if no community is selected
-    if (markers.length > 0 && !selectedCommunityId) {
-      const group = new L.FeatureGroup(markers);
-      mapInstanceRef.current.fitBounds(group.getBounds().pad(0.1));
+    // Fit map to show all markers with appropriate zoom
+    if (markers.length > 0) {
+      if (markers.length === 1) {
+        // Single community: center on it with appropriate zoom level
+        const marker = markers[0];
+        const latlng = marker.getLatLng();
+        mapInstanceRef.current.setView(latlng, 13);
+        
+        // Open popup for single community if selected
+        if (selectedCommunityId && showPopups) {
+          marker.openPopup();
+        }
+      } else {
+        // Multiple communities: fit bounds to show all with padding
+        const group = new L.FeatureGroup(markers);
+        mapInstanceRef.current.fitBounds(group.getBounds(), {
+          padding: [50, 50],
+          maxZoom: 12
+        });
+        
+        // If a community is selected, ensure it's visible and highlighted
+        if (selectedCommunityId && showPopups) {
+          const selectedMarker = markers.find((_, idx) => 
+            validCommunities[idx]?.id === selectedCommunityId
+          );
+          if (selectedMarker) {
+            selectedMarker.openPopup();
+          }
+        }
+      }
     }
   }, [communities, selectedCommunityId, onCommunitySelect, showPopups]);
 
