@@ -1648,6 +1648,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       email: "",
       talkFurtherId: "",
       videoUrl: "",
+      propertyMapUrl: "",
       heroImageUrl: "",
       logoImageId: "",
       contactImageId: "",
@@ -2651,6 +2652,22 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     </FormControl>
                     <FormDescription>
                       Optional: Add a YouTube video URL to display a "Watch Video" button on the community page.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
+                name="propertyMapUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Property Map URL</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value || ""} placeholder="https://sightmap.com/embed/..." data-testid="input-community-property-map-url" />
+                    </FormControl>
+                    <FormDescription>
+                      Optional: Add an embed URL for the property map to display below floor plans on the community page.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

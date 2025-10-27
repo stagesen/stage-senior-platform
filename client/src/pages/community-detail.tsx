@@ -2384,6 +2384,32 @@ export default function CommunityDetail() {
               </section>
             )}
 
+            {/* Property Map Section */}
+            {community.propertyMapUrl && (
+              <section id="property-map" className="scroll-mt-24">
+                <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Property Map</h2>
+                </ScaleHeader>
+                <FadeIn direction="up" delay={0.1}>
+                  <p className="text-lg text-gray-600 mb-8">
+                    Explore our community layout and available units with our interactive property map.
+                  </p>
+                </FadeIn>
+                <FadeIn direction="up" delay={0.2}>
+                  <div className="relative w-full rounded-2xl overflow-hidden shadow-xl bg-gray-50" style={{ paddingBottom: '56.25%' }}>
+                    <iframe
+                      src={community.propertyMapUrl}
+                      title="Property Map"
+                      className="absolute top-0 left-0 w-full h-full border-0"
+                      loading="lazy"
+                      allowFullScreen
+                      data-testid="property-map-iframe"
+                    />
+                  </div>
+                </FadeIn>
+              </section>
+            )}
+
             {/* Experience Our Community Section */}
             <section>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Experience Our Community</h2>

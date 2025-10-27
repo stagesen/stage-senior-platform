@@ -109,6 +109,7 @@ export const communities = pgTable("communities", {
   noObligation: boolean("no_obligation").default(true),
   talkFurtherId: text("talk_further_id"),
   videoUrl: text("video_url"),
+  propertyMapUrl: text("property_map_url"),
   cluster: varchar("cluster", { length: 100 }), // Geographic cluster for landing page recommendations: 'littleton', 'arvada', 'golden'
   // Community credentials and verified stats
   yearEstablished: integer("year_established"),
