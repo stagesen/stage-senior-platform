@@ -3572,16 +3572,35 @@ Disallow: /admin/
       if (!asset) {
         return res.status(404).json({ message: "Content asset not found" });
       }
-      
+
       // Only return active assets to public
       if (!asset.active) {
         return res.status(404).json({ message: "Content asset not found" });
       }
-      
+
       res.json(asset);
     } catch (error) {
       console.error("Error fetching public content asset:", error);
       res.status(500).json({ message: "Failed to fetch content asset" });
+    }
+  });
+
+  // GET /api/public/page-content-sections - Get page content sections (public)
+  app.get("/api/public/page-content-sections", async (req, res) => {
+    try {
+      const pagePath = req.query.pagePath as string | undefined;
+      const landingPageTemplateId = req.query.landingPageTemplateId as string | undefined;
+
+      const sections = await storage.getPageContentSections({
+        pagePath,
+        landingPageTemplateId,
+        activeOnly: true, // Only return active sections to public
+      });
+
+      res.json(sections);
+    } catch (error) {
+      console.error("Error fetching public page content sections:", error);
+      res.status(500).json({ message: "Failed to fetch page content sections" });
     }
   });
 

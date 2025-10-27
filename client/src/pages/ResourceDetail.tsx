@@ -13,7 +13,8 @@ import { setMetaTags, getCanonicalUrl, sanitizeMetaText } from "@/lib/metaTags";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { getUtmParams, getClickIdsFromUrl, generateEventId } from "@/lib/tracking";
-import { ArrowLeft, Download, User, FileText, BookOpen } from "lucide-react";
+import { ArrowLeft, Download, User, FileText, BookOpen, Calendar, Phone } from "lucide-react";
+import { useScheduleTour } from "@/hooks/useScheduleTour";
 import type { ContentAsset, TeamMember } from "@shared/schema";
 
 interface DownloadFormData {
@@ -30,6 +31,7 @@ export default function ResourceDetail() {
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const [formData, setFormData] = useState<DownloadFormData>({ email: "" });
   const { toast } = useToast();
+  const { openScheduleTour } = useScheduleTour();
 
   // Fetch resource by slug
   const { data: resource, isLoading: resourceLoading } = useQuery<ContentAsset>({
@@ -266,54 +268,97 @@ export default function ResourceDetail() {
         </div>
       </section>
 
-      {/* Download CTA Section */}
-      {resource.fileUrl && featuredImageUrl && (
+      {/* CTA Section - Download or Contact */}
+      {featuredImageUrl && (
         <section className="py-12 lg:py-16 bg-background">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <Card className="overflow-hidden shadow-lg border border-gray-200">
               <div className="grid md:grid-cols-2 gap-0">
                 {/* Left side - Image with gradient overlay and icon */}
                 <div className="relative h-64 md:h-auto min-h-[400px]">
-                  <img 
-                    src={featuredImageUrl} 
+                  <img
+                    src={featuredImageUrl}
                     alt={resource.title}
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-primary/70 to-primary/60" />
-                  
-                  {/* PDF Book Icon */}
+
+                  {/* Icon */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-8 border-2 border-white/30">
-                      <BookOpen className="w-20 h-20 text-white" strokeWidth={1.5} />
+                      {resource.fileUrl ? (
+                        <BookOpen className="w-20 h-20 text-white" strokeWidth={1.5} />
+                      ) : (
+                        <Calendar className="w-20 h-20 text-white" strokeWidth={1.5} />
+                      )}
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Right side - Content */}
                 <div className="p-8 lg:p-12 flex flex-col justify-center bg-white">
-                  <p className="text-primary font-semibold mb-2 uppercase tracking-wide text-sm">
-                    Need More Information?
-                  </p>
-                  <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3" data-testid="download-cta-title">
-                    Get the Complete Guide
-                  </h2>
-                  <p className="text-base text-gray-600 mb-6" data-testid="download-cta-description">
-                    Access the full PDF with detailed checklists, worksheets, and step-by-step planning tools you can use right away.
-                  </p>
-                  <Button 
-                    size="lg"
-                    onClick={() => setShowDownloadDialog(true)}
-                    className="w-full md:w-auto text-lg px-8 py-6 h-auto"
-                    data-testid="button-download-pdf"
-                  >
-                    <Download className="w-5 h-5 mr-2" />
-                    {resource.ctaText || "Download Full Guide"}
-                  </Button>
-                  {resource.downloadCount && resource.downloadCount > 0 && (
-                    <p className="mt-4 text-sm text-gray-500" data-testid="download-count">
-                      Downloaded by {resource.downloadCount.toLocaleString()}+ families
-                    </p>
+                  {resource.fileUrl ? (
+                    <>
+                      <p className="text-primary font-semibold mb-2 uppercase tracking-wide text-sm">
+                        Need More Information?
+                      </p>
+                      <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3" data-testid="download-cta-title">
+                        Get the Complete Guide
+                      </h2>
+                      <p className="text-base text-gray-600 mb-6" data-testid="download-cta-description">
+                        Access the full PDF with detailed checklists, worksheets, and step-by-step planning tools you can use right away.
+                      </p>
+                      <Button
+                        size="lg"
+                        onClick={() => setShowDownloadDialog(true)}
+                        className="w-full md:w-auto text-lg px-8 py-6 h-auto"
+                        data-testid="button-download-pdf"
+                      >
+                        <Download className="w-5 h-5 mr-2" />
+                        {resource.ctaText || "Download Full Guide"}
+                      </Button>
+                      {resource.downloadCount && resource.downloadCount > 0 && (
+                        <p className="mt-4 text-sm text-gray-500" data-testid="download-count">
+                          Downloaded by {resource.downloadCount.toLocaleString()}+ families
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-primary font-semibold mb-2 uppercase tracking-wide text-sm">
+                        Ready to Learn More?
+                      </p>
+                      <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3" data-testid="contact-cta-title">
+                        Let's Find the Right Community for You
+                      </h2>
+                      <p className="text-base text-gray-600 mb-6" data-testid="contact-cta-description">
+                        Our senior living experts are here to answer your questions and help you explore your options.
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <Button
+                          size="lg"
+                          onClick={() => openScheduleTour()}
+                          className="text-base px-6 py-5 h-auto talkfurther-schedule-tour"
+                          data-testid="button-schedule-tour"
+                        >
+                          <Calendar className="w-5 h-5 mr-2" />
+                          Schedule a Tour
+                        </Button>
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          asChild
+                          className="text-base px-6 py-5 h-auto border-2"
+                          data-testid="button-call-now"
+                        >
+                          <a href="tel:+17202184663">
+                            <Phone className="w-5 h-5 mr-2" />
+                            (720) 218-4663
+                          </a>
+                        </Button>
+                      </div>
+                    </>
                   )}
                 </div>
               </div>
