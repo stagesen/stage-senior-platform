@@ -538,6 +538,9 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: any[], onG
                             alt={image.alt || `${gallery.title} image ${idx + 1}`}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             loading="lazy"
+                            decoding="async"
+                            width="800"
+                            height="600"
                           />
                         </div>
                       ))}
@@ -992,6 +995,9 @@ const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: an
                 alt="Comfortable senior living apartment"
                 className="w-full h-full object-cover"
                 loading="lazy"
+                decoding="async"
+                width="800"
+                height="600"
               />
             </div>
             <CardHeader>
@@ -1047,6 +1053,9 @@ const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: an
                     alt={primaryContact.name}
                     className="w-full h-full object-cover"
                     loading="lazy"
+                    decoding="async"
+                    width="400"
+                    height="400"
                   />
                 ) : (
                   <User className="w-24 h-24 text-primary/40" />
@@ -1095,6 +1104,9 @@ const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: an
                 alt="Friendly staff ready to help"
                 className="w-full h-full object-cover"
                 loading="lazy"
+                decoding="async"
+                width="800"
+                height="600"
               />
             </div>
             <CardHeader>
@@ -1144,6 +1156,9 @@ const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: an
                 alt="Community brochure preview"
                 className="w-full h-full object-cover"
                 loading="lazy"
+                decoding="async"
+                width="800"
+                height="600"
               />
             </div>
             <CardHeader>
@@ -1448,7 +1463,7 @@ export default function CommunityDetail() {
     }
 
     // Inject Schema.org JSON-LD
-    let schemaScript = document.getElementById('community-schema');
+    let schemaScript = document.getElementById('community-schema') as HTMLScriptElement | null;
     if (!schemaScript) {
       schemaScript = document.createElement('script');
       schemaScript.id = 'community-schema';

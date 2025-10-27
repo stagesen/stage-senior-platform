@@ -79,6 +79,8 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
                   className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                   decoding="async"
+                  width="800"
+                  height="600"
                   data-testid={`image-${community.slug}`}
                 />
                 
@@ -89,6 +91,9 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
                       src={logoImageUrl}
                       alt={`${community.name} logo`}
                       className="h-12 w-auto object-contain"
+                      width="200"
+                      height="48"
+                      loading="lazy"
                       data-testid={`logo-${community.slug}`}
                     />
                   </div>
