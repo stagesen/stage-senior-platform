@@ -17,6 +17,14 @@ The backend is an Express.js application built with Node.js and TypeScript, adhe
 ### Performance Optimizations
 The platform implements route-based code splitting using `React.lazy()` and `Suspense` for all page components to reduce initial bundle size. Lightweight API endpoints are designed to eliminate over-fetching, providing minimal data for specific UI components (e.g., `/api/communities/minimal`, `/api/communities/cards`, `/api/communities/dropdown`). Server-side filtering is utilized for community listings to optimize data retrieval.
 
+**Image Performance (2025 Best Practices):**
+- All hero images use `fetchpriority="high"` for optimal Largest Contentful Paint (LCP)
+- Hero components (PageHero, ParallaxHero) use `<img>` tags instead of CSS backgrounds for better browser optimization
+- All images have explicit `width` and `height` attributes to prevent Cumulative Layout Shift (CLS)
+- Below-the-fold images use `loading="lazy"` for deferred loading
+- All images include `decoding="async"` for non-blocking rendering
+- Optimizations applied across: community detail pages, landing pages, galleries, floor plans, and team member profiles
+
 ### Data Storage Solutions
 PostgreSQL is the primary database, hosted on Neon for serverless capabilities. Drizzle ORM is used for type-safe database interactions and schema management. Zod schemas are shared between client and server for consistent data validation. The database schema supports complex relationships across various content types like communities, posts, events, FAQs, and tour requests.
 
