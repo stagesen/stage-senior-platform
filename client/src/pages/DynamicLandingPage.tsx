@@ -687,6 +687,10 @@ const GalleryOverview = ({ galleries, onGallerySelect }: { galleries: Gallery[],
                       src={coverImage.url}
                       alt={coverImage.alt || `${gallery.title} gallery`}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                      decoding="async"
+                      width="800"
+                      height="600"
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
