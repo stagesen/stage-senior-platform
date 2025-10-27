@@ -1,6 +1,6 @@
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -228,7 +228,7 @@ const getNeighborhoodInfo = (communitySlug: string) => {
 };
 
 // Local subcomponent: Highlight Card
-const HighlightCard = ({ highlight, imageOnRight = false }: { highlight: { title: string; description: string; imageUrl?: string; imageId?: string; ctaLabel?: string; ctaHref?: string }; imageOnRight?: boolean }) => {
+const HighlightCard = memo(({ highlight, imageOnRight = false }: { highlight: { title: string; description: string; imageUrl?: string; imageId?: string; ctaLabel?: string; ctaHref?: string }; imageOnRight?: boolean }) => {
   // Pass imageId directly - useResolveImageUrl handles the API path internally
   const resolvedImageUrl = useResolveImageUrl(highlight.imageId || highlight.imageUrl);
 
@@ -274,10 +274,11 @@ const HighlightCard = ({ highlight, imageOnRight = false }: { highlight: { title
       </CardContent>
     </Card>
   );
-};
+});
+HighlightCard.displayName = 'HighlightCard';
 
 // Local subcomponent: Floor Plan Card
-const FloorPlanCard = ({ plan, onOpen }: { plan: any, onOpen: (plan: any) => void }) => {
+const FloorPlanCard = memo(({ plan, onOpen }: { plan: any, onOpen: (plan: any) => void }) => {
   const resolvedImageUrl = useResolveImageUrl(plan.imageId || plan.imageUrl);
 
   // Fallback: if imageId resolution failed, try imageUrl directly as a UUID
@@ -343,7 +344,8 @@ const FloorPlanCard = ({ plan, onOpen }: { plan: any, onOpen: (plan: any) => voi
       </CardContent>
     </Card>
   );
-};
+});
+FloorPlanCard.displayName = 'FloorPlanCard';
 
 // Helper function to extract care type from floor plan name
 const extractCareType = (planName: string): string => {
@@ -1241,6 +1243,7 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
               src={finalHeroImageUrl}
               alt="Community background"
               className="w-full h-full object-cover"
+              fetchpriority="high"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-blue-900/60 via-blue-800/60 to-blue-600/60" />
           </>
@@ -2200,6 +2203,7 @@ export default function CommunityDetail() {
                         src={finalHeroImageUrl}
                         alt={`${community.name} - Community View`}
                         className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
                       />
                     </AspectRatio>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

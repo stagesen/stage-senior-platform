@@ -27,7 +27,8 @@
       "Bash(pdfinfo:*)",
       "Bash(pkill:*)",
       "Bash(lsof:*)",
-      "Bash(xargs kill:*)"
+      "Bash(xargs kill:*)",
+      "WebFetch(domain:stagesenior.replit.app)"
     ],
     "deny": [],
     "ask": []
