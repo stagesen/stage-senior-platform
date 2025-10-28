@@ -49,7 +49,11 @@ export default defineConfig({
             '@react-leaflet/core'
           ],
           // Separate UI components library
+          // IMPORTANT: React must be in this chunk since Radix UI components use React.forwardRef
+          // and this chunk is preloaded before the main bundle
           'vendor-ui': [
+            'react',
+            'react-dom',
             '@radix-ui/react-dialog',
             '@radix-ui/react-dropdown-menu',
             '@radix-ui/react-select',
