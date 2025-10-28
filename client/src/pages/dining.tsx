@@ -11,6 +11,12 @@ export default function Dining() {
   const searchParams = new URLSearchParams(window.location.search);
   const fromCommunity = searchParams.get('from');
 
+  // Fetch community data when coming from a specific community
+  const { data: communityData } = useQuery<any>({
+    queryKey: [`/api/communities/${fromCommunity}/full`],
+    enabled: !!fromCommunity,
+  });
+
   // Fetch page content sections
   const { data: sections = [], isLoading } = useQuery<PageContentSection[]>({
     queryKey: ["/api/page-content", { pagePath: "/dining", active: true }],
@@ -23,6 +29,9 @@ export default function Dining() {
       );
     }
   });
+
+  // Use community-specific image if available
+  const heroBackgroundImage = communityData?.community?.privateDiningImageId || "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=2000&q=80";
 
   useEffect(() => {
     document.title = "Dining & Restaurant Services | Senior Living Communities";
@@ -47,7 +56,7 @@ export default function Dining() {
         pagePath="/dining"
         defaultTitle="Exceptional Dining Experiences"
         defaultSubtitle="Restaurant-Style Service • Fresh Daily • Social Connection"
-        defaultBackgroundImage="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=2000&q=80"
+        defaultBackgroundImage={heroBackgroundImage}
       />
 
       {/* Breadcrumb Navigation */}

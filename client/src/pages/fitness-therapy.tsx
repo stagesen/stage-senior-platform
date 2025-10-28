@@ -11,6 +11,12 @@ export default function FitnessTherapy() {
   const searchParams = new URLSearchParams(window.location.search);
   const fromCommunity = searchParams.get('from');
 
+  // Fetch community data when coming from a specific community
+  const { data: communityData } = useQuery<any>({
+    queryKey: [`/api/communities/${fromCommunity}/full`],
+    enabled: !!fromCommunity,
+  });
+
   // Fetch page content sections
   const { data: sections = [], isLoading } = useQuery<PageContentSection[]>({
     queryKey: ["/api/page-content", { pagePath: "/fitness-therapy", active: true }],
@@ -23,6 +29,9 @@ export default function FitnessTherapy() {
       );
     }
   });
+
+  // Use community-specific image if available
+  const heroBackgroundImage = communityData?.community?.fitnessImageId || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=2000&q=80";
 
   useEffect(() => {
     document.title = "Fitness & Therapy Center | Senior Living Communities";
@@ -45,7 +54,7 @@ export default function FitnessTherapy() {
         pagePath="/fitness-therapy"
         defaultTitle="Fitness & Therapy Center"
         defaultSubtitle="Your Journey to Wellness Starts Here"
-        defaultBackgroundImage="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=2000&q=80"
+        defaultBackgroundImage={heroBackgroundImage}
       />
 
       {/* Breadcrumb Navigation */}

@@ -7,6 +7,15 @@ import PageSectionRenderer from "@/components/PageSectionRenderer";
 import type { PageContentSection } from "@shared/schema";
 
 export default function CourtyardsPatios() {
+  const searchParams = new URLSearchParams(window.location.search);
+  const fromCommunity = searchParams.get('from');
+
+  // Fetch community data when coming from a specific community
+  const { data: communityData } = useQuery<any>({
+    queryKey: [`/api/communities/${fromCommunity}/full`],
+    enabled: !!fromCommunity,
+  });
+
   // Fetch page content sections
   const { data: sections = [], isLoading } = useQuery<PageContentSection[]>({
     queryKey: ["/api/page-content", { pagePath: "/courtyards-patios", active: true }],
@@ -19,6 +28,9 @@ export default function CourtyardsPatios() {
       );
     }
   });
+
+  // Use community-specific image if available
+  const heroBackgroundImage = communityData?.community?.courtyardsImageId || "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=2000&q=80";
 
   useEffect(() => {
     document.title = "Courtyards & Outdoor Spaces | Senior Living Communities";
@@ -41,7 +53,7 @@ export default function CourtyardsPatios() {
         pagePath="/courtyards-patios"
         defaultTitle="Courtyards & Outdoor Spaces"
         defaultSubtitle="Connect with Nature in Beautiful, Safe Environments"
-        defaultBackgroundImage="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=2000&q=80"
+        defaultBackgroundImage={heroBackgroundImage}
       />
 
       {/* Breadcrumb Navigation */}

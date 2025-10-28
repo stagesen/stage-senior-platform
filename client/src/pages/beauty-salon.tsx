@@ -7,6 +7,15 @@ import PageSectionRenderer from "@/components/PageSectionRenderer";
 import type { PageContentSection } from "@shared/schema";
 
 export default function BeautySalon() {
+  const searchParams = new URLSearchParams(window.location.search);
+  const fromCommunity = searchParams.get('from');
+
+  // Fetch community data when coming from a specific community
+  const { data: communityData } = useQuery<any>({
+    queryKey: [`/api/communities/${fromCommunity}/full`],
+    enabled: !!fromCommunity,
+  });
+
   // Fetch page content sections
   const { data: sections = [], isLoading } = useQuery<PageContentSection[]>({
     queryKey: ["/api/page-content", { pagePath: "/beauty-salon", active: true }],
@@ -19,6 +28,9 @@ export default function BeautySalon() {
       );
     }
   });
+
+  // Use community-specific image if available
+  const heroBackgroundImage = communityData?.community?.salonImageId || "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=2000&q=80";
 
   useEffect(() => {
     document.title = "Beauty Salon & Barber Services | Senior Living Communities";
@@ -41,7 +53,7 @@ export default function BeautySalon() {
         pagePath="/beauty-salon"
         defaultTitle="Beauty Salon & Barber Services"
         defaultSubtitle="Look Your Best, Feel Your Best"
-        defaultBackgroundImage="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=2000&q=80"
+        defaultBackgroundImage={heroBackgroundImage}
       />
 
       {/* Breadcrumb Navigation */}
