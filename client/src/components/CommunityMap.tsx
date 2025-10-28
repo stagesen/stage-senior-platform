@@ -44,6 +44,14 @@ export default function CommunityMap({
   useEffect(() => {
     if (!mapRef.current) return;
 
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+    if (!apiKey) {
+      console.error('CommunityMap: Google Maps API key is missing');
+      return;
+    }
+
+    // Function to initialize the map once Google Maps is loaded
     const initializeMap = () => {
       if (mapRef.current && window.google && window.google.maps && !mapInstanceRef.current) {
         const map = new window.google.maps.Map(mapRef.current, {
@@ -61,44 +69,62 @@ export default function CommunityMap({
       }
     };
 
-    // Check if Google Maps API is already loaded
+    // Check if Google Maps is already loaded
     if (window.google && window.google.maps) {
       initializeMap();
       return;
     }
 
-    // Check if script is already loading
-    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+    // Load Google Maps script dynamically
+    const existingScript = document.getElementById('google-maps-script');
     
     if (existingScript) {
-      // Script exists but API not ready yet - wait for it
-      const checkGoogleLoaded = setInterval(() => {
+      // Script is already loading or loaded, wait for it
+      const checkGoogleMaps = setInterval(() => {
         if (window.google && window.google.maps) {
-          clearInterval(checkGoogleLoaded);
+          clearInterval(checkGoogleMaps);
           initializeMap();
         }
       }, 100);
-      
-      return () => clearInterval(checkGoogleLoaded);
+
+      return () => clearInterval(checkGoogleMaps);
     }
 
-    // Load the Google Maps API using dynamic script loading
+    // Create and load the script
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&libraries=places&v=weekly`;
+    script.id = 'google-maps-script';
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
     script.async = true;
     script.defer = true;
-    
-    script.onload = initializeMap;
-    
+
+    script.onload = () => {
+      // Wait for google.maps to be fully available
+      const checkGoogleMaps = setInterval(() => {
+        if (window.google && window.google.maps) {
+          clearInterval(checkGoogleMaps);
+          initializeMap();
+        }
+      }, 50);
+
+      // Timeout after 5 seconds
+      setTimeout(() => clearInterval(checkGoogleMaps), 5000);
+    };
+
+    script.onerror = () => {
+      console.error('CommunityMap: Failed to load Google Maps script');
+    };
+
     document.head.appendChild(script);
 
     return () => {
-      // Cleanup
+      // Cleanup markers and info windows
       markersRef.current.forEach(marker => marker.setMap(null));
       infoWindowsRef.current.forEach(infoWindow => infoWindow.close());
       markersRef.current = [];
       infoWindowsRef.current = [];
-      mapInstanceRef.current = null;
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current = null;
+      }
     };
   }, []);
 
