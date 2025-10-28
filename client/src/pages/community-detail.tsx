@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
@@ -1350,6 +1351,131 @@ const extractYouTubeVideoId = (url: string): string | null => {
   return null;
 };
 
+// Component to display amenities in rows with images on the left
+interface AmenitiesRowListProps {
+  amenities: Array<Amenity & { communityImageId?: string | null; imageUrl?: string | null }>;
+  communitySlug: string;
+}
+
+const AmenitiesRowList = ({ amenities, communitySlug }: AmenitiesRowListProps) => {
+  const [showAll, setShowAll] = useState(false);
+  const INITIAL_DISPLAY_COUNT = 5;
+  
+  const displayedAmenities = showAll ? amenities : amenities.slice(0, INITIAL_DISPLAY_COUNT);
+  const hasMore = amenities.length > INITIAL_DISPLAY_COUNT;
+  
+  const getAmenityIcon = (name: string) => {
+    const lowerName = name.toLowerCase();
+    if (lowerName.includes('wifi') || lowerName.includes('internet')) return Wifi;
+    if (lowerName.includes('parking') || lowerName.includes('garage')) return Car;
+    if (lowerName.includes('dining') || lowerName.includes('restaurant') || lowerName.includes('meal')) return Coffee;
+    if (lowerName.includes('fitness') || lowerName.includes('exercise') || lowerName.includes('gym') || lowerName.includes('therapy')) return Activity;
+    if (lowerName.includes('library') || lowerName.includes('reading')) return BookOpen;
+    if (lowerName.includes('salon') || lowerName.includes('barber') || lowerName.includes('beauty')) return Sparkles;
+    if (lowerName.includes('medical') || lowerName.includes('health') || lowerName.includes('care') || lowerName.includes('nurse')) return Heart;
+    if (lowerName.includes('garden') || lowerName.includes('courtyard') || lowerName.includes('patio') || lowerName.includes('outdoor')) return Trees;
+    return Home;
+  };
+
+  const getAmenityLink = (name: string): string | null => {
+    const lowerName = name.toLowerCase();
+    if ((lowerName.includes('restaurant') && lowerName.includes('dining')) ||
+        (lowerName.includes('private') && lowerName.includes('family') && lowerName.includes('dining'))) {
+      return `/dining?from=${communitySlug}`;
+    }
+    if (lowerName.includes('beauty salon') || lowerName.includes('barber')) {
+      return `/beauty-salon?from=${communitySlug}`;
+    }
+    if (lowerName.includes('fitness') || lowerName.includes('therapy')) {
+      return `/fitness-therapy?from=${communitySlug}`;
+    }
+    if (lowerName.includes('courtyard') || lowerName.includes('patio') || 
+        lowerName.includes('garden') || lowerName.includes('outdoor')) {
+      return `/courtyards-patios?from=${communitySlug}`;
+    }
+    return null;
+  };
+
+  return (
+    <div className="space-y-3">
+      {/* Always visible amenities */}
+      {displayedAmenities.map((amenity) => {
+        const imageToResolve = amenity.communityImageId || amenity.imageUrl;
+        const imageUrl = useResolveImageUrl(imageToResolve);
+        const IconComponent = getAmenityIcon(amenity.name);
+        const link = getAmenityLink(amenity.name);
+
+        const rowContent = (
+          <div 
+            className={cn(
+              "flex items-center gap-4 p-4 bg-white rounded-lg hover:shadow-md transition-all duration-200",
+              link && "cursor-pointer group"
+            )}
+          >
+            {/* Image on the left */}
+            {imageUrl && (
+              <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden">
+                <img
+                  src={imageUrl}
+                  alt={amenity.name}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  loading="lazy"
+                />
+              </div>
+            )}
+            
+            {/* Icon and text content */}
+            <div className="flex items-center gap-3 flex-1">
+              <IconComponent className="w-6 h-6 text-primary flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900">{amenity.name}</h3>
+                {amenity.description && (
+                  <p className="text-sm text-gray-600 mt-1">{amenity.description}</p>
+                )}
+              </div>
+              {link && (
+                <ChevronRight className="w-5 h-5 text-primary group-hover:translate-x-1 transition-transform flex-shrink-0" />
+              )}
+            </div>
+          </div>
+        );
+
+        if (link) {
+          return (
+            <Link key={amenity.id} href={link} data-testid={`amenity-row-${amenity.slug}`}>
+              {rowContent}
+            </Link>
+          );
+        }
+
+        return <div key={amenity.id} data-testid={`amenity-row-${amenity.slug}`}>{rowContent}</div>;
+      })}
+
+      {/* Collapsible section for additional amenities */}
+      {hasMore && (
+        <Collapsible open={showAll} onOpenChange={setShowAll}>
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full mt-2"
+              data-testid="button-toggle-amenities"
+            >
+              {showAll ? (
+                <>Show Less</>
+              ) : (
+                <>View {amenities.length - INITIAL_DISPLAY_COUNT} More Amenities</>
+              )}
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-3 mt-3">
+            {/* This is handled by the displayedAmenities slice above */}
+          </CollapsibleContent>
+        </Collapsible>
+      )}
+    </div>
+  );
+};
+
 export default function CommunityDetail() {
   const { openScheduleTour } = useScheduleTour();
   const params = useParams();
@@ -2122,80 +2248,7 @@ export default function CommunityDetail() {
                       Step into a lifestyle where every day feels like a retreat. Our community is packed with thoughtful amenities designed to make life easier and more enjoyable.
                     </p>
                     {amenitiesData.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {amenitiesData.map((amenity) => {
-                        const AmenityCard = ({ amenity: a }: { amenity: typeof amenity }) => {
-                          // Use community-specific image if available, otherwise use default amenity image
-                          const imageToResolve = a.communityImageId || a.imageUrl;
-                          const imageUrl = useResolveImageUrl(imageToResolve);
-                          
-                          const getAmenityLink = (name: string): string | null => {
-                            const lowerName = name.toLowerCase();
-                            if ((lowerName.includes('restaurant') && lowerName.includes('dining')) ||
-                                (lowerName.includes('private') && lowerName.includes('family') && lowerName.includes('dining'))) {
-                              return `/dining?from=${community.slug}`;
-                            }
-                            if (lowerName.includes('beauty salon') || lowerName.includes('barber')) {
-                              return `/beauty-salon?from=${community.slug}`;
-                            }
-                            if (lowerName.includes('fitness') || lowerName.includes('therapy')) {
-                              return `/fitness-therapy?from=${community.slug}`;
-                            }
-                            if (lowerName.includes('courtyard') || lowerName.includes('patio') || 
-                                lowerName.includes('garden') || lowerName.includes('outdoor')) {
-                              return `/courtyards-patios?from=${community.slug}`;
-                            }
-                            return null;
-                          };
-                          
-                          const link = getAmenityLink(a.name);
-                          const IconComponent = getAmenityIcon(a.name);
-                          
-                          const AmenityCardContent = () => (
-                            <Card className={cn(
-                              "overflow-hidden hover:shadow-lg transition-all duration-300",
-                              link && "cursor-pointer group"
-                            )}>
-                              {imageUrl && (
-                                <div className="relative h-48 w-full overflow-hidden">
-                                  <img
-                                    src={imageUrl}
-                                    alt={a.name}
-                                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                                    loading="lazy"
-                                  />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                                </div>
-                              )}
-                              <CardContent className="p-4">
-                                <div className="flex items-center gap-3">
-                                  <IconComponent className="w-6 h-6 text-primary flex-shrink-0" />
-                                  <h3 className="font-semibold text-lg">{a.name}</h3>
-                                  {link && (
-                                    <ChevronRight className="w-4 h-4 ml-auto text-primary group-hover:translate-x-1 transition-transform" />
-                                  )}
-                                </div>
-                                {a.description && (
-                                  <p className="text-sm text-gray-600 mt-2">{a.description}</p>
-                                )}
-                              </CardContent>
-                            </Card>
-                          );
-                          
-                          return link ? (
-                            <Link href={link} data-testid={`amenity-card-${a.slug}`}>
-                              <AmenityCardContent />
-                            </Link>
-                          ) : (
-                            <div data-testid={`amenity-card-${a.slug}`}>
-                              <AmenityCardContent />
-                            </div>
-                          );
-                        };
-                        
-                        return <AmenityCard key={amenity.id} amenity={amenity} />;
-                      })}
-                    </div>
+                      <AmenitiesRowList amenities={amenitiesData} communitySlug={community.slug} />
                     ) : (
                       <div className="flex flex-col gap-3">
                         {community.amenities && community.amenities.length > 0 && community.amenities.map((amenityName, index) => {
