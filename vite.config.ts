@@ -33,6 +33,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
+          // CRITICAL: React must be in its own chunk that loads first
+          // This prevents "Cannot read properties of undefined (reading 'forwardRef')" errors
+          'vendor-react': [
+            'react',
+            'react-dom',
+            'react/jsx-runtime'
+          ],
           // Separate admin into its own chunk (large and rarely used)
           'admin': [
             './client/src/pages/admin.tsx'
@@ -49,11 +56,7 @@ export default defineConfig({
             '@react-leaflet/core'
           ],
           // Separate UI components library
-          // IMPORTANT: React must be in this chunk since Radix UI components use React.forwardRef
-          // and this chunk is preloaded before the main bundle
           'vendor-ui': [
-            'react',
-            'react-dom',
             '@radix-ui/react-dialog',
             '@radix-ui/react-dropdown-menu',
             '@radix-ui/react-select',
