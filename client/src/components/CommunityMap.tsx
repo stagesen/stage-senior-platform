@@ -123,9 +123,12 @@ export default function CommunityMap({
     // Debug logging
     console.log('CommunityMap: Total communities:', communities.length);
     console.log('CommunityMap: Valid communities with coordinates:', validCommunities.length);
-    if (validCommunities.length === 0 && communities.length > 0) {
-      console.log('CommunityMap: Sample community data:', communities[0]);
-    }
+    console.log('CommunityMap: Communities data:', communities.map(c => ({ 
+      id: c.id, 
+      name: c.name, 
+      lat: c.latitude, 
+      lng: c.longitude 
+    })));
 
     if (validCommunities.length === 0) return;
 
