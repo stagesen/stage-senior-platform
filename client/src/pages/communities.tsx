@@ -175,7 +175,7 @@ export default function Communities() {
 
             {/* Sort Control */}
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full sm:w-40 rounded-full" data-testid="select-sort">
+              <SelectTrigger className="w-full sm:w-40 rounded-full" data-testid="select-sort" aria-label="Sort communities">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

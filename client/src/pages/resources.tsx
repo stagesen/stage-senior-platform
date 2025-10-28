@@ -363,7 +363,7 @@ export default function Resources() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               {/* Category Filter */}
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full sm:w-64" data-testid="select-category">
+                <SelectTrigger className="w-full sm:w-64" data-testid="select-category" aria-label="Filter by category">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -377,7 +377,7 @@ export default function Resources() {
 
               {/* Sort Control */}
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-full sm:w-48" data-testid="select-sort">
+                <SelectTrigger className="w-full sm:w-48" data-testid="select-sort" aria-label="Sort resources">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
