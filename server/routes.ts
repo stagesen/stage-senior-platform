@@ -9,6 +9,7 @@ import { db } from "./db";
 import { setupAuth } from "./auth";
 import { utmTrackingMiddleware } from "./utm-tracking";
 import { clickIdCaptureMiddleware } from "./click-id-middleware";
+import { redirectMiddleware } from "./redirect-middleware";
 import { sendTourRequestNotification, sendExitIntentSubmissionNotification } from "./email";
 import { sendConversion } from "./conversion-service";
 import { validateConversionPayload, generateTransactionId, type ConversionPayload } from "./conversion-utils";
@@ -99,10 +100,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // UTM tracking middleware - captures campaign data from query parameters
   app.use(utmTrackingMiddleware);
-  
+
   // Click ID capture middleware - captures Google Ads and Meta click IDs
   app.use(clickIdCaptureMiddleware);
-  
+
+  // Redirect middleware - handles 301 redirects from old URLs to new structure
+  app.use(redirectMiddleware);
+
   // Root health check endpoint for deployment health checks (production only)
   // Root route will be handled by Vite middleware (dev) or static files (production)
   // No explicit route needed - the setup in server/vite.ts handles this
@@ -3105,23 +3109,17 @@ Disallow: /admin/
     }
   });
 
-  // Community amenities endpoint - returns full amenity objects for a community
+  // Community amenities endpoint - returns full amenity objects for a community with community-specific images
   app.get("/api/communities/:id/amenities", async (req, res) => {
     try {
       const communityId = req.params.id;
-      const amenityIds = await storage.getCommunityAmenities(communityId);
       
-      // Fetch full amenity objects for each ID
-      const amenities = await Promise.all(
-        amenityIds.map(async (id) => {
-          const amenity = await storage.getAmenityById(id);
-          return amenity;
-        })
-      );
+      // Fetch amenities with community-specific image overrides
+      const amenities = await storage.getCommunityAmenitiesWithImages(communityId);
       
-      // Filter out any undefined results and return only active amenities
-      const validAmenities = amenities.filter(a => a && a.active);
-      res.json(validAmenities);
+      // Filter for active amenities only
+      const activeAmenities = amenities.filter(a => a.active);
+      res.json(activeAmenities);
     } catch (error) {
       console.error("Error fetching community amenities:", error);
       res.status(500).json({ message: "Failed to fetch community amenities" });

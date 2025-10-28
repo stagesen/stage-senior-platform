@@ -82,7 +82,8 @@ import type {
   BlogPost,
   CommunityHighlight,
   TeamMember,
-  ContentAsset
+  ContentAsset,
+  Amenity
 } from "@shared/schema";
 import {
   Carousel,
@@ -1427,6 +1428,13 @@ export default function CommunityDetail() {
     }));
   }, [rawGalleries, galleryImages]);
 
+  // Fetch amenities with community-specific images
+  const { data: amenitiesData = [] } = useQuery<Array<Amenity & { communityImageId?: string | null }>>({
+    queryKey: [`/api/communities/${community?.id}/amenities`],
+    enabled: !!community?.id,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
   // Resolve hero image URL (handle both image ID and full URL)
   const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
 
@@ -1517,7 +1525,7 @@ export default function CommunityDetail() {
   const galleryCategories = Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean)));
 
   const hasAmenities = Boolean(
-    (community as any)?.amenitiesData?.length || community?.amenities?.length
+    amenitiesData?.length || community?.amenities?.length
   );
   const hasFloorPlans = floorPlans.length > 0;
   const hasGallery = galleries.length > 0 && galleries.some(g => g.images && g.images.length > 0);
@@ -2103,7 +2111,7 @@ export default function CommunityDetail() {
 
 
             {/* Amenities Showcase */}
-            {community.amenities && community.amenities.length > 0 && (
+            {hasAmenities && (
               <section id="amenities" className="scroll-mt-24">
                 <ScaleHeader scaleFrom={0.85} scaleTo={1}>
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Amenities & Services</h2>
@@ -2113,108 +2121,94 @@ export default function CommunityDetail() {
                     <p className="text-lg text-gray-600 mb-8">
                       Step into a lifestyle where every day feels like a retreat. Our community is packed with thoughtful amenities designed to make life easier and more enjoyable.
                     </p>
-                    <StaggerContainer staggerDelay={0.1} className="flex flex-col gap-3">
-                    {(() => {
-                      const amenitiesList = (community as any).amenities || 
-                        community.amenities?.map(name => ({ name })) || [];
-                      const displayedAmenities = showAllAmenities ? amenitiesList : amenitiesList.slice(0, 5);
-                      
-                      return displayedAmenities.map((amenity: any, index: number) => {
-                        const amenityName = typeof amenity === 'string' ? amenity : amenity.name;
-                        const IconComponent = typeof amenity === 'string' ? 
-                          getAmenityIcon(amenity) :
-                          (amenity.icon ? 
-                            (amenity.icon === 'Utensils' ? Coffee : 
-                             amenity.icon === 'Coffee' ? Coffee :
-                             amenity.icon === 'Car' ? Car :
-                             amenity.icon === 'Activity' ? Activity :
-                             amenity.icon === 'BookOpen' ? BookOpen :
-                             amenity.icon === 'Heart' ? Heart :
-                             amenity.icon === 'Users' ? Users :
-                             amenity.icon === 'Wifi' ? Wifi :
-                             Sparkles) : 
-                            getAmenityIcon(amenityName));
-
-                        // Helper function to determine amenity linking
-                        const getAmenityLink = (name: string): { href: string; testIdPrefix: string } | null => {
-                          if (!name) return null;
-                          const lowerName = name.toLowerCase();
+                    {amenitiesData.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {amenitiesData.map((amenity) => {
+                        const AmenityCard = ({ amenity: a }: { amenity: typeof amenity }) => {
+                          // Use community-specific image if available, otherwise use default amenity image
+                          const imageToResolve = a.communityImageId || a.imageUrl;
+                          const imageUrl = useResolveImageUrl(imageToResolve);
                           
-                          // Check for dining-related amenities
-                          const isRestaurantDining = lowerName.includes('restaurant') && lowerName.includes('dining');
-                          const isPrivateFamilyDining = lowerName.includes('private') && lowerName.includes('family') && lowerName.includes('dining');
-                          if (isRestaurantDining || isPrivateFamilyDining) {
-                            return { href: `/dining?from=${community.slug}`, testIdPrefix: 'dining' };
-                          }
+                          const getAmenityLink = (name: string): string | null => {
+                            const lowerName = name.toLowerCase();
+                            if ((lowerName.includes('restaurant') && lowerName.includes('dining')) ||
+                                (lowerName.includes('private') && lowerName.includes('family') && lowerName.includes('dining'))) {
+                              return `/dining?from=${community.slug}`;
+                            }
+                            if (lowerName.includes('beauty salon') || lowerName.includes('barber')) {
+                              return `/beauty-salon?from=${community.slug}`;
+                            }
+                            if (lowerName.includes('fitness') || lowerName.includes('therapy')) {
+                              return `/fitness-therapy?from=${community.slug}`;
+                            }
+                            if (lowerName.includes('courtyard') || lowerName.includes('patio') || 
+                                lowerName.includes('garden') || lowerName.includes('outdoor')) {
+                              return `/courtyards-patios?from=${community.slug}`;
+                            }
+                            return null;
+                          };
                           
-                          // Check for beauty salon/barber amenities
-                          if (lowerName.includes('beauty salon') || lowerName.includes('barber')) {
-                            return { href: `/beauty-salon?from=${community.slug}`, testIdPrefix: 'beauty-salon' };
-                          }
+                          const link = getAmenityLink(a.name);
+                          const IconComponent = getAmenityIcon(a.name);
                           
-                          // Check for fitness/therapy amenities
-                          if (lowerName.includes('fitness') || lowerName.includes('therapy')) {
-                            return { href: `/fitness-therapy?from=${community.slug}`, testIdPrefix: 'fitness-therapy' };
-                          }
+                          const AmenityCardContent = () => (
+                            <Card className={cn(
+                              "overflow-hidden hover:shadow-lg transition-all duration-300",
+                              link && "cursor-pointer group"
+                            )}>
+                              {imageUrl && (
+                                <div className="relative h-48 w-full overflow-hidden">
+                                  <img
+                                    src={imageUrl}
+                                    alt={a.name}
+                                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                                    loading="lazy"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                </div>
+                              )}
+                              <CardContent className="p-4">
+                                <div className="flex items-center gap-3">
+                                  <IconComponent className="w-6 h-6 text-primary flex-shrink-0" />
+                                  <h3 className="font-semibold text-lg">{a.name}</h3>
+                                  {link && (
+                                    <ChevronRight className="w-4 h-4 ml-auto text-primary group-hover:translate-x-1 transition-transform" />
+                                  )}
+                                </div>
+                                {a.description && (
+                                  <p className="text-sm text-gray-600 mt-2">{a.description}</p>
+                                )}
+                              </CardContent>
+                            </Card>
+                          );
                           
-                          // Check for courtyard/patio amenities
-                          if (lowerName.includes('courtyard') || lowerName.includes('patio') || 
-                              lowerName.includes('garden') || lowerName.includes('outdoor')) {
-                            return { href: `/courtyards-patios?from=${community.slug}`, testIdPrefix: 'courtyards-patios' };
-                          }
-                          
-                          return null;
-                        };
-
-                        const amenityLink = getAmenityLink(amenityName);
-
-                        return amenityLink ? (
-                          <StaggerItem key={`amenity-${index}`} direction="up">
-                            <Link 
-                              href={amenityLink.href}
-                              className="flex items-center justify-between bg-white rounded-lg p-4 hover:bg-primary/5 hover:shadow-md transition-all duration-200 cursor-pointer group"
-                              data-testid={`amenity-link-${amenityLink.testIdPrefix}-${index}`}
-                            >
-                              <div className="flex items-center space-x-3">
-                                <IconComponent className="w-8 h-8 text-primary flex-shrink-0" />
-                                <span className="text-sm font-medium text-primary group-hover:text-primary/80 transition-colors">{amenityName}</span>
-                              </div>
-                              <ChevronRight className="w-4 h-4 text-primary group-hover:translate-x-0.5 transition-all" />
+                          return link ? (
+                            <Link href={link} data-testid={`amenity-card-${a.slug}`}>
+                              <AmenityCardContent />
                             </Link>
-                          </StaggerItem>
-                        ) : (
-                          <StaggerItem key={`amenity-${index}`} direction="up">
-                            <div 
-                              className="flex items-center space-x-3 bg-white rounded-lg p-4"
-                              data-testid={`amenity-${index}`}
-                            >
-                              <IconComponent className="w-8 h-8 text-primary flex-shrink-0" />
-                              <span className="text-sm font-medium">{amenityName}</span>
+                          ) : (
+                            <div data-testid={`amenity-card-${a.slug}`}>
+                              <AmenityCardContent />
                             </div>
-                          </StaggerItem>
-                        );
-                      });
-                    })()}
-                    </StaggerContainer>
-                    {(() => {
-                      const amenitiesList = (community as any).amenities || 
-                        community.amenities?.map(name => ({ name })) || [];
-                      const hasMoreAmenities = amenitiesList.length > 5;
-                      
-                      return hasMoreAmenities && (
-                        <div className="mt-6 text-center">
-                          <Button
-                            variant="outline"
-                            onClick={() => setShowAllAmenities(!showAllAmenities)}
-                            className="px-6"
-                            data-testid="toggle-amenities-button"
-                          >
-                            {showAllAmenities ? 'Show Less' : `Show All ${amenitiesList.length} Amenities`}
-                            <ChevronRight className={`ml-2 w-4 h-4 transition-transform ${showAllAmenities ? 'rotate-90' : ''}`} />
-                          </Button>
-                        </div>
-                      );
-                    })()}
+                          );
+                        };
+                        
+                        return <AmenityCard key={amenity.id} amenity={amenity} />;
+                      })}
+                    </div>
+                    ) : (
+                      <div className="flex flex-col gap-3">
+                        {community.amenities && community.amenities.length > 0 && community.amenities.map((amenityName, index) => {
+                          const IconComponent = getAmenityIcon(amenityName);
+                          return (
+                            <div key={index} className="flex items-center gap-3 p-3 bg-white rounded-lg" data-testid={`legacy-amenity-${index}`}>
+                              <IconComponent className="w-5 h-5 text-primary flex-shrink-0" />
+                              <span className="text-gray-800">{amenityName}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </FadeIn>
               </section>

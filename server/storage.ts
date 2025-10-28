@@ -355,7 +355,9 @@ export interface IStorage {
 
   // Community-Amenity relationship operations
   getCommunityAmenities(communityId: string): Promise<string[]>;
+  getCommunityAmenitiesWithImages(communityId: string): Promise<Array<Amenity & { communityImageId?: string | null }>>;
   setCommunityAmenities(communityId: string, amenityIds: string[]): Promise<void>;
+  updateCommunityAmenityImage(communityId: string, amenityId: string, imageId: string | null): Promise<void>;
   getAllCommunitiesAmenities(): Promise<Array<{ communityId: string; amenityId: string }>>;
 
   // Gallery image operations
@@ -2193,6 +2195,30 @@ export class DatabaseStorage implements IStorage {
     return results.map(r => r.amenityId);
   }
 
+  async getCommunityAmenitiesWithImages(communityId: string): Promise<Array<Amenity & { communityImageId?: string | null }>> {
+    const results = await db
+      .select({
+        id: amenities.id,
+        slug: amenities.slug,
+        name: amenities.name,
+        category: amenities.category,
+        description: amenities.description,
+        icon: amenities.icon,
+        imageUrl: amenities.imageUrl,
+        sortOrder: amenities.sortOrder,
+        active: amenities.active,
+        createdAt: amenities.createdAt,
+        updatedAt: amenities.updatedAt,
+        communityImageId: communitiesAmenities.imageId,
+      })
+      .from(communitiesAmenities)
+      .leftJoin(amenities, eq(communitiesAmenities.amenityId, amenities.id))
+      .where(eq(communitiesAmenities.communityId, communityId))
+      .orderBy(asc(amenities.sortOrder), asc(amenities.name));
+    
+    return results as Array<Amenity & { communityImageId?: string | null }>;
+  }
+
   async setCommunityAmenities(communityId: string, amenityIds: string[]): Promise<void> {
     await db.transaction(async (tx) => {
       // Delete existing relationships
@@ -2209,6 +2235,18 @@ export class DatabaseStorage implements IStorage {
         await tx.insert(communitiesAmenities).values(values);
       }
     });
+  }
+
+  async updateCommunityAmenityImage(communityId: string, amenityId: string, imageId: string | null): Promise<void> {
+    await db
+      .update(communitiesAmenities)
+      .set({ imageId })
+      .where(
+        and(
+          eq(communitiesAmenities.communityId, communityId),
+          eq(communitiesAmenities.amenityId, amenityId)
+        )
+      );
   }
 
   async getAllCommunitiesAmenities(): Promise<Array<{ communityId: string; amenityId: string }>> {

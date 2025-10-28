@@ -133,6 +133,7 @@ export const communitiesAmenities = pgTable("communities_amenities", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   communityId: uuid("community_id").notNull().references(() => communities.id, { onDelete: "cascade" }),
   amenityId: uuid("amenity_id").notNull().references(() => amenities.id, { onDelete: "cascade" }),
+  imageId: varchar("image_id", { length: 255 }).references(() => images.id), // Community-specific amenity image override
   createdAt: timestamp("created_at").defaultNow(),
 });
 
