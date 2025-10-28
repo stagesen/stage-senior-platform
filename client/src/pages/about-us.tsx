@@ -43,7 +43,7 @@ function renderSectionHeader(section: PageContentSection) {
   const content = section.content as { heading?: string; subheading?: string } | undefined;
   
   return (
-    <section key={section.id} className="py-8 bg-white" data-testid={`section-${section.sectionKey}`}>
+    <section key={section.id} id={section.sectionKey} className="py-8 bg-white scroll-mt-24" data-testid={`section-${section.sectionKey}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
@@ -69,7 +69,7 @@ function renderBenefitCards(section: PageContentSection) {
   
   if (isStatsVariant) {
     return (
-      <section key={section.id} className="py-8" data-testid={`section-${section.sectionKey}`}>
+      <section key={section.id} id={section.sectionKey} className="py-8 scroll-mt-24" data-testid={`section-${section.sectionKey}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {section.title && (
             <h3 className="text-2xl font-bold text-center mb-8">{section.title}</h3>
@@ -98,7 +98,7 @@ function renderBenefitCards(section: PageContentSection) {
   
   // Regular benefit cards (values, highlights, etc.)
   return (
-    <section key={section.id} className="py-8 bg-white" data-testid={`section-${section.sectionKey}`}>
+    <section key={section.id} id={section.sectionKey} className="py-8 bg-white scroll-mt-24" data-testid={`section-${section.sectionKey}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {section.title && (
           <h3 className="text-2xl font-bold text-center mb-8">{section.title}</h3>
@@ -133,7 +133,7 @@ function renderTextBlock(section: PageContentSection) {
   const htmlContent = content?.text || '';
   
   return (
-    <section key={section.id} className="py-16 bg-gray-50" data-testid={`section-${section.sectionKey}`}>
+    <section key={section.id} id={section.sectionKey} className="py-16 bg-gray-50 scroll-mt-24" data-testid={`section-${section.sectionKey}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="prose prose-lg max-w-none" dangerouslySetInnerHTML={{ __html: htmlContent }} />
       </div>
