@@ -130,12 +130,16 @@ export default function CommunityMap({
 
   // Update markers when communities change
   useEffect(() => {
-    if (!mapInstanceRef.current || !window.google) return;
+    if (!mapInstanceRef.current || !window.google) {
+      console.log('CommunityMap: Skipping marker update - map or google not ready');
+      return;
+    }
 
     console.log('CommunityMap: Total communities:', communities.length);
     console.log('CommunityMap: Communities data:', communities);
 
     // Clear existing markers and info windows
+    console.log('CommunityMap: Clearing', markersRef.current.length, 'existing markers');
     markersRef.current.forEach(marker => marker.setMap(null));
     infoWindowsRef.current.forEach(infoWindow => infoWindow.close());
     markersRef.current = [];
@@ -169,20 +173,25 @@ export default function CommunityMap({
       const lng = parseFloat(community.longitude!);
       const position = { lat, lng };
 
+      console.log(`Creating marker for ${community.name} at`, position);
+
       // Get community color
       const markerColor = community.mainColorHex || '#2563eb';
 
-      // Create marker
+      // Create marker with default icon for now
       const marker = new window.google.maps.Marker({
         position,
         map: mapInstanceRef.current!,
-        icon: {
-          url: createCustomMarkerIcon(markerColor),
-          scaledSize: new window.google.maps.Size(48, 48),
-          anchor: new window.google.maps.Point(24, 48),
-        },
         title: community.name,
+        label: {
+          text: community.name.substring(0, 1),
+          color: 'white',
+          fontSize: '16px',
+          fontWeight: 'bold'
+        }
       });
+
+      console.log(`Marker created for ${community.name}:`, marker, 'visible:', marker.getVisible());
 
       // Create popup content
       if (showPopups) {
@@ -283,6 +292,11 @@ export default function CommunityMap({
 
     markersRef.current = markers;
     infoWindowsRef.current = infoWindows;
+
+    console.log(`CommunityMap: Created and stored ${markers.length} markers`);
+    console.log('CommunityMap: Map instance:', mapInstanceRef.current);
+    console.log('CommunityMap: Map center:', mapInstanceRef.current?.getCenter()?.toString());
+    console.log('CommunityMap: Map zoom:', mapInstanceRef.current?.getZoom());
 
     // Create a stable identifier for the current set of communities
     const currentCommunityIds = validCommunities.map(c => c.id).sort().join(',');
