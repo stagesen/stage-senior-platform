@@ -11,6 +11,14 @@ Preferred communication style: Simple, everyday language.
 ### Frontend Architecture
 The frontend is built with React 18 and TypeScript, using modern patterns. It leverages Wouter for routing, TanStack Query for state management, Tailwind CSS with shadcn/ui for styling, and React Hook Form with Zod for form handling. Vite is used for fast development and optimized builds. The architecture is component-based, supporting responsive design and accessibility, and includes features like a dynamic team directory with filtering, individual team member profiles, and dynamic contact cards.
 
+**Hash-Based URL Navigation:**
+All major pages support hash-based URL navigation enabling Google Ads campaigns to target specific content sections. Each major section has:
+- Unique semantic ID (e.g., `#comparison`, `#pricing`, `#testimonials`, `#faqs`, `#contact`)
+- `scroll-mt-24` class for proper scroll offset with fixed headers
+- Community detail page implements scroll-spy: automatically updates URL hash as users scroll (using `history.replaceState()` to avoid history pollution)
+- Navigation clicks use `history.pushState()` to support browser back button
+- Implemented across: home, about-us, services, communities, care-points, safety-with-dignity, and community-detail pages
+
 ### Backend Architecture
 The backend is an Express.js application built with Node.js and TypeScript, adhering to RESTful API principles. It incorporates middleware for logging, JSON parsing, and error handling. A service layer pattern is used for data operations, ensuring separation of concerns.
 
