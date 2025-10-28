@@ -2687,11 +2687,20 @@ export default function CommunityDetail() {
                 <CardContent className="p-0">
                   <div className="h-96" data-testid="community-map">
                     {community.latitude && community.longitude ? (
-                      <CommunityMap 
-                        communities={[community]}
-                        selectedCommunityId={community.id}
-                        showPopups={false}
-                      />
+                      <Suspense fallback={
+                        <div className="bg-[#faf8f6] rounded-xl h-full flex items-center justify-center text-gray-500">
+                          <div className="text-center">
+                            <MapPin className="w-12 h-12 mx-auto mb-4 animate-pulse" />
+                            <p className="text-lg font-medium">Loading map...</p>
+                          </div>
+                        </div>
+                      }>
+                        <CommunityMap 
+                          communities={[community]}
+                          selectedCommunityId={community.id}
+                          showPopups={false}
+                        />
+                      </Suspense>
                     ) : (
                       <div className="bg-[#faf8f6] rounded-xl h-full flex items-center justify-center text-gray-500">
                         <div className="text-center">

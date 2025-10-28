@@ -1423,10 +1423,19 @@ export default function DynamicLandingPage() {
       {template.urlPattern && (template.urlPattern.includes('-near-me') || template.urlPattern.includes('/best-')) && filteredCommunities.length > 0 && (
         <FadeIn direction="up" delay={0.2}>
           <section className="w-full" data-testid="section-community-map" style={{ height: '500px' }}>
-            <CommunityMap 
-              communities={filteredCommunities}
-              selectedCommunityId={primaryCommunity?.id}
-            />
+            <Suspense fallback={
+              <div className="h-full bg-gray-100 flex items-center justify-center">
+                <div className="text-center">
+                  <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4 animate-pulse" />
+                  <p className="text-lg text-gray-600">Loading map...</p>
+                </div>
+              </div>
+            }>
+              <CommunityMap 
+                communities={filteredCommunities}
+                selectedCommunityId={primaryCommunity?.id}
+              />
+            </Suspense>
           </section>
         </FadeIn>
       )}

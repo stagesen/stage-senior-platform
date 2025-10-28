@@ -816,7 +816,16 @@ ${data.message}
                     </div>
                   </div>
                 ) : (
-                  <CommunityMap communities={communities} />
+                  <Suspense fallback={
+                    <div className="h-full bg-gray-100 flex items-center justify-center">
+                      <div className="text-center">
+                        <MapPin className="w-16 h-16 text-gray-400 mx-auto mb-4 animate-pulse" />
+                        <p className="text-lg text-gray-600">Loading map...</p>
+                      </div>
+                    </div>
+                  }>
+                    <CommunityMap communities={communities} />
+                  </Suspense>
                 )}
               </div>
             </CardContent>

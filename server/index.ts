@@ -61,8 +61,8 @@ app.use((req, res, next) => {
     app.use((req, res, next) => {
       const requestPath = req.path;
       
-      // Cache hashed assets (filename contains hash like -Ce2fJscA.) for 1 year
-      if (requestPath.match(/\.[a-zA-Z0-9_-]{8,}\.(js|css|woff2?|ttf|eot|svg|png|jpg|jpeg|gif|webp|ico)$/i)) {
+      // Cache hashed assets (Vite hash format: name-hash.ext like home-BPDd6tVQ.js) for 1 year
+      if (requestPath.match(/-[A-Za-z0-9_-]{8,}\.(js|css|woff2?|ttf|eot|svg|png|jpg|jpeg|gif|webp|ico)$/i)) {
         res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
       }
       // Don't cache HTML files - always check for updates
