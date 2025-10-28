@@ -1658,6 +1658,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       experienceImageId: "",
       fitnessImageId: "",
       privateDiningImageId: "",
+      salonImageId: "",
+      courtyardsImageId: "",
       calendarFile1Id: "",
       calendarFile1ButtonText: "",
       calendarFile2Id: "",
@@ -2104,7 +2106,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       // Convert empty string image IDs to null (for foreign key constraints)
       const imageFields = [
         'logoImageId', 'contactImageId', 'pricingImageId', 'brochureImageId',
-        'experienceImageId', 'fitnessImageId', 'privateDiningImageId',
+        'experienceImageId', 'fitnessImageId', 'privateDiningImageId', 'salonImageId', 'courtyardsImageId',
         'experienceImage1Id', 'experienceImage2Id', 'experienceImage3Id', 'experienceImage4Id',
         'calendarFile1Id', 'calendarFile2Id'
       ];
@@ -3028,6 +3030,44 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         value={field.value || undefined}
                         onChange={field.onChange}
                         label="Upload image for the Private Dining Room section"
+                        maxSize={10 * 1024 * 1024}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={communityForm.control}
+                name="salonImageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Salon & Spa Image</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload image for the Salon & Spa amenity"
+                        maxSize={10 * 1024 * 1024}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={communityForm.control}
+                name="courtyardsImageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Courtyards & Patios Image</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        label="Upload image for the Courtyards & Patios amenity"
                         maxSize={10 * 1024 * 1024}
                       />
                     </FormControl>

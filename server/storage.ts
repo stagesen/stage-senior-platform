@@ -2210,9 +2210,11 @@ export class DatabaseStorage implements IStorage {
         createdAt: amenities.createdAt,
         updatedAt: amenities.updatedAt,
         communityImageId: communitiesAmenities.imageId,
-        // Community-level images for fallback
+        // Community-level images for specific amenities
         communityFitnessImageId: communities.fitnessImageId,
         communityPrivateDiningImageId: communities.privateDiningImageId,
+        communitySalonImageId: communities.salonImageId,
+        communityCourtyardsImageId: communities.courtyardsImageId,
       })
       .from(communitiesAmenities)
       .leftJoin(amenities, eq(communitiesAmenities.amenityId, amenities.id))
@@ -2220,11 +2222,11 @@ export class DatabaseStorage implements IStorage {
       .where(eq(communitiesAmenities.communityId, communityId))
       .orderBy(asc(amenities.sortOrder), asc(amenities.name));
     
-    // Map results and apply community-level image fallbacks for specific amenities
+    // Map results and use ONLY community-level images (no default amenity images)
     return results.map(result => {
       let finalImageId = result.communityImageId;
       
-      // Use community-level fitness image for fitness-related amenities if no specific override
+      // Use community-level fitness image for fitness-related amenities
       if (!finalImageId && result.slug && (
         result.slug.includes('fitness') || 
         result.slug.includes('workout') ||
@@ -2233,17 +2235,36 @@ export class DatabaseStorage implements IStorage {
         finalImageId = result.communityFitnessImageId;
       }
       
-      // Use community-level private dining image for private dining amenities if no specific override
+      // Use community-level private dining image for private dining amenities
       if (!finalImageId && result.slug && (
         result.slug.includes('private') && result.slug.includes('dining')
       )) {
         finalImageId = result.communityPrivateDiningImageId;
       }
       
-      // Return amenity with the final image ID
-      const { communityFitnessImageId, communityPrivateDiningImageId, ...amenity } = result;
+      // Use community-level salon image for salon amenities
+      if (!finalImageId && result.slug && (
+        result.slug.includes('salon') || 
+        result.slug.includes('barber') ||
+        result.slug.includes('spa')
+      )) {
+        finalImageId = result.communitySalonImageId;
+      }
+      
+      // Use community-level courtyards image for courtyard/patio amenities
+      if (!finalImageId && result.slug && (
+        result.slug.includes('courtyard') || 
+        result.slug.includes('patio') ||
+        result.slug.includes('outdoor')
+      )) {
+        finalImageId = result.communityCourtyardsImageId;
+      }
+      
+      // Return amenity with ONLY community-specific image (no default imageUrl)
+      const { communityFitnessImageId, communityPrivateDiningImageId, communitySalonImageId, communityCourtyardsImageId, imageUrl, ...amenity } = result;
       return {
         ...amenity,
+        imageUrl: null, // Remove default image URL
         communityImageId: finalImageId,
       };
     }) as Array<Amenity & { communityImageId?: string | null }>;
