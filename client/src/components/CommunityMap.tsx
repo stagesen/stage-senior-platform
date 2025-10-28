@@ -37,20 +37,15 @@ export default function CommunityMap({
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const infoWindowsRef = useRef<any[]>([]);
+  const isInitialBoundsSet = useRef(false);
+  const lastCommunityIds = useRef<string>('');
 
   // Initialize Google Maps
   useEffect(() => {
     if (!mapRef.current) return;
 
-    // Load the Google Maps API using dynamic script loading
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&libraries=places&v=weekly`;
-    script.async = true;
-    script.defer = true;
-    
-    script.onload = () => {
-      if (mapRef.current && window.google) {
-        // Initialize map centered on Denver metro area
+    const initializeMap = () => {
+      if (mapRef.current && window.google && window.google.maps && !mapInstanceRef.current) {
         const map = new window.google.maps.Map(mapRef.current, {
           center: { lat: 39.7392, lng: -104.9903 },
           zoom: 10,
@@ -62,10 +57,38 @@ export default function CommunityMap({
           streetViewControl: false,
           fullscreenControl: false,
         });
-
         mapInstanceRef.current = map;
       }
     };
+
+    // Check if Google Maps API is already loaded
+    if (window.google && window.google.maps) {
+      initializeMap();
+      return;
+    }
+
+    // Check if script is already loading
+    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+    
+    if (existingScript) {
+      // Script exists but API not ready yet - wait for it
+      const checkGoogleLoaded = setInterval(() => {
+        if (window.google && window.google.maps) {
+          clearInterval(checkGoogleLoaded);
+          initializeMap();
+        }
+      }, 100);
+      
+      return () => clearInterval(checkGoogleLoaded);
+    }
+
+    // Load the Google Maps API using dynamic script loading
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&libraries=places&v=weekly`;
+    script.async = true;
+    script.defer = true;
+    
+    script.onload = initializeMap;
     
     document.head.appendChild(script);
 
@@ -199,6 +222,10 @@ export default function CommunityMap({
 
         // Add click listener to marker
         marker.addListener('click', () => {
+          // Call the selection callback if provided
+          if (onCommunitySelect) {
+            onCommunitySelect(community);
+          }
           // Close all other info windows
           infoWindows.forEach(iw => iw.close());
           infoWindow.open(mapInstanceRef.current!, marker);
@@ -219,8 +246,11 @@ export default function CommunityMap({
     markersRef.current = markers;
     infoWindowsRef.current = infoWindows;
 
-    // Fit map to show all markers
-    if (markers.length > 0) {
+    // Create a stable identifier for the current set of communities
+    const currentCommunityIds = validCommunities.map(c => c.id).sort().join(',');
+    const shouldAdjustBounds = !isInitialBoundsSet.current || lastCommunityIds.current !== currentCommunityIds;
+    
+    if (markers.length > 0 && shouldAdjustBounds) {
       if (markers.length === 1) {
         // Single community: center on it with appropriate zoom level
         const marker = markers[0];
@@ -246,6 +276,9 @@ export default function CommunityMap({
           }
         });
       }
+      
+      isInitialBoundsSet.current = true;
+      lastCommunityIds.current = currentCommunityIds;
     }
   }, [communities, selectedCommunityId, showPopups]);
 
