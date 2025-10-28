@@ -814,16 +814,18 @@ const TestimonialsCarousel = ({ testimonials }: { testimonials: any[] }) => {
         <CarouselPrevious className="left-0" />
         <CarouselNext className="right-0" />
       </Carousel>
-      <div className="flex justify-center gap-2 mt-6">
+      <div className="flex justify-center gap-1 mt-6">
         {Array.from({ length: count }).map((_, index) => (
           <button
             key={index}
-            className={`w-2 h-2 rounded-full transition-all ${
-              current === index + 1 ? 'bg-primary w-8' : 'bg-gray-300'
-            }`}
+            className="p-3 transition-all duration-300 min-w-[48px] min-h-[48px] flex items-center justify-center"
             onClick={() => api?.scrollTo(index)}
             aria-label={`Go to testimonial ${index + 1}`}
-          />
+          >
+            <span className={`inline-block rounded-full transition-all ${
+              current === index + 1 ? 'bg-primary w-8 h-2' : 'bg-gray-300 w-2 h-2'
+            }`} />
+          </button>
         ))}
       </div>
     </div>
