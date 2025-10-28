@@ -1086,9 +1086,6 @@ Disallow: /admin/
       
       const communities = await storage.getCommunities(filters);
 
-      // Debug logging
-      console.log(`[Communities API] Returned ${communities.length} communities:`, communities.map(c => ({ id: c.id, name: c.name, active: c.active })));
-
       // getCommunities already includes careTypeIds and amenityIds from the junction tables
       // No need to re-query - this was causing N+1 query problem (1 + 2N queries instead of 3)
       res.json(communities);

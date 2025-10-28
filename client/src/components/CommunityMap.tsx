@@ -120,16 +120,6 @@ export default function CommunityMap({
       return !isNaN(lat) && !isNaN(lng);
     });
 
-    // Debug logging
-    console.log('CommunityMap: Total communities:', communities.length);
-    console.log('CommunityMap: Valid communities with coordinates:', validCommunities.length);
-    console.log('CommunityMap: Communities data:', communities.map(c => ({ 
-      id: c.id, 
-      name: c.name, 
-      lat: c.latitude, 
-      lng: c.longitude 
-    })));
-
     if (validCommunities.length === 0) return;
 
     const markers: any[] = [];
