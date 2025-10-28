@@ -49,8 +49,7 @@ export default function ParallaxHero({
             src={backgroundImage}
             alt="Hero background"
             className="w-full h-[120%] object-cover"
-            // @ts-ignore - fetchPriority is a valid HTML attribute but not in React types yet
-            fetchpriority="high"
+            fetchPriority="high"
             decoding="async"
             width="1920"
             height="1080"

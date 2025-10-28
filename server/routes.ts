@@ -103,6 +103,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Click ID capture middleware - captures Google Ads and Meta click IDs
   app.use(clickIdCaptureMiddleware);
   
+  // Root health check endpoint for deployment health checks (production only)
+  // Root route will be handled by Vite middleware (dev) or static files (production)
+  // No explicit route needed - the setup in server/vite.ts handles this
+  
   // Diagnostic endpoint for debugging production issues
   app.get("/api/health", async (_req, res) => {
     try {
