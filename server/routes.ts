@@ -170,16 +170,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Height must be between 10 and 3000" });
       }
 
-      // Extract bucket ID and filename from URL
-      const match = url.match(/\/replit-objstore-([^/]+)\/public\/(.+)$/);
+      // Extract bucket name and filename from URL
+      const match = url.match(/\/(replit-objstore-[^/]+)\/public\/(.+)$/);
       if (!match) {
         return res.status(400).json({ error: "Invalid object storage URL" });
       }
 
-      const [, bucketId, filename] = match;
-      const expectedBucketId = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
+      const [, bucketName, filename] = match;
+      const expectedBucketName = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
 
-      if (bucketId !== expectedBucketId) {
+      if (bucketName !== expectedBucketName) {
         return res.status(404).json({ error: "Bucket not found" });
       }
 
@@ -204,7 +204,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Get file from bucket
-      const bucket = objectStorageClient.bucket(bucketId);
+      const bucket = objectStorageClient.bucket(bucketName);
       const file = bucket.file(`public/${filename}`);
 
       const [exists] = await file.exists();
