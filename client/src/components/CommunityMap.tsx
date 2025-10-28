@@ -1,26 +1,15 @@
 import { useEffect, useRef } from 'react';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 import { getCityState } from '@/lib/communityContact';
 import type { Community } from '@shared/schema';
-import { useResolveImageUrl } from '@/hooks/useResolveImageUrl';
 
-// Create custom marker icon with community color (48x48 for accessibility)
-const createCustomMarker = (color: string = '#2563eb') => {
-  const svgIcon = `
+// Create custom marker icon SVG with community color
+const createCustomMarkerIcon = (color: string = '#2563eb'): string => {
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
     <svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
       <path d="M24 0C15.163 0 8 7.163 8 16c0 8 16 32 16 32s16-24 16-32C40 7.163 32.837 0 24 0z" fill="${color}"/>
       <circle cx="24" cy="16" r="8" fill="white"/>
     </svg>
-  `;
-  
-  return L.divIcon({
-    html: svgIcon,
-    iconSize: [48, 48],
-    iconAnchor: [24, 48],
-    popupAnchor: [0, -48],
-    className: 'custom-marker'
-  });
+  `)}`;
 };
 
 interface CommunityMapProps {
@@ -30,6 +19,14 @@ interface CommunityMapProps {
   showPopups?: boolean;
 }
 
+// Declare google maps types
+declare global {
+  interface Window {
+    google: any;
+  }
+  const google: any;
+}
+
 export default function CommunityMap({ 
   communities, 
   onCommunitySelect, 
@@ -37,45 +34,62 @@ export default function CommunityMap({
   showPopups = true
 }: CommunityMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<L.Map | null>(null);
-  const markersRef = useRef<L.Marker[]>([]);
+  const mapInstanceRef = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
+  const infoWindowsRef = useRef<any[]>([]);
 
+  // Initialize Google Maps
   useEffect(() => {
     if (!mapRef.current) return;
 
-    // Initialize map centered on Denver metro area with a broader view
-    const map = L.map(mapRef.current, {
-      scrollWheelZoom: false,
-      doubleClickZoom: false,
-      touchZoom: false,
-      zoomControl: false,
-      dragging: true,
-    }).setView([39.7392, -104.9903], 10);
-    mapInstanceRef.current = map;
+    // Load the Google Maps API using dynamic script loading
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&libraries=places&v=weekly`;
+    script.async = true;
+    script.defer = true;
+    
+    script.onload = () => {
+      if (mapRef.current && window.google) {
+        // Initialize map centered on Denver metro area
+        const map = new window.google.maps.Map(mapRef.current, {
+          center: { lat: 39.7392, lng: -104.9903 },
+          zoom: 10,
+          scrollwheel: false,
+          disableDoubleClickZoom: true,
+          gestureHandling: 'greedy',
+          zoomControl: false,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: false,
+        });
 
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-    }).addTo(map);
+        mapInstanceRef.current = map;
+      }
+    };
+    
+    document.head.appendChild(script);
 
     return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-      }
+      // Cleanup
+      markersRef.current.forEach(marker => marker.setMap(null));
+      infoWindowsRef.current.forEach(infoWindow => infoWindow.close());
+      markersRef.current = [];
+      infoWindowsRef.current = [];
+      mapInstanceRef.current = null;
     };
   }, []);
 
+  // Update markers when communities change
   useEffect(() => {
-    if (!mapInstanceRef.current) return;
+    if (!mapInstanceRef.current || !window.google) return;
 
-    // Clear existing markers
-    markersRef.current.forEach(marker => {
-      mapInstanceRef.current?.removeLayer(marker);
-    });
+    // Clear existing markers and info windows
+    markersRef.current.forEach(marker => marker.setMap(null));
+    infoWindowsRef.current.forEach(infoWindow => infoWindow.close());
     markersRef.current = [];
+    infoWindowsRef.current = [];
 
-    // Add markers for communities with valid coordinates
+    // Filter communities with valid coordinates
     const validCommunities = communities.filter(community => {
       if (!community.latitude || !community.longitude) return false;
       const lat = parseFloat(community.latitude);
@@ -85,142 +99,155 @@ export default function CommunityMap({
 
     if (validCommunities.length === 0) return;
 
-    const markers: L.Marker[] = [];
-    const markerCommunityMap = new Map<L.Marker, Community>();
-    
+    const markers: any[] = [];
+    const infoWindows: any[] = [];
+    const bounds = new window.google.maps.LatLngBounds();
+
     validCommunities.forEach(community => {
       const lat = parseFloat(community.latitude!);
       const lng = parseFloat(community.longitude!);
+      const position = { lat, lng };
 
-      // Get community color (use mainColorHex or default to primary blue)
+      // Get community color
       const markerColor = community.mainColorHex || '#2563eb';
-      
-      // Create popup content with hero image, name and city
-      const popupDiv = document.createElement('div');
-      popupDiv.className = 'overflow-hidden min-w-[280px]';
-      
-      // Add hero image if available
-      if (community.imageId) {
-        const heroContainer = document.createElement('div');
-        heroContainer.className = 'relative h-32 mb-3 -mt-3 -mx-3';
-        
-        const hero = document.createElement('img');
-        hero.src = `/api/images/${community.imageId}`;
-        hero.alt = `${community.name}`;
-        hero.className = 'w-full h-full object-cover';
-        hero.onerror = () => {
-          // Hide hero if it fails to load
-          heroContainer.style.display = 'none';
-        };
-        
-        heroContainer.appendChild(hero);
-        popupDiv.appendChild(heroContainer);
-      }
 
-      // Content container
-      const contentDiv = document.createElement('div');
-      contentDiv.className = 'px-4 pb-4';
+      // Create marker
+      const marker = new window.google.maps.Marker({
+        position,
+        map: mapInstanceRef.current!,
+        icon: {
+          url: createCustomMarkerIcon(markerColor),
+          scaledSize: new window.google.maps.Size(48, 48),
+          anchor: new window.google.maps.Point(24, 48),
+        },
+        title: community.name,
+      });
 
-      // Add logo if available (small version next to title)
-      const headerDiv = document.createElement('div');
-      headerDiv.className = 'flex items-center justify-center gap-2 mb-2';
-      
-      if (community.logoImageId) {
-        const logo = document.createElement('img');
-        logo.src = `/api/images/${community.logoImageId}`;
-        logo.alt = `${community.name} logo`;
-        logo.className = 'h-8 w-auto object-contain';
-        logo.onerror = () => {
-          // Hide logo if it fails to load
-          logo.style.display = 'none';
-        };
-        headerDiv.appendChild(logo);
-      }
-
-      // Community name - bold and centered
-      const title = document.createElement('h3');
-      title.className = 'font-bold text-lg';
-      title.style.color = markerColor;
-      title.textContent = community.name;
-      headerDiv.appendChild(title);
-      
-      contentDiv.appendChild(headerDiv);
-
-      // City name - centered
-      const location = document.createElement('p');
-      location.className = 'text-sm text-gray-600 mb-3 text-center';
-      location.textContent = getCityState(community);
-      contentDiv.appendChild(location);
-
-      // View Details button with community color
-      const button = document.createElement('button');
-      button.className = 'px-4 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity w-full';
-      button.style.backgroundColor = markerColor;
-      button.textContent = 'View Details';
-      button.onclick = () => {
-        window.location.href = `/communities/${community.slug}`;
-      };
-      contentDiv.appendChild(button);
-      
-      popupDiv.appendChild(contentDiv);
-
-      // Create marker with custom color
-      const marker = L.marker([lat, lng], {
-        icon: createCustomMarker(markerColor)
-      })
-        .addTo(mapInstanceRef.current!);
-
-      // Bind popup only if showPopups is true
+      // Create popup content
       if (showPopups) {
-        marker.bindPopup(popupDiv, {
-          maxWidth: 250,
-          className: 'custom-popup'
+        const popupDiv = document.createElement('div');
+        popupDiv.className = 'overflow-hidden min-w-[280px]';
+        
+        // Add hero image if available
+        if (community.imageId) {
+          const heroContainer = document.createElement('div');
+          heroContainer.className = 'relative h-32 mb-3';
+          
+          const hero = document.createElement('img');
+          hero.src = `/api/images/${community.imageId}`;
+          hero.alt = `${community.name}`;
+          hero.className = 'w-full h-full object-cover';
+          hero.onerror = () => {
+            heroContainer.style.display = 'none';
+          };
+          
+          heroContainer.appendChild(hero);
+          popupDiv.appendChild(heroContainer);
+        }
+
+        // Content container
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'px-4 pb-4';
+
+        // Header with logo and title
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'flex items-center justify-center gap-2 mb-2';
+        
+        if (community.logoImageId) {
+          const logo = document.createElement('img');
+          logo.src = `/api/images/${community.logoImageId}`;
+          logo.alt = `${community.name} logo`;
+          logo.className = 'h-8 w-auto object-contain';
+          logo.onerror = () => {
+            logo.style.display = 'none';
+          };
+          headerDiv.appendChild(logo);
+        }
+
+        // Community name
+        const title = document.createElement('h3');
+        title.className = 'font-bold text-lg';
+        title.style.color = markerColor;
+        title.textContent = community.name;
+        headerDiv.appendChild(title);
+        
+        contentDiv.appendChild(headerDiv);
+
+        // City name
+        const location = document.createElement('p');
+        location.className = 'text-sm text-gray-600 mb-3 text-center';
+        location.textContent = getCityState(community);
+        contentDiv.appendChild(location);
+
+        // View Details button
+        const button = document.createElement('button');
+        button.className = 'px-4 py-2 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity w-full';
+        button.style.backgroundColor = markerColor;
+        button.textContent = 'View Details';
+        button.onclick = () => {
+          window.location.href = `/communities/${community.slug}`;
+        };
+        contentDiv.appendChild(button);
+        
+        popupDiv.appendChild(contentDiv);
+
+        // Create InfoWindow
+        const infoWindow = new window.google.maps.InfoWindow({
+          content: popupDiv,
+          maxWidth: 280,
         });
 
-        // Highlight selected community
+        // Add click listener to marker
+        marker.addListener('click', () => {
+          // Close all other info windows
+          infoWindows.forEach(iw => iw.close());
+          infoWindow.open(mapInstanceRef.current!, marker);
+        });
+
+        infoWindows.push(infoWindow);
+
+        // Open popup for selected community
         if (selectedCommunityId === community.id) {
-          marker.openPopup();
+          infoWindow.open(mapInstanceRef.current!, marker);
         }
       }
 
       markers.push(marker);
-      markerCommunityMap.set(marker, community);
+      bounds.extend(position);
     });
 
     markersRef.current = markers;
+    infoWindowsRef.current = infoWindows;
 
-    // Fit map to show all markers with appropriate zoom
+    // Fit map to show all markers
     if (markers.length > 0) {
       if (markers.length === 1) {
         // Single community: center on it with appropriate zoom level
         const marker = markers[0];
-        const latlng = marker.getLatLng();
-        mapInstanceRef.current.setView(latlng, 13);
-        
-        // Open popup for single community if selected
-        if (selectedCommunityId && showPopups) {
-          marker.openPopup();
+        const position = marker.getPosition();
+        if (position) {
+          mapInstanceRef.current!.setCenter(position);
+          mapInstanceRef.current!.setZoom(13);
         }
       } else {
-        // Multiple communities: fit bounds to show all with padding
-        const group = new L.FeatureGroup(markers);
-        mapInstanceRef.current.fitBounds(group.getBounds(), {
-          padding: [50, 50],
-          maxZoom: 12
+        // Multiple communities: fit bounds to show all
+        mapInstanceRef.current!.fitBounds(bounds, {
+          top: 50,
+          right: 50,
+          bottom: 50,
+          left: 50,
         });
         
-        // If a community is selected, ensure it's visible and highlighted
-        if (selectedCommunityId && showPopups) {
-          const selectedMarker = markers.find(marker => 
-            markerCommunityMap.get(marker)?.id === selectedCommunityId
-          );
-          if (selectedMarker) {
-            selectedMarker.openPopup();
+        // Limit max zoom
+        const listener = window.google.maps.event.addListenerOnce(mapInstanceRef.current!, 'bounds_changed', () => {
+          const currentZoom = mapInstanceRef.current!.getZoom();
+          if (currentZoom && currentZoom > 12) {
+            mapInstanceRef.current!.setZoom(12);
           }
-        }
+        });
       }
     }
-  }, [communities, selectedCommunityId, onCommunitySelect, showPopups]);
+  }, [communities, selectedCommunityId, showPopups]);
 
   return (
     <div 
