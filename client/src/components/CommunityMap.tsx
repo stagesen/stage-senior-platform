@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getCityState } from '@/lib/communityContact';
 import type { Community } from '@shared/schema';
 
@@ -39,6 +39,7 @@ export default function CommunityMap({
   const infoWindowsRef = useRef<any[]>([]);
   const isInitialBoundsSet = useRef(false);
   const lastCommunityIds = useRef<string>('');
+  const [isMapReady, setIsMapReady] = useState(false);
 
   // Initialize Google Maps
   useEffect(() => {
@@ -54,6 +55,7 @@ export default function CommunityMap({
     // Function to initialize the map once Google Maps is loaded
     const initializeMap = () => {
       if (mapRef.current && window.google && window.google.maps && !mapInstanceRef.current) {
+        console.log('CommunityMap: Initializing map...');
         const map = new window.google.maps.Map(mapRef.current, {
           center: { lat: 39.7392, lng: -104.9903 },
           zoom: 10,
@@ -66,6 +68,8 @@ export default function CommunityMap({
           fullscreenControl: false,
         });
         mapInstanceRef.current = map;
+        console.log('CommunityMap: Map initialized successfully!');
+        setIsMapReady(true);
       }
     };
 
@@ -130,8 +134,12 @@ export default function CommunityMap({
 
   // Update markers when communities change
   useEffect(() => {
-    if (!mapInstanceRef.current || !window.google) {
-      console.log('CommunityMap: Skipping marker update - map or google not ready');
+    if (!mapInstanceRef.current || !window.google || !isMapReady) {
+      console.log('CommunityMap: Skipping marker update - map or google not ready', {
+        hasMap: !!mapInstanceRef.current,
+        hasGoogle: !!window.google,
+        isMapReady
+      });
       return;
     }
 
@@ -332,7 +340,7 @@ export default function CommunityMap({
       isInitialBoundsSet.current = true;
       lastCommunityIds.current = currentCommunityIds;
     }
-  }, [communities, selectedCommunityId, showPopups]);
+  }, [communities, selectedCommunityId, showPopups, isMapReady]);
 
   return (
     <div 
