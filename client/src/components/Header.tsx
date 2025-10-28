@@ -82,6 +82,9 @@ export default function Header() {
                 src={logoUrl}
                 alt="Stage Senior"
                 className="w-auto object-contain min-w-[180px] h-8 sm:h-10 md:h-12"
+                width="280"
+                height="70"
+                decoding="async"
               />
             </Link>
           </div>

@@ -157,7 +157,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const width = w ? parseInt(w as string) : undefined;
       const height = h ? parseInt(h as string) : undefined;
-      const quality = q ? parseInt(q as string) : 80;
+      const quality = q ? parseInt(q as string) : 75; // Optimized for better compression
 
       // Validate dimensions
       if (width && (width < 10 || width > 3000)) {
@@ -223,7 +223,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Apply quality and format optimization
-      transformer = transformer.webp({ quality });
+      // Use effort 6 (higher compression) and quality 75 for optimal balance
+      transformer = transformer.webp({ 
+        quality,
+        effort: 6, // Higher compression effort (0-6, default is 4)
+        smartSubsample: true // Better color subsampling
+      });
 
       // Process image
       const optimizedBuffer = await transformer.toBuffer();

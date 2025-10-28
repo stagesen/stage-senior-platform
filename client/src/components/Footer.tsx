@@ -36,8 +36,10 @@ export default function Footer() {
                   src={logoWhiteUrl} 
                   alt="Stage Senior"
                   className="w-auto object-contain min-w-[160px] h-14 sm:h-16 md:h-18"
-                  width="240"
-                  height="190"
+                  width="160"
+                  height="127"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <p className="text-[var(--mist-white)]/95 mb-4 text-lg leading-relaxed" data-testid="footer-description">
