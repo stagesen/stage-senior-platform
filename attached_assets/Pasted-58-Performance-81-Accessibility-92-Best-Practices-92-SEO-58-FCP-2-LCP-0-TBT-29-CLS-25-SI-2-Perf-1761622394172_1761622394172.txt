@@ -1,0 +1,162 @@
+58
+Performance
+81
+Accessibility
+92
+Best Practices
+92
+SEO
+58
+FCP
++2
+LCP
++0
+TBT
++29
+CLS
++25
+SI
++2
+Performance
+Values are estimated and may vary. The performance score is calculated directly from these metrics.See calculator.
+0–49
+50–89
+90–100
+Final Screenshot
+
+Metrics
+Expand view
+First Contentful Paint
+4.0 s
+Largest Contentful Paint
+12.0 s
+Total Blocking Time
+110 ms
+Cumulative Layout Shift
+0.002
+Speed Index
+8.2 s
+Captured at Oct 27, 2025, 9:30 PM MDT
+Emulated Moto G Power with Lighthouse 13.0.1
+Single page session
+Initial page load
+Slow 4G throttling
+Using HeadlessChromium 137.0.7151.119 with lr
+View Treemap
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Show audits relevant to:
+
+All
+
+FCP
+
+LCP
+
+TBT
+
+CLS
+Insights
+Render blocking requests Est savings of 220 ms
+Use efficient cache lifetimes Est savings of 254 KiB
+A long cache lifetime can speed up repeat visits to your page. Learn more about caching.LCPFCPUnscored
+Request
+Cache TTL
+Transfer Size
+talkfurther.com
+193 KiB
+/famchat.v3.js(vsa.talkfurther.com)
+2h
+171 KiB
+/talkfurther_init.min.js(js.talkfurther.com)
+None
+22 KiB
+openstreetmap.org
+245 KiB
+…213/388.png(b.tile.openstreetmap.org)
+1d 1h 55m 24s
+43 KiB
+…213/389.png(c.tile.openstreetmap.org)
+1d 43m 21s
+36 KiB
+…212/388.png(a.tile.openstreetmap.org)
+1d 32m
+33 KiB
+…213/387.png(a.tile.openstreetmap.org)
+1d 1h 46m 36s
+31 KiB
+…212/387.png(c.tile.openstreetmap.org)
+1d 1h 1m 46s
+27 KiB
+…212/389.png(b.tile.openstreetmap.org)
+1d 1h 26m 10s
+24 KiB
+…214/388.png(c.tile.openstreetmap.org)
+1d 34m 3s
+20 KiB
+…214/389.png(a.tile.openstreetmap.org)
+1d 39m 13s
+17 KiB
+…214/387.png(b.tile.openstreetmap.org)
+1d 2h 15m 59s
+13 KiB
+Google CDN cdn 
+24 KiB
+/wcm/loader.js(www.gstatic.com)
+1h
+3 KiB
+/call-tracking/call-tracking_9.js(www.gstatic.com)
+7d
+21 KiB
+replit.app 1st party
+3 KiB
+…images/3ec91d99-b163-4b6f-8905-c91a6de90f1e(stagesenior.replit.app)
+1h
+1 KiB
+…images/12217af9-d0a0-4aea-a784-e182f9764008(stagesenior.replit.app)
+1h
+1 KiB
+…images/20bedd7f-ae9e-49d3-ac80-db5347c86214(stagesenior.replit.app)
+1h
+1 KiB
+…images/df4aa340-bc6f-4b2f-afd7-107376a3091b(stagesenior.replit.app)
+1h
+1 KiB
+Improve image delivery Est savings of 722 KiB
+Forced reflow
+LCP breakdown
+Network dependency tree
+Layout shift culprits
+3rd parties
+These insights are also available in the Chrome DevTools Performance Panel - record a trace to view more detailed information.
+Diagnostics
+Reduce unused JavaScript Est savings of 302 KiB
+Reduce unused JavaScript and defer loading scripts until they are required to decrease bytes consumed by network activity. Learn how to reduce unused JavaScript.LCPFCPUnscored
+URL
+Transfer Size
+Est Savings
+Google Tag Manager tag-manager 
+447.1 KiB	201.4 KiB
+/gtag/destination?id=G-0LN6BJRRF2&cx=c&gtm=4e5ao1(www.googletagmanager.com)
+162.2 KiB
+101.0 KiB
+/gtm.js?id=GTM-M6D3DHTS(www.googletagmanager.com)
+122.6 KiB
+52.6 KiB
+/gtag/js?id=G-0LN6BJRRF2&cx=c&gtm=4e5ao1(www.googletagmanager.com)
+162.2 KiB
+47.8 KiB
+replit.app 1st party
+196.0 KiB	101.0 KiB
+/assets/index-lHJh7sq7.js(stagesenior.replit.app)
+151.1 KiB
+74.6 KiB
+/assets/Community….js(stagesenior.replit.app)
+45.0 KiB
+26.5 KiB

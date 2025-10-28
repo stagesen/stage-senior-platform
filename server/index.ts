@@ -57,6 +57,26 @@ app.use((req, res, next) => {
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
+    // Add cache-control middleware for production static assets
+    app.use((req, res, next) => {
+      const requestPath = req.path;
+      
+      // Cache hashed assets (filename contains hash like -Ce2fJscA.) for 1 year
+      if (requestPath.match(/\.[a-zA-Z0-9_-]{8,}\.(js|css|woff2?|ttf|eot|svg|png|jpg|jpeg|gif|webp|ico)$/i)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      }
+      // Don't cache HTML files - always check for updates
+      else if (requestPath.endsWith('.html') || requestPath === '/' || !requestPath.includes('.')) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      }
+      // Default cache for other static assets without content hash (1 day)
+      else if (requestPath.match(/\.(js|css|woff2?|ttf|eot|svg|png|jpg|jpeg|gif|webp|ico)$/i)) {
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+      }
+      
+      next();
+    });
+    
     serveStatic(app);
   }
 
