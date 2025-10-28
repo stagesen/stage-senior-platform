@@ -1,9 +1,13 @@
+// Import Sentry instrumentation FIRST before any other modules
+import "./instrument";
+import { Sentry } from "./instrument";
 import express, { type Request, Response, NextFunction } from "express";
 import compression from "compression";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
 // Enable gzip compression for all responses
 app.use(compression());
 // Increase JSON body limit to 50MB to support database imports
@@ -42,6 +46,11 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
+
+  // Sentry error handler must be after all routes but before other error handlers
+  if (process.env.SENTRY_DSN) {
+    Sentry.setupExpressErrorHandler(app);
+  }
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

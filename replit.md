@@ -86,6 +86,12 @@ A centralized contact information formatting system ensures consistency across a
 ### Email Service
 - **Resend**: For automated email notifications (e.g., tour requests).
 
+### Monitoring & Error Tracking
+- **Sentry**: Application monitoring, error tracking, and performance monitoring for both frontend and backend.
+  - Frontend: Tracks JavaScript errors, performance issues, and user sessions with replay
+  - Backend: Monitors Express.js errors, API performance, and server-side issues
+  - Configuration: Separate DSN values for frontend (VITE_SENTRY_DSN) and backend (SENTRY_DSN)
+
 ### Advertising Platforms
 - **Google Ads API**: For programmatic creation and management of conversion actions.
 - **Google Ads**: Enhanced Conversions for Leads (ECL) integration with server-side and browser-side tracking.
@@ -175,3 +181,98 @@ The platform implements comprehensive conversion tracking for Google Ads and Met
 - GOOGLE_ADS_CUSTOMER_ID
 
 Stored as environment secrets for secure access to Google Ads API.
+
+## Monitoring and Observability
+
+### Error Tracking with Sentry
+
+The platform uses Sentry for comprehensive error tracking and performance monitoring across both frontend and backend.
+
+**Environment Variables Required:**
+- `SENTRY_DSN`: Backend Sentry project DSN (e.g., `https://xxxxx@o0.ingest.sentry.io/0`)
+- `VITE_SENTRY_DSN`: Frontend Sentry project DSN (can be same as backend or separate project)
+
+**Backend Monitoring (`server/instrument.ts`, `server/index.ts`):**
+- Uses Sentry SDK v8+ with automatic instrumentation
+- Error capture for Express.js routes via `setupExpressErrorHandler()`
+- Performance tracing for API endpoints (auto-enabled via OpenTelemetry)
+- Request/response tracking (automatic)
+- Error context includes user IP and request headers (`sendDefaultPii: true`)
+
+**Frontend Monitoring (`client/src/main.tsx`, `client/src/components/ErrorBoundary.tsx`):**
+- React error boundary for catching component errors
+- Session replay with privacy defaults (masks text and blocks media to protect sensitive data)
+  - 10% of sessions captured
+  - 100% of error sessions captured
+- Browser performance monitoring (10% sample rate in production)
+- User-friendly error fallback UI
+
+**Configuration:**
+- Development: 100% trace sample rate for comprehensive debugging
+- Production: 10% trace sample rate to manage quota and costs
+- Sentry v8 API: Single `setupExpressErrorHandler(app)` call replaces old v7 handlers
+- Error handler positioned after routes but before generic error handlers
+- Privacy-first: Session replay uses default masking to protect resident/lead data
+
+**Setup Instructions:**
+1. Create account at https://sentry.io (free tier available)
+2. Create two projects (or use one for both):
+   - Backend: Node.js project
+   - Frontend: React project
+3. Copy DSN values from project settings
+4. Add as environment secrets in Replit:
+   - `SENTRY_DSN` - Backend DSN
+   - `VITE_SENTRY_DSN` - Frontend DSN
+5. Deploy to production
+6. Verify in Sentry dashboard that errors and performance data appear
+
+**Note:** The implementation uses Sentry SDK v8 which features automatic instrumentation. No manual integration configuration is needed - error tracking and performance monitoring work automatically once DSN values are configured.
+
+### Uptime Monitoring
+
+**Service: UptimeRobot** (https://uptimerobot.com)
+
+UptimeRobot provides free uptime monitoring with checks every 5 minutes and instant alerts via email/SMS/Slack when your site goes down.
+
+**Recommended Monitors to Set Up:**
+
+1. **Main Website Health Check**
+   - Type: HTTP(s)
+   - URL: `https://your-domain.replit.app/`
+   - Interval: Every 5 minutes
+   - Alert when down for: 2 minutes
+
+2. **API Health Check**
+   - Type: HTTP(s)
+   - URL: `https://your-domain.replit.app/api/communities/minimal`
+   - Interval: Every 5 minutes
+   - Expected HTTP status: 200
+   - Alert when down for: 2 minutes
+
+3. **Database Connectivity Check**
+   - Type: HTTP(s)
+   - URL: `https://your-domain.replit.app/api/events`
+   - Interval: Every 5 minutes
+   - Alert when down for: 2 minutes
+
+**Alert Channels to Configure:**
+- Email: Primary contact for dev team
+- SMS: For critical alerts (optional, paid feature)
+- Slack/Discord: Team notification channel
+
+**Setup Instructions:**
+1. Sign up at https://uptimerobot.com (free tier includes 50 monitors)
+2. Click "Add New Monitor"
+3. For each recommended monitor:
+   - Select "HTTP(s)" as monitor type
+   - Enter the URL
+   - Set friendly name (e.g., "Stage Senior - Main Site")
+   - Set monitoring interval to 5 minutes
+   - Configure alert contacts
+4. Test by pausing the workflow and confirming alerts trigger
+
+**Dashboard Features:**
+- 90-day uptime history
+- Response time graphs
+- Downtime alerts log
+- Public status page (optional)
