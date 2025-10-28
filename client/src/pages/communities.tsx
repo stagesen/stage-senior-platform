@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -7,8 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin, Calendar, Phone, Star, HelpCircle, Check } from "lucide-react";
 import CommunityCard from "@/components/CommunityCard";
-import CommunityMap from "@/components/CommunityMap";
 import { Skeleton } from "@/components/ui/skeleton";
+
+// Lazy load map component to reduce initial bundle size (~45 KiB savings)
+const CommunityMap = lazy(() => import("@/components/CommunityMap"));
 import { PageHero } from "@/components/PageHero";
 import CommunitySelectionModal from "@/components/CommunitySelectionModal";
 import TestimonialSection from "@/components/TestimonialSection";
@@ -134,14 +136,23 @@ export default function Communities() {
                     </div>
                   </div>
                 ) : (
-                  <CommunityMap
-                    communities={sortedCommunities}
-                    selectedCommunityId={selectedCommunityId}
-                    onCommunitySelect={(community) => {
-                      setSelectedCommunityId(community.id);
-                      scrollToCommunity(community.id);
-                    }}
-                  />
+                  <Suspense fallback={
+                    <div className="h-full bg-gray-100 flex items-center justify-center">
+                      <div className="text-center">
+                        <MapPin className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-4 animate-pulse" />
+                        <p className="text-base sm:text-lg text-gray-600">Loading map...</p>
+                      </div>
+                    </div>
+                  }>
+                    <CommunityMap
+                      communities={sortedCommunities}
+                      selectedCommunityId={selectedCommunityId}
+                      onCommunitySelect={(community) => {
+                        setSelectedCommunityId(community.id);
+                        scrollToCommunity(community.id);
+                      }}
+                    />
+                  </Suspense>
                 )}
               </div>
             </CardContent>

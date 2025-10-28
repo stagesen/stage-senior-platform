@@ -1,6 +1,6 @@
 import { useParams, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,8 +14,10 @@ import FloorPlanModal from "@/components/FloorPlanModal";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
 import { ExitIntentPopup, useExitIntent } from "@/components/ExitIntentPopup";
-import CommunityMap from "@/components/CommunityMap";
 import CommunityCredentials from "@/components/landing-sections/CommunityCredentials";
+
+// Lazy load map component to reduce initial bundle size (~45 KiB savings)
+const CommunityMap = lazy(() => import("@/components/CommunityMap"));
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import NotFound from "@/pages/not-found";
@@ -1778,7 +1780,16 @@ export default function DynamicLandingPage() {
       )}
 
       {/* 2. & 3. Community Credentials - Database-driven trust badges and stats */}
-      {primaryCommunity && <CommunityCredentials community={primaryCommunity} />}
+      {primaryCommunity && <CommunityCredentials community={{
+        yearEstablished: primaryCommunity.yearEstablished ?? undefined,
+        licensedSince: primaryCommunity.licensedSince ?? undefined,
+        residentCapacity: primaryCommunity.residentCapacity ?? undefined,
+        specialCertifications: primaryCommunity.specialCertifications ?? undefined,
+        verifiedStats: primaryCommunity.verifiedStats ?? undefined,
+        licenseStatus: primaryCommunity.licenseStatus ?? undefined,
+        sameDayTours: primaryCommunity.sameDayTours ?? undefined,
+        state: primaryCommunity.state,
+      }} />}
 
       {/* 4. Community Highlights - What makes this community special (alternating feature sections) */}
       {communityHighlights.length > 0 && (

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,8 +19,10 @@ import {
   FormMessage,
   FormDescription 
 } from "@/components/ui/form";
-import CommunityMap from "@/components/CommunityMap";
 import { PageHero } from "@/components/PageHero";
+
+// Lazy load map component to reduce initial bundle size (~45 KiB savings)
+const CommunityMap = lazy(() => import("@/components/CommunityMap"));
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { getPrimaryPhoneDisplay, getPrimaryPhoneHref, getCityState } from "@/lib/communityContact";

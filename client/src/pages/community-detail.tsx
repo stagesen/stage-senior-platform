@@ -1,6 +1,6 @@
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState, memo } from "react";
+import { useEffect, useMemo, useState, memo, lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,8 +13,10 @@ import EventCard from "@/components/EventCard";
 import EventDetailsModal from "@/components/EventDetailsModal";
 import FloorPlanModal from "@/components/FloorPlanModal";
 import GalleryModal from "@/components/GalleryModal";
-import CommunityMap from "@/components/CommunityMap";
 import FadeIn from "@/components/animations/FadeIn";
+
+// Lazy load map component to reduce initial bundle size (~45 KiB savings)
+const CommunityMap = lazy(() => import("@/components/CommunityMap"));
 import ScaleIn from "@/components/animations/ScaleIn";
 import ScaleHeader from "@/components/animations/ScaleHeader";
 import StaggerContainer from "@/components/animations/StaggerContainer";
