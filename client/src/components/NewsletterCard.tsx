@@ -14,28 +14,21 @@ interface NewsletterResponse extends BlogPost {
 
 interface NewsletterCardProps {
   communityId: string;
+  community?: Community;
 }
 
-export default function NewsletterCard({ communityId }: NewsletterCardProps) {
-  const { data: newsletter, isLoading: newsletterLoading, error } = useQuery<NewsletterResponse>({
+export default function NewsletterCard({ communityId, community: communityProp }: NewsletterCardProps) {
+  const { data: newsletter, isLoading, error } = useQuery<NewsletterResponse>({
     queryKey: ['/api/posts/latest-newsletter', communityId],
     retry: 1,
   });
-
-  // Also fetch community data separately for calendar downloads
-  const { data: community, isLoading: communityLoading } = useQuery<Community>({
-    queryKey: ['/api/communities', communityId],
-    retry: 1,
-  });
-
-  const isLoading = newsletterLoading || communityLoading;
 
   // Resolve image URLs
   const resolvedThumbnailImage = useResolveImageUrl(newsletter?.thumbnailImage);
   const resolvedMainImage = useResolveImageUrl(newsletter?.mainImage);
   
-  // Resolve calendar file URLs (use community data or newsletter's community data)
-  const communityData = community || newsletter?.community;
+  // Resolve calendar file URLs - use newsletter's community data or prop fallback
+  const communityData = newsletter?.community || communityProp;
   const resolvedCalendarFile1 = useResolveImageUrl(communityData?.calendarFile1Id);
   const resolvedCalendarFile2 = useResolveImageUrl(communityData?.calendarFile2Id);
 

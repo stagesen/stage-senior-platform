@@ -2010,7 +2010,7 @@ export default function CommunityDetail() {
 
           {/* Newsletter Card */}
           <div className="md:col-span-1">
-            <NewsletterCard communityId={community.id} />
+            <NewsletterCard communityId={community.id} community={community} />
           </div>
         </div>
       </div>
