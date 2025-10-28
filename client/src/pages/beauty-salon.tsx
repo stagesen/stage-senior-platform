@@ -88,9 +88,19 @@ export default function BeautySalon() {
         </div>
       ) : (
         <>
-          {sections.map((section) => (
-            <PageSectionRenderer key={section.id} section={section} />
-          ))}
+          {sections.map((section, index) => {
+            // Pass community salon image to the first hero_section
+            const isFirstHeroSection = index === 0 && section.sectionType === 'hero_section';
+            const communityImageId = isFirstHeroSection ? communityData?.community?.salonImageId : undefined;
+            
+            return (
+              <PageSectionRenderer 
+                key={section.id} 
+                section={section}
+                communityImageId={communityImageId}
+              />
+            );
+          })}
         </>
       )}
     </div>

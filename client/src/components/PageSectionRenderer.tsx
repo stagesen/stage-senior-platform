@@ -30,14 +30,17 @@ const iconMap: Record<string, any> = {
 interface PageSectionRendererProps {
   section: PageContentSection;
   currentCareType?: string;
+  communityImageId?: string | null;
 }
 
-export default function PageSectionRenderer({ section, currentCareType }: PageSectionRendererProps) {
+export default function PageSectionRenderer({ section, currentCareType, communityImageId }: PageSectionRendererProps) {
   const content = section.content as any;
   const { openScheduleTour } = useScheduleTour();
   
   // Resolve image URLs (converts UUIDs to actual URLs)
-  const heroImageUrl = useResolveImageUrl(content.imageId || content.imageUrl);
+  // Use community image if provided, otherwise fall back to section's image
+  const imageIdToUse = communityImageId || content.imageId || content.imageUrl;
+  const heroImageUrl = useResolveImageUrl(imageIdToUse);
 
   // Text Block
   if (section.sectionType === "text_block") {

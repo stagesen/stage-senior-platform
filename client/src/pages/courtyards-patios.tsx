@@ -88,9 +88,19 @@ export default function CourtyardsPatios() {
         </div>
       ) : (
         <>
-          {sections.map((section) => (
-            <PageSectionRenderer key={section.id} section={section} />
-          ))}
+          {sections.map((section, index) => {
+            // Pass community courtyards image to the first hero_section
+            const isFirstHeroSection = index === 0 && section.sectionType === 'hero_section';
+            const communityImageId = isFirstHeroSection ? communityData?.community?.courtyardsImageId : undefined;
+            
+            return (
+              <PageSectionRenderer 
+                key={section.id} 
+                section={section}
+                communityImageId={communityImageId}
+              />
+            );
+          })}
         </>
       )}
     </div>
