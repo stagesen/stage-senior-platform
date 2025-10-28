@@ -132,6 +132,9 @@ export default function CommunityMap({
   useEffect(() => {
     if (!mapInstanceRef.current || !window.google) return;
 
+    console.log('CommunityMap: Total communities:', communities.length);
+    console.log('CommunityMap: Communities data:', communities);
+
     // Clear existing markers and info windows
     markersRef.current.forEach(marker => marker.setMap(null));
     infoWindowsRef.current.forEach(infoWindow => infoWindow.close());
@@ -140,12 +143,21 @@ export default function CommunityMap({
 
     // Filter communities with valid coordinates
     const validCommunities = communities.filter(community => {
-      if (!community.latitude || !community.longitude) return false;
+      if (!community.latitude || !community.longitude) {
+        console.log('CommunityMap: Community missing coordinates:', community.name, community.latitude, community.longitude);
+        return false;
+      }
       const lat = parseFloat(community.latitude);
       const lng = parseFloat(community.longitude);
-      return !isNaN(lat) && !isNaN(lng);
+      const isValid = !isNaN(lat) && !isNaN(lng);
+      if (!isValid) {
+        console.log('CommunityMap: Invalid coordinates for:', community.name, lat, lng);
+      }
+      return isValid;
     });
 
+    console.log('CommunityMap: Valid communities with coordinates:', validCommunities.length);
+    
     if (validCommunities.length === 0) return;
 
     const markers: any[] = [];
