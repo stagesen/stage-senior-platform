@@ -1397,7 +1397,7 @@ const AmenitiesRowList = ({ amenities, communitySlug }: AmenitiesRowListProps) =
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {/* Always visible amenities */}
       {displayedAmenities.map((amenity) => {
         const imageToResolve = amenity.communityImageId || amenity.imageUrl;
@@ -1457,7 +1457,7 @@ const AmenitiesRowList = ({ amenities, communitySlug }: AmenitiesRowListProps) =
           <CollapsibleTrigger asChild>
             <Button
               variant="outline"
-              className="w-full mt-2"
+              className="w-full mt-4"
               data-testid="button-toggle-amenities"
             >
               {showAll ? (
@@ -1467,7 +1467,7 @@ const AmenitiesRowList = ({ amenities, communitySlug }: AmenitiesRowListProps) =
               )}
             </Button>
           </CollapsibleTrigger>
-          <CollapsibleContent className="space-y-3 mt-3">
+          <CollapsibleContent className="space-y-4 mt-4">
             {/* This is handled by the displayedAmenities slice above */}
           </CollapsibleContent>
         </Collapsible>
