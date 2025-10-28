@@ -15,7 +15,6 @@
     "import:resource-articles:prod": "NODE_ENV=production DATABASE_URL=$PROD_DATABASE_URL tsx scripts/import-resource-articles.ts"
   },
   "dependencies": {
-    "@googlemaps/js-api-loader": "^2.0.1",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@neondatabase/serverless": "^0.10.4",
