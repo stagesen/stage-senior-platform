@@ -149,7 +149,6 @@ export default function Communities() {
                       selectedCommunityId={selectedCommunityId}
                       onCommunitySelect={(community) => {
                         setSelectedCommunityId(community.id);
-                        scrollToCommunity(community.id);
                       }}
                     />
                   </Suspense>

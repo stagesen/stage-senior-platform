@@ -213,9 +213,10 @@ export default function CommunityMap({
           const logo = document.createElement('img');
           logo.src = `/api/images/${community.logoImageId}`;
           logo.alt = `${community.name} logo`;
-          logo.className = 'h-12 w-auto object-contain';
+          logo.className = 'h-12 w-auto object-contain max-w-[200px]';
           logo.onerror = () => {
-            // If logo fails to load, show the title instead
+            // If logo fails to load, replace with title
+            headerDiv.innerHTML = '';
             const title = document.createElement('h3');
             title.className = 'font-bold text-lg text-center';
             title.style.color = markerColor;
