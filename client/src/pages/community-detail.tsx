@@ -1351,6 +1351,98 @@ const extractYouTubeVideoId = (url: string): string | null => {
   return null;
 };
 
+// Helper functions for amenities
+const getAmenityIcon = (name: string) => {
+  const lowerName = name.toLowerCase();
+  if (lowerName.includes('wifi') || lowerName.includes('internet')) return Wifi;
+  if (lowerName.includes('parking') || lowerName.includes('garage')) return Car;
+  if (lowerName.includes('dining') || lowerName.includes('restaurant') || lowerName.includes('meal')) return Coffee;
+  if (lowerName.includes('fitness') || lowerName.includes('exercise') || lowerName.includes('gym') || lowerName.includes('therapy')) return Activity;
+  if (lowerName.includes('library') || lowerName.includes('reading')) return BookOpen;
+  if (lowerName.includes('salon') || lowerName.includes('barber') || lowerName.includes('beauty')) return Sparkles;
+  if (lowerName.includes('medical') || lowerName.includes('health') || lowerName.includes('care') || lowerName.includes('nurse')) return Heart;
+  if (lowerName.includes('garden') || lowerName.includes('courtyard') || lowerName.includes('patio') || lowerName.includes('outdoor')) return Trees;
+  return Home;
+};
+
+const getAmenityLink = (name: string, communitySlug: string): string | null => {
+  const lowerName = name.toLowerCase();
+  if ((lowerName.includes('restaurant') && lowerName.includes('dining')) ||
+      (lowerName.includes('private') && lowerName.includes('family') && lowerName.includes('dining'))) {
+    return `/dining?from=${communitySlug}`;
+  }
+  if (lowerName.includes('beauty salon') || lowerName.includes('barber')) {
+    return `/beauty-salon?from=${communitySlug}`;
+  }
+  if (lowerName.includes('fitness') || lowerName.includes('therapy')) {
+    return `/fitness-therapy?from=${communitySlug}`;
+  }
+  if (lowerName.includes('courtyard') || lowerName.includes('patio') || 
+      lowerName.includes('garden') || lowerName.includes('outdoor')) {
+    return `/courtyards-patios?from=${communitySlug}`;
+  }
+  return null;
+};
+
+// Component for a single amenity row - fixes React hooks violation
+const AmenityRow = ({ 
+  amenity, 
+  communitySlug 
+}: { 
+  amenity: Amenity & { communityImageId?: string | null; imageUrl?: string | null };
+  communitySlug: string;
+}) => {
+  const imageToResolve = amenity.communityImageId || amenity.imageUrl;
+  const imageUrl = useResolveImageUrl(imageToResolve);
+  const IconComponent = getAmenityIcon(amenity.name);
+  const link = getAmenityLink(amenity.name, communitySlug);
+
+  const rowContent = (
+    <div 
+      className={cn(
+        "flex items-center gap-4 p-4 bg-white rounded-lg hover:shadow-md transition-all duration-200",
+        link && "cursor-pointer group"
+      )}
+    >
+      {/* Image on the left */}
+      {imageUrl && (
+        <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden">
+          <img
+            src={imageUrl}
+            alt={amenity.name}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+            loading="lazy"
+          />
+        </div>
+      )}
+      
+      {/* Icon and text content */}
+      <div className="flex items-center gap-3 flex-1">
+        <IconComponent className="w-6 h-6 text-primary flex-shrink-0" />
+        <div className="flex-1">
+          <h3 className="font-semibold text-gray-900">{amenity.name}</h3>
+          {amenity.description && (
+            <p className="text-sm text-gray-600 mt-1">{amenity.description}</p>
+          )}
+        </div>
+        {link && (
+          <ChevronRight className="w-5 h-5 text-primary group-hover:translate-x-1 transition-transform flex-shrink-0" />
+        )}
+      </div>
+    </div>
+  );
+
+  if (link) {
+    return (
+      <Link href={link} data-testid={`amenity-row-${amenity.slug}`}>
+        {rowContent}
+      </Link>
+    );
+  }
+
+  return <div data-testid={`amenity-row-${amenity.slug}`}>{rowContent}</div>;
+};
+
 // Component to display amenities in rows with images on the left
 interface AmenitiesRowListProps {
   amenities: Array<Amenity & { communityImageId?: string | null; imageUrl?: string | null }>;
@@ -1363,93 +1455,13 @@ const AmenitiesRowList = ({ amenities, communitySlug }: AmenitiesRowListProps) =
   
   const displayedAmenities = showAll ? amenities : amenities.slice(0, INITIAL_DISPLAY_COUNT);
   const hasMore = amenities.length > INITIAL_DISPLAY_COUNT;
-  
-  const getAmenityIcon = (name: string) => {
-    const lowerName = name.toLowerCase();
-    if (lowerName.includes('wifi') || lowerName.includes('internet')) return Wifi;
-    if (lowerName.includes('parking') || lowerName.includes('garage')) return Car;
-    if (lowerName.includes('dining') || lowerName.includes('restaurant') || lowerName.includes('meal')) return Coffee;
-    if (lowerName.includes('fitness') || lowerName.includes('exercise') || lowerName.includes('gym') || lowerName.includes('therapy')) return Activity;
-    if (lowerName.includes('library') || lowerName.includes('reading')) return BookOpen;
-    if (lowerName.includes('salon') || lowerName.includes('barber') || lowerName.includes('beauty')) return Sparkles;
-    if (lowerName.includes('medical') || lowerName.includes('health') || lowerName.includes('care') || lowerName.includes('nurse')) return Heart;
-    if (lowerName.includes('garden') || lowerName.includes('courtyard') || lowerName.includes('patio') || lowerName.includes('outdoor')) return Trees;
-    return Home;
-  };
-
-  const getAmenityLink = (name: string): string | null => {
-    const lowerName = name.toLowerCase();
-    if ((lowerName.includes('restaurant') && lowerName.includes('dining')) ||
-        (lowerName.includes('private') && lowerName.includes('family') && lowerName.includes('dining'))) {
-      return `/dining?from=${communitySlug}`;
-    }
-    if (lowerName.includes('beauty salon') || lowerName.includes('barber')) {
-      return `/beauty-salon?from=${communitySlug}`;
-    }
-    if (lowerName.includes('fitness') || lowerName.includes('therapy')) {
-      return `/fitness-therapy?from=${communitySlug}`;
-    }
-    if (lowerName.includes('courtyard') || lowerName.includes('patio') || 
-        lowerName.includes('garden') || lowerName.includes('outdoor')) {
-      return `/courtyards-patios?from=${communitySlug}`;
-    }
-    return null;
-  };
 
   return (
     <div className="space-y-4">
       {/* Always visible amenities */}
-      {displayedAmenities.map((amenity) => {
-        const imageToResolve = amenity.communityImageId || amenity.imageUrl;
-        const imageUrl = useResolveImageUrl(imageToResolve);
-        const IconComponent = getAmenityIcon(amenity.name);
-        const link = getAmenityLink(amenity.name);
-
-        const rowContent = (
-          <div 
-            className={cn(
-              "flex items-center gap-4 p-4 bg-white rounded-lg hover:shadow-md transition-all duration-200",
-              link && "cursor-pointer group"
-            )}
-          >
-            {/* Image on the left */}
-            {imageUrl && (
-              <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden">
-                <img
-                  src={imageUrl}
-                  alt={amenity.name}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                  loading="lazy"
-                />
-              </div>
-            )}
-            
-            {/* Icon and text content */}
-            <div className="flex items-center gap-3 flex-1">
-              <IconComponent className="w-6 h-6 text-primary flex-shrink-0" />
-              <div className="flex-1">
-                <h3 className="font-semibold text-gray-900">{amenity.name}</h3>
-                {amenity.description && (
-                  <p className="text-sm text-gray-600 mt-1">{amenity.description}</p>
-                )}
-              </div>
-              {link && (
-                <ChevronRight className="w-5 h-5 text-primary group-hover:translate-x-1 transition-transform flex-shrink-0" />
-              )}
-            </div>
-          </div>
-        );
-
-        if (link) {
-          return (
-            <Link key={amenity.id} href={link} data-testid={`amenity-row-${amenity.slug}`}>
-              {rowContent}
-            </Link>
-          );
-        }
-
-        return <div key={amenity.id} data-testid={`amenity-row-${amenity.slug}`}>{rowContent}</div>;
-      })}
+      {displayedAmenities.map((amenity) => (
+        <AmenityRow key={amenity.id} amenity={amenity} communitySlug={communitySlug} />
+      ))}
 
       {/* Collapsible section for additional amenities */}
       {hasMore && (
