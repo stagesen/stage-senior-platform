@@ -1,0 +1,288 @@
+Improve image delivery Est savings of 825 KiB
+Reducing the download time of images can improve the perceived load time of the page and LCP. Learn more about optimizing image sizeLCPFCPUnscored
+URL
+Resource Size
+Est Savings
+replit.app 1st party
+925.0 KiB    569.3 KiB
+Golden Pond Retirement Community - Senior Living Community
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1760123494579…" alt="Golden Pond Retirement Community - Senior Living Community" class="w-full
+ h-full object-cover cursor-pointer hover:scale-105 transition-trans…" loading="lazy" decoding="async" width="800" height="600" data-testid="image-golden-pond">
+…public/176…-d74590e….webp(stagesenior.replit.app)
+191.7 KiB
+123.5 KiB
+Increasing the image compression factor could improve this image's download size.
+121.6 KiB
+This image file is larger than it needs to be (663x650) for its displayed dimensions (879x476). Use responsive images to reduce the image download size.
+5.2 KiB
+Find Your Perfect Colorado Community
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1760623756681…" alt="Find Your Perfect Colorado Community" class="w-full h-full object-cover" 
+decoding="async" width="1920" height="1080" data-testid="hero-background--communities" fetchpriority="high">
+…public/176…-56d8d68….webp(stagesenior.replit.app)
+199.1 KiB
+111.7 KiB
+Increasing the image compression factor could improve this image's download size.
+111.7 KiB
+The Gardens at Columbine - Senior Living Community
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1759937999938…" alt="The Gardens at Columbine - Senior Living Community" class="w-full h-full 
+object-cover cursor-pointer hover:scale-105 transition-trans…" loading="lazy" decoding="async" width="800" height="600" data-testid="image-the-gardens-at-columbine">
+…public/175…-b8dc121….webp(stagesenior.replit.app)
+168.3 KiB
+105.0 KiB
+Increasing the image compression factor could improve this image's download size.
+87.0 KiB
+This image file is larger than it needs to be (714x700) for its displayed dimensions (817x476). Use responsive images to reduce the image download size.
+37.3 KiB
+The Gardens on Quail - Senior Living Community
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1759932679929…" alt="The Gardens on Quail - Senior Living Community" class="w-full h-full 
+object-cover cursor-pointer hover:scale-105 transition-trans…" loading="lazy" decoding="async" width="800" height="600" data-testid="image-the-gardens-on-quail">
+…public/175…-0a9b484….webp(stagesenior.replit.app)
+151.4 KiB
+88.1 KiB
+Increasing the image compression factor could improve this image's download size.
+70.1 KiB
+This image file is larger than it needs to be (714x700) for its displayed dimensions (817x476). Use responsive images to reduce the image download size.
+33.5 KiB
+Stonebridge Senior - Senior Living Community
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1760457234952…" alt="Stonebridge Senior - Senior Living Community" class="w-full h-full 
+object-cover cursor-pointer hover:scale-105 transition-trans…" loading="lazy" decoding="async" width="800" height="600" data-testid="image-stonebridge-senior">
+…public/176…-d34dc0e….webp(stagesenior.replit.app)
+114.8 KiB
+46.6 KiB
+Increasing the image compression factor could improve this image's download size.
+44.7 KiB
+Stage Senior
+<img src="/assets/stage-logo-Ce2fJscA.webp" alt="Stage Senior" class="w-auto object-contain min-w-[180px] h-8 sm:h-10 md:h-12" width="280" height="70" 
+decoding="async">
+/assets/stage-log….webp(stagesenior.replit.app)
+33.6 KiB
+32.1 KiB
+Increasing the image compression factor could improve this image's download size.
+13.7 KiB
+This image file is larger than it needs to be (700x175) for its displayed dimensions (192x48). Use responsive images to reduce the image download size.
+31.1 KiB
+The Gardens on Quail logo
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1759932675754…" alt="The Gardens on Quail logo" class="h-12 w-auto object-contain" width="200"
+ height="48" loading="lazy" data-testid="logo-the-gardens-on-quail">
+…public/175…-817f58c….webp(stagesenior.replit.app)
+29.7 KiB
+28.9 KiB
+This image file is larger than it needs to be (1200x300) for its displayed dimensions (192x48). Use responsive images to reduce the image download size.
+28.9 KiB
+The Gardens at Columbine logo
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1760475176549…" alt="The Gardens at Columbine logo" class="h-12 w-auto object-contain" 
+width="200" height="48" loading="lazy" data-testid="logo-the-gardens-at-columbine">
+…public/176…-8906838….png(stagesenior.replit.app)
+13.9 KiB
+12.9 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+10.3 KiB
+This image file is larger than it needs to be (250x90) for its displayed dimensions (133x48). Use responsive images to reduce the image download size.
+10.0 KiB
+Golden Pond Retirement Community logo
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1759944738191…" alt="Golden Pond Retirement Community logo" class="h-12 w-auto object-contain"
+ width="200" height="48" loading="lazy" data-testid="logo-golden-pond">
+…public/175…-0964d21….webp(stagesenior.replit.app)
+10.3 KiB
+9.7 KiB
+Increasing the image compression factor could improve this image's download size.
+6.3 KiB
+This image file is larger than it needs to be (200x125) for its displayed dimensions (77x48). Use responsive images to reduce the image download size.
+8.8 KiB
+Stage Senior
+<img src="/assets/stage-logo-white-Dcoj2oCj.webp" alt="Stage Senior" class="w-auto object-contain min-w-[160px] h-14 sm:h-16 md:h-18" width="160" height="127" 
+loading="lazy" decoding="async">
+/assets/stage-log….webp(stagesenior.replit.app)
+7.3 KiB
+6.5 KiB
+This image file is larger than it needs to be (240x190) for its displayed dimensions (81x64). Use responsive images to reduce the image download size.
+6.5 KiB
+ASHA - Assisted Living Association
+<img src="/assets/asha-logo-white-Bk0Cij8d.webp" alt="ASHA - Assisted Living Association" class="w-auto h-10 sm:h-12" width="200" height="137" 
+data-testid="footer-asha-logo">
+/assets/asha-logo….webp(stagesenior.replit.app)
+4.8 KiB
+4.2 KiB
+This image file is larger than it needs to be (200x137) for its displayed dimensions (70x48). Use responsive images to reduce the image download size.
+4.2 KiB
+unsplash.com
+99.9 KiB    50.6 KiB
+The Gardens at Columbine - Senior Living Community
+<img src="/replit-objstore-93bd6ca8-4ff6-4811-a84f-0a271fb04f53/public/1759937999938…" alt="The Gardens at Columbine - Senior Living Community" class="w-full h-full 
+object-cover cursor-pointer hover:scale-105 transition-trans…" loading="lazy" decoding="async" width="800" height="600" data-testid="image-the-gardens-at-columbine">
+/photo-141…-3373a0480b5b?ixlib=…(images.unsplash.com)
+99.9 KiB
+50.6 KiB
+Increasing the image compression factor could improve this image's download size.
+40.1 KiB
+This image file is larger than it needs to be (612x600) for its displayed dimensions (635x476). Use responsive images to reduce the image download size.
+17.6 KiB
+openstreetmap.org
+365.5 KiB    205.5 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://b.tile.openstreetmap.org/10/213/388.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(516px, 88px, 0px);">
+…213/388.png(b.tile.openstreetmap.org)
+42.7 KiB
+32.1 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+32.1 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://c.tile.openstreetmap.org/10/213/389.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(516px, 344px, 0px);">
+…213/389.png(c.tile.openstreetmap.org)
+35.6 KiB
+24.9 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+24.9 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://a.tile.openstreetmap.org/10/212/388.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(260px, 88px, 0px);">
+…212/388.png(a.tile.openstreetmap.org)
+31.9 KiB
+21.2 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+21.2 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://a.tile.openstreetmap.org/10/213/387.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(516px, -168px, 0px);">
+…213/387.png(a.tile.openstreetmap.org)
+30.7 KiB
+20.0 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+20.0 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://c.tile.openstreetmap.org/10/212/387.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(260px, -168px, 0px);">
+…212/387.png(c.tile.openstreetmap.org)
+26.7 KiB
+16.0 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+16.0 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://c.tile.openstreetmap.org/10/211/388.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(4px, 88px, 0px);">
+…211/388.png(c.tile.openstreetmap.org)
+24.1 KiB
+13.4 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+13.4 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://b.tile.openstreetmap.org/10/212/389.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(260px, 344px, 0px);">
+…212/389.png(b.tile.openstreetmap.org)
+23.6 KiB
+13.0 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+13.0 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://c.tile.openstreetmap.org/10/210/389.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(-252px, 344px, 0px);">
+…210/389.png(c.tile.openstreetmap.org)
+23.1 KiB
+12.4 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+12.4 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://b.tile.openstreetmap.org/10/211/387.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(4px, -168px, 0px);">
+…211/387.png(b.tile.openstreetmap.org)
+20.8 KiB
+10.1 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+10.1 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://a.tile.openstreetmap.org/10/210/387.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(-252px, -168px, 0px);">
+…210/387.png(a.tile.openstreetmap.org)
+19.6 KiB
+9.0 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+9.0 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://c.tile.openstreetmap.org/10/214/388.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(772px, 88px, 0px);">
+…214/388.png(c.tile.openstreetmap.org)
+19.1 KiB
+8.4 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+8.4 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://a.tile.openstreetmap.org/10/211/389.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(4px, 344px, 0px);">
+…211/389.png(a.tile.openstreetmap.org)
+18.7 KiB
+8.0 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+8.0 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://b.tile.openstreetmap.org/10/210/388.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(-252px, 88px, 0px);">
+…210/388.png(b.tile.openstreetmap.org)
+17.8 KiB
+7.1 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+7.1 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://a.tile.openstreetmap.org/10/214/389.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(772px, 344px, 0px);">
+…214/389.png(a.tile.openstreetmap.org)
+16.4 KiB
+5.7 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+5.7 KiB
+div.leaflet-pane > div.leaflet-layer > div.leaflet-tile-container > img.leaflet-tile
+<img alt="" src="https://a.tile.openstreetmap.org/10/215/388.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: 
+translate3d(1028px, 88px, 0px);">
+…215/388.png(a.tile.openstreetmap.org)
+14.8 KiB
+4.1 KiB
+Using a modern image format (WebP, AVIF) or increasing the image compression could improve this image's download size.
+4.1 KiB 
+
+● Looking at these performance issues, here are my thoughts on fixing the image delivery problems:
+
+  Key Issues & Solutions
+
+  1. Over-sized Images (largest impact)
+
+  Many images are served at much larger dimensions than displayed:
+  - Stage logo: 700x175 served, 192x48 displayed
+  - Community logos: 1200x300 served, 192x48 displayed
+  - Community images: ~700x700 served, ~817x476 displayed
+
+  Solution: Implement responsive images with srcset and multiple sizes
+
+  2. Insufficient Compression
+
+  Most images can be compressed more aggressively (569KB of potential savings)
+
+  Solution: Re-process images with higher WebP compression (quality ~75-80 instead of ~90-95)
+
+  3. PNG to WebP Conversion
+
+  The Columbine logo is still PNG (13.9 KiB)
+
+  Solution: Convert to WebP
+
+  4. OpenStreetMap Tiles (205KB)
+
+  These are 3rd-party map tiles - you can't control them, but could:
+  - Implement tile caching/proxy
+  - Consider alternative map providers (Mapbox, Google Maps) with WebP support
+  - Or accept this cost (it's relatively minor)
+
+  Recommended Implementation Plan
+
+  I can help you implement:
+
+  1. Add image optimization pipeline - Sharp library to generate multiple sizes + compress
+  2. Update image upload handler - Auto-generate 3-4 sizes on upload (thumbnail, small, medium, full)
+  3. Update Image components - Add srcset support for responsive loading
+  4. Batch re-process existing images - Script to optimize all current images
+  5. Add CDN headers - Ensure proper caching
+
+  Estimated effort: 2-3 hours
+  Expected savings: ~600-700 KiB (OpenStreetMap tiles excluded)
+
+  Would you like me to implement these optimizations? I'd start with the image optimization pipeline and then batch-process existing images.
