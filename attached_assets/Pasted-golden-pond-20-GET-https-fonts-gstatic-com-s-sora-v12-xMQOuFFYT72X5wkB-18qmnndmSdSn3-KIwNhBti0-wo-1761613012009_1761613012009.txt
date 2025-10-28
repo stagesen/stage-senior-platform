@@ -1,0 +1,63 @@
+golden-pond:20  GET https://fonts.gstatic.com/s/sora/v12/xMQOuFFYT72X5wkB_18qmnndmSdSn3-KIwNhBti0.woff2 net::ERR_ABORTED 404 (Not Found)Understand this error
+content.js:40845 startFormHelpers
+vendor-ui-D2TxuCDh.js:1 Uncaught TypeError: Cannot read properties of undefined (reading 'forwardRef')
+    at vendor-ui-D2TxuCDh.js:1:1428
+(anonymous) @ vendor-ui-D2TxuCDh.js:1Understand this error
+content.js:40845 startFormHelpers
+talkfurther_init.min.js:2  GET https://api.talkfurther.com/api/chat/site_setup?url=stagesenior.replit.app%2Fcommunities%2Fgolden-pond 404 (Not Found)
+(anonymous) @ talkfurther_init.min.js:2
+f @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+n @ talkfurther_init.min.js:2
+s @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+f @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+n @ talkfurther_init.min.js:2
+s @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+f @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+n @ talkfurther_init.min.js:2
+s @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+f @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+n @ talkfurther_init.min.js:2
+s @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+Ae @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2Understand this error
+talkfurther_init.min.js:2 goFurther error: Error: (404)  {url_location: 'https://stagesenior.replit.app/communities/golden-pond', user_agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Ap…KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', navigator_vendor: 'Google Inc.', msg: 'goFurther error: Error: (404) ', stack: 'Error: (404) \n    at https://js.talkfurther.com/ta…s.talkfurther.com/talkfurther_init.min.js:2:5144)'}
+error @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+f @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+n @ talkfurther_init.min.js:2
+u @ talkfurther_init.min.js:2
+Promise.then
+n @ talkfurther_init.min.js:2
+s @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+Ae @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2
+(anonymous) @ talkfurther_init.min.js:2Understand this error
+content.js:40845 startFormHelpers
