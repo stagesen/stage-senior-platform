@@ -5,20 +5,20 @@ import { getCityState } from '@/lib/communityContact';
 import type { Community } from '@shared/schema';
 import { useResolveImageUrl } from '@/hooks/useResolveImageUrl';
 
-// Create custom marker icon with community color
+// Create custom marker icon with community color (48x48 for accessibility)
 const createCustomMarker = (color: string = '#2563eb') => {
   const svgIcon = `
-    <svg width="30" height="45" viewBox="0 0 30 45" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15 0C6.716 0 0 6.716 0 15c0 8.284 15 30 15 30s15-21.716 15-30C30 6.716 23.284 0 15 0z" fill="${color}"/>
-      <circle cx="15" cy="15" r="8" fill="white"/>
+    <svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <path d="M24 0C15.163 0 8 7.163 8 16c0 8 16 32 16 32s16-24 16-32C40 7.163 32.837 0 24 0z" fill="${color}"/>
+      <circle cx="24" cy="16" r="8" fill="white"/>
     </svg>
   `;
   
   return L.divIcon({
     html: svgIcon,
-    iconSize: [30, 45],
-    iconAnchor: [15, 45],
-    popupAnchor: [0, -45],
+    iconSize: [48, 48],
+    iconAnchor: [24, 48],
+    popupAnchor: [0, -48],
     className: 'custom-marker'
   });
 };

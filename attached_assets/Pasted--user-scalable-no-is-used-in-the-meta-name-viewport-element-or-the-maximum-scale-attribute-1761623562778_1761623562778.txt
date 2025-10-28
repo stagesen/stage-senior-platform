@@ -1,0 +1,111 @@
+
+[user-scalable="no"] is used in the <meta name="viewport"> element or the [maximum-scale] attribute is less than 5.
+Disabling zooming is problematic for users with low vision who rely on screen magnification to properly see the contents of a web page. Learn more about the viewport meta tag.
+Failing Elements
+head > meta
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+Touch targets do not have sufficient size or spacing.
+Touch targets with sufficient size and spacing help users who may have difficulty targeting small controls to activate the targets. Learn more about touch targets.
+Failing Elements
+div.w-full > div.leaflet-pane > div.leaflet-pane > div.leaflet-marker-icon
+<div class="leaflet-marker-icon custom-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -15px; margin-top: -45px; width: 30px; height: 45px;">
+div.w-full > div.leaflet-pane > div.leaflet-pane > div.leaflet-marker-icon
+<div class="leaflet-marker-icon custom-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -15px; margin-top: -45px; width: 30px; height: 45px;">
+Go to testimonial 2
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 2">
+Go to testimonial 3
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 3">
+Go to testimonial 3
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 3">
+Go to testimonial 2
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 2">
+Go to testimonial 4
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 4">
+Go to testimonial 4
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 4">
+Go to testimonial 3
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 3">
+Go to testimonial 5
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 5">
+Go to testimonial 5
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 5">
+Go to testimonial 4
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 4">
+Go to testimonial 6
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 6">
+Go to testimonial 6
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 6">
+Go to testimonial 5
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 5">
+Go to testimonial 7
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 7">
+Go to testimonial 7
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 7">
+Go to testimonial 6
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 6">
+Go to testimonial 8
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 8">
+Go to testimonial 8
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 8">
+Go to testimonial 7
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 7">
+Go to testimonial 9
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 9">
+Go to testimonial 9
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 9">
+Go to testimonial 8
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 8">
+Go to testimonial 10
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 10">
+Go to testimonial 10
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 10">
+Go to testimonial 9
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 9">
+Go to testimonial 11
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 11">
+Go to testimonial 11
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 11">
+Go to testimonial 10
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 10">
+Go to testimonial 12
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 12">
+Go to testimonial 12
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 12">
+Go to testimonial 11
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 11">
+Go to testimonial 13
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 13">
+Go to testimonial 13
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 13">
+Go to testimonial 12
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 12">
+Go to testimonial 14
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 14">
+Go to testimonial 14
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 14">
+Go to testimonial 13
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 13">
+Go to testimonial 15
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 15">
+Go to testimonial 15
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 15">
+Go to testimonial 14
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 14">
+Go to testimonial 16
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 16">
+Go to testimonial 16
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 16">
+Go to testimonial 15
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 15">
+Go to testimonial 17
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 17">
+Go to testimonial 17
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 17">
+Go to testimonial 16
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 16">
+Go to testimonial 18
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 18">
+Go to testimonial 18
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 18">
+Go to testimonial 17
+<button class="transition-all duration-300 w-2 h-2 bg-primary/30 rounded-full hover:bg-pr…" aria-label="Go to testimonial 17">

@@ -245,18 +245,20 @@ export default function TestimonialSection({
         </div>
 
         {/* Dot Indicators */}
-        <div className="flex justify-center gap-2 mt-8">
+        <div className="flex justify-center gap-1 mt-8">
           {enhancedTestimonials.map((_, index) => (
             <button
               key={index}
               onClick={() => scrollTo(index)}
-              className={`transition-all duration-300 ${
+              className="p-3 transition-all duration-300 min-w-[48px] min-h-[48px] flex items-center justify-center"
+              aria-label={`Go to testimonial ${index + 1}`}
+            >
+              <span className={`transition-all duration-300 ${
                 current === index
                   ? 'w-8 h-2 bg-primary rounded-full'
                   : 'w-2 h-2 bg-primary/30 rounded-full hover:bg-primary/50'
-              }`}
-              aria-label={`Go to testimonial ${index + 1}`}
-            />
+              }`} />
+            </button>
           ))}
         </div>
 
