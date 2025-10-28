@@ -23,6 +23,7 @@ Session-based authentication with `connect-pg-simple` stores sessions in Postgre
 ### Content Management
 A comprehensive admin interface supports CRUD operations for:
 - **Community Management**: Details, amenities, care types, images, ratings, property map URLs, and active/inactive status.
+  - **Community-Specific Amenity Images**: Upload custom images for four key amenities (Fitness Center, Private Dining, Beauty Salon, Courtyards & Patios) per community. These images display on both community detail pages (in row-based amenity layout) and dedicated amenity pages when accessed via `?from=<community-slug>` parameter.
 - **Content Systems**: Blog, team member, event, FAQ, gallery, and testimonial management with image uploads and community associations.
 - **Dynamic Content**: Management for page heroes, floor plans, community highlights, and homepage sections.
 - **Lead Management**: Tour request system with email forwarding.
