@@ -241,32 +241,75 @@ export async function processSingleImageUpload(
   width: number;
   height: number;
 }> {
-  const filename = generateUniqueFilename(file.originalname);
+  // Detect if this is a logo based on filename or path
+  const isLogo = file.originalname.toLowerCase().includes('logo') || 
+                 file.fieldname?.toLowerCase().includes('logo');
   
-  // Get image dimensions
-  const { width, height } = await getImageDimensions(file.buffer);
+  // Convert to WebP and optimize
+  // Use quality 75 for logos (need sharpness), quality 70 for photos
+  const quality = isLogo ? 75 : 70;
+  
+  let processedBuffer = file.buffer;
+  let finalMimeType = file.mimetype;
+  let finalFilename = generateUniqueFilename(file.originalname);
+  
+  // Convert all images to WebP for optimal compression
+  try {
+    const metadata = await sharp(file.buffer).metadata();
+    const isAnimated = metadata.pages && metadata.pages > 1; // Detect animated GIFs
+    
+    if (isAnimated) {
+      // Preserve animated GIFs with WebP animation support
+      processedBuffer = await sharp(file.buffer, { animated: true })
+        .webp({ 
+          quality,
+          effort: 6,
+          smartSubsample: true
+        })
+        .toBuffer();
+    } else {
+      // Static images
+      processedBuffer = await sharp(file.buffer)
+        .webp({ 
+          quality,
+          effort: 6,
+          smartSubsample: true
+        })
+        .toBuffer();
+    }
+    
+    // Update filename to have .webp extension
+    finalFilename = finalFilename.replace(/\.(jpg|jpeg|png|gif)$/i, '.webp');
+    finalMimeType = 'image/webp';
+  } catch (error) {
+    console.error("Error converting image to WebP, using original:", error);
+    // If conversion fails, use original buffer
+  }
+  
+  // Get image dimensions from processed buffer
+  const { width, height } = await getImageDimensions(processedBuffer);
   
   // Upload to object storage
   const objectKey = await uploadToObjectStorage(
-    file.buffer,
-    filename,
-    file.mimetype,
+    processedBuffer,
+    finalFilename,
+    finalMimeType,
     true // Upload to public directory
   );
   
   // Generate public URL
   const bucketId = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-  const publicUrl = `/${bucketId}/public/${filename}`;
+  const publicUrl = `/${bucketId}/public/${finalFilename}`;
   
   // Save metadata to database
   const imageData: InsertImage = {
-    objectKey: `public/${filename}`,
+    objectKey: `public/${finalFilename}`,
     url: publicUrl,
     alt: file.originalname.split(".")[0].replace(/[-_]/g, " "),
     width,
     height,
-    sizeBytes: file.size,
-    mimeType: file.mimetype,
+    sizeBytes: processedBuffer.length, // Use processed buffer size
+    mimeType: finalMimeType,
     uploadedBy,
   };
   
