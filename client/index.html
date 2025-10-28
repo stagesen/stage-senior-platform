@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-M6D3DHTS');</script>
-    <!-- End Google Tag Manager -->
+    <!-- Google Tag Manager - Deferred to reduce render blocking -->
+    <script>
+      // Initialize dataLayer immediately for early tracking compatibility
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+    </script>
+    <!-- End Google Tag Manager (head) -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <title>Stage Senior Living - Compassionate Care for Your Loved Ones</title>
@@ -32,6 +32,27 @@
     <!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- Load GTM script deferred to reduce render blocking -->
+    <script type='text/javascript'>
+// Defer GTM until after page load to reduce render blocking (saves ~200ms)
+window.addEventListener('load', function() {
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(function() {
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-M6D3DHTS';
+      document.head.appendChild(script);
+    });
+  } else {
+    setTimeout(function() {
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-M6D3DHTS';
+      document.head.appendChild(script);
+    }, 1000);
+  }
+});
+</script>
     <script type='text/javascript'>
 // Defer TalkFurther widget until after page load to reduce TBT
 window.addEventListener('load', function() {
