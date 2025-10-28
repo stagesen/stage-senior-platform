@@ -1434,13 +1434,13 @@ const AmenityRow = ({
 
   if (link) {
     return (
-      <Link href={link} data-testid={`amenity-row-${amenity.slug}`}>
+      <Link href={link} data-testid={`amenity-row-${amenity.slug}`} className="block my-2">
         {rowContent}
       </Link>
     );
   }
 
-  return <div data-testid={`amenity-row-${amenity.slug}`}>{rowContent}</div>;
+  return <div data-testid={`amenity-row-${amenity.slug}`} className="my-2">{rowContent}</div>;
 };
 
 // Component to display amenities in rows with images on the left
