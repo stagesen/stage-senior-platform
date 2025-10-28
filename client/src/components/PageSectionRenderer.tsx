@@ -221,7 +221,7 @@ export default function PageSectionRenderer({ section, currentCareType }: PageSe
     return (
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-xl p-12 text-white">
+          <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl shadow-xl p-12 text-white">
             <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center" data-testid={`${section.sectionKey}-title`}>
               {content.heading}
             </h2>
@@ -235,7 +235,7 @@ export default function PageSectionRenderer({ section, currentCareType }: PageSe
                 {content.buttonLink === "#schedule-tour" ? (
                   <Button
                     size="lg"
-                    className="bg-white hover:bg-gray-100 text-purple-600 hover:text-purple-700 font-semibold"
+                    className="bg-white hover:bg-gray-100 text-blue-600 hover:text-blue-700 font-semibold"
                     onClick={() => openScheduleTour()}
                     data-testid={`${section.sectionKey}-button`}
                   >
@@ -244,7 +244,7 @@ export default function PageSectionRenderer({ section, currentCareType }: PageSe
                 ) : (
                   <Button
                     size="lg"
-                    className="bg-white hover:bg-gray-100 text-purple-600 hover:text-purple-700 font-semibold"
+                    className="bg-white hover:bg-gray-100 text-blue-600 hover:text-blue-700 font-semibold"
                     asChild
                     data-testid={`${section.sectionKey}-button`}
                   >
