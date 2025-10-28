@@ -178,10 +178,16 @@ async function createCampaignForCommunity(community: CommunityData): Promise<voi
   const budgetAmountMicros = dailyBudget * 1000000;
   
   // Determine domain for final URLs
-  // For production, use the actual domain. For development, use Replit dev URL
-  const domain = process.env.REPLIT_DEV_DOMAIN 
-    ? `https://${process.env.REPLIT_DEV_DOMAIN}` 
-    : 'https://stagesenior.com'; // Update with actual production domain
+  // Use the published domain (stagesenior.com) if in production
+  // In development, use the dev domain for testing
+  let domain = 'https://stagesenior.com';
+  
+  const replitDomains = process.env.REPLIT_DOMAINS || '';
+  const isProduction = replitDomains.includes('stagesenior.com');
+  
+  if (!isProduction && process.env.REPLIT_DEV_DOMAIN) {
+    domain = `https://${process.env.REPLIT_DEV_DOMAIN}`;
+  }
   
   const finalUrl = `${domain}/communities/${community.slug}`;
   
