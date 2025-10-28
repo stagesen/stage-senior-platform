@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { preloadLCPImage } from "@/lib/metaTags";
 
 interface PageHeroProps {
   pagePath: string;
@@ -93,6 +95,13 @@ export function PageHero({
     center: "text-center items-center",
     right: "text-right items-end",
   };
+
+  // Preload LCP image for better performance
+  useEffect(() => {
+    if (finalBackgroundImage) {
+      preloadLCPImage(finalBackgroundImage);
+    }
+  }, [finalBackgroundImage]);
 
   return (
     <section

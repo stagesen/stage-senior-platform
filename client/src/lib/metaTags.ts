@@ -143,6 +143,28 @@ export function getCanonicalUrl(path?: string): string {
 }
 
 /**
+ * Adds a preload link for LCP (Largest Contentful Paint) optimization
+ * This makes images discoverable from the HTML immediately
+ */
+export function preloadLCPImage(imageUrl: string): void {
+  if (!imageUrl) return;
+  
+  // Check if preload link already exists
+  const existingPreload = document.querySelector(`link[rel="preload"][href="${imageUrl}"]`);
+  if (existingPreload) return;
+  
+  // Create and add preload link
+  const link = document.createElement('link');
+  link.rel = 'preload';
+  link.as = 'image';
+  link.href = imageUrl;
+  link.setAttribute('fetchpriority', 'high');
+  
+  // Insert at the beginning of head for maximum priority
+  document.head.insertBefore(link, document.head.firstChild);
+}
+
+/**
  * Helper function to format care types for display
  * Maps alternative care type names to standard names
  */
