@@ -130,6 +130,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // UptimeRobot webhook endpoint - receives alerts and runs diagnostics
+  app.post("/api/webhooks/uptime-monitor", async (req, res) => {
+    try {
+      const timestamp = new Date().toISOString();
+      const alertData = req.body;
+      
+      console.log(`[UPTIME ALERT] ${timestamp} - Received alert:`, JSON.stringify(alertData, null, 2));
+      
+      // Run diagnostics
+      const diagnostics: any = {
+        timestamp,
+        alert: alertData,
+        diagnostics: {}
+      };
+      
+      // Check database connectivity
+      try {
+        const dbConnected = await storage.getUserCount().then(() => true).catch(() => false);
+        diagnostics.diagnostics.database = {
+          status: dbConnected ? "connected" : "error",
+          message: dbConnected ? "Database is responding" : "Database connection failed"
+        };
+      } catch (error: any) {
+        diagnostics.diagnostics.database = {
+          status: "error",
+          message: error.message
+        };
+      }
+      
+      // Check environment
+      diagnostics.diagnostics.environment = {
+        nodeEnv: process.env.NODE_ENV || "development",
+        hasSessionSecret: !!process.env.SESSION_SECRET,
+        hasSentryDsn: !!process.env.SENTRY_DSN
+      };
+      
+      // Check memory usage
+      const memoryUsage = process.memoryUsage();
+      diagnostics.diagnostics.memory = {
+        heapUsed: `${Math.round(memoryUsage.heapUsed / 1024 / 1024)}MB`,
+        heapTotal: `${Math.round(memoryUsage.heapTotal / 1024 / 1024)}MB`,
+        rss: `${Math.round(memoryUsage.rss / 1024 / 1024)}MB`
+      };
+      
+      // Log to console for visibility
+      console.log(`[UPTIME DIAGNOSTICS] ${timestamp}:`, JSON.stringify(diagnostics.diagnostics, null, 2));
+      
+      res.json({
+        success: true,
+        message: "Alert received and diagnostics completed",
+        ...diagnostics
+      });
+    } catch (error: any) {
+      console.error("[UPTIME WEBHOOK ERROR]", error);
+      res.status(500).json({ 
+        success: false,
+        message: "Failed to process alert",
+        error: error.message 
+      });
+    }
+  });
+
   // Serve ONLY generated images directory (not entire attached_assets)
   // This prevents exposure of sensitive files like CSV exports, admin guides, etc.
   const generatedImagesPath = path.join(import.meta.dirname, "..", "attached_assets", "generated_images");
