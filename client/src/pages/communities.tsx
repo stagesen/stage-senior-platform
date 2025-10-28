@@ -57,16 +57,6 @@ export default function Communities() {
     }
   });
 
-  console.log('Communities Page - Raw data from API:', communities.length);
-  console.log('Communities Page - After filtering:', filteredCommunities.length);
-  console.log('Communities Page - After sorting (passing to map):', sortedCommunities.length);
-  console.log('Communities Page - Data:', sortedCommunities.map(c => ({ 
-    name: c.name, 
-    lat: c.latitude, 
-    lng: c.longitude,
-    hasCoords: !!(c.latitude && c.longitude)
-  })));
-
   const scrollToCommunity = (communityId: string) => {
     const element = document.getElementById(`community-card-${communityId}`);
     if (element) {
