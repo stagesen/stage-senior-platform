@@ -104,12 +104,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use(clickIdCaptureMiddleware);
   
   // Root health check endpoint for deployment health checks (production only)
-  // In development, Vite middleware handles the root route
-  if (process.env.NODE_ENV === "production") {
-    app.get("/", (_req, res) => {
-      res.status(200).json({ status: "ok" });
-    });
-  }
+  // Root route will be handled by Vite middleware (dev) or static files (production)
+  // No explicit route needed - the setup in server/vite.ts handles this
   
   // Diagnostic endpoint for debugging production issues
   app.get("/api/health", async (_req, res) => {

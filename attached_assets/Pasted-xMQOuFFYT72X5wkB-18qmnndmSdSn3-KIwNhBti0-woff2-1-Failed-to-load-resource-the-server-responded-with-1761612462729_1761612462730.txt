@@ -1,0 +1,12 @@
+xMQOuFFYT72X5wkB_18qmnndmSdSn3-KIwNhBti0.woff2:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+content.js:40845 startFormHelpers
+vendor-ui-D2TxuCDh.js:1 Uncaught TypeError: Cannot read properties of undefined (reading 'forwardRef')
+    at vendor-ui-D2TxuCDh.js:1:1428Understand this error
+content.js:40845 startFormHelpers
+api.talkfurther.com/api/chat/site_setup?url=stagesenior.replit.app%2Fcommunities%2Fgolden-pond:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+talkfurther_init.min.js:2 goFurther error: Error: (404)  Objectmsg: "goFurther error: Error: (404) "navigator_vendor: "Google Inc."stack: "Error: (404) \n    at https://js.talkfurther.com/talkfurther_init.min.js:2:29268\n    at f (https://js.talkfurther.com/talkfurther_init.min.js:2:9279)\n    at Generator._invoke (https://js.talkfurther.com/talkfurther_init.min.js:2:9032)\n    at Generator.next (https://js.talkfurther.com/talkfurther_init.min.js:2:9642)\n    at n (https://js.talkfurther.com/talkfurther_init.min.js:2:4941)\n    at s (https://js.talkfurther.com/talkfurther_init.min.js:2:5144)"url_location: "https://stagesenior.replit.app/communities/golden-pond"user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"[[Prototype]]: Object
+error @ talkfurther_init.min.js:2Understand this error
+content.js:40845 startFormHelpers
+golden-pond:1 The resource https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.Understand this warning
+golden-pond:1 The resource https://vsa.talkfurther.com/famchat.v3.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.Understand this warning
+golden-pond:1 The resource https://fonts.gstatic.com/s/sora/v12/xMQOuFFYT72X5wkB_18qmnndmSdSn3-KIwNhBti0.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
