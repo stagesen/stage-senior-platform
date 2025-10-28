@@ -2684,6 +2684,27 @@ export default function CommunityDetail() {
               <ScaleHeader scaleFrom={0.85} scaleTo={1}>
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8">Location & Neighborhood</h2>
               </ScaleHeader>
+
+              {/* Address with directions link */}
+              <FadeIn direction="up" delay={0.05}>
+                <div className="mb-4 flex items-center gap-2 text-gray-700">
+                  <MapPin className="w-5 h-5 text-primary flex-shrink-0" />
+                  <span className="text-lg">
+                    {community.address}, {community.city}, {community.state} {community.zipCode}
+                  </span>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${community.address}, ${community.city}, ${community.state} ${community.zipCode}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                    title="Get directions"
+                    data-testid="directions-link"
+                  >
+                    <Navigation className="w-5 h-5 text-primary" />
+                  </a>
+                </div>
+              </FadeIn>
+
               <FadeIn direction="up" delay={0.1}>
                 <Card className="mb-6 overflow-hidden">
                 <CardContent className="p-0">
