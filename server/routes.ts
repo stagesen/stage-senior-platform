@@ -385,9 +385,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Robots.txt - SEO crawling instructions
   app.get("/robots.txt", (_req, res) => {
-    const baseUrl = process.env.REPLIT_DEV_DOMAIN 
-      ? `https://${process.env.REPLIT_DEV_DOMAIN}` 
-      : "https://stagesenior.com";
+    // Use the published domain (stagesenior.com) if in production
+    // In development, use the dev domain for testing
+    let baseUrl = "https://stagesenior.com";
+    
+    const replitDomains = process.env.REPLIT_DOMAINS || "";
+    const isProduction = replitDomains.includes("stagesenior.com");
+    
+    if (!isProduction && process.env.REPLIT_DEV_DOMAIN) {
+      baseUrl = `https://${process.env.REPLIT_DEV_DOMAIN}`;
+    }
     
     const robotsTxt = `User-agent: *
 Allow: /
@@ -407,9 +414,16 @@ Disallow: /admin/
   // Sitemap.xml - Dynamic sitemap for search engines
   app.get("/sitemap.xml", async (_req, res) => {
     try {
-      const baseUrl = process.env.REPLIT_DEV_DOMAIN 
-        ? `https://${process.env.REPLIT_DEV_DOMAIN}` 
-        : "https://stagesenior.com";
+      // Use the published domain (stagesenior.com) if in production
+      // In development, use the dev domain for testing
+      let baseUrl = "https://stagesenior.com";
+      
+      const replitDomains = process.env.REPLIT_DOMAINS || "";
+      const isProduction = replitDomains.includes("stagesenior.com");
+      
+      if (!isProduction && process.env.REPLIT_DEV_DOMAIN) {
+        baseUrl = `https://${process.env.REPLIT_DEV_DOMAIN}`;
+      }
 
       // Get all communities
       const communities = await storage.getCommunities();
@@ -585,18 +599,57 @@ Disallow: /admin/
         }
       }
 
-      // Add all landing pages
+      // Add all landing pages - expand templates with actual cities
       sitemap += `  
   <!-- Landing Pages -->
 `;
       for (const template of landingTemplates) {
-        if (template.slug) {
+        const pattern = template.urlPattern || '';
+        const cities = template.cities || [];
+        
+        // Handle templates with no dynamic parts (static landing pages)
+        if (!pattern.includes(':')) {
           sitemap += `  <url>
-    <loc>${baseUrl}/${template.slug}</loc>
+    <loc>${baseUrl}${pattern}</loc>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 `;
+          continue;
+        }
+        
+        // Handle city-based templates - generate URL for each city
+        if (pattern.includes(':city') && cities.length > 0) {
+          cities.forEach((city) => {
+            const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+            const url = pattern.replace(':city', citySlug);
+            sitemap += `  <url>
+    <loc>${baseUrl}${url}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+`;
+          });
+          continue;
+        }
+        
+        // Handle care level + city templates (e.g., /:careLevel/:city)
+        if (pattern.includes(':careLevel') && pattern.includes(':city')) {
+          const careLevels = ['assisted-living', 'memory-care', 'independent-living'];
+          cities.forEach((city) => {
+            careLevels.forEach((careLevel) => {
+              const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+              const url = pattern
+                .replace(':careLevel', careLevel)
+                .replace(':city', citySlug);
+              sitemap += `  <url>
+    <loc>${baseUrl}${url}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+`;
+            });
+          });
         }
       }
 
