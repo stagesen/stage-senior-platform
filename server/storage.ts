@@ -2210,13 +2210,43 @@ export class DatabaseStorage implements IStorage {
         createdAt: amenities.createdAt,
         updatedAt: amenities.updatedAt,
         communityImageId: communitiesAmenities.imageId,
+        // Community-level images for fallback
+        communityFitnessImageId: communities.fitnessImageId,
+        communityPrivateDiningImageId: communities.privateDiningImageId,
       })
       .from(communitiesAmenities)
       .leftJoin(amenities, eq(communitiesAmenities.amenityId, amenities.id))
+      .leftJoin(communities, eq(communitiesAmenities.communityId, communities.id))
       .where(eq(communitiesAmenities.communityId, communityId))
       .orderBy(asc(amenities.sortOrder), asc(amenities.name));
     
-    return results as Array<Amenity & { communityImageId?: string | null }>;
+    // Map results and apply community-level image fallbacks for specific amenities
+    return results.map(result => {
+      let finalImageId = result.communityImageId;
+      
+      // Use community-level fitness image for fitness-related amenities if no specific override
+      if (!finalImageId && result.slug && (
+        result.slug.includes('fitness') || 
+        result.slug.includes('workout') ||
+        result.slug.includes('therapy')
+      )) {
+        finalImageId = result.communityFitnessImageId;
+      }
+      
+      // Use community-level private dining image for private dining amenities if no specific override
+      if (!finalImageId && result.slug && (
+        result.slug.includes('private') && result.slug.includes('dining')
+      )) {
+        finalImageId = result.communityPrivateDiningImageId;
+      }
+      
+      // Return amenity with the final image ID
+      const { communityFitnessImageId, communityPrivateDiningImageId, ...amenity } = result;
+      return {
+        ...amenity,
+        communityImageId: finalImageId,
+      };
+    }) as Array<Amenity & { communityImageId?: string | null }>;
   }
 
   async setCommunityAmenities(communityId: string, amenityIds: string[]): Promise<void> {
