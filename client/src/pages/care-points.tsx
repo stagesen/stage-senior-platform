@@ -262,7 +262,6 @@ export default function CarePoints() {
         pagePath="/care-points"
         defaultTitle="Care Points"
         defaultSubtitle="Personalized care for every need"
-        defaultDescription="Comprehensive care services tailored to each resident's unique requirements"
       />
 
       {/* Render Database Content Sections */}
@@ -284,7 +283,7 @@ export default function CarePoints() {
       )}
 
       {/* Comparison Table */}
-      <section className="py-16 bg-gray-50">
+      <section id="comparison" className="py-16 bg-gray-50 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse bg-white rounded-lg shadow-sm">
@@ -310,7 +309,7 @@ export default function CarePoints() {
       </section>
 
       {/* Pricing Examples */}
-      <section className="py-16 bg-white">
+      <section id="pricing" className="py-16 bg-white scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-4" data-testid="pricing-examples-title">
             What monthly care looks like—simple, real examples
@@ -446,7 +445,7 @@ export default function CarePoints() {
       )}
 
       {/* FAQ Section */}
-      <section className="py-16 bg-gray-50">
+      <section id="faqs" className="py-16 bg-gray-50 scroll-mt-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-12" data-testid="faq-title">
             Frequently asked questions
@@ -468,7 +467,7 @@ export default function CarePoints() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-16 bg-white">
+      <section id="testimonials" className="py-16 bg-white scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="testimonials-title">
@@ -501,7 +500,7 @@ export default function CarePoints() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-16 bg-gradient-to-br from-primary/10 to-white">
+      <section id="contact" className="py-16 bg-gradient-to-br from-primary/10 to-white scroll-mt-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" data-testid="final-cta-title">
             Schedule a Pricing Consult

@@ -211,7 +211,7 @@ export default function Home() {
       />
 
       {/* Community Carousel */}
-      <section id="finder" className="py-16 bg-primary text-white relative overflow-hidden">
+      <section id="finder" className="py-16 bg-primary text-white relative overflow-hidden scroll-mt-24">
         {/* Enhanced dark background overlay */}
         <div className="absolute inset-0 bg-primary/95 z-0" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -334,7 +334,7 @@ export default function Home() {
       </section>
 
       {/* Featured Differentiators */}
-      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+      <section id="what-makes-us-different" className="py-20 bg-gradient-to-b from-white to-gray-50 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <ScaleHeader scaleFrom={0.85} scaleTo={1}>
@@ -514,12 +514,14 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <FadeIn direction="up" delay={0.2}>
-        <TestimonialSection />
-      </FadeIn>
+      <section id="testimonials" className="scroll-mt-24">
+        <FadeIn direction="up" delay={0.2}>
+          <TestimonialSection />
+        </FadeIn>
+      </section>
 
       {/* Pricing Teaser */}
-      <section id="pricing" className="py-16 bg-white">
+      <section id="pricing" className="py-16 bg-white scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="bg-gradient-to-br from-primary/5 to-white border-primary/20 overflow-hidden">
             <CardContent className="p-8 md:p-12">
@@ -566,7 +568,7 @@ export default function Home() {
 
       {/* Lead Generation Panel - Blue Background for CTA Emphasis */}
       <ScaleIn delay={0.2}>
-        <section id="lead" className="py-16 bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] relative overflow-hidden">
+        <section id="contact" className="py-16 bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] relative overflow-hidden scroll-mt-24">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

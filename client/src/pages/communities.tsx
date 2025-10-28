@@ -81,7 +81,7 @@ export default function Communities() {
       />
 
       {/* Hero Actions & Map Overlap */}
-      <section className="relative z-20 -mt-20 sm:-mt-24 lg:-mt-32 pb-8 sm:pb-12">
+      <section id="map" className="relative z-20 -mt-20 sm:-mt-24 lg:-mt-32 pb-8 sm:pb-12 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] text-white rounded-2xl sm:rounded-3xl px-4 sm:px-8 py-6 sm:py-10 shadow-2xl flex flex-col items-center gap-4 sm:gap-6 animate-fadeIn">
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
@@ -161,7 +161,7 @@ export default function Communities() {
       </section>
 
       {/* Search and Filters */}
-      <section className="bg-white py-4 sm:py-6 sticky top-0 z-40 border-b border-gray-200 shadow-sm">
+      <section id="filters" className="bg-white py-4 sm:py-6 sticky top-0 z-40 border-b border-gray-200 shadow-sm scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             {/* Care Type Filter */}
@@ -201,7 +201,7 @@ export default function Communities() {
       </section>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <main id="communities-list" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 scroll-mt-24">
         {/* Communities List */}
         {isLoading ? (
           <div className="space-y-6">
@@ -258,10 +258,12 @@ export default function Communities() {
       </main>
 
       {/* Testimonials Section */}
-      <TestimonialSection />
+      <section id="testimonials" className="scroll-mt-24">
+        <TestimonialSection />
+      </section>
 
       {/* CTA Section with Contact */}
-      <section id="contact-section" className="relative bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] text-white py-16 sm:py-24 overflow-hidden">
+      <section id="contact" className="relative bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] text-white py-16 sm:py-24 overflow-hidden scroll-mt-24">
         {/* Decorative Elements */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>

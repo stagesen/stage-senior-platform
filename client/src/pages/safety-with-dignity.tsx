@@ -333,7 +333,7 @@ export default function SafetyWithDignity() {
       )}
 
       {/* Comparison Section */}
-      <section className="py-16 bg-gray-50">
+      <section id="comparison" className="py-16 bg-gray-50 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <Badge className="mb-4" variant="outline">Why Choose Us</Badge>
@@ -376,7 +376,7 @@ export default function SafetyWithDignity() {
       </section>
 
       {/* Privacy & Consent Section - Enhanced with Icons */}
-      <section className="py-16 bg-white">
+      <section id="privacy" className="py-16 bg-white scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <Badge className="mb-4" variant="secondary">Your Privacy Matters</Badge>
@@ -438,7 +438,7 @@ export default function SafetyWithDignity() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-16 bg-gradient-to-br from-primary/5 to-white">
+      <section id="testimonials" className="py-16 bg-gradient-to-br from-primary/5 to-white scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <Badge className="mb-4" variant="outline">Real Stories</Badge>
@@ -469,7 +469,7 @@ export default function SafetyWithDignity() {
       </section>
 
       {/* What Families Can Expect Section - Enhanced */}
-      <section className="py-16 bg-white">
+      <section id="what-to-expect" className="py-16 bg-white scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <Badge className="mb-4" variant="secondary">Family Partnership</Badge>
@@ -548,7 +548,7 @@ export default function SafetyWithDignity() {
       </section>
 
       {/* Video Section - Enhanced */}
-      <section className="py-16 bg-gray-50">
+      <section id="video" className="py-16 bg-gray-50 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <Badge className="mb-4" variant="outline">See It In Action</Badge>
@@ -586,7 +586,7 @@ export default function SafetyWithDignity() {
       </section>
 
       {/* FAQ Section - Enhanced */}
-      <section className="py-16 bg-white">
+      <section id="faqs" className="py-16 bg-white scroll-mt-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <Badge className="mb-4" variant="secondary">Your Questions Answered</Badge>
@@ -618,7 +618,7 @@ export default function SafetyWithDignity() {
       </section>
 
       {/* Final CTA Section - Enhanced */}
-      <section className="py-20 bg-gradient-to-br from-primary to-primary/90 text-white relative overflow-hidden">
+      <section id="contact" className="py-20 bg-gradient-to-br from-primary to-primary/90 text-white relative overflow-hidden scroll-mt-24">
         <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]"></div>
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4" data-testid="cta-title">

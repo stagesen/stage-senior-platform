@@ -74,7 +74,7 @@ export default function Services() {
       )}
 
       {/* Bottom Section - Communities */}
-      <section className="py-20 bg-gray-50">
+      <section id="communities" className="py-20 bg-gray-50 scroll-mt-24">
         <CommunitiesCarousel
           communities={communities || []}
           isLoading={communitiesLoading}

@@ -1605,6 +1605,8 @@ export default function CommunityDetail() {
 
         if (nextActiveId) {
           setActiveSection(nextActiveId);
+          // Update URL hash without causing scroll jump
+          window.history.replaceState(null, '', `#${nextActiveId}`);
         }
       },
       {
@@ -1656,6 +1658,8 @@ export default function CommunityDetail() {
     });
 
     setActiveSection(sectionId);
+    // Update URL hash when clicking nav links
+    window.history.pushState(null, '', `#${sectionId}`);
   };
 
   // Resolve the logo image from logoImageId
