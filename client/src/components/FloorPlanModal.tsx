@@ -109,19 +109,19 @@ export default function FloorPlanModal({
         <DialogHeader className="mb-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 min-w-0">
-              <div className="min-w-0">
-                <DialogTitle className="text-xl sm:text-2xl font-bold">
-                  {floorPlan.name}
-                </DialogTitle>
-                <p className="text-sm sm:text-base text-muted-foreground mt-1">{communityName}</p>
-              </div>
-              <div className="text-left sm:text-right">
+              <div className="text-left sm:text-left">
                 {getAvailabilityBadge(floorPlan.availability)}
                 {floorPlan.startingPrice && (
                   <p className="text-xl sm:text-2xl font-bold text-primary mt-1 sm:mt-2">
                     {formatPrice(floorPlan.startingPrice)}/mo
                   </p>
                 )}
+              </div>
+              <div className="min-w-0 text-left sm:text-right">
+                <DialogTitle className="text-xl sm:text-2xl font-bold">
+                  {floorPlan.name}
+                </DialogTitle>
+                <p className="text-sm sm:text-base text-muted-foreground mt-1">{communityName}</p>
               </div>
             </div>
           </div>

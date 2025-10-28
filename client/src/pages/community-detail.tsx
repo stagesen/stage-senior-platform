@@ -1457,7 +1457,7 @@ const AmenitiesRowList = ({ amenities, communitySlug }: AmenitiesRowListProps) =
   const hasMore = amenities.length > INITIAL_DISPLAY_COUNT;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Always visible amenities */}
       {displayedAmenities.map((amenity) => (
         <AmenityRow key={amenity.id} amenity={amenity} communitySlug={communitySlug} />
