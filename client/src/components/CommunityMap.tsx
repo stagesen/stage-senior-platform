@@ -184,14 +184,15 @@ export default function CommunityMap({
         popupDiv.className = 'overflow-hidden min-w-[280px]';
         
         // Add hero image if available
-        if (community.imageId) {
+        const heroImageId = community.imageId || community.heroImageUrl;
+        if (heroImageId) {
           const heroContainer = document.createElement('div');
           heroContainer.className = 'relative h-32 mb-3';
           
           const hero = document.createElement('img');
-          hero.src = `/api/images/${community.imageId}`;
+          hero.src = `/api/images/${heroImageId}`;
           hero.alt = `${community.name}`;
-          hero.className = 'w-full h-full object-cover';
+          hero.className = 'w-full h-full object-cover rounded-t-lg';
           hero.onerror = () => {
             heroContainer.style.display = 'none';
           };
@@ -204,27 +205,32 @@ export default function CommunityMap({
         const contentDiv = document.createElement('div');
         contentDiv.className = 'px-4 pb-4';
 
-        // Header with logo and title
+        // Header with logo
         const headerDiv = document.createElement('div');
-        headerDiv.className = 'flex items-center justify-center gap-2 mb-2';
+        headerDiv.className = 'flex items-center justify-center mb-3';
         
         if (community.logoImageId) {
           const logo = document.createElement('img');
           logo.src = `/api/images/${community.logoImageId}`;
           logo.alt = `${community.name} logo`;
-          logo.className = 'h-8 w-auto object-contain';
+          logo.className = 'h-12 w-auto object-contain';
           logo.onerror = () => {
-            logo.style.display = 'none';
+            // If logo fails to load, show the title instead
+            const title = document.createElement('h3');
+            title.className = 'font-bold text-lg text-center';
+            title.style.color = markerColor;
+            title.textContent = community.name;
+            headerDiv.appendChild(title);
           };
           headerDiv.appendChild(logo);
+        } else {
+          // No logo, show the title
+          const title = document.createElement('h3');
+          title.className = 'font-bold text-lg text-center';
+          title.style.color = markerColor;
+          title.textContent = community.name;
+          headerDiv.appendChild(title);
         }
-
-        // Community name
-        const title = document.createElement('h3');
-        title.className = 'font-bold text-lg';
-        title.style.color = markerColor;
-        title.textContent = community.name;
-        headerDiv.appendChild(title);
         
         contentDiv.appendChild(headerDiv);
 
