@@ -85,19 +85,24 @@ export default function Dining() {
         </div>
       ) : (
         <>
-          {sections.map((section, index) => {
-            // Pass community private dining image to the first hero_section
-            const isFirstHeroSection = index === 0 && section.sectionType === 'hero_section';
-            const communityImageId = isFirstHeroSection ? communityData?.community?.privateDiningImageId : undefined;
+          {(() => {
+            // Find the index of the first hero_section
+            const firstHeroIndex = sections.findIndex(s => s.sectionType === 'hero_section');
             
-            return (
-              <PageSectionRenderer 
-                key={section.id} 
-                section={section}
-                communityImageId={communityImageId}
-              />
-            );
-          })}
+            return sections.map((section, index) => {
+              // Pass community private dining image to the first hero_section only
+              const isFirstHeroSection = index === firstHeroIndex && firstHeroIndex !== -1;
+              const communityImageId = isFirstHeroSection ? communityData?.community?.privateDiningImageId : undefined;
+              
+              return (
+                <PageSectionRenderer 
+                  key={section.id} 
+                  section={section}
+                  communityImageId={communityImageId}
+                />
+              );
+            });
+          })()}
         </>
       )}
     </div>

@@ -89,19 +89,34 @@ export default function FitnessTherapy() {
         </div>
       ) : (
         <>
-          {sections.map((section, index) => {
-            // Pass community fitness image to the first hero_section
-            const isFirstHeroSection = index === 0 && section.sectionType === 'hero_section';
-            const communityImageId = isFirstHeroSection ? communityData?.community?.fitnessImageId : undefined;
+          {(() => {
+            // Find the index of the first hero_section
+            const firstHeroIndex = sections.findIndex(s => s.sectionType === 'hero_section');
             
-            return (
-              <PageSectionRenderer 
-                key={section.id} 
-                section={section}
-                communityImageId={communityImageId}
-              />
-            );
-          })}
+            return sections.map((section, index) => {
+              // Pass community fitness image to the first hero_section only
+              const isFirstHeroSection = index === firstHeroIndex && firstHeroIndex !== -1;
+              const communityImageId = isFirstHeroSection ? communityData?.community?.fitnessImageId : undefined;
+              
+              // Debug logging
+              if (isFirstHeroSection && communityImageId) {
+                console.log('[Fitness Page] Passing community fitness image to section:', {
+                  sectionType: section.sectionType,
+                  sectionId: section.id,
+                  communityImageId,
+                  defaultImageId: (section.content as any)?.imageId
+                });
+              }
+              
+              return (
+                <PageSectionRenderer 
+                  key={section.id} 
+                  section={section}
+                  communityImageId={communityImageId}
+                />
+              );
+            });
+          })()}
         </>
       )}
     </div>
