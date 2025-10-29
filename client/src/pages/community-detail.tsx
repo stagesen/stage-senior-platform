@@ -1159,7 +1159,7 @@ const ActionPanel = ({ community, teamMembers, handleNavClick }: { community: an
                   <div>
                     <p className="font-medium">Visit Us</p>
                     <p className="text-sm text-muted-foreground">
-                      {community.address}<br />
+                      {community.street}<br />
                       {getCityStateZip(community)}
                     </p>
                   </div>
@@ -1937,8 +1937,8 @@ export default function CommunityDetail() {
                 <div className="flex items-start" data-testid="community-location">
                   <MapPin className="w-5 h-5 mr-2 mt-1 flex-shrink-0" />
                   <div>
-                    {community.street || community.address}
-                    {(community.street || community.address) && <br />}
+                    {community.street}
+                    {community.street && <br />}
                     {getCityStateZip(community)}
                   </div>
                 </div>
@@ -2387,7 +2387,7 @@ export default function CommunityDetail() {
                       <div className="text-sm">
                         <p className="font-medium">Address</p>
                         <p className="text-muted-foreground">
-                          {community.address}<br />
+                          {community.street}<br />
                           {getCityStateZip(community)}
                         </p>
                       </div>
@@ -2400,7 +2400,7 @@ export default function CommunityDetail() {
                       data-testid="button-get-directions"
                     >
                       <a 
-                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(community.address + ', ' + community.city + ', ' + community.state + ' ' + community.zipCode)}`}
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(community.street + ', ' + community.city + ', ' + community.state + ' ' + (community.zipCode || community.zip))}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2841,10 +2841,10 @@ export default function CommunityDetail() {
                 <div className="mb-4 flex items-center gap-2 text-gray-700">
                   <MapPin className="w-5 h-5 text-primary flex-shrink-0" />
                   <span className="text-lg">
-                    {community.address}, {community.city}, {community.state} {community.zipCode}
+                    {community.street}, {community.city}, {community.state} {community.zipCode || community.zip}
                   </span>
                   <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${community.address}, ${community.city}, ${community.state} ${community.zipCode}`)}`}
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${community.street}, ${community.city}, ${community.state} ${community.zipCode || community.zip}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="ml-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -2879,8 +2879,8 @@ export default function CommunityDetail() {
                       <div className="bg-[#faf8f6] rounded-xl h-full flex items-center justify-center text-gray-500">
                         <div className="text-center">
                           <MapPin className="w-12 h-12 mx-auto mb-4" />
-                          <p className="text-lg font-medium">{community.address}</p>
-                          <p>{community.city}, {community.state} {community.zipCode}</p>
+                          <p className="text-lg font-medium">{community.street}</p>
+                          <p>{community.city}, {community.state} {community.zipCode || community.zip}</p>
                           <p className="text-sm mt-2">Map coordinates not available</p>
                         </div>
                       </div>

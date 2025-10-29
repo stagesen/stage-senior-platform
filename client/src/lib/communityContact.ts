@@ -201,8 +201,8 @@ export function getFullAddress(
 ): string {
   const parts: string[] = [];
   
-  // Check for address or street field
-  const addressValue = ('address' in community && community.address) || ('street' in community && community.street);
+  // Check for street or address field (prioritize street as it's the primary field)
+  const addressValue = ('street' in community && community.street) || ('address' in community && community.address);
   if (addressValue) {
     parts.push(addressValue);
   }
