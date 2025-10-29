@@ -115,10 +115,10 @@ export default function FloorPlanModal({
                 </DialogTitle>
                 <p className="text-sm sm:text-base text-muted-foreground mt-1">{communityName}</p>
               </div>
-              <div className="text-left sm:text-right order-1 sm:order-2 flex items-center gap-2 sm:flex-col sm:items-end">
+              <div className="text-left sm:text-right order-1 sm:order-2 flex items-center gap-2">
                 {getAvailabilityBadge(floorPlan.availability)}
                 {floorPlan.startingPrice && (
-                  <p className="text-xl sm:text-2xl font-bold text-primary sm:mt-2">
+                  <p className="text-xl sm:text-2xl font-bold text-primary">
                     {formatPrice(floorPlan.startingPrice)}/mo
                   </p>
                 )}
@@ -167,8 +167,8 @@ export default function FloorPlanModal({
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="left-1 sm:left-2 bg-white/95 hover:bg-white shadow-lg border-2 h-10 w-10 sm:h-11 sm:w-11" />
-                <CarouselNext className="right-1 sm:right-2 bg-white/95 hover:bg-white shadow-lg border-2 h-10 w-10 sm:h-11 sm:w-11" />
+                <CarouselPrevious className="left-2 bg-white/95 hover:bg-white shadow-lg border-2 min-h-[44px] min-w-[44px]" />
+                <CarouselNext className="right-2 bg-white/95 hover:bg-white shadow-lg border-2 min-h-[44px] min-w-[44px]" />
               </Carousel>
             ) : (
               <div className="relative aspect-[4/3] sm:aspect-video bg-muted rounded-lg overflow-hidden">
@@ -328,18 +328,18 @@ export default function FloorPlanModal({
             </div>
             
             {/* Trust indicators */}
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs text-muted-foreground">
+            <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs text-muted-foreground">
               <div className="flex items-center gap-1">
                 <Check className="w-3 h-3 flex-shrink-0 text-green-600" />
-                <span className="whitespace-nowrap">Same-day tours</span>
+                <span>Same-day tours</span>
               </div>
               <div className="flex items-center gap-1">
                 <Check className="w-3 h-3 flex-shrink-0 text-green-600" />
-                <span className="whitespace-nowrap">No obligation</span>
+                <span>No obligation</span>
               </div>
               <div className="flex items-center gap-1">
                 <Check className="w-3 h-3 flex-shrink-0 text-green-600" />
-                <span className="whitespace-nowrap">Free consultation</span>
+                <span>Free consultation</span>
               </div>
             </div>
           </div>
