@@ -403,7 +403,7 @@ export default function Home() {
           <div className="text-center mb-12">
             <ScaleHeader scaleFrom={0.85} scaleTo={1}>
               <EmphasizedHeading
-                text="Find your Colorado community"
+                text="Find Your Colorado Community"
                 accentWords={["Colorado"]}
                 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4"
                 accentClassName="text-white font-extrabold"
@@ -411,7 +411,7 @@ export default function Home() {
             </ScaleHeader>
             <FadeIn direction="up" delay={0.2}>
               <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
-                Find a community near you and explore all the benefits of vibrant independent living.
+                Explore locally owned senior living options designed for comfort, connection, and care.
               </p>
             </FadeIn>
           </div>
@@ -536,18 +536,18 @@ export default function Home() {
                 <div>
                   <Link href="/care-points">
                     <EmphasizedHeading
-                      text="Clear pricing, no surprises"
-                      accentWords={["no surprises"]}
+                      text="Clear Pricing, No Surprises"
+                      accentWords={["No Surprises"]}
                       className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 hover:text-primary transition-colors cursor-pointer"
                       accentClassName="text-primary font-extrabold"
                     />
                   </Link>
                   <p className="text-xl text-muted-foreground mb-6">
-                    See starting rates by community and explore our Care Points system that prevents unexpected charges. We give advance notice and partner with families on any changes.
+                    Explore transparent rates for every Stage Senior community. We believe families should plan with confidence—not guesswork.
                   </p>
                   <div className="flex flex-wrap gap-4">
-                    <Button 
-                      size="lg" 
+                    <Button
+                      size="lg"
                       variant="outline"
                       asChild
                       data-testid="button-learn-care-points"
@@ -559,15 +559,15 @@ export default function Home() {
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div className="bg-white p-6 rounded-lg shadow-sm">
                     <div className="text-2xl font-bold text-primary mb-2">$4,600+</div>
-                    <div className="text-sm text-muted-foreground">Starting Monthly Rate</div>
+                    <div className="text-sm text-muted-foreground">Starting from $4,600 per month (varies by care level)</div>
                   </div>
                   <div className="bg-white p-6 rounded-lg shadow-sm">
                     <div className="text-2xl font-bold text-primary mb-2">4</div>
-                    <div className="text-sm text-muted-foreground">Colorado Communities</div>
+                    <div className="text-sm text-muted-foreground">4 Colorado Communities — All Locally Owned</div>
                   </div>
-                  <div className="bg-white p-6 rounded-lg shadow-sm">
+                  <div className="bg-white p-6 rounded-lg shadow-sm col-span-2">
                     <div className="text-2xl font-bold text-primary mb-2">2016</div>
-                    <div className="text-sm text-muted-foreground">Locally Owned Since</div>
+                    <div className="text-sm text-muted-foreground">Locally Owned & Operated Since 2016</div>
                   </div>
                 </div>
               </div>

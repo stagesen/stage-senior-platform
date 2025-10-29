@@ -2538,16 +2538,21 @@ export default function CommunityDetail() {
                   </p>
                 </FadeIn>
                 <FadeIn direction="up" delay={0.2}>
-                  <div className="relative w-full rounded-2xl overflow-hidden shadow-xl bg-gray-50" style={{ paddingBottom: '56.25%' }}>
+                  {/* Mobile-optimized container: uses viewport height on mobile, aspect ratio on desktop */}
+                  <div className="relative w-full rounded-2xl overflow-hidden shadow-xl bg-gray-50 h-[70vh] md:h-auto md:aspect-video max-h-[90vh]">
                     <iframe
                       src={community.propertyMapUrl}
                       title="Property Map"
-                      className="absolute top-0 left-0 w-full h-full border-0"
+                      className="w-full h-full border-0"
                       loading="lazy"
                       allowFullScreen
                       data-testid="property-map-iframe"
                     />
                   </div>
+                  {/* Mobile scroll hint */}
+                  <p className="md:hidden text-sm text-gray-500 text-center mt-4 italic">
+                    Scroll within the map to explore, or scroll past to continue viewing the page
+                  </p>
                 </FadeIn>
               </section>
             )}
