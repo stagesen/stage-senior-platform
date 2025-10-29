@@ -28,7 +28,9 @@
       "Bash(pkill:*)",
       "Bash(lsof:*)",
       "Bash(xargs kill:*)",
-      "WebFetch(domain:stagesenior.replit.app)"
+      "WebFetch(domain:stagesenior.replit.app)",
+      "Bash(npm run db:generate:*)",
+      "Bash(npm run:*)"
     ],
     "deny": [],
     "ask": []
