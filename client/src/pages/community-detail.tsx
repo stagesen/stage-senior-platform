@@ -1647,7 +1647,6 @@ export default function CommunityDetail() {
   // Navigation sections memoization
   const navSections = useMemo(() => {
     const sections: { id: string; label: string }[] = [
-      { id: "overview", label: "Overview" },
       { id: "highlights", label: "Highlights" },
     ];
 
@@ -1759,6 +1758,17 @@ export default function CommunityDetail() {
   };
 
   const handleNavClick = (sectionId: string) => {
+    // Special handling for Contact button - open schedule tour modal
+    if (sectionId === 'contact') {
+      openScheduleTour({
+        communityId: community?.id || '',
+        communityName: community?.name || '',
+        title: `Schedule a Tour at ${community?.name || 'our community'}`,
+        description: `Visit ${community?.name || 'our community'} in ${community?.city || ''} to see our beautiful community and amenities in person.`
+      });
+      return;
+    }
+
     const element = document.getElementById(sectionId);
     if (!element) {
       return;

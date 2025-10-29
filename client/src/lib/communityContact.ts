@@ -139,8 +139,8 @@ export function getCityStateZip(
   // Join city and state with ", " then append zip with space
   let result = parts.join(', ');
   
-  // Check both zip and zipCode fields (database uses zipCode)
-  const zipValue = ('zipCode' in community && community.zipCode) || ('zip' in community && community.zip);
+  // Check both zip and zipCode fields (prioritize zip as it has correct data)
+  const zipValue = ('zip' in community && community.zip) || ('zipCode' in community && community.zipCode);
   if (zipValue) {
     result += ` ${zipValue}`;
   }
