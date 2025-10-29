@@ -103,7 +103,7 @@ export default function FloorPlanModal({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="max-w-4xl w-[95vw] max-h-[95vh] overflow-y-auto p-4 sm:p-6"
+        className="w-[95vw] max-w-2xl lg:max-w-4xl max-h-[95vh] overflow-y-auto p-4 sm:p-6"
         data-testid={`floor-plan-modal-${floorPlan.id}`}
       >
         <DialogHeader className="mb-4">
