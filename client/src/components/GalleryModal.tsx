@@ -129,6 +129,7 @@ export default function GalleryModal({ isOpen, onClose, gallery, initialImageInd
               src={currentImage.url}
               alt={currentImage.alt || `Image ${currentIndex + 1}`}
               className="max-w-full max-h-[70vh] object-contain"
+              loading="lazy"
               data-testid="gallery-current-image"
             />
             {currentImage.caption && (
@@ -170,6 +171,7 @@ export default function GalleryModal({ isOpen, onClose, gallery, initialImageInd
                     src={image.url}
                     alt={image.alt || `Thumbnail ${index + 1}`}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </button>
               ))}

@@ -172,6 +172,7 @@ export function ExitIntentPopup({ open, onOpenChange }: ExitIntentPopupProps) {
                     src={popupImageUrl} 
                     alt={config.title} 
                     className="w-full h-full object-cover"
+                    loading="lazy"
                     data-testid="popup-image"
                   />
                 </div>

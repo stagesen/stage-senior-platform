@@ -3,22 +3,22 @@ import { useQuery } from "@tanstack/react-query";
 import { PageHero } from "@/components/PageHero";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
+import { setMetaTags } from "@/lib/metaTags";
 import type { Community, PageContentSection } from "@shared/schema";
 
 export default function Chaplaincy() {
   useEffect(() => {
-    document.title = "Chaplain Program | Stage Senior";
-
-    // Add meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Stage Senior Chaplain Program provides compassionate spiritual support for residents of all faiths. Professional chaplains offer 24/7 emotional support, counseling, and spiritual care.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Stage Senior Chaplain Program provides compassionate spiritual support for residents of all faiths. Professional chaplains offer 24/7 emotional support, counseling, and spiritual care.';
-      document.head.appendChild(meta);
-    }
+    const baseUrl = window.location.origin;
+    setMetaTags({
+      title: "Spiritual Care & Chaplaincy Services | Stage Senior",
+      description: "Compassionate spiritual care and chaplaincy services for seniors. Supporting residents' faith and emotional wellbeing in our communities.",
+      canonicalUrl: `${baseUrl}/services/chaplaincy`,
+      ogTitle: "Spiritual Care & Chaplaincy Services",
+      ogDescription: "Compassionate spiritual care and chaplaincy services for seniors. Supporting residents' faith and emotional wellbeing in our communities.",
+      ogType: "website",
+      ogUrl: `${baseUrl}/services/chaplaincy`,
+      ogSiteName: "Stage Senior Living"
+    });
   }, []);
 
   // Fetch communities from API

@@ -153,6 +153,7 @@ export default function FloorPlanModal({
                           src={image.url}
                           alt={image.caption}
                           className="w-full h-full object-contain"
+                          loading="lazy"
                           data-testid={`modal-carousel-image-${index}`}
                         />
                         <div className="absolute bottom-2 left-2 right-2 flex justify-between items-end">
@@ -176,6 +177,7 @@ export default function FloorPlanModal({
                   src={images[0]?.url || ''}
                   alt={images[0]?.caption || 'Floor plan image'}
                   className="w-full h-full object-contain"
+                  loading="lazy"
                   data-testid={`modal-main-image-0`}
                 />
                 <div className="absolute bottom-2 left-2 bg-background/80 px-3 py-1 rounded">
@@ -210,6 +212,7 @@ export default function FloorPlanModal({
                       src={image.url}
                       alt={image.caption}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                     {selectedImageIndex === index && (
                       <div className="absolute inset-0 bg-primary/10" />

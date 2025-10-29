@@ -69,6 +69,7 @@ function ResourceCard({ asset, onDownloadClick }: { asset: ContentAsset; onDownl
               src={featuredImageUrl} 
               alt={asset.title}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              loading="lazy"
               data-testid={`img-resource-featured-${asset.id}`}
             />
           ) : (

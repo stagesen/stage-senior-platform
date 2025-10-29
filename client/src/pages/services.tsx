@@ -10,11 +10,16 @@ import type { Community, PageContentSection } from "@shared/schema";
 
 export default function Services() {
   useEffect(() => {
+    const baseUrl = window.location.origin;
     setMetaTags({
-      title: "Our Services | Stage Senior",
-      description: "Discover Stage Senior's comprehensive senior living management solutions, spiritual care programs, and long-term care insurance services across Colorado communities.",
-      canonicalUrl: getCanonicalUrl("/services"),
+      title: "Senior Living Services & Amenities | Stage Senior",
+      description: "Explore our comprehensive senior living services including professional management, dining, fitness, chaplaincy, and personalized care programs.",
+      canonicalUrl: `${baseUrl}/services`,
+      ogTitle: "Senior Living Services & Amenities",
+      ogDescription: "Explore our comprehensive senior living services including professional management, dining, fitness, chaplaincy, and personalized care programs.",
       ogType: "website",
+      ogUrl: `${baseUrl}/services`,
+      ogSiteName: "Stage Senior Living"
     });
   }, []);
 

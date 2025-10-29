@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
+import { setMetaTags } from "@/lib/metaTags";
 import type { PageContentSection } from "@shared/schema";
 
 export default function SafetyWithDignity() {
@@ -47,18 +48,17 @@ export default function SafetyWithDignity() {
   });
 
   useEffect(() => {
-    document.title = "Safety with Dignity - Fall Detection Program | The Gardens on Quail";
-    
-    // Add meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Learn about our Safety with Dignity fall detection program at The Gardens on Quail. Privacy-focused technology that identifies falls quickly, alerts staff immediately, and helps adapt care—without live streaming or audio recording.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Learn about our Safety with Dignity fall detection program at The Gardens on Quail. Privacy-focused technology that identifies falls quickly, alerts staff immediately, and helps adapt care—without live streaming or audio recording.';
-      document.head.appendChild(meta);
-    }
+    const baseUrl = window.location.origin;
+    setMetaTags({
+      title: "Safety with Dignity Program | Fall Prevention & Senior Safety",
+      description: "Our Safety with Dignity program prioritizes resident safety while maintaining independence. Advanced fall detection and proactive care monitoring.",
+      canonicalUrl: `${baseUrl}/safety-with-dignity`,
+      ogTitle: "Safety with Dignity Program | Fall Prevention & Senior Safety",
+      ogDescription: "Our Safety with Dignity program prioritizes resident safety while maintaining independence. Advanced fall detection and proactive care monitoring.",
+      ogType: "website",
+      ogUrl: `${baseUrl}/safety-with-dignity`,
+      ogSiteName: "Stage Senior Living"
+    });
   }, []);
 
   const scrollToHowItWorks = () => {

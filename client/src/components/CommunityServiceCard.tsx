@@ -23,6 +23,7 @@ export default function CommunityServiceCard({ community }: CommunityServiceCard
             src={heroImageUrl || `https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450`}
             alt={`${community.name} - Senior Living Community`}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
             data-testid={`image-${community.slug}`}
           />
         </div>

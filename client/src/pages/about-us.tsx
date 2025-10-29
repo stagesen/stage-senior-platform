@@ -307,11 +307,16 @@ export default function AboutUs() {
   const resolvedHeroImage = useResolveImageUrl(heroContent?.imageUrl);
   
   useEffect(() => {
+    const baseUrl = window.location.origin;
     setMetaTags({
-      title: "About Us | Stage Senior",
-      description: "Learn about Stage Senior Management - a locally owned, Colorado-based senior living management company founded in 2016. Discover our mission, values, leadership, and commitment to exceptional resident care.",
-      canonicalUrl: getCanonicalUrl("/about-us"),
+      title: "About Stage Senior | Colorado Senior Living Experts",
+      description: "Learn about Stage Senior, Colorado's trusted senior living management company. Locally owned, resident-focused care since 2016.",
+      canonicalUrl: `${baseUrl}/about-us`,
+      ogTitle: "About Stage Senior | Colorado Senior Living Experts",
+      ogDescription: "Learn about Stage Senior, Colorado's trusted senior living management company. Locally owned, resident-focused care since 2016.",
       ogType: "website",
+      ogUrl: `${baseUrl}/about-us`,
+      ogSiteName: "Stage Senior Living"
     });
   }, []);
 
@@ -374,6 +379,7 @@ export default function AboutUs() {
                 src={resolvedHeroImage || "https://images.unsplash.com/photo-1559628233-0fb74da9d96b?q=80&w=800&auto=format&fit=crop"}
                 alt="Stage Senior team providing compassionate care to residents"
                 className="rounded-lg shadow-xl w-full"
+                loading="lazy"
                 data-testid="hero-image"
               />
             </div>

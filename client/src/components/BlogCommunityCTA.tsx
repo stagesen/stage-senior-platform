@@ -85,6 +85,7 @@ export default function BlogCommunityCTA({ community }: BlogCommunityCTAProps) {
                   src={logoUrl}
                   alt={`${community.name} logo`}
                   className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 object-contain"
+                  loading="lazy"
                   data-testid="community-logo"
                 />
               </div>

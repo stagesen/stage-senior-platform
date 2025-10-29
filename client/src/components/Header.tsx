@@ -84,6 +84,8 @@ export default function Header() {
                 className="w-auto object-contain min-w-[180px] h-8 sm:h-10 md:h-12"
                 width="280"
                 height="70"
+                fetchpriority="high"
+                loading="eager"
                 decoding="async"
               />
             </Link>

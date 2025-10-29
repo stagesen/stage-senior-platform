@@ -168,6 +168,7 @@ export default function TeamMemberProfile() {
                   src={avatarUrl}
                   alt={`${teamMember.name} portrait`}
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               ) : (
                 <AvatarFallback

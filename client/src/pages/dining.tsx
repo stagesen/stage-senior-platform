@@ -85,6 +85,7 @@ export default function Dining() {
                   src={diningImageUrl || ''}
                   alt="Private Dining"
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               </div>
               

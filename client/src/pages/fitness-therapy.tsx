@@ -89,6 +89,7 @@ export default function FitnessTherapy() {
                   src={fitnessImageUrl || ''}
                   alt="Fitness Center"
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               </div>
               

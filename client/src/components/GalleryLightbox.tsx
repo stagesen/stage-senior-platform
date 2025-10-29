@@ -69,6 +69,7 @@ export default function GalleryLightbox({ gallery }: GalleryLightboxProps) {
                   src={image.url}
                   alt={image.alt || `Gallery image ${index + 1}`}
                   className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
               </button>
@@ -122,6 +123,7 @@ export default function GalleryLightbox({ gallery }: GalleryLightboxProps) {
                     src={gallery.images?.[currentIndex]?.url || ""}
                     alt={gallery.images?.[currentIndex]?.alt || `Gallery image ${currentIndex + 1}`}
                     className="max-w-full max-h-full object-contain"
+                    loading="lazy"
                     data-testid={`lightbox-image-${currentIndex}`}
                   />
                   

@@ -10,22 +10,22 @@ import { useQuery } from "@tanstack/react-query";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
 import { Skeleton } from "@/components/ui/skeleton";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
+import { setMetaTags } from "@/lib/metaTags";
 import type { Community, PageContentSection } from "@shared/schema";
 
 export default function StageCares() {
   useEffect(() => {
-    document.title = "Stage Cares Foundation - Charitable Giving | Stage Senior";
-    
-    // Add meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Stage Cares Foundation - Our charitable giving program creating positive change through employee participation, company matching, and community support for those in need.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Stage Cares Foundation - Our charitable giving program creating positive change through employee participation, company matching, and community support for those in need.';
-      document.head.appendChild(meta);
-    }
+    const baseUrl = window.location.origin;
+    setMetaTags({
+      title: "Stage Cares Community Initiative | Stage Senior",
+      description: "Stage Cares gives back to Colorado communities through charitable programs, volunteer efforts, and support for local seniors and families.",
+      canonicalUrl: `${baseUrl}/stage-cares`,
+      ogTitle: "Stage Cares Community Initiative",
+      ogDescription: "Stage Cares gives back to Colorado communities through charitable programs, volunteer efforts, and support for local seniors and families.",
+      ogType: "website",
+      ogUrl: `${baseUrl}/stage-cares`,
+      ogSiteName: "Stage Senior Living"
+    });
   }, []);
 
   // Fetch page content sections from database
@@ -126,6 +126,8 @@ export default function StageCares() {
                 src="https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=800&auto=format&fit=crop"
                 alt="Hands holding together representing community support and charitable giving"
                 className="rounded-lg shadow-xl w-full"
+                fetchpriority="high"
+                loading="eager"
                 data-testid="hero-image"
               />
               <div className="absolute -bottom-6 -right-6 bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-6 rounded-lg shadow-lg">
@@ -182,6 +184,7 @@ export default function StageCares() {
                     src={project.image}
                     alt={project.title}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                   <Badge 
                     className="absolute top-4 right-4 bg-white/90 text-gray-800"

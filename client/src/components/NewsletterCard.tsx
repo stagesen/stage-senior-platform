@@ -195,6 +195,7 @@ export default function NewsletterCard({ communityId, community: communityProp }
             src={imageUrl}
             alt={newsletter.title}
             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
             data-testid={`newsletter-image-${newsletter.slug}`}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

@@ -31,11 +31,16 @@ export default function Contact() {
   });
 
   useEffect(() => {
+    const baseUrl = window.location.origin;
     setMetaTags({
-      title: "Contact Us | Stage Senior",
-      description: "Contact Stage Senior today. Call (970) 444-4689 or visit one of our four Colorado communities. Schedule tours, get answers, and explore senior living options.",
-      canonicalUrl: getCanonicalUrl("/contact"),
+      title: "Contact Stage Senior | Get in Touch",
+      description: "Contact Stage Senior for questions about our communities, schedule a tour, or learn more about senior living options. We're here to help.",
+      canonicalUrl: `${baseUrl}/contact`,
+      ogTitle: "Contact Stage Senior | Get in Touch",
+      ogDescription: "Contact Stage Senior for questions about our communities, schedule a tour, or learn more about senior living options. We're here to help.",
       ogType: "website",
+      ogUrl: `${baseUrl}/contact`,
+      ogSiteName: "Stage Senior Living"
     });
   }, []);
 

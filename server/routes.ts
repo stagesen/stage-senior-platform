@@ -1207,6 +1207,7 @@ Disallow: /admin/
 
       // getCommunities already includes careTypeIds and amenityIds from the junction tables
       // No need to re-query - this was causing N+1 query problem (1 + 2N queries instead of 3)
+      res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
       res.json(communities);
     } catch (error) {
       console.error("Error fetching communities:", error);
@@ -1346,6 +1347,7 @@ Disallow: /admin/
       const careTypeIds = await storage.getCommunityCareTypes(community.id);
       const amenityIds = await storage.getCommunityAmenities(community.id);
       
+      res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
       res.json({
         ...community,
         careTypeIds,
@@ -1635,6 +1637,7 @@ Disallow: /admin/
       }
 
       const posts = await storage.getBlogPosts(filters);
+      res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
       res.json(posts);
     } catch (error) {
       console.error("Error fetching blog posts:", error);
@@ -1742,6 +1745,7 @@ Disallow: /admin/
       }
       
       const events = await storage.getEvents(filters);
+      res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
       res.json(events);
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -1811,6 +1815,7 @@ Disallow: /admin/
       }
 
       const faqs = await storage.getFaqs(filters);
+      res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
       res.json(faqs);
     } catch (error) {
       console.error("Error fetching FAQs:", error);
@@ -1891,6 +1896,7 @@ Disallow: /admin/
         })
       );
       
+      res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
       res.json(galleriesWithImages);
     } catch (error) {
       console.error("Error fetching galleries:", error);
@@ -2917,6 +2923,7 @@ Disallow: /admin/
       }
       
       const testimonials = await storage.getTestimonials(filters);
+      res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
       res.json(testimonials);
     } catch (error) {
       console.error("Error fetching testimonials:", error);
@@ -3232,6 +3239,7 @@ Disallow: /admin/
       }
       
       const careTypes = await storage.getCareTypes(filters);
+      res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
       res.json(careTypes);
     } catch (error) {
       console.error("Error fetching care types:", error);
@@ -3326,6 +3334,7 @@ Disallow: /admin/
       }
       
       const amenities = await storage.getAmenities(filters);
+      res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
       res.json(amenities);
     } catch (error) {
       console.error("Error fetching amenities:", error);
@@ -3390,9 +3399,9 @@ Disallow: /admin/
 
       const pageHeroes = await storage.getPageHeroes(filters);
 
-      // Cache for 5 minutes (public, so CDNs can cache too)
+      // Cache for 1 hour (public, so CDNs can cache too)
       // Use stale-while-revalidate for better performance
-      res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+      res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
 
       res.json(pageHeroes);
     } catch (error) {
@@ -3497,6 +3506,7 @@ Disallow: /admin/
     try {
       const { includeInactive } = req.query;
       const members = await storage.getAllTeamMembers(includeInactive === 'true');
+      res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
       res.json(members);
     } catch (error) {
       console.error("Error fetching team members:", error);

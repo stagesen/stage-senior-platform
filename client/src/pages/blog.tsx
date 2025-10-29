@@ -14,6 +14,7 @@ import { Link } from "wouter";
 import { PageHero } from "@/components/PageHero";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { setMetaTags, getCanonicalUrl, sanitizeMetaText } from "@/lib/metaTags";
+import { generateArticleSchema } from "@/lib/schemaOrg";
 import type { BlogPost, Community } from "@shared/schema";
 
 export default function Blog() {
@@ -47,29 +48,44 @@ export default function Blog() {
   const resolvedMainImage = useResolveImageUrl(currentPost?.mainImage);
   const resolvedAuthorAvatar = useResolveImageUrl(currentPost?.authorDetails?.avatarImageId);
 
-  // Set meta tags for individual blog posts
+  // Set meta tags for individual blog posts and listing page
   useEffect(() => {
     if (currentPost && postSlug) {
-      const excerpt = currentPost.summary || sanitizeMetaText(currentPost.content || '', 155);
+      // Individual blog post meta tags
+      const baseUrl = window.location.origin;
+      const currentUrl = `${baseUrl}/blog/${postSlug}`;
+      
+      // Use post's SEO data or generate defaults
+      const title = (currentPost as any).seoTitle || `${currentPost.title} | Stage Senior Blog`;
+      const excerpt = (currentPost as any).seoDescription || currentPost.summary || sanitizeMetaText(currentPost.content || '', 155);
       const publishedDate = currentPost.publishedAt ? new Date(currentPost.publishedAt).toISOString() : undefined;
       const modifiedDate = currentPost.updatedAt ? new Date(currentPost.updatedAt).toISOString() : undefined;
 
       setMetaTags({
-        title: `${currentPost.title} | Stage Senior Blog`,
+        title,
         description: excerpt,
-        canonicalUrl: getCanonicalUrl(`/blog/${postSlug}`),
+        canonicalUrl: currentUrl,
+        ogTitle: title,
+        ogDescription: excerpt,
         ogType: "article",
-        ogImage: resolvedMainImage || `${window.location.origin}/assets/stage-logo.webp`,
+        ogUrl: currentUrl,
+        ogImage: resolvedMainImage || `${baseUrl}/assets/stage-logo.webp`,
+        ogSiteName: "Stage Senior Living",
         articlePublishedTime: publishedDate,
         articleModifiedTime: modifiedDate,
       });
     } else if (!postSlug) {
-      // Set meta tags for blog listing page
+      // Blog listing page meta tags
+      const baseUrl = window.location.origin;
       setMetaTags({
-        title: "Senior Living Blog | Stage Senior",
-        description: "Stay informed with Stage Senior's blog. Read about senior living, memory care, community events, and tips for families navigating senior care in Colorado.",
-        canonicalUrl: getCanonicalUrl("/blog"),
+        title: "Senior Living Blog & Resources | Stage Senior",
+        description: "Expert insights on senior living, memory care, assisted living, and family caregiving. Read the latest articles from Stage Senior's community.",
+        canonicalUrl: `${baseUrl}/blog`,
+        ogTitle: "Senior Living Blog & Resources | Stage Senior",
+        ogDescription: "Expert insights on senior living, memory care, assisted living, and family caregiving.",
         ogType: "website",
+        ogUrl: `${baseUrl}/blog`,
+        ogSiteName: "Stage Senior Living",
       });
     }
   }, [currentPost, postSlug, resolvedMainImage]);
@@ -138,10 +154,23 @@ export default function Blog() {
 
     const community = communities.find(c => c.id === currentPost.communityId);
 
+    // Generate Schema.org Article markup
+    const articleSchema = generateArticleSchema({ 
+      post: currentPost, 
+      pathname: `/blog/${postSlug}` 
+    });
+
     return (
-      <div>
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-primary/5 to-accent/10 py-12 lg:py-16">
+      <>
+        {articleSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+          />
+        )}
+        <div>
+          {/* Hero Section */}
+          <section className="bg-gradient-to-br from-primary/5 to-accent/10 py-12 lg:py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <Button 
               variant="ghost" 
@@ -188,6 +217,7 @@ export default function Blog() {
                         src={resolvedAuthorAvatar}
                         alt={currentPost.authorDetails.name}
                         className="w-10 h-10 rounded-full object-cover border-2 border-border group-hover:border-primary transition-colors"
+                        loading="lazy"
                       />
                     )}
                     <span>{currentPost.authorDetails.name}</span>
@@ -232,6 +262,7 @@ export default function Blog() {
                 src={resolvedMainImage}
                 alt={currentPost.title}
                 className="w-full h-96 object-cover rounded-lg mb-8"
+                loading="lazy"
                 data-testid="post-hero-image"
               />
             )}
@@ -252,6 +283,7 @@ export default function Blog() {
                       src={resolvedAuthorAvatar}
                       alt={currentPost.authorDetails.name}
                       className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md flex-shrink-0"
+                      loading="lazy"
                       data-testid="author-avatar"
                     />
                   )}
@@ -286,7 +318,8 @@ export default function Blog() {
             <BlogCommunityCTA community={community} />
           )}
         </main>
-      </div>
+        </div>
+      </>
     );
   }
 

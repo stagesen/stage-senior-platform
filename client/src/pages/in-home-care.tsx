@@ -280,6 +280,7 @@ export default function InHomeCare() {
                     src={service.image}
                     alt={service.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    loading="lazy"
                   />
                 </div>
                 <CardContent className="p-6">
@@ -369,6 +370,7 @@ export default function InHomeCare() {
                   src="https://images.unsplash.com/photo-1576765608622-067973a79f53?q=80&w=2078&auto=format&fit=crop"
                   alt="Professional caregiver team"
                   className="w-full h-[600px] object-cover"
+                  loading="lazy"
                 />
               </div>
               <div className="absolute -bottom-8 -right-8 w-48 h-48 bg-green-100 rounded-full opacity-50 blur-2xl"></div>
@@ -449,6 +451,7 @@ export default function InHomeCare() {
                     src={post.image}
                     alt={post.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    loading="lazy"
                   />
                 </div>
                 <CardContent className="p-6">

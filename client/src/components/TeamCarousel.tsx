@@ -66,6 +66,7 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
                   src={avatarUrl}
                   alt={`${member.name} portrait`}
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               ) : (
                 <AvatarFallback

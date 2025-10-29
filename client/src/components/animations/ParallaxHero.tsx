@@ -49,7 +49,8 @@ export default function ParallaxHero({
             src={backgroundImage}
             alt="Hero background"
             className="w-full h-[120%] object-cover"
-            fetchPriority="high"
+            fetchpriority="high"
+            loading="eager"
             decoding="async"
             width="1920"
             height="1080"

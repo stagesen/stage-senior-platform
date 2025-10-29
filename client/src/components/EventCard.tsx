@@ -37,6 +37,7 @@ export default function EventCard({ event, onViewDetails }: EventCardProps) {
               src={resolvedImageUrl || `https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300`}
               alt={event.title}
               className="w-full h-48 md:h-full object-cover"
+              loading="lazy"
               data-testid={`event-image-${event.slug}`}
             />
           </div>

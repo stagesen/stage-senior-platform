@@ -88,6 +88,7 @@ export default function BeautySalon() {
                   src={salonImageUrl || ''}
                   alt="Beauty Salon"
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               </div>
               

@@ -59,6 +59,7 @@ export default function EventDetailsModal({ event, isOpen, onClose }: EventDetai
                 src={resolvedImageUrl}
                 alt={event.title}
                 className="w-full h-full object-cover"
+                loading="lazy"
                 data-testid="modal-event-image"
               />
             </div>

@@ -103,6 +103,7 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
                 alt={`${member.name}`}
                 className="w-full h-full rounded-full object-cover border-4 shadow-lg transition-transform duration-300 group-hover:scale-105"
                 style={{ borderColor: communityColor || '#e5e7eb' }}
+                loading="lazy"
                 data-testid={`team-member-avatar-${member.id}`}
               />
             ) : (

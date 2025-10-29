@@ -244,6 +244,7 @@ export default function ResourceDetail() {
                 src={featuredImageUrl} 
                 alt={resource.title}
                 className="w-full h-auto object-cover max-h-[500px]"
+                loading="lazy"
                 data-testid="resource-featured-image"
               />
             </div>
@@ -280,6 +281,7 @@ export default function ResourceDetail() {
                     src={featuredImageUrl}
                     alt={resource.title}
                     className="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
                   />
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-primary/70 to-primary/60" />
@@ -380,6 +382,7 @@ export default function ResourceDetail() {
                       src={authorAvatarUrl} 
                       alt={author.name}
                       className="w-20 h-20 rounded-full object-cover flex-shrink-0"
+                      loading="lazy"
                       data-testid="author-avatar"
                     />
                   ) : (
@@ -414,6 +417,7 @@ export default function ResourceDetail() {
                 src={featuredImageUrl} 
                 alt={resource?.title}
                 className="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
               />
               {/* Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/70 via-primary/60 to-primary/50" />

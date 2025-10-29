@@ -62,6 +62,7 @@ export default function BlogCard({ post, community, onTagClick }: BlogCardProps)
             src={resolvedThumbnailImage || resolvedMainImage || DEFAULT_BLOG_IMAGE}
             alt={post.title}
             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
             data-testid={`blog-image-${post.slug}`}
           />
         </div>

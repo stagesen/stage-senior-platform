@@ -68,6 +68,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { setMetaTags, getCanonicalUrl, sanitizeMetaText } from "@/lib/metaTags";
+import { generateLocalBusinessSchema } from "@/lib/schemaOrg";
 import { DEFAULT_BLOG_IMAGE } from "@/lib/constants";
 import stageSeniorLogo from "@/assets/stage-logo.webp";
 import defaultBrochureImage from "@/assets/community-brochure-default.webp";
@@ -1259,7 +1260,8 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
               src={finalHeroImageUrl}
               alt="Community background"
               className="w-full h-full object-cover"
-              fetchPriority="high"
+              fetchpriority="high"
+              loading="eager"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-blue-900/60 via-blue-800/60 to-blue-600/60" />
           </>
@@ -1279,6 +1281,7 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
               className="max-h-24 md:max-h-32 w-auto object-contain"
               width="360"
               height="130"
+              loading="lazy"
             />
           </div>
         )}
@@ -1577,82 +1580,43 @@ export default function CommunityDetail() {
   // Resolve private dining image URL from privateDiningImageId field
   const privateDiningImageUrl = useResolveImageUrl(community?.privateDiningImageId);
 
-  // Set meta tags and Schema.org markup
+  // Set meta tags when community data loads
   useEffect(() => {
-    if (!community) return;
+    if (community) {
+      const baseUrl = window.location.origin;
+      const currentUrl = `${baseUrl}/communities/${community.slug}`;
+      
+      // Use community's SEO data or generate defaults
+      const title = community.seoTitle || `${community.name} | Senior Living in ${community.city}, ${community.state}`;
+      const description = community.seoDescription || community.shortDescription || community.description || 
+        `Discover ${community.name} in ${community.city}, ${community.state}. Premium senior living with exceptional care and amenities.`;
+      
+      setMetaTags({
+        title,
+        description,
+        canonicalUrl: currentUrl,
+        ogTitle: title,
+        ogDescription: description,
+        ogType: 'place',
+        ogUrl: currentUrl,
+        ogImage: heroImageUrl || `${baseUrl}/default-og-image.jpg`,
+        ogSiteName: 'Stage Senior Living',
+        ogLocality: community.city,
+        ogRegion: community.state
+      });
+    }
+  }, [community, heroImageUrl]);
 
-    const city = community.city || '';
-    const careTypes = community.careTypes?.join(', ') || 'Senior Living';
-    const description = community.shortDescription || community.description || '';
-    const descriptionExcerpt = sanitizeMetaText(description, 100);
-    const priceInfo = community.startingPrice 
-      ? ` Starting at $${community.startingPrice.toLocaleString()}/month.` 
-      : '';
+  // Generate LocalBusiness Schema.org markup
+  const localBusinessSchema = useMemo(() => {
+    if (!community) return null;
     
-    const metaDescription = `${community.name} offers ${careTypes} in ${city}, Colorado. ${descriptionExcerpt}.${priceInfo} Schedule your tour today.`;
-
-    setMetaTags({
-      title: `${community.name} - Senior Living in ${city}, CO | Stage Senior`,
-      description: metaDescription,
-      canonicalUrl: getCanonicalUrl(`/communities/${community.slug}`),
-      ogType: "place",
-      ogImage: heroImageUrl || `${window.location.origin}${stageSeniorLogo}`,
-      ogLocality: city,
-      ogRegion: "CO",
+    return generateLocalBusinessSchema({
+      community,
+      template: {} as any, // Empty template - community data is sufficient
+      pathname: `/communities/${community.slug}`
     });
-
-    // Add LocalBusiness Schema.org markup
-    // Get phone number in international format (without tel: prefix)
-    const phoneHref = getPrimaryPhoneHref(community);
-    const telephone = phoneHref.replace('tel:', '');
-    
-    const schema = {
-      "@context": "https://schema.org",
-      "@type": "SeniorCare",
-      "name": community.name,
-      "image": heroImageUrl || '',
-      "description": sanitizeMetaText(description, 200),
-      "url": getCanonicalUrl(`/communities/${community.slug}`),
-      "telephone": telephone,
-      "priceRange": community.startingPrice 
-        ? `Starting at $${community.startingPrice.toLocaleString()}` 
-        : 'Contact for pricing',
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": community.street || '',
-        "addressLocality": city,
-        "addressRegion": "CO",
-        "postalCode": community.zip || community.zipCode || '',
-      },
-    };
-
-    // Add geo coordinates if available
-    if (community.latitude && community.longitude) {
-      (schema as any).geo = {
-        "@type": "GeoCoordinates",
-        "latitude": String(community.latitude),
-        "longitude": String(community.longitude),
-      };
-    }
-
-    // Inject Schema.org JSON-LD
-    let schemaScript = document.getElementById('community-schema') as HTMLScriptElement | null;
-    if (!schemaScript) {
-      schemaScript = document.createElement('script');
-      schemaScript.id = 'community-schema';
-      schemaScript.type = 'application/ld+json';
-      document.head.appendChild(schemaScript);
-    }
-    schemaScript.textContent = JSON.stringify(schema);
-
-    // Cleanup function
-    return () => {
-      const script = document.getElementById('community-schema');
-      if (script) {
-        script.remove();
-      }
-    };
-  }, [community, heroImageUrl, slug]);
+  }, [community]);
 
   // Computed values based on query data
   const galleryCategories = Array.from(new Set(galleryImages.map(img => img.category).filter(Boolean)));
@@ -1915,9 +1879,18 @@ export default function CommunityDetail() {
     : (heroImageUrl || `https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600`);
 
   return (
-    <div className="min-h-screen bg-white" style={communityStyles}>
-      {/* Hero Section */}
-      <ParallaxHero 
+    <>
+      {/* Schema.org LocalBusiness structured data */}
+      {localBusinessSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+        />
+      )}
+      
+      <div className="min-h-screen bg-white" style={communityStyles}>
+        {/* Hero Section */}
+        <ParallaxHero 
         backgroundImage={finalHeroImageUrl}
         className="relative md:h-[600px]"
         height="500px"
@@ -2974,5 +2947,6 @@ export default function CommunityDetail() {
       {/* Scroll to Top Button */}
       <ScrollToTop />
     </div>
+    </>
   );
 }

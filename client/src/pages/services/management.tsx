@@ -4,22 +4,22 @@ import { useQuery } from "@tanstack/react-query";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
 import { PageHero } from "@/components/PageHero";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
+import { setMetaTags } from "@/lib/metaTags";
 import type { Community, PageContentSection } from "@shared/schema";
 
 export default function ProfessionalManagement() {
   useEffect(() => {
-    document.title = "Professional Management Services | Stage Senior";
-
-    // Add meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Discover Stage Senior\'s professional management services for senior living communities. Expert operational excellence, personalized care, and proven results across Colorado.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Discover Stage Senior\'s professional management services for senior living communities. Expert operational excellence, personalized care, and proven results across Colorado.';
-      document.head.appendChild(meta);
-    }
+    const baseUrl = window.location.origin;
+    setMetaTags({
+      title: "Professional Senior Living Management Services | Stage Senior",
+      description: "Expert management services for senior living communities. Local leadership, proven excellence, and compassionate care tailored to each resident.",
+      canonicalUrl: `${baseUrl}/services/management`,
+      ogTitle: "Professional Senior Living Management Services",
+      ogDescription: "Expert management services for senior living communities. Local leadership, proven excellence, and compassionate care tailored to each resident.",
+      ogType: "website",
+      ogUrl: `${baseUrl}/services/management`,
+      ogSiteName: "Stage Senior Living"
+    });
   }, []);
 
   // Fetch communities from API

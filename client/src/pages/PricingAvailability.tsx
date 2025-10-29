@@ -259,6 +259,7 @@ function CommunityPricingCard({ community, floorPlans }: CommunityPricingCardPro
             src={imageUrl}
             alt={community.name}
             className="w-full h-full object-cover"
+            loading="lazy"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">

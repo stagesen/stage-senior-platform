@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
+import { setMetaTags } from "@/lib/metaTags";
 import type { PageContentSection } from "@shared/schema";
 
 export default function CarePoints() {
@@ -35,17 +36,17 @@ export default function CarePoints() {
   });
 
   useEffect(() => {
-    document.title = "Care Points vs Tiered Pricing | Stage Senior";
-
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Only pay for the care your loved one needs—nothing more. Our Care Points approach replaces one-size-fits-all tiers with transparent, personalized plans you can understand at a glance.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Only pay for the care your loved one needs—nothing more. Our Care Points approach replaces one-size-fits-all tiers with transparent, personalized plans you can understand at a glance.';
-      document.head.appendChild(meta);
-    }
+    const baseUrl = window.location.origin;
+    setMetaTags({
+      title: "Care Points Program | Flexible Senior Living Options",
+      description: "Our innovative Care Points program offers flexible, personalized care options. Pay only for the services you need, when you need them.",
+      canonicalUrl: `${baseUrl}/care-points`,
+      ogTitle: "Care Points Program | Flexible Senior Living Options",
+      ogDescription: "Our innovative Care Points program offers flexible, personalized care options. Pay only for the services you need, when you need them.",
+      ogType: "website",
+      ogUrl: `${baseUrl}/care-points`,
+      ogSiteName: "Stage Senior Living"
+    });
   }, []);
 
   const baseRents = {

@@ -54,6 +54,7 @@ function GalleryImageItem({ image, index }: { image: GalleryImage; index: number
         src={resolvedUrl} 
         alt={image.alt || `Gallery image ${index + 1}`}
         className="w-full h-full object-cover"
+        loading="lazy"
       />
     </div>
   );

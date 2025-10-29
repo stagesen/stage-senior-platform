@@ -60,6 +60,7 @@ function ImageCard({ image, onDelete, onView }: {
           src={image.url}
           alt={image.alt || "Gallery image"}
           className="w-full h-full object-cover cursor-pointer transition-transform group-hover:scale-105"
+          loading="lazy"
           onClick={() => onView(image)}
           data-testid={`image-preview-${image.id}`}
         />
@@ -211,6 +212,7 @@ function ImageViewModal({ image, isOpen, onClose }: {
               src={image.url}
               alt={image.alt || "Gallery image"}
               className="w-full h-auto max-h-[70vh] object-contain"
+              loading="lazy"
               data-testid="image-modal-preview"
             />
           </div>

@@ -76,6 +76,7 @@ function TestimonialCard({ testimonial }: { testimonial: EnhancedTestimonial }) 
             src={imageUrl}
             alt={testimonial.authorName}
             className="w-12 h-12 rounded-full object-cover"
+            loading="lazy"
           />
           <div className="flex-grow">
             <div className="font-semibold text-foreground">{testimonial.authorName}</div>

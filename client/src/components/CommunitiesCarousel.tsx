@@ -56,6 +56,7 @@ const CarouselCommunityCard = ({
               src={resolvedHeroUrl} 
               alt={community.name}
               className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+              loading="lazy"
               data-testid={`carousel-image-${community.id}`}
             />
           ) : (

@@ -77,6 +77,79 @@ export interface BreadcrumbListSchema {
   }>;
 }
 
+export interface OrganizationSchema {
+  "@context": string;
+  "@type": string;
+  name: string;
+  description?: string;
+  url: string;
+  logo?: string;
+  telephone?: string;
+  email?: string;
+  address?: {
+    "@type": "PostalAddress";
+    addressLocality: string;
+    addressRegion: string;
+    addressCountry: string;
+  };
+  sameAs?: string[];
+}
+
+export interface OrganizationSchemaParams {
+  name: string;
+  description?: string;
+  url: string;
+  logo?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  addressLocality?: string;
+  addressRegion?: string;
+  socialMediaLinks?: string[];
+}
+
+/**
+ * Generates an Organization schema for the homepage
+ */
+export function generateOrganizationSchema(params: OrganizationSchemaParams): OrganizationSchema {
+  const schema: OrganizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: params.name,
+    url: params.url,
+  };
+
+  if (params.description) {
+    schema.description = params.description;
+  }
+
+  if (params.logo) {
+    schema.logo = params.logo;
+  }
+
+  if (params.contactPhone) {
+    schema.telephone = params.contactPhone;
+  }
+
+  if (params.contactEmail) {
+    schema.email = params.contactEmail;
+  }
+
+  if (params.addressLocality || params.addressRegion) {
+    schema.address = {
+      "@type": "PostalAddress",
+      addressLocality: params.addressLocality || "Colorado",
+      addressRegion: params.addressRegion || "CO",
+      addressCountry: "US",
+    };
+  }
+
+  if (params.socialMediaLinks && params.socialMediaLinks.length > 0) {
+    schema.sameAs = params.socialMediaLinks;
+  }
+
+  return schema;
+}
+
 /**
  * Generates a LocalBusiness schema for community landing pages
  */
@@ -352,4 +425,68 @@ export function generateSchemaOrgData(params: SchemaOrgParams): Array<LocalBusin
   schemas.push(breadcrumbSchema);
 
   return schemas;
+}
+
+export interface ArticleSchema {
+  "@context": string;
+  "@type": "Article";
+  headline: string;
+  description?: string;
+  image?: string[];
+  datePublished?: string;
+  dateModified?: string;
+  author?: {
+    "@type": "Person" | "Organization";
+    name: string;
+  };
+}
+
+/**
+ * Generates an Article schema for blog posts
+ */
+export function generateArticleSchema(params: {
+  post: any;
+  pathname: string;
+}): ArticleSchema | null {
+  const { post, pathname } = params;
+  
+  if (!post) return null;
+  
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://stagesenior.com";
+  const schema: ArticleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+  };
+  
+  if (post.summary) {
+    schema.description = post.summary;
+  }
+  
+  if (post.mainImage || post.heroImageUrl) {
+    schema.image = [post.mainImage || post.heroImageUrl];
+  }
+  
+  if (post.publishedAt) {
+    schema.datePublished = new Date(post.publishedAt).toISOString();
+  }
+  
+  if (post.updatedAt) {
+    schema.dateModified = new Date(post.updatedAt).toISOString();
+  }
+  
+  // Add author information if available
+  if (post.authorDetails?.name) {
+    schema.author = {
+      "@type": "Person",
+      name: post.authorDetails.name,
+    };
+  } else {
+    schema.author = {
+      "@type": "Organization",
+      name: "Stage Senior Living",
+    };
+  }
+  
+  return schema;
 }

@@ -6,22 +6,22 @@ import { Link } from "wouter";
 import { PageHero } from "@/components/PageHero";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
+import { setMetaTags } from "@/lib/metaTags";
 import type { Community, PageContentSection } from "@shared/schema";
 
 export default function LongTermCare() {
   useEffect(() => {
-    document.title = "Long Term Care Insurance Services | Stage Senior";
-
-    // Add meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Expert long-term care insurance services from Stage Senior. Maximize your benefits with our comprehensive claims processing, policy review, and certification support.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Expert long-term care insurance services from Stage Senior. Maximize your benefits with our comprehensive claims processing, policy review, and certification support.';
-      document.head.appendChild(meta);
-    }
+    const baseUrl = window.location.origin;
+    setMetaTags({
+      title: "Long-Term Care Planning & Services | Stage Senior",
+      description: "Comprehensive long-term care solutions for seniors. Professional guidance for assisted living, memory care, and extended care planning.",
+      canonicalUrl: `${baseUrl}/services/long-term-care`,
+      ogTitle: "Long-Term Care Planning & Services",
+      ogDescription: "Comprehensive long-term care solutions for seniors. Professional guidance for assisted living, memory care, and extended care planning.",
+      ogType: "website",
+      ogUrl: `${baseUrl}/services/long-term-care`,
+      ogSiteName: "Stage Senior Living"
+    });
   }, []);
 
   // Fetch communities from API
@@ -82,6 +82,7 @@ export default function LongTermCare() {
                       src={heroContent?.imageUrl}
                       alt={heroContent?.heading}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   </div>
                 </div>

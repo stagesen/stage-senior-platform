@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { PageHero } from "@/components/PageHero";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { setMetaTags } from "@/lib/metaTags";
 import type { Community } from "@shared/schema";
 import { 
   Briefcase, 
@@ -27,19 +28,19 @@ export default function Careers() {
   const { data: communities = [] } = useQuery<Community[]>({
     queryKey: ['/api/communities'],
   });
+  
   useEffect(() => {
-    document.title = "Careers | Stage Senior";
-    
-    // Add meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Join Stage Senior and build a career that makes a difference. Explore opportunities at our four Colorado communities with competitive benefits and supportive culture.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Join Stage Senior and build a career that makes a difference. Explore opportunities at our four Colorado communities with competitive benefits and supportive culture.';
-      document.head.appendChild(meta);
-    }
+    const baseUrl = window.location.origin;
+    setMetaTags({
+      title: "Careers at Stage Senior | Join Our Team",
+      description: "Explore rewarding career opportunities at Stage Senior. Join our team of compassionate professionals dedicated to exceptional senior care.",
+      canonicalUrl: `${baseUrl}/careers`,
+      ogTitle: "Careers at Stage Senior | Join Our Team",
+      ogDescription: "Explore rewarding career opportunities at Stage Senior. Join our team of compassionate professionals dedicated to exceptional senior care.",
+      ogType: "website",
+      ogUrl: `${baseUrl}/careers`,
+      ogSiteName: "Stage Senior Living"
+    });
   }, []);
   const openPositions = [
     {
@@ -278,6 +279,7 @@ function CommunityCareerCard({ community }: { community: Community }) {
             src={imageUrl}
             alt={community.name}
             className="w-full h-full object-cover"
+            loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         </div>

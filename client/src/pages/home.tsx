@@ -42,6 +42,7 @@ import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { setMetaTags, getCanonicalUrl } from "@/lib/metaTags";
+import { generateOrganizationSchema } from "@/lib/schemaOrg";
 import type { CommunityCard, Community, HomepageSection, HomepageConfig } from "@shared/schema";
 import seniorCaregiverDocuments from '@/assets/senior-caregiver-documents.webp';
 import carePricingImage from '@/assets/cp-home.webp';
@@ -133,14 +134,20 @@ export default function Home() {
 
   // Set meta tags for SEO
   useEffect(() => {
-    const logoUrl = `${window.location.origin}${stageLogo}`;
+    const baseUrl = window.location.origin;
+    const currentUrl = `${baseUrl}/`;
+    const logoUrl = `${baseUrl}${stageLogo}`;
     
     setMetaTags({
-      title: "Stage Senior - Exceptional Senior Living in Colorado | Memory Care & Assisted Living",
-      description: "Discover Colorado's finest senior living communities with Stage Senior. Offering assisted living, memory care, and independent living with dignity, comfort, and joy. Schedule your tour today.",
-      canonicalUrl: getCanonicalUrl("/"),
+      title: "Stage Senior Living | Premium Senior Communities in Colorado",
+      description: "Discover exceptional senior living communities across Colorado. Stage Senior offers assisted living, memory care, and independent living with compassionate care and modern amenities.",
+      canonicalUrl: currentUrl,
+      ogTitle: "Stage Senior Living | Premium Senior Communities in Colorado",
+      ogDescription: "Discover exceptional senior living communities across Colorado. Stage Senior offers assisted living, memory care, and independent living with compassionate care and modern amenities.",
       ogType: "website",
+      ogUrl: currentUrl,
       ogImage: logoUrl,
+      ogSiteName: "Stage Senior Living",
     });
   }, []);
 
@@ -201,8 +208,27 @@ export default function Home() {
     setShowContactForm(false);
   };
 
+  // Generate Schema.org Organization markup
+  const organizationSchema = generateOrganizationSchema({
+    name: "Stage Senior Living",
+    description: "Colorado-based senior living management company providing assisted living, memory care, and independent living communities.",
+    url: window.location.origin,
+    logo: `${window.location.origin}${stageLogo}`,
+    contactPhone: "+1-720-706-7168",
+    contactEmail: "info@stagesenior.com",
+    addressLocality: "Colorado",
+    addressRegion: "CO",
+  });
+
   return (
-    <div className="min-h-screen bg-white">
+    <>
+      {organizationSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+      )}
+      <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <PageHero
         pagePath="/"
@@ -666,6 +692,7 @@ export default function Home() {
         onOpenChange={setShowCommunityModal}
         communities={communities}
       />
-    </div>
+      </div>
+    </>
   );
 }

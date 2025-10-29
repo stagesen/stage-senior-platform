@@ -88,6 +88,7 @@ export default function CourtyardsPatios() {
                   src={courtyardsImageUrl || ''}
                   alt="Courtyards & Patios"
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               </div>
               

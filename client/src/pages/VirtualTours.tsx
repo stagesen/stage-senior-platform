@@ -132,6 +132,7 @@ function CommunitySection({ community, floorPlans, onFloorPlanClick }: Community
                 src={heroImageUrl}
                 alt={community.name}
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
@@ -221,6 +222,7 @@ function FloorPlanCard({ floorPlan, onClick }: FloorPlanCardProps) {
             src={imageUrl}
             alt={floorPlan.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">

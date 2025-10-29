@@ -432,6 +432,7 @@ const TeamMemberAvatar = ({ avatarImageId, name }: { avatarImageId?: string; nam
           src={avatarUrl} 
           alt={`${name} avatar`}
           className="w-full h-full object-cover"
+          loading="lazy"
         />
       ) : (
         <div className="w-full h-full flex items-center justify-center text-muted-foreground">
@@ -462,6 +463,7 @@ const GalleryImageItem = ({ image, index, onMoveUp, onMoveDown, onDelete, showCo
             src={resolvedImageUrl}
             alt={image.caption || image.alt || `Gallery image ${index + 1}`}
             className="w-full h-full object-cover"
+            loading="lazy"
           />
         )}
       </div>
@@ -521,6 +523,7 @@ const ExistingGalleryImage = ({ image, index, onDelete }: {
           src={resolvedImageUrl} 
           alt={image.alt || `Gallery image ${index + 1}`}
           className="w-full h-24 object-cover rounded-md border"
+          loading="lazy"
         />
       )}
       <Button
