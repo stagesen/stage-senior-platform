@@ -240,6 +240,14 @@ export default function Contact() {
                         {getPrimaryPhoneDisplay(community)}
                       </a>
                     </div>
+                    {community.email && (
+                      <div className="flex items-center gap-3">
+                        <Mail className="w-5 h-5 text-primary" />
+                        <a href={`mailto:${community.email}`} className="text-muted-foreground hover:text-primary">
+                          {community.email}
+                        </a>
+                      </div>
+                    )}
                     <Button 
                       asChild 
                       className="w-full"
