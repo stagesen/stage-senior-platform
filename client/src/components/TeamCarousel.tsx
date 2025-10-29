@@ -49,12 +49,12 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
   return (
     <Link href={`/team/${member.slug}`}>
       <Card
-        className="group text-center p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full cursor-pointer bg-white"
+        className="group text-center p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full cursor-pointer bg-white"
         style={{ borderTop: `5px solid ${communityColor || '#6366f1'}` }}
         data-testid={`carousel-member-${member.id}`}
       >
         <CardContent className="pt-6">
-          <div className="relative w-24 h-24 mx-auto mb-4">
+          <div className="relative w-32 h-32 mx-auto mb-6">
             <Avatar
               className="w-full h-full border-4 shadow-lg transition-transform duration-300 group-hover:scale-110"
               style={{ borderColor: communityColor || '#e5e7eb' }}
