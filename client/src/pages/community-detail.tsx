@@ -2116,6 +2116,22 @@ export default function CommunityDetail() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Overview Content */}
           <div className="md:col-span-2">
+            {/* Heading and Subheading */}
+            {(community.heading || community.subheading) && (
+              <div className="mb-6">
+                {community.heading && (
+                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3" data-testid="community-heading">
+                    {community.heading}
+                  </h2>
+                )}
+                {community.subheading && (
+                  <p className="text-xl text-gray-700 leading-relaxed" data-testid="community-subheading">
+                    {community.subheading}
+                  </p>
+                )}
+              </div>
+            )}
+            
             <div 
               className="text-lg text-gray-600 leading-relaxed mb-6 prose prose-lg max-w-none" 
               data-testid="community-description"
