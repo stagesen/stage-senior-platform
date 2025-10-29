@@ -149,7 +149,7 @@ const getNeighborhoodInfo = (communitySlug: string) => {
       ]
     },
     'golden-pond': {
-      setting: "Golden Pond is centrally located at 1270 N Ford Street, roughly 1.8 miles from downtown Golden and about 15 miles from downtown Denver with quick access to Interstate 70 and Highway 93. Golden sits at the foot of the Rockies.",
+      setting: "Golden Pond is centrally located roughly 1.8 miles from downtown Golden and about 15 miles from downtown Denver with quick access to Interstate 70 and Highway 93. Golden sits at the foot of the Rockies.",
       healthcare: [
         "Centura St. Anthony Hospital (Lakewood)",
         "Emergency & Urgent Care Golden",
@@ -175,7 +175,7 @@ const getNeighborhoodInfo = (communitySlug: string) => {
       ]
     },
     'gardens-at-columbine': {
-      setting: "Located at 5130 West Ken Caryl Avenue in Littleton, about 5 miles from downtown Littleton and 15 miles from downtown Denver, with convenient access to Santa Fe Drive and C‑470.",
+      setting: "Located in Littleton, about 5 miles from downtown Littleton and 15 miles from downtown Denver, with convenient access to Santa Fe Drive and C‑470.",
       healthcare: [
         "Swedish/Craig Hospital",
         "UCHealth Highlands Ranch Hospital",
@@ -204,7 +204,7 @@ const getNeighborhoodInfo = (communitySlug: string) => {
       ]
     },
     'gardens-on-quail': {
-      setting: "Located at 6447 Quail Street in Arvada, a thriving suburb just outside Denver offering seniors a high quality of life with abundant housing options, healthcare and activities.",
+      setting: "Located in Arvada, a thriving suburb just outside Denver offering seniors a high quality of life with abundant housing options, healthcare and activities.",
       healthcare: [
         "Lutheran Medical Center",
         "Denver Health",
@@ -1265,7 +1265,7 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
               src={finalHeroImageUrl}
               alt="Community background"
               className="w-full h-full object-cover"
-              fetchpriority="high"
+              fetchPriority="high"
               loading="eager"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-blue-900/60 via-blue-800/60 to-blue-600/60" />
