@@ -68,6 +68,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { setMetaTags, getCanonicalUrl, sanitizeMetaText } from "@/lib/metaTags";
+import { DEFAULT_BLOG_IMAGE } from "@/lib/constants";
 import stageSeniorLogo from "@/assets/stage-logo.webp";
 import defaultBrochureImage from "@/assets/community-brochure-default.webp";
 import NewsletterCard from "@/components/NewsletterCard";
@@ -238,7 +239,7 @@ const HighlightCard = memo(({ highlight, imageOnRight = false }: { highlight: { 
 
   // Generate optimized image URLs with proper dimensions
   const isObjectStorage = resolvedImageUrl && (resolvedImageUrl.includes('/replit-objstore-') || resolvedImageUrl.includes('/public/'));
-  const baseImageUrl = resolvedImageUrl || "https://images.unsplash.com/photo-1576765608535-5f04d1e3dc0b?w=800&q=80";
+  const baseImageUrl = resolvedImageUrl || DEFAULT_BLOG_IMAGE;
 
   // For object storage images, use our resize API
   const srcSet = isObjectStorage
@@ -932,20 +933,14 @@ const BlogPostCard = ({ post }: { post: BlogPost }) => {
     <Link href={`/blog/${post.slug}`}>
       <Card className="group hover:shadow-2xl transition-all duration-300 border-0 overflow-hidden bg-white cursor-pointer" data-testid={`blog-post-${post.id}`}>
         <div className="relative">
-          {(resolvedThumbnail || resolvedMainImage) ? (
-            <div className="h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
-              <img
-                src={resolvedThumbnail || resolvedMainImage || ''}
-                alt={post.title}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                loading="lazy"
-              />
-            </div>
-          ) : (
-            <div className="h-56 bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center">
-              <Image className="w-16 h-16 text-primary/30" />
-            </div>
-          )}
+          <div className="h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+            <img
+              src={resolvedThumbnail || resolvedMainImage || DEFAULT_BLOG_IMAGE}
+              alt={post.title}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              loading="lazy"
+            />
+          </div>
           {post.featured && (
             <Badge className="absolute top-4 left-4 bg-yellow-500 text-white border-0">
               <Star className="w-3 h-3 mr-1 fill-current" />

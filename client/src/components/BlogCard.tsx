@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, User, Clock } from "lucide-react";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { DEFAULT_BLOG_IMAGE } from "@/lib/constants";
 import type { BlogPost, Community } from "@shared/schema";
 
 interface BlogCardProps {
@@ -58,7 +59,7 @@ export default function BlogCard({ post, community, onTagClick }: BlogCardProps)
         {/* Featured Image */}
         <div className="relative overflow-hidden">
           <img
-            src={resolvedThumbnailImage || resolvedMainImage || `https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400`}
+            src={resolvedThumbnailImage || resolvedMainImage || DEFAULT_BLOG_IMAGE}
             alt={post.title}
             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
             data-testid={`blog-image-${post.slug}`}

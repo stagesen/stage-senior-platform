@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
+import { DEFAULT_BLOG_IMAGE } from "@/lib/constants";
 import { Download, FileText, Calendar, AlertCircle, CalendarDays } from "lucide-react";
 import type { BlogPost, PostAttachment, Community } from "@shared/schema";
 
@@ -162,7 +163,7 @@ export default function NewsletterCard({ communityId, community: communityProp }
     );
   }
 
-  const imageUrl = resolvedThumbnailImage || resolvedMainImage;
+  const imageUrl = resolvedThumbnailImage || resolvedMainImage || DEFAULT_BLOG_IMAGE;
   const attachment = newsletter.attachments?.[0];
 
   return (
@@ -189,17 +190,15 @@ export default function NewsletterCard({ communityId, community: communityProp }
       
       <CardContent className="space-y-4">
         {/* Featured Image */}
-        {imageUrl && (
-          <div className="relative overflow-hidden rounded-md group">
-            <img
-              src={imageUrl}
-              alt={newsletter.title}
-              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-              data-testid={`newsletter-image-${newsletter.slug}`}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          </div>
-        )}
+        <div className="relative overflow-hidden rounded-md group">
+          <img
+            src={imageUrl}
+            alt={newsletter.title}
+            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            data-testid={`newsletter-image-${newsletter.slug}`}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        </div>
 
         {/* Content */}
         <div className="space-y-3">
