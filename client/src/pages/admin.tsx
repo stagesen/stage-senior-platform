@@ -184,6 +184,7 @@ export default function Admin() {
             <TabsTrigger value="faqs" data-testid="tab-faqs">FAQs</TabsTrigger>
             <TabsTrigger value="galleries" data-testid="tab-galleries">Galleries</TabsTrigger>
             <TabsTrigger value="testimonials" data-testid="tab-testimonials">Testimonials</TabsTrigger>
+            <TabsTrigger value="social-posts" data-testid="tab-social-posts">Social Posts</TabsTrigger>
             <TabsTrigger value="page-heroes" data-testid="tab-page-heroes" className="bg-primary text-primary-foreground hover:bg-primary/90">Page Heroes</TabsTrigger>
             <TabsTrigger value="care-types" data-testid="tab-care-types">Care Types</TabsTrigger>
             <TabsTrigger value="amenities" data-testid="tab-amenities">Amenities</TabsTrigger>
@@ -425,6 +426,10 @@ export default function Admin() {
 
           <TabsContent value="testimonials">
             <AdminDashboard type="testimonials" />
+          </TabsContent>
+
+          <TabsContent value="social-posts">
+            <AdminDashboard type="social-posts" />
           </TabsContent>
 
           <TabsContent value="page-heroes">
