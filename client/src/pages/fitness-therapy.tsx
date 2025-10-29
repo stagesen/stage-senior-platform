@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PageHero } from "@/components/PageHero";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { PageContentSection } from "@shared/schema";
 
 export default function FitnessTherapy() {
@@ -30,6 +31,9 @@ export default function FitnessTherapy() {
     }
   });
 
+  // Resolve community fitness image URL
+  const fitnessImageUrl = useResolveImageUrl(communityData?.community?.fitnessImageId);
+
   useEffect(() => {
     document.title = "Fitness & Therapy Center | Senior Living Communities";
     
@@ -47,12 +51,7 @@ export default function FitnessTherapy() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <PageHero
-        pagePath="/fitness-therapy"
-        defaultTitle="Stay Active, Stay Healthy"
-        defaultSubtitle="On-site physical therapy, fitness programs, and wellness activities designed for active aging."
-        communityImageId={communityData?.community?.fitnessImageId}
-      />
+      <PageHero pagePath="/fitness-therapy" />
 
       {/* Breadcrumb Navigation */}
       <div className="bg-gray-50 py-4">
@@ -86,12 +85,19 @@ export default function FitnessTherapy() {
         </div>
       ) : (
         <>
-          {sections.map((section) => (
-            <PageSectionRenderer 
-              key={section.id} 
-              section={section}
-            />
-          ))}
+          {sections.map((section, index) => {
+            // Pass community fitness image to the first hero_section
+            const isFirstHeroSection = index === sections.findIndex(s => s.sectionType === 'hero_section');
+            const communityImageId = isFirstHeroSection && fromCommunity ? communityData?.community?.fitnessImageId : undefined;
+            
+            return (
+              <PageSectionRenderer 
+                key={section.id} 
+                section={section}
+                communityImageId={communityImageId}
+              />
+            );
+          })}
         </>
       )}
     </div>

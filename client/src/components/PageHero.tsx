@@ -15,7 +15,6 @@ interface PageHeroProps {
   className?: string;
   logoUrl?: string;
   logoAlt?: string;
-  communityImageId?: string; // Community-specific image override
 }
 
 export function PageHero({
@@ -26,7 +25,6 @@ export function PageHero({
   className,
   logoUrl,
   logoAlt,
-  communityImageId,
 }: PageHeroProps) {
   const { data: hero, isLoading } = useQuery({
     queryKey: ["/api/page-heroes", pagePath],
@@ -50,8 +48,7 @@ export function PageHero({
   const title = hero?.title || defaultTitle || "";
   const subtitle = hero?.subtitle || defaultSubtitle || "";
   const description = hero?.description || "";
-  // Use community image if provided, otherwise fall back to hero's background or default
-  const backgroundImageRaw = communityImageId || hero?.backgroundImageUrl || defaultBackgroundImage || "";
+  const backgroundImageRaw = hero?.backgroundImageUrl || defaultBackgroundImage || "";
   const ctaText = hero?.ctaText || "";
   const ctaLink = hero?.ctaLink || "";
   const overlayOpacity = hero?.overlayOpacity || 0.3; // Reduced for better gradient visibility

@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PageHero } from "@/components/PageHero";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { PageContentSection } from "@shared/schema";
 
 export default function BeautySalon() {
@@ -29,6 +30,9 @@ export default function BeautySalon() {
     }
   });
 
+  // Resolve community salon image URL
+  const salonImageUrl = useResolveImageUrl(communityData?.community?.salonImageId);
+
   useEffect(() => {
     document.title = "Beauty Salon & Barber Services | Senior Living Communities";
     
@@ -46,12 +50,7 @@ export default function BeautySalon() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <PageHero
-        pagePath="/beauty-salon"
-        defaultTitle="Beauty Salon & Barber Services"
-        defaultSubtitle="Look Your Best, Feel Your Best"
-        communityImageId={communityData?.community?.salonImageId}
-      />
+      <PageHero pagePath="/beauty-salon" />
 
       {/* Breadcrumb Navigation */}
       <div className="bg-gray-50 py-4">
@@ -85,12 +84,19 @@ export default function BeautySalon() {
         </div>
       ) : (
         <>
-          {sections.map((section) => (
-            <PageSectionRenderer 
-              key={section.id} 
-              section={section}
-            />
-          ))}
+          {sections.map((section, index) => {
+            // Pass community salon image to the first hero_section
+            const isFirstHeroSection = index === sections.findIndex(s => s.sectionType === 'hero_section');
+            const communityImageId = isFirstHeroSection && fromCommunity ? communityData?.community?.salonImageId : undefined;
+            
+            return (
+              <PageSectionRenderer 
+                key={section.id} 
+                section={section}
+                communityImageId={communityImageId}
+              />
+            );
+          })}
         </>
       )}
     </div>

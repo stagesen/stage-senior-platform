@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PageHero } from "@/components/PageHero";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { PageContentSection } from "@shared/schema";
 
 export default function Dining() {
@@ -30,6 +31,9 @@ export default function Dining() {
     }
   });
 
+  // Resolve community dining image URL
+  const diningImageUrl = useResolveImageUrl(communityData?.community?.privateDiningImageId);
+
   useEffect(() => {
     document.title = "Dining & Restaurant Services | Senior Living Communities";
     
@@ -49,12 +53,7 @@ export default function Dining() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <PageHero
-        pagePath="/dining"
-        defaultTitle="Exceptional Dining Experiences"
-        defaultSubtitle="Restaurant-Style Service • Fresh Daily • Social Connection"
-        communityImageId={communityData?.community?.privateDiningImageId}
-      />
+      <PageHero pagePath="/dining" />
 
       {/* Breadcrumb Navigation */}
       <div className="bg-gray-50 py-4">
@@ -82,12 +81,19 @@ export default function Dining() {
         </div>
       ) : (
         <>
-          {sections.map((section) => (
-            <PageSectionRenderer 
-              key={section.id} 
-              section={section}
-            />
-          ))}
+          {sections.map((section, index) => {
+            // Pass community dining image to the first hero_section
+            const isFirstHeroSection = index === sections.findIndex(s => s.sectionType === 'hero_section');
+            const communityImageId = isFirstHeroSection && fromCommunity ? communityData?.community?.privateDiningImageId : undefined;
+            
+            return (
+              <PageSectionRenderer 
+                key={section.id} 
+                section={section}
+                communityImageId={communityImageId}
+              />
+            );
+          })}
         </>
       )}
     </div>

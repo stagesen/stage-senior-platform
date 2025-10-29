@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PageHero } from "@/components/PageHero";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
+import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { PageContentSection } from "@shared/schema";
 
 export default function CourtyardsPatios() {
@@ -29,6 +30,9 @@ export default function CourtyardsPatios() {
     }
   });
 
+  // Resolve community courtyards image URL
+  const courtyardsImageUrl = useResolveImageUrl(communityData?.community?.courtyardsImageId);
+
   useEffect(() => {
     document.title = "Courtyards & Outdoor Spaces | Senior Living Communities";
     
@@ -46,12 +50,7 @@ export default function CourtyardsPatios() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <PageHero
-        pagePath="/courtyards-patios"
-        defaultTitle="Courtyards & Outdoor Spaces"
-        defaultSubtitle="Connect with Nature in Beautiful, Safe Environments"
-        communityImageId={communityData?.community?.courtyardsImageId}
-      />
+      <PageHero pagePath="/courtyards-patios" />
 
       {/* Breadcrumb Navigation */}
       <div className="bg-gray-50 py-4">
@@ -85,12 +84,19 @@ export default function CourtyardsPatios() {
         </div>
       ) : (
         <>
-          {sections.map((section) => (
-            <PageSectionRenderer 
-              key={section.id} 
-              section={section}
-            />
-          ))}
+          {sections.map((section, index) => {
+            // Pass community courtyards image to the first hero_section
+            const isFirstHeroSection = index === sections.findIndex(s => s.sectionType === 'hero_section');
+            const communityImageId = isFirstHeroSection && fromCommunity ? communityData?.community?.courtyardsImageId : undefined;
+            
+            return (
+              <PageSectionRenderer 
+                key={section.id} 
+                section={section}
+                communityImageId={communityImageId}
+              />
+            );
+          })}
         </>
       )}
     </div>
