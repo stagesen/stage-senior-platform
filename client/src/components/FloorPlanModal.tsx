@@ -328,18 +328,18 @@ export default function FloorPlanModal({
             </div>
             
             {/* Trust indicators */}
-            <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs text-muted-foreground">
               <div className="flex items-center gap-1">
-                <Check className="w-3 h-3 text-green-600" />
-                <span>Same-day tours</span>
+                <Check className="w-3 h-3 flex-shrink-0 text-green-600" />
+                <span className="whitespace-nowrap">Same-day tours</span>
               </div>
               <div className="flex items-center gap-1">
-                <Check className="w-3 h-3 text-green-600" />
-                <span>No obligation</span>
+                <Check className="w-3 h-3 flex-shrink-0 text-green-600" />
+                <span className="whitespace-nowrap">No obligation</span>
               </div>
               <div className="flex items-center gap-1">
-                <Check className="w-3 h-3 text-green-600" />
-                <span>Free consultation</span>
+                <Check className="w-3 h-3 flex-shrink-0 text-green-600" />
+                <span className="whitespace-nowrap">Free consultation</span>
               </div>
             </div>
           </div>
