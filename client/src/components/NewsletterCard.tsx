@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { DEFAULT_BLOG_IMAGE } from "@/lib/constants";
-import { Download, FileText, Calendar, AlertCircle, CalendarDays } from "lucide-react";
+import { Download, FileText, Calendar, AlertCircle, CalendarDays, Mail } from "lucide-react";
 import type { BlogPost, PostAttachment, Community } from "@shared/schema";
 
 interface NewsletterResponse extends BlogPost {
@@ -163,8 +163,8 @@ export default function NewsletterCard({ communityId, community: communityProp }
     );
   }
 
-  const imageUrl = resolvedThumbnailImage || resolvedMainImage || DEFAULT_BLOG_IMAGE;
   const attachment = newsletter.attachments?.[0];
+  const communityColor = newsletter.community.mainColorHex || '#4F46E5'; // Default to indigo if no color set
 
   return (
     <Card 
@@ -189,16 +189,17 @@ export default function NewsletterCard({ communityId, community: communityProp }
       </CardHeader>
       
       <CardContent className="space-y-4">
-        {/* Featured Image */}
-        <div className="relative overflow-hidden rounded-md group">
-          <img
-            src={imageUrl}
-            alt={newsletter.title}
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-            loading="lazy"
-            data-testid={`newsletter-image-${newsletter.slug}`}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Newsletter Icon with Community Color Background */}
+        <div 
+          className="relative overflow-hidden rounded-md group flex items-center justify-center h-48"
+          style={{ backgroundColor: communityColor }}
+          data-testid={`newsletter-banner-${newsletter.slug}`}
+        >
+          <div className="relative z-10">
+            <Mail className="w-24 h-24 text-white/90 group-hover:scale-110 transition-transform duration-300" strokeWidth={1.5} />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
 
         {/* Content */}
