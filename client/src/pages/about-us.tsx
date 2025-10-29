@@ -238,8 +238,7 @@ function renderCTA(section: PageContentSection, openScheduleTour: () => void) {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button 
             size="lg" 
-            variant="secondary"
-            className="px-8 py-6 text-lg talkfurther-schedule-tour"
+            className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 hover:shadow-lg px-8 py-6 text-lg talkfurther-schedule-tour"
             onClick={() => openScheduleTour()}
             data-testid="button-schedule-tour"
           >
@@ -249,7 +248,7 @@ function renderCTA(section: PageContentSection, openScheduleTour: () => void) {
           <Button 
             size="lg" 
             variant="outline"
-            className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary px-8 py-6 text-lg"
+            className="border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary px-8 py-6 text-lg"
             asChild
             data-testid="button-call-now"
           >
