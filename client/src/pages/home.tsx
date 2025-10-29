@@ -568,7 +568,7 @@ export default function Home() {
 
       {/* Lead Generation Panel - Blue Background for CTA Emphasis */}
       <ScaleIn delay={0.2}>
-        <section id="contact" className="py-16 bg-gradient-to-br from-[var(--deep-blue)] to-[var(--bright-blue)] relative overflow-hidden scroll-mt-24">
+        <section id="contact" className="py-16 bg-[#2952b3] relative overflow-hidden scroll-mt-24">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
