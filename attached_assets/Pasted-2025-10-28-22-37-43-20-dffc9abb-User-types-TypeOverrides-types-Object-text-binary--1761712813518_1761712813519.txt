@@ -1,0 +1,176 @@
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_types: TypeOverrides { _types: [Object], text: {}, binary: {} },
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_ending: true,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_connecting: false,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_connected: true,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_connectionError: false,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_queryable: false,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+connection: Connection {
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_events: [Object: null prototype],
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_eventsCount: 22,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_maxListeners: undefined,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+stream: [Socket],
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_keepAlive: false,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_keepAliveInitialDelayMillis: 0,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+lastBuffer: false,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+parsedStatements: {},
+2025-10-28 22:37:43.20
+dffc9abb
+User
+ssl: false,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_ending: true,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_emitMessage: false,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_connecting: true
+2025-10-28 22:37:43.20
+dffc9abb
+User
+},
+2025-10-28 22:37:43.20
+dffc9abb
+User
+queryQueue: [],
+2025-10-28 22:37:43.20
+dffc9abb
+User
+binary: false,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+processID: 610710905,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+secretKey: -713768992,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+ssl: false,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_connectionTimeoutMillis: 0,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+config: {
+2025-10-28 22:37:43.20
+dffc9abb
+User
+maxUses: Infinity,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+allowExitOnIdle: false,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+}
+2025-10-28 22:37:43.20
+dffc9abb
+User
+at WebSocket. (file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:987:80)
+2025-10-28 22:37:43.20
+dffc9abb
+User
+at callListener (/home/runner/workspace/node_modules/ws/lib/event-target.js:290:14)
+2025-10-28 22:37:43.20
+dffc9abb
+User
+at WebSocket.onMessage (/home/runner/workspace/node_modules/ws/lib/event-target.js:209:9)
+2025-10-28 22:37:43.20
+dffc9abb
+User
+severity: 'FATAL',
+2025-10-28 22:37:43.20
+dffc9abb
+User
+code: '57P01',
+2025-10-28 22:37:43.20
+dffc9abb
+User
+schema: undefined,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+dataType: undefined,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+constraint: undefined,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+_events: [Object: null prototype] { error: [Function (anonymous)] },
+2025-10-28 22:37:43.20
+dffc9abb
+User
+connectionParameters: ConnectionParameters {
+2025-10-28 22:37:43.20
+dffc9abb
+User
+port: 5432,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+ssl: {},
+2025-10-28 22:37:43.20
+dffc9abb
+User
+replication: undefined,
+2025-10-28 22:37:43.20
+dffc9abb
+User
+isDomainSocket: false,
