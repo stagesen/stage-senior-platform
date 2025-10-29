@@ -167,8 +167,8 @@ export default function FloorPlanModal({
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="left-2" />
-                <CarouselNext className="right-2" />
+                <CarouselPrevious className="left-1 sm:left-2 bg-white/95 hover:bg-white shadow-lg border-2 h-10 w-10 sm:h-11 sm:w-11" />
+                <CarouselNext className="right-1 sm:right-2 bg-white/95 hover:bg-white shadow-lg border-2 h-10 w-10 sm:h-11 sm:w-11" />
               </Carousel>
             ) : (
               <div className="relative aspect-[4/3] sm:aspect-video bg-muted rounded-lg overflow-hidden">
