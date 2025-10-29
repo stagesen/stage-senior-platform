@@ -1668,6 +1668,8 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       calendarFile2Id: "",
       calendarFile2ButtonText: "",
       overview: "",
+      heading: "",
+      subheading: "",
       description: "",
       shortDescription: "",
       address: "", // Backward compatibility
@@ -2851,6 +2853,38 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                     <FormControl>
                       <Textarea {...field} value={field.value || ""} rows={4} data-testid="textarea-community-overview" />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
+                name="heading"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Heading</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value || ""} placeholder="Main heading for detail page" data-testid="input-community-heading" />
+                    </FormControl>
+                    <FormDescription>
+                      Main heading displayed above the description on the community detail page
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={communityForm.control}
+                name="subheading"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Subheading</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} value={field.value || ""} rows={2} placeholder="Subheading/tagline for detail page" data-testid="textarea-community-subheading" />
+                    </FormControl>
+                    <FormDescription>
+                      Subheading/tagline displayed below the heading and above the description
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
