@@ -89,6 +89,8 @@ export const communities = pgTable("communities", {
   salonImageId: varchar("salon_image_id", { length: 255 }).references(() => images.id), // Salon & spa image
   courtyardsImageId: varchar("courtyards_image_id", { length: 255 }).references(() => images.id), // Courtyards & patios image
   overview: text("overview"),
+  heading: varchar("heading", { length: 255 }), // Heading displayed above description on detail page
+  subheading: text("subheading"), // Subheading displayed below heading and above description
   description: text("description"),
   shortDescription: text("short_description"),
   startingRateDisplay: varchar("starting_rate_display", { length: 100 }),
