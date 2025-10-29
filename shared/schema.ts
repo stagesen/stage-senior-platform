@@ -442,6 +442,21 @@ export const testimonials = pgTable("testimonials", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Social Posts table for managing custom social media posts for each community
+export const socialPosts = pgTable("social_posts", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  communityId: uuid("community_id").notNull().references(() => communities.id, { onDelete: "cascade" }),
+  imageId: varchar("image_id", { length: 255 }).references(() => images.id),
+  caption: text("caption"),
+  linkUrl: text("link_url"),
+  author: varchar("author", { length: 255 }),
+  postDate: timestamp("post_date").defaultNow(),
+  sortOrder: integer("sort_order").default(0),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Images table for storing all image metadata
 export const images = pgTable("images", {
   id: varchar("id", { length: 255 }).primaryKey().default(sql`gen_random_uuid()`),
@@ -1082,6 +1097,14 @@ export const insertTestimonialSchema = createInsertSchema(testimonials).omit({
   updatedAt: true,
 });
 
+export const insertSocialPostSchema = createInsertSchema(socialPosts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  postDate: z.coerce.date().optional(),
+});
+
 export const insertCommunityHighlightSchema = createInsertSchema(communityHighlights).omit({
   id: true,
   createdAt: true,
@@ -1246,6 +1269,8 @@ export type FloorPlan = typeof floorPlans.$inferSelect;
 export type InsertFloorPlan = z.infer<typeof insertFloorPlanSchema>;
 export type Testimonial = typeof testimonials.$inferSelect;
 export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
+export type SocialPost = typeof socialPosts.$inferSelect;
+export type InsertSocialPost = z.infer<typeof insertSocialPostSchema>;
 export type CommunityHighlight = typeof communityHighlights.$inferSelect;
 export type InsertCommunityHighlight = z.infer<typeof insertCommunityHighlightSchema>;
 export type CommunityFeature = typeof communityFeatures.$inferSelect;

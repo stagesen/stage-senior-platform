@@ -52,6 +52,7 @@ import {
   insertFaqSchema,
   insertGallerySchema,
   insertTestimonialSchema,
+  insertSocialPostSchema,
   insertPageHeroSchema,
   insertFloorPlanSchema,
   insertCareTypeSchema,
@@ -78,6 +79,7 @@ import {
   type Faq,
   type Gallery,
   type Testimonial,
+  type SocialPost,
   type PageHero,
   type FloorPlan,
   type CareType,
@@ -89,6 +91,7 @@ import {
   type InsertFaq,
   type InsertGallery,
   type InsertTestimonial,
+  type InsertSocialPost,
   type InsertPageHero,
   type InsertFloorPlan,
   type InsertCareType,
@@ -106,7 +109,7 @@ import {
 } from "@shared/schema";
 
 interface AdminDashboardProps {
-  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "homepage" | "email-recipients" | "database-sync" | "page-content" | "landing-pages";
+  type: "communities" | "posts" | "blog-posts" | "team" | "events" | "tours" | "faqs" | "galleries" | "testimonials" | "social-posts" | "page-heroes" | "floor-plans" | "care-types" | "amenities" | "homepage" | "email-recipients" | "database-sync" | "page-content" | "landing-pages";
 }
 
 // Helper function to generate slug from title
@@ -1605,7 +1608,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   // Fetch lightweight community data for dropdown selects (id and name only)
   const { data: communitiesDropdown = [] } = useQuery<Array<{ id: string; name: string }>>({
     queryKey: ["/api/communities/dropdown"],
-    enabled: type === "tours" || type === "galleries" || type === "events" || type === "faqs" || type === "blog-posts" || type === "posts" || type === "testimonials" || type === "floor-plans" || type === "team" || type === "landing-pages",
+    enabled: type === "tours" || type === "galleries" || type === "events" || type === "faqs" || type === "blog-posts" || type === "posts" || type === "testimonials" || type === "social-posts" || type === "floor-plans" || type === "team" || type === "landing-pages",
   });
 
   // Use the appropriate communities list based on context
@@ -1765,6 +1768,20 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       featured: false,
       approved: true,
       sortOrder: 0,
+    },
+  });
+
+  const socialPostForm = useForm<InsertSocialPost>({
+    resolver: zodResolver(insertSocialPostSchema),
+    defaultValues: {
+      communityId: undefined,
+      imageId: undefined,
+      caption: "",
+      linkUrl: "",
+      author: "",
+      postDate: new Date(),
+      sortOrder: 0,
+      active: true,
     },
   });
 
@@ -1964,6 +1981,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       case "faqs": return faqForm;
       case "galleries": return galleryForm;
       case "testimonials": return testimonialForm;
+      case "social-posts": return socialPostForm;
       case "page-heroes": return pageHeroForm;
       case "floor-plans": return floorPlanForm;
       case "care-types": return careTypeForm;
@@ -4890,6 +4908,224 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
           </Form>
         );
 
+      case "social-posts":
+        return (
+          <Form {...socialPostForm}>
+            <form onSubmit={socialPostForm.handleSubmit(handleSubmit)} className="space-y-4">
+              <FormField
+                control={socialPostForm.control}
+                name="communityId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Community *</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      value={field.value || ""}
+                    >
+                      <FormControl>
+                        <SelectTrigger data-testid="select-social-post-community">
+                          <SelectValue placeholder="Select a community" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {communities.map((community) => (
+                          <SelectItem key={community.id} value={community.id}>
+                            {community.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={socialPostForm.control}
+                name="imageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Post Image</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        imageId={field.value}
+                        onImageChange={field.onChange}
+                        placeholder="Upload social post image"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Upload an image for this social media post
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={socialPostForm.control}
+                name="caption"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Caption</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        {...field} 
+                        value={field.value || ""} 
+                        rows={4} 
+                        placeholder="Share what's happening at the community..." 
+                        data-testid="textarea-social-post-caption" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={socialPostForm.control}
+                name="linkUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Link URL</FormLabel>
+                    <FormControl>
+                      <Input 
+                        {...field} 
+                        value={field.value || ""} 
+                        type="url" 
+                        placeholder="https://www.instagram.com/p/..." 
+                        data-testid="input-social-post-link" 
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Link to the original Instagram post or external URL
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={socialPostForm.control}
+                name="author"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Author</FormLabel>
+                    <FormControl>
+                      <Input 
+                        {...field} 
+                        value={field.value || ""} 
+                        placeholder="@username" 
+                        data-testid="input-social-post-author" 
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Social media username or author name
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={socialPostForm.control}
+                name="postDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Post Date *</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                            data-testid="button-social-post-date"
+                          >
+                            {field.value ? (
+                              format(new Date(field.value), "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value ? new Date(field.value) : undefined}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date > new Date() || date < new Date("1900-01-01")
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormDescription>
+                      The date this post was published
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={socialPostForm.control}
+                  name="sortOrder"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sort Order</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || 0} 
+                          onChange={(e) => field.onChange(Number(e.target.value))} 
+                          data-testid="input-social-post-sort" 
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Lower numbers appear first
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={socialPostForm.control}
+                  name="active"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2 mt-8">
+                      <FormControl>
+                        <Switch 
+                          checked={field.value} 
+                          onCheckedChange={field.onChange} 
+                          data-testid="switch-social-post-active" 
+                        />
+                      </FormControl>
+                      <FormLabel>Active</FormLabel>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} data-testid="button-cancel">
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="button-submit">
+                  {editingItem ? "Update" : "Create"} Social Post
+                </Button>
+              </div>
+            </form>
+          </Form>
+        );
+
       case "page-heroes":
         return (
           <Form {...pageHeroForm}>
@@ -7754,6 +7990,93 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                         <Badge variant="outline">Featured</Badge>
                       )}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleEdit(item)}
+                        data-testid={`button-edit-${item.id}`}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={() => handleDelete(item.id)}
+                        data-testid={`button-delete-${item.id}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      );
+    }
+
+    // Social Posts table
+    if (type === "social-posts") {
+      return (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Community</TableHead>
+              <TableHead>Caption</TableHead>
+              <TableHead>Image</TableHead>
+              <TableHead>Author</TableHead>
+              <TableHead>Post Date</TableHead>
+              <TableHead>Sort Order</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.map((item: SocialPost) => {
+              const community = communities.find(c => c.id === item.communityId);
+              const imageUrl = item.imageId ? resolveImageUrl(item.imageId, { width: 100, height: 100 }) : null;
+              return (
+                <TableRow key={item.id} data-testid={`social-post-row-${item.id}`}>
+                  <TableCell className="font-medium">
+                    {community?.name || "Unknown"}
+                  </TableCell>
+                  <TableCell className="max-w-[300px]">
+                    <div className="truncate">
+                      {item.caption ? item.caption.substring(0, 100) + (item.caption.length > 100 ? '...' : '') : 'No caption'}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {imageUrl ? (
+                      <img 
+                        src={imageUrl} 
+                        alt="Post" 
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
+                        No image
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm text-muted-foreground">
+                      {item.author || 'N/A'}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    {item.postDate ? new Date(item.postDate).toLocaleDateString() : 'N/A'}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{item.sortOrder}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={item.active ? "default" : "secondary"}>
+                      {item.active ? "Active" : "Inactive"}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">

@@ -9,6 +9,7 @@ import {
   tourRequests,
   floorPlans,
   testimonials,
+  socialPosts,
   galleryImages,
   floorPlanImages,
   careTypes,
@@ -44,6 +45,8 @@ import {
   type InsertFloorPlan,
   type Testimonial,
   type InsertTestimonial,
+  type SocialPost,
+  type InsertSocialPost,
   type CommunityHighlight,
   type InsertCommunityHighlight,
   type CommunityFeature,
@@ -263,6 +266,14 @@ export interface IStorage {
   createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
   updateTestimonial(id: string, testimonial: Partial<InsertTestimonial>): Promise<Testimonial>;
   deleteTestimonial(id: string): Promise<void>;
+
+  // Social posts operations
+  getAllSocialPosts(): Promise<SocialPost[]>;
+  getSocialPostsByCommunity(communityId: string): Promise<SocialPost[]>;
+  getSocialPost(id: string): Promise<SocialPost | undefined>;
+  createSocialPost(post: InsertSocialPost): Promise<SocialPost>;
+  updateSocialPost(id: string, post: Partial<InsertSocialPost>): Promise<SocialPost>;
+  deleteSocialPost(id: string): Promise<void>;
 
   // Community highlights operations
   getAllCommunityHighlights(): Promise<CommunityHighlight[]>;
@@ -1519,6 +1530,61 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTestimonial(id: string): Promise<void> {
     await db.delete(testimonials).where(eq(testimonials.id, id));
+  }
+
+  // Social posts operations
+  async getAllSocialPosts(): Promise<SocialPost[]> {
+    const posts = await db
+      .select()
+      .from(socialPosts)
+      .orderBy(asc(socialPosts.sortOrder), desc(socialPosts.postDate));
+    return posts;
+  }
+
+  async getSocialPostsByCommunity(communityId: string): Promise<SocialPost[]> {
+    const posts = await db
+      .select()
+      .from(socialPosts)
+      .where(
+        and(
+          eq(socialPosts.communityId, communityId),
+          eq(socialPosts.active, true)
+        )
+      )
+      .orderBy(asc(socialPosts.sortOrder), desc(socialPosts.postDate));
+    return posts;
+  }
+
+  async getSocialPost(id: string): Promise<SocialPost | undefined> {
+    const [post] = await db
+      .select()
+      .from(socialPosts)
+      .where(eq(socialPosts.id, id));
+    return post;
+  }
+
+  async createSocialPost(post: InsertSocialPost): Promise<SocialPost> {
+    const [created] = await db
+      .insert(socialPosts)
+      .values(post)
+      .returning();
+    return created;
+  }
+
+  async updateSocialPost(id: string, post: Partial<InsertSocialPost>): Promise<SocialPost> {
+    const [updated] = await db
+      .update(socialPosts)
+      .set({
+        ...post,
+        updatedAt: new Date()
+      })
+      .where(eq(socialPosts.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteSocialPost(id: string): Promise<void> {
+    await db.delete(socialPosts).where(eq(socialPosts.id, id));
   }
 
   // Community highlights operations

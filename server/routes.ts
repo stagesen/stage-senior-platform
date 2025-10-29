@@ -40,6 +40,7 @@ import {
   insertEmailRecipientSchema,
   insertFloorPlanSchema,
   insertTestimonialSchema,
+  insertSocialPostSchema,
   insertCommunityHighlightSchema,
   insertCommunityFeatureSchema,
   insertGalleryImageSchema,
@@ -2973,6 +2974,74 @@ Disallow: /admin/
     } catch (error) {
       console.error("Error deleting testimonial:", error);
       res.status(500).json({ message: "Failed to delete testimonial" });
+    }
+  });
+
+  // Social posts routes - RESTful endpoints for managing social media posts
+  app.get("/api/social-posts", async (req, res) => {
+    try {
+      const posts = await storage.getAllSocialPosts();
+      res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+      res.json(posts);
+    } catch (error) {
+      console.error("Error fetching social posts:", error);
+      res.status(500).json({ message: "Failed to fetch social posts" });
+    }
+  });
+
+  app.get("/api/social-posts/community/:communityId", async (req, res) => {
+    try {
+      const posts = await storage.getSocialPostsByCommunity(req.params.communityId);
+      res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+      res.json(posts);
+    } catch (error) {
+      console.error("Error fetching community social posts:", error);
+      res.status(500).json({ message: "Failed to fetch community social posts" });
+    }
+  });
+
+  app.get("/api/social-posts/:id", async (req, res) => {
+    try {
+      const post = await storage.getSocialPost(req.params.id);
+      if (!post) {
+        return res.status(404).json({ message: "Social post not found" });
+      }
+      res.json(post);
+    } catch (error) {
+      console.error("Error fetching social post:", error);
+      res.status(500).json({ message: "Failed to fetch social post" });
+    }
+  });
+
+  app.post("/api/social-posts", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertSocialPostSchema.parse(req.body);
+      const post = await storage.createSocialPost(validatedData);
+      res.status(201).json(post);
+    } catch (error) {
+      console.error("Error creating social post:", error);
+      res.status(400).json({ message: "Failed to create social post" });
+    }
+  });
+
+  app.put("/api/social-posts/:id", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertSocialPostSchema.partial().parse(req.body);
+      const post = await storage.updateSocialPost(req.params.id, validatedData);
+      res.json(post);
+    } catch (error) {
+      console.error("Error updating social post:", error);
+      res.status(400).json({ message: "Failed to update social post" });
+    }
+  });
+
+  app.delete("/api/social-posts/:id", requireAuth, async (req, res) => {
+    try {
+      await storage.deleteSocialPost(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting social post:", error);
+      res.status(500).json({ message: "Failed to delete social post" });
     }
   });
 

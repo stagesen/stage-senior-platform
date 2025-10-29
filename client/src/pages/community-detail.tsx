@@ -2752,27 +2752,26 @@ export default function CommunityDetail() {
               </section>
             )}
 
-            {/* Instagram Feed Section */}
-            {community.instagramUrl && (
-              <section id="instagram" className="py-8 scroll-mt-24" data-testid="instagram-feed-section">
-                <div className="text-center mb-8">
-                  <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">
-                      Inside {community.name}
-                    </h2>
-                  </ScaleHeader>
-                  <p className="text-lg text-gray-600">
-                    See what's happening on our Instagram
-                  </p>
-                </div>
-                <FadeIn direction="up" delay={0.1}>
-                  <InstagramFeed 
-                    instagramUrl={community.instagramUrl}
-                    communityName={community.name}
-                  />
-                </FadeIn>
-              </section>
-            )}
+            {/* Social Posts / Instagram Feed Section */}
+            <section id="instagram" className="py-8 scroll-mt-24" data-testid="instagram-feed-section">
+              <div className="text-center mb-8">
+                <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">
+                    Inside {community.name}
+                  </h2>
+                </ScaleHeader>
+                <p className="text-lg text-gray-600">
+                  See what's happening in our community
+                </p>
+              </div>
+              <FadeIn direction="up" delay={0.1}>
+                <InstagramFeed 
+                  communityId={community.id}
+                  communityName={community.name}
+                  instagramUrl={community.instagramUrl || undefined}
+                />
+              </FadeIn>
+            </section>
 
             {/* Resources Section - Content Assets */}
             {resources.length > 0 && (
