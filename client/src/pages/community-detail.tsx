@@ -90,7 +90,8 @@ import type {
   CommunityHighlight,
   TeamMember,
   ContentAsset,
-  Amenity
+  Amenity,
+  SocialPost
 } from "@shared/schema";
 import {
   Carousel,
@@ -1575,6 +1576,13 @@ export default function CommunityDetail() {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
+  // Fetch social posts for this community
+  const { data: socialPosts = [] } = useQuery<SocialPost[]>({
+    queryKey: ['/api/social-posts/community', community?.id],
+    enabled: !!community?.id,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
   // Resolve hero image URL (handle both image ID and full URL)
   const heroImageUrl = useResolveImageUrl(community?.heroImageUrl);
 
@@ -1634,6 +1642,7 @@ export default function CommunityDetail() {
   const hasTestimonials = testimonials.length > 0;
   const hasPosts = posts.length > 0;
   const hasFaqs = faqs.length > 0;
+  const hasSocialPosts = socialPosts.filter(post => post.active).length > 0;
 
   // Navigation sections memoization
   const navSections = useMemo(() => {
@@ -2753,25 +2762,27 @@ export default function CommunityDetail() {
             )}
 
             {/* Social Posts / Instagram Feed Section */}
-            <section id="instagram" className="py-8 scroll-mt-24" data-testid="instagram-feed-section">
-              <div className="text-center mb-8">
-                <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">
-                    Inside {community.name}
-                  </h2>
-                </ScaleHeader>
-                <p className="text-lg text-gray-600">
-                  See what's happening in our community
-                </p>
-              </div>
-              <FadeIn direction="up" delay={0.1}>
-                <InstagramFeed 
-                  communityId={community.id}
-                  communityName={community.name}
-                  instagramUrl={community.instagramUrl || undefined}
-                />
-              </FadeIn>
-            </section>
+            {hasSocialPosts && (
+              <section id="instagram" className="py-8 scroll-mt-24" data-testid="instagram-feed-section">
+                <div className="text-center mb-8">
+                  <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">
+                      Inside {community.name}
+                    </h2>
+                  </ScaleHeader>
+                  <p className="text-lg text-gray-600">
+                    See what's happening in our community
+                  </p>
+                </div>
+                <FadeIn direction="up" delay={0.1}>
+                  <InstagramFeed 
+                    communityId={community.id}
+                    communityName={community.name}
+                    instagramUrl={community.instagramUrl || undefined}
+                  />
+                </FadeIn>
+              </section>
+            )}
 
             {/* Resources Section - Content Assets */}
             {resources.length > 0 && (
