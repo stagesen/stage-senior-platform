@@ -211,9 +211,9 @@ export default function Home() {
       />
 
       {/* Community Carousel */}
-      <section id="finder" className="py-16 bg-primary text-white relative overflow-hidden scroll-mt-24">
+      <section id="finder" className="py-16 bg-[#2952b3] text-white relative overflow-hidden scroll-mt-24">
         {/* Enhanced dark background overlay */}
-        <div className="absolute inset-0 bg-primary/95 z-0" />
+        <div className="absolute inset-0 bg-[#2952b3]/95 z-0" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Header */}
           <div className="text-center mb-12">
