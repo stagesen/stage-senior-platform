@@ -196,12 +196,11 @@ export default function TestimonialSection({
           </div>
 
           <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-6">
-            Why families choose Stage Senior
+            Stories from Colorado Families
           </h2>
 
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Don't just take our word for it. Hear directly from residents and families
-            who've experienced the Stage Senior difference.
+            Real words from families who've found peace of mind, friendship, and exceptional care in our communities.
           </p>
         </div>
 
