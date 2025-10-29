@@ -13,6 +13,7 @@ import { TeamCarousel } from "@/components/TeamCarousel";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { setMetaTags, getCanonicalUrl } from "@/lib/metaTags";
+import EmphasizedHeading from "@/components/EmphasizedHeading";
 import type { PageContentSection } from "@shared/schema";
 
 // Icon mapping helper
@@ -40,15 +41,19 @@ function getIconComponent(iconName: string | undefined) {
 
 // Section Renderers
 function renderSectionHeader(section: PageContentSection) {
-  const content = section.content as { heading?: string; subheading?: string } | undefined;
+  const content = section.content as { heading?: string; subheading?: string; accentWords?: string[] } | undefined;
+  const heading = content?.heading ?? section.title ?? '';
   
   return (
-    <section key={section.id} id={section.sectionKey} className="py-8 bg-white scroll-mt-24" data-testid={`section-${section.sectionKey}`}>
+    <section key={section.id} id={section.sectionKey ?? undefined} className="py-8 bg-white scroll-mt-24" data-testid={`section-${section.sectionKey ?? 'header'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-            {content?.heading || section.title}
-          </h2>
+          <EmphasizedHeading
+            text={heading}
+            accentWords={content?.accentWords || undefined}
+            className="text-3xl md:text-4xl font-bold text-foreground mb-6"
+            accentClassName="text-primary font-extrabold"
+          />
           {content?.subheading && (
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               {content.subheading}
@@ -69,7 +74,7 @@ function renderBenefitCards(section: PageContentSection) {
   
   if (isStatsVariant) {
     return (
-      <section key={section.id} id={section.sectionKey} className="py-8 scroll-mt-24" data-testid={`section-${section.sectionKey}`}>
+      <section key={section.id} id={section.sectionKey ?? undefined} className="py-8 scroll-mt-24" data-testid={`section-${section.sectionKey ?? 'section'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {section.title && (
             <h3 className="text-2xl font-bold text-center mb-8">{section.title}</h3>
@@ -98,12 +103,12 @@ function renderBenefitCards(section: PageContentSection) {
   
   // Regular benefit cards (values, highlights, etc.)
   return (
-    <section key={section.id} id={section.sectionKey} className="py-8 bg-white scroll-mt-24" data-testid={`section-${section.sectionKey}`}>
+    <section key={section.id} id={section.sectionKey ?? undefined} className="py-8 bg-white scroll-mt-24" data-testid={`section-${section.sectionKey ?? 'section'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {section.title && (
           <h3 className="text-2xl font-bold text-center mb-8">{section.title}</h3>
         )}
-        <div className={`grid grid-cols-1 ${cards.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-8`}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {cards.map((card, index) => {
             const IconComponent = getIconComponent(card.icon);
             return (
@@ -133,7 +138,7 @@ function renderTextBlock(section: PageContentSection) {
   const htmlContent = content?.text || '';
   
   return (
-    <section key={section.id} id={section.sectionKey} className="py-16 bg-gray-50 scroll-mt-24" data-testid={`section-${section.sectionKey}`}>
+    <section key={section.id} id={section.sectionKey ?? undefined} className="py-16 bg-gray-50 scroll-mt-24" data-testid={`section-${section.sectionKey ?? 'section'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="prose prose-lg max-w-none" dangerouslySetInnerHTML={{ __html: htmlContent }} />
       </div>
@@ -150,7 +155,7 @@ function renderCTA(section: PageContentSection, openScheduleTour: () => void) {
   } | undefined;
   
   return (
-    <section key={section.id} className="py-16 bg-primary text-primary-foreground" data-testid={`section-${section.sectionKey}`}>
+    <section key={section.id} className="py-16 bg-primary text-primary-foreground" data-testid={`section-${section.sectionKey ?? 'cta'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-6">
           {content?.heading || section.title}

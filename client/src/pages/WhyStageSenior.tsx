@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PageHero } from "@/components/PageHero";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
 import TestimonialSection from "@/components/TestimonialSection";
+import EmphasizedHeading from "@/components/EmphasizedHeading";
 import type { PageContentSection } from "@shared/schema";
 
 export default function WhyStageSenior() {
@@ -51,9 +52,15 @@ export default function WhyStageSenior() {
       <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50" data-testid="testimonials-section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4" data-testid="testimonials-title">
-              Hear From Our Families
-            </h2>
+            <EmphasizedHeading
+              splitText={{
+                primary: "Hear From",
+                accent: "Our Families"
+              }}
+              className="text-3xl md:text-4xl font-bold text-foreground mb-4"
+              accentClassName="text-primary font-extrabold"
+              data-testid="testimonials-title"
+            />
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto" data-testid="testimonials-subtitle">
               Real stories from families who have chosen Stage Senior communities for their loved ones
             </p>

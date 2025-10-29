@@ -35,6 +35,7 @@ export default function Services() {
       <PageHero
         pagePath="/services"
         defaultTitle="Senior Living Management Solutions"
+        titleAccentWords={["Management Solutions"]}
         defaultSubtitle="Comprehensive Care & Support Services"
         defaultBackgroundImage="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=2000&q=80"
       />

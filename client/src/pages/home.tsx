@@ -46,6 +46,7 @@ import type { CommunityCard, Community, HomepageSection, HomepageConfig } from "
 import seniorCaregiverDocuments from '@/assets/senior-caregiver-documents.webp';
 import carePricingImage from '@/assets/cp-home.webp';
 import stageLogo from '@/assets/stage-logo.webp';
+import EmphasizedHeading from "@/components/EmphasizedHeading";
 
 // Subcomponent for carousel items that handles image resolution
 const CarouselCommunityCard = ({ 
@@ -218,9 +219,12 @@ export default function Home() {
           {/* Header */}
           <div className="text-center mb-12">
             <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-                Find your Colorado community
-              </h2>
+              <EmphasizedHeading
+                text="Find your Colorado community"
+                accentWords={["Colorado"]}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4"
+                accentClassName="text-white font-extrabold"
+              />
             </ScaleHeader>
             <FadeIn direction="up" delay={0.2}>
               <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
@@ -338,9 +342,12 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-                {homepageConfig?.heading || "What Makes Stage Senior Different"}
-              </h2>
+              <EmphasizedHeading
+                text={homepageConfig?.heading || "What Makes Stage Senior Different"}
+                accentWords={["Stage Senior"]}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4"
+                accentClassName="text-primary font-extrabold"
+              />
             </ScaleHeader>
             <FadeIn direction="up" delay={0.2}>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -528,9 +535,12 @@ export default function Home() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                 <div>
                   <Link href="/care-points">
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 hover:text-primary transition-colors cursor-pointer">
-                      Clear pricing, no surprises
-                    </h2>
+                    <EmphasizedHeading
+                      text="Clear pricing, no surprises"
+                      accentWords={["no surprises"]}
+                      className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 hover:text-primary transition-colors cursor-pointer"
+                      accentClassName="text-primary font-extrabold"
+                    />
                   </Link>
                   <p className="text-xl text-muted-foreground mb-6">
                     See starting rates by community and explore our Care Points system that prevents unexpected charges. We give advance notice and partner with families on any changes.

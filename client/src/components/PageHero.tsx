@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { preloadLCPImage } from "@/lib/metaTags";
+import EmphasizedHeading from "@/components/EmphasizedHeading";
 
 interface PageHeroProps {
   pagePath: string;
@@ -15,6 +16,11 @@ interface PageHeroProps {
   className?: string;
   logoUrl?: string;
   logoAlt?: string;
+  titleAccentWords?: string[];
+  titleSplitText?: {
+    primary: string;
+    accent: string;
+  };
 }
 
 export function PageHero({
@@ -25,6 +31,8 @@ export function PageHero({
   className,
   logoUrl,
   logoAlt,
+  titleAccentWords,
+  titleSplitText,
 }: PageHeroProps) {
   const { data: hero, isLoading } = useQuery({
     queryKey: ["/api/page-heroes", pagePath],
@@ -178,16 +186,15 @@ export function PageHero({
           )}
         >
           {title && (
-            <h1
+            <EmphasizedHeading
+              as="h1"
+              text={titleSplitText ? undefined : title}
+              accentWords={titleAccentWords}
+              splitText={titleSplitText}
               className="text-white font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl"
-              style={{
-                fontFamily: "var(--font-display)",
-                lineHeight: "1.2",
-              }}
+              accentClassName="text-white font-extrabold drop-shadow-lg"
               data-testid={`hero-title-${pagePath.replace(/\//g, "-") || "home"}`}
-            >
-              {title}
-            </h1>
+            />
           )}
           
           {subtitle && (

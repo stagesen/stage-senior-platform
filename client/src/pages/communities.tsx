@@ -75,6 +75,7 @@ export default function Communities() {
       <PageHero
         pagePath="/communities"
         defaultTitle="Independent Living Tailored to You"
+        titleAccentWords={["Tailored to You"]}
         defaultSubtitle="Explore our four Colorado communities where exceptional care meets the comfort of home."
         defaultBackgroundImage="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=2000&q=80"
         className="pb-40"

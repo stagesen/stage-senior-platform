@@ -201,8 +201,8 @@ export function TeamCarousel({
           <Skeleton className="h-10 w-64 mx-auto mb-4" />
           <Skeleton className="h-6 w-48 mx-auto" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
-          {[1, 2, 3, 4, 5].map((i) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {[1, 2, 3].map((i) => (
             <Card key={i} className="text-center p-6">
               <CardContent className="pt-6">
                 <Skeleton className="w-20 h-20 rounded-full mx-auto mb-4" />
@@ -264,7 +264,7 @@ export function TeamCarousel({
             {teamMembers.map((member) => (
               <div
                 key={member.id}
-                className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] xl:flex-[0_0_20%] px-3"
+                className="flex-[0_0_100%] min-w-0 md:flex-[0_0_33.333%] px-3"
               >
                 <TeamMemberCard member={member} />
               </div>
