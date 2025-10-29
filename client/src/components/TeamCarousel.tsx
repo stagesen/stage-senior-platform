@@ -80,19 +80,19 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
               )}
             </Avatar>
           </div>
-          <h3 className="font-bold text-lg mb-1 group-hover:underline decoration-2"
+          <h3 className="font-bold text-xl mb-2 group-hover:underline decoration-2"
               style={{ textDecorationColor: communityColor || '#6366f1' }}
               data-testid={`carousel-member-name-${member.id}`}>
             {member.name}
           </h3>
-          <p className="text-sm font-semibold mb-2"
+          <p className="text-base font-semibold mb-3"
              style={{ color: communityColor || '#6366f1' }}
              data-testid={`carousel-member-role-${member.id}`}>
             {member.role}
           </p>
           {member.department && (
-            <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
-              <Building className="w-3 h-3" />
+            <p className="text-sm text-gray-500 flex items-center justify-center gap-1">
+              <Building className="w-4 h-4" />
               {member.department}
             </p>
           )}
@@ -203,11 +203,11 @@ export function TeamCarousel({
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {[1, 2, 3].map((i) => (
-            <Card key={i} className="text-center p-6">
+            <Card key={i} className="text-center p-8">
               <CardContent className="pt-6">
-                <Skeleton className="w-20 h-20 rounded-full mx-auto mb-4" />
-                <Skeleton className="h-6 w-32 mx-auto mb-2" />
-                <Skeleton className="h-4 w-28 mx-auto" />
+                <Skeleton className="w-32 h-32 rounded-full mx-auto mb-6" />
+                <Skeleton className="h-7 w-36 mx-auto mb-3" />
+                <Skeleton className="h-5 w-32 mx-auto" />
               </CardContent>
             </Card>
           ))}
