@@ -152,11 +152,11 @@ export default function CommunityCard({ community, isSelected, onSelect }: Commu
             
             {/* Amenities */}
             {community.amenities && community.amenities.length > 0 && (
-              <div className="grid grid-cols-1 gap-2 mb-4 text-sm text-muted-foreground">
+              <div className="grid grid-cols-2 gap-2 mb-4 text-sm text-muted-foreground">
                 {community.amenities.slice(0, 4).map((amenity, index) => (
-                  <div key={index} className="flex items-start" data-testid={`amenity-${index}-${community.slug}`}>
-                    <Check className="w-4 h-4 mr-2 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span>{amenity}</span>
+                  <div key={index} className="flex items-center" data-testid={`amenity-${index}-${community.slug}`}>
+                    {getAmenityIcon(amenity)}
+                    <span className="ml-2">{amenity}</span>
                   </div>
                 ))}
               </div>
