@@ -242,23 +242,23 @@ export default function FloorPlanModal({
         {/* Details Section */}
         <div className="space-y-4 sm:space-y-6 mt-6">
             {/* Specifications */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-muted rounded-lg p-4 text-center">
-                <BedDouble className="h-6 w-6 mx-auto mb-2 text-primary" />
-                <p className="text-2xl font-bold">{floorPlan.bedrooms}</p>
-                <p className="text-sm text-muted-foreground">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+              <div className="bg-muted rounded-lg p-3 sm:p-4 text-center">
+                <BedDouble className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-2 text-primary" />
+                <p className="text-xl sm:text-2xl font-bold">{floorPlan.bedrooms}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   {floorPlan.bedrooms === 1 ? 'Bedroom' : 'Bedrooms'}
                 </p>
               </div>
               
-              <div className="bg-muted rounded-lg p-4 text-center">
-                <Bath className="h-6 w-6 mx-auto mb-2 text-primary" />
-                <p className="text-2xl font-bold">
+              <div className="bg-muted rounded-lg p-3 sm:p-4 text-center">
+                <Bath className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-2 text-primary" />
+                <p className="text-xl sm:text-2xl font-bold">
                   {floorPlan.bathrooms != null 
                     ? parseFloat(String(floorPlan.bathrooms)) || '—'
                     : '—'}
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   {floorPlan.bathrooms != null && parseFloat(String(floorPlan.bathrooms)) === 1 
                     ? 'Bathroom' 
                     : 'Bathrooms'}
@@ -266,10 +266,10 @@ export default function FloorPlanModal({
               </div>
               
               {floorPlan.squareFeet && (
-                <div className="bg-muted rounded-lg p-4 text-center">
-                  <Square className="h-6 w-6 mx-auto mb-2 text-primary" />
-                  <p className="text-2xl font-bold">{floorPlan.squareFeet}</p>
-                  <p className="text-sm text-muted-foreground">Sq Ft</p>
+                <div className="bg-muted rounded-lg p-3 sm:p-4 text-center col-span-2 sm:col-span-1">
+                  <Square className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-2 text-primary" />
+                  <p className="text-xl sm:text-2xl font-bold">{floorPlan.squareFeet}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Sq Ft</p>
                 </div>
               )}
             </div>
