@@ -71,6 +71,9 @@ export const communities = pgTable("communities", {
   secondaryPhoneDisplay: varchar("secondary_phone_display", { length: 20 }),
   secondaryPhoneDial: varchar("secondary_phone_dial", { length: 20 }),
   email: varchar("email", { length: 255 }),
+  instagramUrl: text("instagram_url"),
+  facebookUrl: text("facebook_url"),
+  linkedinUrl: text("linkedin_url"),
   heroImageUrl: text("hero_image_url"), // Keep for backward compatibility
   imageId: varchar("image_id", { length: 255 }).references(() => images.id), // New image reference
   logoImageId: varchar("logo_image_id", { length: 255 }).references(() => images.id), // Logo image reference
