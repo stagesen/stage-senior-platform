@@ -24,7 +24,7 @@ const communityFAQs = {
   "the-gardens-at-columbine": [
     {
       question: "Where exactly are you, and how easy is it to visit?",
-      answer: "We're at 5130 W Ken Caryl Ave in Littleton—about 10 minutes to Downtown Littleton and 15 miles to Downtown Denver, with quick access to Santa Fe Dr and C-470. Tours can be in-person or virtual.",
+      answer: "We're located in Littleton—about 10 minutes to Downtown Littleton and 15 miles to Downtown Denver, with quick access to Santa Fe Dr and C-470. Tours can be in-person or virtual.",
       category: "Location & Visiting"
     },
     {
@@ -76,7 +76,7 @@ const communityFAQs = {
   "the-gardens-on-quail": [
     {
       question: "What kind of community is this, and where?",
-      answer: "An upscale Assisted Living & Memory Care community at 6447 Quail St in Arvada, minutes from Olde Town—quiet neighborhood, easy access for family.",
+      answer: "An upscale Assisted Living & Memory Care community in Arvada, minutes from Olde Town—quiet neighborhood, easy access for family.",
       category: "Location & Overview"
     },
     {
@@ -133,7 +133,7 @@ const communityFAQs = {
     },
     {
       question: "Where are you and what's around?",
-      answer: "1270 N Ford St, just 1.8 miles from Downtown Golden with views of North Table Mountain.",
+      answer: "Located in Golden, just 1.8 miles from Downtown Golden with views of North Table Mountain.",
       category: "Location"
     },
     {
@@ -185,7 +185,7 @@ const communityFAQs = {
     },
     {
       question: "Where are you and how do we visit?",
-      answer: "11825 W 64th Ave, Arvada. Same-day and next-day tours are common—call or schedule online.",
+      answer: "Located in Arvada, CO. Same-day and next-day tours are common—call or schedule online.",
       category: "Location & Tours"
     },
     {
