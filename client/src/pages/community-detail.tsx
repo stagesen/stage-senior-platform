@@ -1272,13 +1272,13 @@ const EnhancedBottomCTA = ({ community }: { community: any }) => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Logo */}
         {community.heroLogoSrc && (
-          <div className="w-[240px] h-[80px] mx-auto mb-8 flex items-center justify-center">
+          <div className="w-[280px] h-[100px] md:w-[360px] md:h-[130px] mx-auto mb-8 flex items-center justify-center">
             <img
               src={community.heroLogoSrc}
               alt={`${community.name} logo`}
-              className="max-h-20 w-auto object-contain"
-              width="240"
-              height="80"
+              className="max-h-24 md:max-h-32 w-auto object-contain"
+              width="360"
+              height="130"
             />
           </div>
         )}
@@ -1925,13 +1925,13 @@ export default function CommunityDetail() {
         {/* Hero Logo Overlay */}
         {heroLogoSrc && (
           <div className="absolute top-6 right-6 md:top-10 md:right-10 z-20">
-            <div className="bg-white rounded-2xl shadow-lg px-4 py-3 md:px-6 md:py-4 border border-gray-300 w-[200px] h-[80px] flex items-center justify-center">
+            <div className="bg-white rounded-2xl shadow-lg px-5 py-4 md:px-8 md:py-6 border border-gray-300 w-[260px] h-[110px] md:w-[320px] md:h-[130px] flex items-center justify-center">
               <img
                 src={heroLogoSrc}
                 alt={heroLogoAlt}
-                className="max-h-12 md:max-h-16 w-auto object-contain"
-                width="200"
-                height="80"
+                className="max-h-16 md:max-h-24 w-auto object-contain"
+                width="300"
+                height="120"
                 data-testid="community-hero-logo"
               />
             </div>
@@ -2030,13 +2030,13 @@ export default function CommunityDetail() {
             {/* Community Branding */}
             <div className="flex items-center gap-4">
               {heroLogoSrc ? (
-                <div className="w-[150px] h-[60px] flex items-center">
+                <div className="w-[180px] h-[70px] md:w-[220px] md:h-[90px] flex items-center">
                   <img
                     src={heroLogoSrc}
                     alt={heroLogoAlt}
-                    className="max-h-10 md:max-h-12 w-auto object-contain"
-                    width="150"
-                    height="60"
+                    className="max-h-12 md:max-h-16 w-auto object-contain"
+                    width="220"
+                    height="90"
                     data-testid="nav-community-logo"
                   />
                 </div>
