@@ -211,132 +211,6 @@ export default function Home() {
         defaultBackgroundImage="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?q=80&w=1600&auto=format&fit=crop"
       />
 
-      {/* Community Carousel */}
-      <section id="finder" className="py-16 bg-[#2952b3] text-white relative overflow-hidden scroll-mt-24">
-        {/* Enhanced dark background overlay */}
-        <div className="absolute inset-0 bg-[#2952b3]/95 z-0" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <ScaleHeader scaleFrom={0.85} scaleTo={1}>
-              <EmphasizedHeading
-                text="Find your Colorado community"
-                accentWords={["Colorado"]}
-                className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4"
-                accentClassName="text-white font-extrabold"
-              />
-            </ScaleHeader>
-            <FadeIn direction="up" delay={0.2}>
-              <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
-                Find a community near you and explore all the benefits of vibrant independent living.
-              </p>
-            </FadeIn>
-          </div>
-          
-          {/* Carousel */}
-          {isLoading ? (
-            <div className="flex justify-center gap-6 px-12">
-              {[...Array(3)].map((_, i) => (
-                <Card key={i} className="relative overflow-hidden flex-shrink-0 w-full max-w-md bg-white/10 border-white/20">
-                  <Skeleton className="h-80 bg-white/20" />
-                  <CardContent className="absolute bottom-0 left-0 right-0 p-6">
-                    <div className="space-y-3">
-                      <Skeleton className="h-6 w-3/4 bg-white/30" />
-                      <Skeleton className="h-4 w-1/2 bg-white/20" />
-                      <Skeleton className="h-4 w-full bg-white/20" />
-                      <Skeleton className="h-10 w-full mt-4 bg-white/30" />
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : featuredCommunities.length === 0 ? (
-            <div className="text-center py-12">
-              <MapPin className="w-16 h-16 mx-auto mb-6 text-white/60" />
-              <h3 className="text-2xl font-bold mb-4">No communities found</h3>
-              <p className="text-white/90 mb-6">
-                Try adjusting your search or filters to find communities that match your needs.
-              </p>
-              <Button asChild variant="secondary" size="lg" data-testid="button-view-all-communities">
-                <Link href="/communities">
-                  View All Communities
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
-            </div>
-          ) : (
-            <div className="relative">
-              <Carousel
-                opts={{
-                  loop: true,
-                  align: "center",
-                }}
-                setApi={setCarouselApi}
-                className="w-full"
-                data-testid="communities-carousel"
-              >
-                <CarouselContent className="-ml-2 md:-ml-4">
-                  {featuredCommunities.map((community, index) => (
-                    <CarouselItem 
-                      key={community.id} 
-                      className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3"
-                      data-testid={`carousel-item-${community.id}`}
-                    >
-                      <CarouselCommunityCard
-                        community={community}
-                        index={index}
-                        selectedIndex={selectedIndex}
-                        setShowContactForm={setShowContactForm}
-                      />
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                
-                {/* Navigation - only show if more than 1 community */}
-                {featuredCommunities.length > 1 && (
-                  <>
-                    <CarouselPrevious 
-                      className="absolute -left-12 top-1/2 -translate-y-1/2 h-10 w-10 bg-white text-primary hover:bg-white/90 shadow-lg border-0"
-                      aria-label="Previous community"
-                      data-testid="carousel-previous"
-                    />
-                    <CarouselNext 
-                      className="absolute -right-12 top-1/2 -translate-y-1/2 h-10 w-10 bg-white text-primary hover:bg-white/90 shadow-lg border-0"
-                      aria-label="Next community"
-                      data-testid="carousel-next"
-                    />
-                  </>
-                )}
-                
-                {/* Progress indicators - inside carousel context */}
-                <div className="flex flex-col items-center gap-3 mt-6">
-                  {/* Dot indicators */}
-                  <CarouselDots
-                    count={featuredCommunities.length}
-                    current={selectedIndex}
-                    className="flex items-center justify-center gap-2"
-                    data-testid="carousel-dots"
-                  />
-                  
-                  {/* Progress bar */}
-                  <CarouselProgressBar
-                    current={selectedIndex}
-                    total={featuredCommunities.length}
-                    className="w-64 max-w-full"
-                    data-testid="carousel-progress"
-                  />
-                  
-                  {/* Current position indicator */}
-                  <div className="text-white/70 text-sm font-medium" data-testid="carousel-position">
-                    {selectedIndex + 1} of {featuredCommunities.length}
-                  </div>
-                </div>
-              </Carousel>
-            </div>
-          )}
-        </div>
-      </section>
-
       {/* Featured Differentiators */}
       <section id="what-makes-us-different" className="py-20 bg-gradient-to-b from-white to-gray-50 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -517,6 +391,132 @@ export default function Home() {
               </div>
             </StaggerItem>
           </StaggerContainer>
+        </div>
+      </section>
+
+      {/* Community Carousel */}
+      <section id="finder" className="py-16 bg-[#2952b3] text-white relative overflow-hidden scroll-mt-24">
+        {/* Enhanced dark background overlay */}
+        <div className="absolute inset-0 bg-[#2952b3]/95 z-0" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+              <EmphasizedHeading
+                text="Find your Colorado community"
+                accentWords={["Colorado"]}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4"
+                accentClassName="text-white font-extrabold"
+              />
+            </ScaleHeader>
+            <FadeIn direction="up" delay={0.2}>
+              <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
+                Find a community near you and explore all the benefits of vibrant independent living.
+              </p>
+            </FadeIn>
+          </div>
+          
+          {/* Carousel */}
+          {isLoading ? (
+            <div className="flex justify-center gap-6 px-12">
+              {[...Array(3)].map((_, i) => (
+                <Card key={i} className="relative overflow-hidden flex-shrink-0 w-full max-w-md bg-white/10 border-white/20">
+                  <Skeleton className="h-80 bg-white/20" />
+                  <CardContent className="absolute bottom-0 left-0 right-0 p-6">
+                    <div className="space-y-3">
+                      <Skeleton className="h-6 w-3/4 bg-white/30" />
+                      <Skeleton className="h-4 w-1/2 bg-white/20" />
+                      <Skeleton className="h-4 w-full bg-white/20" />
+                      <Skeleton className="h-10 w-full mt-4 bg-white/30" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : featuredCommunities.length === 0 ? (
+            <div className="text-center py-12">
+              <MapPin className="w-16 h-16 mx-auto mb-6 text-white/60" />
+              <h3 className="text-2xl font-bold mb-4">No communities found</h3>
+              <p className="text-white/90 mb-6">
+                Try adjusting your search or filters to find communities that match your needs.
+              </p>
+              <Button asChild variant="secondary" size="lg" data-testid="button-view-all-communities">
+                <Link href="/communities">
+                  View All Communities
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="relative">
+              <Carousel
+                opts={{
+                  loop: true,
+                  align: "center",
+                }}
+                setApi={setCarouselApi}
+                className="w-full"
+                data-testid="communities-carousel"
+              >
+                <CarouselContent className="-ml-2 md:-ml-4">
+                  {featuredCommunities.map((community, index) => (
+                    <CarouselItem 
+                      key={community.id} 
+                      className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3"
+                      data-testid={`carousel-item-${community.id}`}
+                    >
+                      <CarouselCommunityCard
+                        community={community}
+                        index={index}
+                        selectedIndex={selectedIndex}
+                        setShowContactForm={setShowContactForm}
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                
+                {/* Navigation - only show if more than 1 community */}
+                {featuredCommunities.length > 1 && (
+                  <>
+                    <CarouselPrevious 
+                      className="absolute -left-12 top-1/2 -translate-y-1/2 h-10 w-10 bg-white text-primary hover:bg-white/90 shadow-lg border-0"
+                      aria-label="Previous community"
+                      data-testid="carousel-previous"
+                    />
+                    <CarouselNext 
+                      className="absolute -right-12 top-1/2 -translate-y-1/2 h-10 w-10 bg-white text-primary hover:bg-white/90 shadow-lg border-0"
+                      aria-label="Next community"
+                      data-testid="carousel-next"
+                    />
+                  </>
+                )}
+                
+                {/* Progress indicators - inside carousel context */}
+                <div className="flex flex-col items-center gap-3 mt-6">
+                  {/* Dot indicators */}
+                  <CarouselDots
+                    count={featuredCommunities.length}
+                    current={selectedIndex}
+                    className="flex items-center justify-center gap-2"
+                    data-testid="carousel-dots"
+                  />
+                  
+                  {/* Progress bar */}
+                  <CarouselProgressBar
+                    current={selectedIndex}
+                    total={featuredCommunities.length}
+                    className="w-64 max-w-full"
+                    data-testid="carousel-progress"
+                  />
+                  
+                  {/* Current position indicator */}
+                  <div className="text-white/70 text-sm font-medium" data-testid="carousel-position">
+                    {selectedIndex + 1} of {featuredCommunities.length}
+                  </div>
+                </div>
+              </Carousel>
+            </div>
+          )}
         </div>
       </section>
 
