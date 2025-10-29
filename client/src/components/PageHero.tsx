@@ -15,6 +15,7 @@ interface PageHeroProps {
   className?: string;
   logoUrl?: string;
   logoAlt?: string;
+  communityImageId?: string; // Community-specific image override
 }
 
 export function PageHero({
@@ -25,6 +26,7 @@ export function PageHero({
   className,
   logoUrl,
   logoAlt,
+  communityImageId,
 }: PageHeroProps) {
   const { data: hero, isLoading } = useQuery({
     queryKey: ["/api/page-heroes", pagePath],
@@ -48,7 +50,8 @@ export function PageHero({
   const title = hero?.title || defaultTitle || "";
   const subtitle = hero?.subtitle || defaultSubtitle || "";
   const description = hero?.description || "";
-  const backgroundImageRaw = hero?.backgroundImageUrl || defaultBackgroundImage || "";
+  // Use community image if provided, otherwise fall back to hero's background or default
+  const backgroundImageRaw = communityImageId || hero?.backgroundImageUrl || defaultBackgroundImage || "";
   const ctaText = hero?.ctaText || "";
   const ctaLink = hero?.ctaLink || "";
   const overlayOpacity = hero?.overlayOpacity || 0.3; // Reduced for better gradient visibility
@@ -57,6 +60,23 @@ export function PageHero({
   
   // Resolve background image URL
   const backgroundImage = useResolveImageUrl(backgroundImageRaw);
+  
+  // Check if we're resolving an image ID (UUID pattern)
+  const isImageId = backgroundImageRaw && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(backgroundImageRaw);
+
+  // Final resolved image: only use resolved URL when ready (prevents flash), otherwise show gradient
+  // If it's an image ID and still loading (null), don't show the fallback URL yet
+  // Also wait for hero query to complete before showing default image to prevent flash
+  const finalBackgroundImage = (isImageId && backgroundImage === null) || isLoading
+    ? undefined
+    : (backgroundImage || defaultBackgroundImage);
+
+  // Preload LCP image for better performance
+  useEffect(() => {
+    if (finalBackgroundImage) {
+      preloadLCPImage(finalBackgroundImage);
+    }
+  }, [finalBackgroundImage]);
   
   // Determine gradient background based on page
   const getGradientBackground = () => {
@@ -79,29 +99,12 @@ export function PageHero({
   if (isLoading && !defaultTitle && !defaultBackgroundImage) {
     return null;
   }
-  
-  // Check if we're resolving an image ID (UUID pattern)
-  const isImageId = backgroundImageRaw && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(backgroundImageRaw);
-
-  // Final resolved image: only use resolved URL when ready (prevents flash), otherwise show gradient
-  // If it's an image ID and still loading (null), don't show the fallback URL yet
-  // Also wait for hero query to complete before showing default image to prevent flash
-  const finalBackgroundImage = (isImageId && backgroundImage === null) || isLoading
-    ? undefined
-    : (backgroundImage || defaultBackgroundImage);
 
   const alignmentClasses = {
     left: "text-left items-start",
     center: "text-center items-center",
     right: "text-right items-end",
   };
-
-  // Preload LCP image for better performance
-  useEffect(() => {
-    if (finalBackgroundImage) {
-      preloadLCPImage(finalBackgroundImage);
-    }
-  }, [finalBackgroundImage]);
 
   return (
     <section

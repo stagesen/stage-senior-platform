@@ -30,9 +30,6 @@ export default function FitnessTherapy() {
     }
   });
 
-  // Use community-specific image if available
-  const heroBackgroundImage = communityData?.community?.fitnessImageId || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=2000&q=80";
-
   useEffect(() => {
     document.title = "Fitness & Therapy Center | Senior Living Communities";
     
@@ -52,9 +49,9 @@ export default function FitnessTherapy() {
       {/* Hero Section */}
       <PageHero
         pagePath="/fitness-therapy"
-        defaultTitle="Fitness & Therapy Center"
-        defaultSubtitle="Your Journey to Wellness Starts Here"
-        defaultBackgroundImage={heroBackgroundImage}
+        defaultTitle="Stay Active, Stay Healthy"
+        defaultSubtitle="On-site physical therapy, fitness programs, and wellness activities designed for active aging."
+        communityImageId={communityData?.community?.fitnessImageId}
       />
 
       {/* Breadcrumb Navigation */}
@@ -89,34 +86,12 @@ export default function FitnessTherapy() {
         </div>
       ) : (
         <>
-          {(() => {
-            // Find the index of the first hero_section
-            const firstHeroIndex = sections.findIndex(s => s.sectionType === 'hero_section');
-            
-            return sections.map((section, index) => {
-              // Pass community fitness image to the first hero_section only
-              const isFirstHeroSection = index === firstHeroIndex && firstHeroIndex !== -1;
-              const communityImageId = isFirstHeroSection ? communityData?.community?.fitnessImageId : undefined;
-              
-              // Debug logging
-              if (isFirstHeroSection && communityImageId) {
-                console.log('[Fitness Page] Passing community fitness image to section:', {
-                  sectionType: section.sectionType,
-                  sectionId: section.id,
-                  communityImageId,
-                  defaultImageId: (section.content as any)?.imageId
-                });
-              }
-              
-              return (
-                <PageSectionRenderer 
-                  key={section.id} 
-                  section={section}
-                  communityImageId={communityImageId}
-                />
-              );
-            });
-          })()}
+          {sections.map((section) => (
+            <PageSectionRenderer 
+              key={section.id} 
+              section={section}
+            />
+          ))}
         </>
       )}
     </div>

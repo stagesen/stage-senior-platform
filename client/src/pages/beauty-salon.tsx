@@ -29,9 +29,6 @@ export default function BeautySalon() {
     }
   });
 
-  // Use community-specific image if available
-  const heroBackgroundImage = communityData?.community?.salonImageId || "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=2000&q=80";
-
   useEffect(() => {
     document.title = "Beauty Salon & Barber Services | Senior Living Communities";
     
@@ -53,7 +50,7 @@ export default function BeautySalon() {
         pagePath="/beauty-salon"
         defaultTitle="Beauty Salon & Barber Services"
         defaultSubtitle="Look Your Best, Feel Your Best"
-        defaultBackgroundImage={heroBackgroundImage}
+        communityImageId={communityData?.community?.salonImageId}
       />
 
       {/* Breadcrumb Navigation */}
@@ -88,24 +85,12 @@ export default function BeautySalon() {
         </div>
       ) : (
         <>
-          {(() => {
-            // Find the index of the first hero_section
-            const firstHeroIndex = sections.findIndex(s => s.sectionType === 'hero_section');
-            
-            return sections.map((section, index) => {
-              // Pass community salon image to the first hero_section only
-              const isFirstHeroSection = index === firstHeroIndex && firstHeroIndex !== -1;
-              const communityImageId = isFirstHeroSection ? communityData?.community?.salonImageId : undefined;
-              
-              return (
-                <PageSectionRenderer 
-                  key={section.id} 
-                  section={section}
-                  communityImageId={communityImageId}
-                />
-              );
-            });
-          })()}
+          {sections.map((section) => (
+            <PageSectionRenderer 
+              key={section.id} 
+              section={section}
+            />
+          ))}
         </>
       )}
     </div>

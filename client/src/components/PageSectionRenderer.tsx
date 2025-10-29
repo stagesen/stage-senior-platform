@@ -41,15 +41,6 @@ export default function PageSectionRenderer({ section, currentCareType, communit
   // Use community image if provided, otherwise fall back to section's image
   const imageIdToUse = communityImageId || content.imageId || content.imageUrl;
   const heroImageUrl = useResolveImageUrl(imageIdToUse);
-  
-  // Debug logging for hero sections
-  if (section.sectionType === 'hero_section' && communityImageId) {
-    console.log('[PageSectionRenderer] Using community image for hero_section:', {
-      communityImageId,
-      defaultImageId: content.imageId,
-      resolvedUrl: heroImageUrl
-    });
-  }
 
   // Text Block
   if (section.sectionType === "text_block") {

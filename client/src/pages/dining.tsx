@@ -30,9 +30,6 @@ export default function Dining() {
     }
   });
 
-  // Use community-specific image if available
-  const heroBackgroundImage = communityData?.community?.privateDiningImageId || "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=2000&q=80";
-
   useEffect(() => {
     document.title = "Dining & Restaurant Services | Senior Living Communities";
     
@@ -56,7 +53,7 @@ export default function Dining() {
         pagePath="/dining"
         defaultTitle="Exceptional Dining Experiences"
         defaultSubtitle="Restaurant-Style Service • Fresh Daily • Social Connection"
-        defaultBackgroundImage={heroBackgroundImage}
+        communityImageId={communityData?.community?.privateDiningImageId}
       />
 
       {/* Breadcrumb Navigation */}
@@ -85,24 +82,12 @@ export default function Dining() {
         </div>
       ) : (
         <>
-          {(() => {
-            // Find the index of the first hero_section
-            const firstHeroIndex = sections.findIndex(s => s.sectionType === 'hero_section');
-            
-            return sections.map((section, index) => {
-              // Pass community private dining image to the first hero_section only
-              const isFirstHeroSection = index === firstHeroIndex && firstHeroIndex !== -1;
-              const communityImageId = isFirstHeroSection ? communityData?.community?.privateDiningImageId : undefined;
-              
-              return (
-                <PageSectionRenderer 
-                  key={section.id} 
-                  section={section}
-                  communityImageId={communityImageId}
-                />
-              );
-            });
-          })()}
+          {sections.map((section) => (
+            <PageSectionRenderer 
+              key={section.id} 
+              section={section}
+            />
+          ))}
         </>
       )}
     </div>

@@ -29,9 +29,6 @@ export default function CourtyardsPatios() {
     }
   });
 
-  // Use community-specific image if available
-  const heroBackgroundImage = communityData?.community?.courtyardsImageId || "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=2000&q=80";
-
   useEffect(() => {
     document.title = "Courtyards & Outdoor Spaces | Senior Living Communities";
     
@@ -53,7 +50,7 @@ export default function CourtyardsPatios() {
         pagePath="/courtyards-patios"
         defaultTitle="Courtyards & Outdoor Spaces"
         defaultSubtitle="Connect with Nature in Beautiful, Safe Environments"
-        defaultBackgroundImage={heroBackgroundImage}
+        communityImageId={communityData?.community?.courtyardsImageId}
       />
 
       {/* Breadcrumb Navigation */}
@@ -88,24 +85,12 @@ export default function CourtyardsPatios() {
         </div>
       ) : (
         <>
-          {(() => {
-            // Find the index of the first hero_section
-            const firstHeroIndex = sections.findIndex(s => s.sectionType === 'hero_section');
-            
-            return sections.map((section, index) => {
-              // Pass community courtyards image to the first hero_section only
-              const isFirstHeroSection = index === firstHeroIndex && firstHeroIndex !== -1;
-              const communityImageId = isFirstHeroSection ? communityData?.community?.courtyardsImageId : undefined;
-              
-              return (
-                <PageSectionRenderer 
-                  key={section.id} 
-                  section={section}
-                  communityImageId={communityImageId}
-                />
-              );
-            });
-          })()}
+          {sections.map((section) => (
+            <PageSectionRenderer 
+              key={section.id} 
+              section={section}
+            />
+          ))}
         </>
       )}
     </div>
