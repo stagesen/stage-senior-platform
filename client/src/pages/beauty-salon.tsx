@@ -77,6 +77,34 @@ export default function BeautySalon() {
         </div>
       </div>
 
+      {/* Community-specific amenity intro section */}
+      {fromCommunity && communityData?.community?.salonImageId && (
+        <section className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+              {/* Image on the left */}
+              <div className="relative rounded-xl overflow-hidden shadow-lg h-64 lg:h-80">
+                <img
+                  src={salonImageUrl || ''}
+                  alt="Beauty Salon"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              
+              {/* Text on the right */}
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                  Professional Beauty & Barber Services
+                </h2>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  Look and feel your best with our convenient on-site beauty salon and barber services. Our professional stylists provide haircuts, styling, color treatments, and grooming services in a comfortable, welcoming environment designed specifically for your needs.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Render content sections from database */}
       {isLoading ? (
         <div className="py-20 text-center">
@@ -84,19 +112,12 @@ export default function BeautySalon() {
         </div>
       ) : (
         <>
-          {sections.map((section, index) => {
-            // Pass community salon image to the first hero_section
-            const isFirstHeroSection = index === sections.findIndex(s => s.sectionType === 'hero_section');
-            const communityImageId = isFirstHeroSection && fromCommunity ? communityData?.community?.salonImageId : undefined;
-            
-            return (
-              <PageSectionRenderer 
-                key={section.id} 
-                section={section}
-                communityImageId={communityImageId}
-              />
-            );
-          })}
+          {sections.map((section) => (
+            <PageSectionRenderer 
+              key={section.id} 
+              section={section}
+            />
+          ))}
         </>
       )}
     </div>

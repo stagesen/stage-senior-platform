@@ -74,6 +74,34 @@ export default function Dining() {
         </div>
       </div>
 
+      {/* Community-specific amenity intro section */}
+      {fromCommunity && communityData?.community?.privateDiningImageId && (
+        <section className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+              {/* Image on the left */}
+              <div className="relative rounded-xl overflow-hidden shadow-lg h-64 lg:h-80">
+                <img
+                  src={diningImageUrl || ''}
+                  alt="Private Dining"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              
+              {/* Text on the right */}
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                  Restaurant-Style Dining Excellence
+                </h2>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  Experience exceptional restaurant-style dining with fresh, nutritious meals prepared daily by our culinary team. Our elegant dining rooms and private family dining spaces provide the perfect setting for enjoying delicious food and meaningful connections with friends and family.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Render content sections from database */}
       {isLoading ? (
         <div className="py-20 text-center">
@@ -81,19 +109,12 @@ export default function Dining() {
         </div>
       ) : (
         <>
-          {sections.map((section, index) => {
-            // Pass community dining image to the first hero_section
-            const isFirstHeroSection = index === sections.findIndex(s => s.sectionType === 'hero_section');
-            const communityImageId = isFirstHeroSection && fromCommunity ? communityData?.community?.privateDiningImageId : undefined;
-            
-            return (
-              <PageSectionRenderer 
-                key={section.id} 
-                section={section}
-                communityImageId={communityImageId}
-              />
-            );
-          })}
+          {sections.map((section) => (
+            <PageSectionRenderer 
+              key={section.id} 
+              section={section}
+            />
+          ))}
         </>
       )}
     </div>

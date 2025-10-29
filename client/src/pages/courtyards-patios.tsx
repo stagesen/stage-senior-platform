@@ -77,6 +77,34 @@ export default function CourtyardsPatios() {
         </div>
       </div>
 
+      {/* Community-specific amenity intro section */}
+      {fromCommunity && communityData?.community?.courtyardsImageId && (
+        <section className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+              {/* Image on the left */}
+              <div className="relative rounded-xl overflow-hidden shadow-lg h-64 lg:h-80">
+                <img
+                  src={courtyardsImageUrl || ''}
+                  alt="Courtyards & Patios"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              
+              {/* Text on the right */}
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                  Beautiful Outdoor Spaces
+                </h2>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  Connect with nature in our beautifully landscaped courtyards and outdoor spaces. Enjoy safe, accessible patios, walking paths, and garden areas designed for relaxation, social activities, and experiencing the therapeutic benefits of the outdoors in a comfortable, secure environment.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Render content sections from database */}
       {isLoading ? (
         <div className="py-20 text-center">
@@ -84,19 +112,12 @@ export default function CourtyardsPatios() {
         </div>
       ) : (
         <>
-          {sections.map((section, index) => {
-            // Pass community courtyards image to the first hero_section
-            const isFirstHeroSection = index === sections.findIndex(s => s.sectionType === 'hero_section');
-            const communityImageId = isFirstHeroSection && fromCommunity ? communityData?.community?.courtyardsImageId : undefined;
-            
-            return (
-              <PageSectionRenderer 
-                key={section.id} 
-                section={section}
-                communityImageId={communityImageId}
-              />
-            );
-          })}
+          {sections.map((section) => (
+            <PageSectionRenderer 
+              key={section.id} 
+              section={section}
+            />
+          ))}
         </>
       )}
     </div>
