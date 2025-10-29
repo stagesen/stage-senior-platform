@@ -14,6 +14,7 @@ import EventCard from "@/components/EventCard";
 import EventDetailsModal from "@/components/EventDetailsModal";
 import FloorPlanModal from "@/components/FloorPlanModal";
 import GalleryModal from "@/components/GalleryModal";
+import InstagramFeed from "@/components/InstagramFeed";
 import FadeIn from "@/components/animations/FadeIn";
 
 // Lazy load map component to reduce initial bundle size (~45 KiB savings)
@@ -2748,6 +2749,28 @@ export default function CommunityDetail() {
                     </Button>
                   </div>
                 )}
+              </section>
+            )}
+
+            {/* Instagram Feed Section */}
+            {community.instagramUrl && (
+              <section id="instagram" className="py-8 scroll-mt-24" data-testid="instagram-feed-section">
+                <div className="text-center mb-8">
+                  <ScaleHeader scaleFrom={0.85} scaleTo={1}>
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">
+                      Inside {community.name}
+                    </h2>
+                  </ScaleHeader>
+                  <p className="text-lg text-gray-600">
+                    See what's happening on our Instagram
+                  </p>
+                </div>
+                <FadeIn direction="up" delay={0.1}>
+                  <InstagramFeed 
+                    instagramUrl={community.instagramUrl}
+                    communityName={community.name}
+                  />
+                </FadeIn>
               </section>
             )}
 
