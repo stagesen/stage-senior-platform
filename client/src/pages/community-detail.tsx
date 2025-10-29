@@ -58,7 +58,10 @@ import {
   Video,
   Play,
   FileText,
-  Eye
+  Eye,
+  Instagram,
+  Facebook,
+  Linkedin
 } from "lucide-react";
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -2418,6 +2421,69 @@ export default function CommunityDetail() {
                         </p>
                       </div>
                     </div>
+                    {(community.instagramUrl || community.facebookUrl || community.linkedinUrl) && (
+                      <>
+                        <Separator className="my-2" />
+                        <div className="flex items-center gap-3">
+                          <div className="text-sm flex-1">
+                            <p className="font-medium mb-2">Connect With Us</p>
+                            <div className="flex gap-2">
+                              {community.instagramUrl && (
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  className="h-9 w-9"
+                                  asChild
+                                >
+                                  <a
+                                    href={community.instagramUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Follow us on Instagram"
+                                  >
+                                    <Instagram className="h-4 w-4" />
+                                  </a>
+                                </Button>
+                              )}
+                              {community.facebookUrl && (
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  className="h-9 w-9"
+                                  asChild
+                                >
+                                  <a
+                                    href={community.facebookUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Follow us on Facebook"
+                                  >
+                                    <Facebook className="h-4 w-4" />
+                                  </a>
+                                </Button>
+                              )}
+                              {community.linkedinUrl && (
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  className="h-9 w-9"
+                                  asChild
+                                >
+                                  <a
+                                    href={community.linkedinUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Follow us on LinkedIn"
+                                  >
+                                    <Linkedin className="h-4 w-4" />
+                                  </a>
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </CardContent>
               </Card>
