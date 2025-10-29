@@ -72,7 +72,36 @@ function renderBenefitCards(section: PageContentSection) {
   // Stats variant (4 cards with short titles like "2016", "98%")
   const isStatsVariant = cards.length === 4 && cards.every(c => c.title.length <= 10);
   
+  // Determine grid columns based on section key and number of cards
+  const isCoreValues = section.sectionKey === "core-values";
+  const shouldExpandToFill = section.sectionKey === "by-the-numbers" || section.sectionKey === "what-makes-us-different";
+  
   if (isStatsVariant) {
+    // Determine grid layout for stats
+    let gridColsClass = "grid-cols-2 md:grid-cols-4"; // default for stats
+    if (shouldExpandToFill) {
+      // For "By the Numbers" and "What Makes Us Different", expand to fill row
+      switch (cards.length) {
+        case 1:
+          gridColsClass = "grid-cols-1";
+          break;
+        case 2:
+          gridColsClass = "grid-cols-1 md:grid-cols-2";
+          break;
+        case 3:
+          gridColsClass = "grid-cols-1 md:grid-cols-3";
+          break;
+        case 5:
+          gridColsClass = "grid-cols-2 md:grid-cols-5";
+          break;
+        case 6:
+          gridColsClass = "grid-cols-2 md:grid-cols-3 lg:grid-cols-6";
+          break;
+        default:
+          gridColsClass = "grid-cols-2 md:grid-cols-4";
+      }
+    }
+    
     return (
       <section key={section.id} id={section.sectionKey ?? undefined} className="py-8 scroll-mt-24" data-testid={`section-${section.sectionKey ?? 'section'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,7 +109,7 @@ function renderBenefitCards(section: PageContentSection) {
             <h3 className="text-2xl font-bold text-center mb-8">{section.title}</h3>
           )}
           <div className="bg-primary/5 rounded-xl p-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div className={`grid ${gridColsClass} gap-8 text-center`}>
               {cards.map((card, index) => {
                 const IconComponent = getIconComponent(card.icon);
                 return (
@@ -102,13 +131,54 @@ function renderBenefitCards(section: PageContentSection) {
   }
   
   // Regular benefit cards (values, highlights, etc.)
+  // Determine grid layout
+  let gridColsClass = "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"; // default (for core-values)
+  
+  if (shouldExpandToFill) {
+    // For "By the Numbers" and "What Makes Us Different", expand to fill row
+    switch (cards.length) {
+      case 1:
+        gridColsClass = "grid-cols-1";
+        break;
+      case 2:
+        gridColsClass = "grid-cols-1 md:grid-cols-2";
+        break;
+      case 3:
+        gridColsClass = "grid-cols-1 md:grid-cols-3";
+        break;
+      case 5:
+        gridColsClass = "grid-cols-2 md:grid-cols-5";
+        break;
+      case 6:
+        gridColsClass = "grid-cols-2 md:grid-cols-3 lg:grid-cols-6";
+        break;
+      default:
+        gridColsClass = "grid-cols-1 md:grid-cols-2 lg:grid-cols-4";
+    }
+  } else if (!isCoreValues) {
+    // For other sections (not core-values and not expand-to-fill), use adaptive layout
+    switch (cards.length) {
+      case 1:
+        gridColsClass = "grid-cols-1";
+        break;
+      case 2:
+        gridColsClass = "grid-cols-1 md:grid-cols-2";
+        break;
+      case 3:
+        gridColsClass = "grid-cols-1 md:grid-cols-3";
+        break;
+      default:
+        gridColsClass = "grid-cols-1 md:grid-cols-2 lg:grid-cols-4";
+    }
+  }
+  
   return (
     <section key={section.id} id={section.sectionKey ?? undefined} className="py-8 bg-white scroll-mt-24" data-testid={`section-${section.sectionKey ?? 'section'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {section.title && (
           <h3 className="text-2xl font-bold text-center mb-8">{section.title}</h3>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className={`grid ${gridColsClass} gap-8`}>
           {cards.map((card, index) => {
             const IconComponent = getIconComponent(card.icon);
             return (
