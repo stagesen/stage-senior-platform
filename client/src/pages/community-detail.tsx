@@ -2030,13 +2030,13 @@ export default function CommunityDetail() {
             {/* Community Branding */}
             <div className="flex items-center gap-4">
               {heroLogoSrc ? (
-                <div className="w-[180px] h-[70px] md:w-[220px] md:h-[90px] flex items-center">
+                <div className="w-[220px] h-[90px] md:w-[280px] md:h-[110px] flex items-center">
                   <img
                     src={heroLogoSrc}
                     alt={heroLogoAlt}
-                    className="max-h-12 md:max-h-16 w-auto object-contain"
-                    width="220"
-                    height="90"
+                    className="max-h-16 md:max-h-20 w-auto object-contain"
+                    width="280"
+                    height="110"
                     data-testid="nav-community-logo"
                   />
                 </div>
