@@ -109,12 +109,20 @@ export default function Dining() {
         </div>
       ) : (
         <>
-          {sections.map((section) => (
-            <PageSectionRenderer 
-              key={section.id} 
-              section={section}
-            />
-          ))}
+          {sections.map((section, index) => {
+            // Skip the first hero_section if we're showing community-specific content
+            const isFirstHeroSection = index === sections.findIndex(s => s.sectionType === 'hero_section');
+            if (isFirstHeroSection && fromCommunity && communityData?.community?.privateDiningImageId) {
+              return null; // Skip rendering this duplicate section
+            }
+            
+            return (
+              <PageSectionRenderer 
+                key={section.id} 
+                section={section}
+              />
+            );
+          })}
         </>
       )}
     </div>
