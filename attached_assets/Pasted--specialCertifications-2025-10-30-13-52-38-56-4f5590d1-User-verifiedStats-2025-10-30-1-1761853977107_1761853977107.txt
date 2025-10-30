@@ -1,0 +1,134 @@
+
+"specialCertifications": [],
+2025-10-30 13:52:38.56
+4f5590d1
+User
+"verifiedStats": {},
+2025-10-30 13:52:38.56
+4f5590d1
+User
+"createdAt": "2025-09-23T22:01:03.707Z",
+2025-10-30 13:52:38.56
+4f5590d1
+User
+"updatedAt": "2025-10-08T00:34:26.524Z"
+2025-10-30 13:52:38.56
+4f5590d1
+User
+}
+2025-10-30 13:52:38.91
+4f5590d1
+User
+Error updating community: error: insert or update on table "communities_amenities" violates foreign key constraint "communities_amenities_amenity_id_amenities_id_fk"
+2025-10-30 13:52:38.91
+4f5590d1
+User
+at cn.parseErrorMessage (file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1182:6)
+2025-10-30 13:52:38.91
+4f5590d1
+User
+at cn.handlePacket (file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1143:13)
+2025-10-30 13:52:38.91
+4f5590d1
+User
+at cn.parse (file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1127:36)
+2025-10-30 13:52:38.91
+4f5590d1
+User
+at v. (file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1190:16)
+2025-10-30 13:52:38.91
+4f5590d1
+User
+at v.emit (file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:397:12)
+2025-10-30 13:52:38.91
+4f5590d1
+User
+at WebSocket. (file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:987:80)
+2025-10-30 13:52:38.91
+4f5590d1
+User
+at callListener (/home/runner/workspace/node_modules/ws/lib/event-target.js:290:14)
+2025-10-30 13:52:38.91
+4f5590d1
+User
+at WebSocket.onMessage (/home/runner/workspace/node_modules/ws/lib/event-target.js:209:9)
+2025-10-30 13:52:38.91
+4f5590d1
+User
+at WebSocket.emit (node:events:524:28)
+2025-10-30 13:52:38.91
+4f5590d1
+User
+at Receiver.receiverOnMessage (/home/runner/workspace/node_modules/ws/lib/websocket.js:1220:20) {
+2025-10-30 13:52:38.91
+4f5590d1
+User
+length: 376,
+2025-10-30 13:52:38.91
+4f5590d1
+User
+severity: 'ERROR',
+2025-10-30 13:52:38.91
+4f5590d1
+User
+code: '23503',
+2025-10-30 13:52:38.91
+4f5590d1
+User
+detail: 'Key (amenity_id)=(57d5167c-f43b-4cbc-9165-1e5aaf3ceae2) is not present in table "amenities".',
+2025-10-30 13:52:38.91
+4f5590d1
+User
+hint: undefined,
+2025-10-30 13:52:38.91
+4f5590d1
+User
+position: undefined,
+2025-10-30 13:52:38.91
+4f5590d1
+User
+internalPosition: undefined,
+2025-10-30 13:52:38.91
+4f5590d1
+User
+internalQuery: undefined,
+2025-10-30 13:52:38.91
+4f5590d1
+User
+where: undefined,
+2025-10-30 13:52:38.91
+4f5590d1
+User
+schema: 'public',
+2025-10-30 13:52:38.91
+4f5590d1
+User
+table: 'communities_amenities',
+2025-10-30 13:52:38.91
+4f5590d1
+User
+column: undefined,
+2025-10-30 13:52:38.91
+4f5590d1
+User
+dataType: undefined,
+2025-10-30 13:52:38.91
+4f5590d1
+User
+constraint: 'communities_amenities_amenity_id_amenities_id_fk',
+2025-10-30 13:52:38.91
+4f5590d1
+User
+file: 'ri_triggers.c',
+2025-10-30 13:52:38.91
+4f5590d1
+User
+line: '2608',
+2025-10-30 13:52:38.91
+4f5590d1
+User
+routine: 'ri_ReportViolation'
+2025-10-30 13:52:38.91
+4f5590d1
+User
+}

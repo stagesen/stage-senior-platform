@@ -2235,14 +2235,32 @@ export class DatabaseStorage implements IStorage {
       await tx.delete(communitiesCareTypes)
         .where(eq(communitiesCareTypes.communityId, communityId));
       
-      // Insert new relationships
+      // Validate that all care type IDs exist before inserting
       if (careTypeIds.length > 0) {
-        const values = careTypeIds.map(careTypeId => ({
-          communityId,
-          careTypeId,
-        }));
+        // Fetch all valid care type IDs from database
+        const validCareTypes = await tx.select({ id: careTypes.id })
+          .from(careTypes)
+          .where(inArray(careTypes.id, careTypeIds));
         
-        await tx.insert(communitiesCareTypes).values(values);
+        const validIds = new Set(validCareTypes.map(ct => ct.id));
+        
+        // Filter to only include IDs that actually exist
+        const validCareTypeIds = careTypeIds.filter(id => validIds.has(id));
+        
+        if (validCareTypeIds.length > 0) {
+          const values = validCareTypeIds.map(careTypeId => ({
+            communityId,
+            careTypeId,
+          }));
+          
+          await tx.insert(communitiesCareTypes).values(values);
+        }
+        
+        // Log warning if any IDs were filtered out
+        if (validCareTypeIds.length < careTypeIds.length) {
+          const invalidIds = careTypeIds.filter(id => !validIds.has(id));
+          console.warn(`Filtered out ${invalidIds.length} invalid care type ID(s):`, invalidIds);
+        }
       }
     });
   }
@@ -2349,14 +2367,32 @@ export class DatabaseStorage implements IStorage {
       await tx.delete(communitiesAmenities)
         .where(eq(communitiesAmenities.communityId, communityId));
       
-      // Insert new relationships
+      // Validate that all amenity IDs exist before inserting
       if (amenityIds.length > 0) {
-        const values = amenityIds.map(amenityId => ({
-          communityId,
-          amenityId,
-        }));
+        // Fetch all valid amenity IDs from database
+        const validAmenities = await tx.select({ id: amenities.id })
+          .from(amenities)
+          .where(inArray(amenities.id, amenityIds));
         
-        await tx.insert(communitiesAmenities).values(values);
+        const validIds = new Set(validAmenities.map(a => a.id));
+        
+        // Filter to only include IDs that actually exist
+        const validAmenityIds = amenityIds.filter(id => validIds.has(id));
+        
+        if (validAmenityIds.length > 0) {
+          const values = validAmenityIds.map(amenityId => ({
+            communityId,
+            amenityId,
+          }));
+          
+          await tx.insert(communitiesAmenities).values(values);
+        }
+        
+        // Log warning if any IDs were filtered out
+        if (validAmenityIds.length < amenityIds.length) {
+          const invalidIds = amenityIds.filter(id => !validIds.has(id));
+          console.warn(`Filtered out ${invalidIds.length} invalid amenity ID(s):`, invalidIds);
+        }
       }
     });
   }
