@@ -21,8 +21,10 @@ import {
 } from "@/components/ui/dialog";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
 import logoUrl from "@/assets/stage-logo.webp";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export default function Header() {
+  const { companyPhoneDisplay, companyPhoneDial } = useSiteSettings();
   const [isOpen, setIsOpen] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [location] = useLocation();
@@ -266,9 +268,9 @@ export default function Header() {
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
                 data-testid="button-modal-call"
               >
-                <a href="tel:+1-970-444-4689">
+                <a href={`tel:${companyPhoneDial}`}>
                   <Phone className="w-5 h-5 mr-2" />
-                  Call (970) 444-4689
+                  Call {companyPhoneDisplay}
                 </a>
               </Button>
             </div>

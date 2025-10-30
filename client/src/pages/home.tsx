@@ -9,6 +9,7 @@ import TestimonialSection from "@/components/TestimonialSection";
 import CommunitySelectionModal from "@/components/CommunitySelectionModal";
 import { PageHero } from "@/components/PageHero";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import FadeIn from "@/components/animations/FadeIn";
 import ScaleIn from "@/components/animations/ScaleIn";
 import ScaleHeader from "@/components/animations/ScaleHeader";
@@ -126,6 +127,7 @@ const CarouselCommunityCard = ({
 };
 
 export default function Home() {
+  const { companyPhoneDisplay, companyPhoneDial, companyEmail } = useSiteSettings();
   const { openScheduleTour } = useScheduleTour();
   const [showContactForm, setShowContactForm] = useState(false);
   const [showCommunityModal, setShowCommunityModal] = useState(false);
@@ -215,7 +217,7 @@ export default function Home() {
     url: window.location.origin,
     logo: `${window.location.origin}${stageLogo}`,
     contactPhone: "+1-720-706-7168",
-    contactEmail: "info@stagesenior.com",
+    contactEmail: companyEmail,
     addressLocality: "Colorado",
     addressRegion: "CO",
   });
@@ -622,9 +624,9 @@ export default function Home() {
                     asChild
                     data-testid="button-call-now"
                   >
-                    <a href="tel:+1-970-444-4689">
+                    <a href={`tel:${companyPhoneDial}`}>
                       <Phone className="w-5 h-5 mr-2" />
-                      Call (970) 444‑4689
+                      Call {companyPhoneDisplay}
                     </a>
                   </Button>
                   <Button 

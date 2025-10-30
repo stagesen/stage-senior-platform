@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CommunitySelectionModal from "@/components/CommunitySelectionModal";
 import { getPrimaryPhoneDisplay, getPrimaryPhoneHref, getCityStateZip } from "@/lib/communityContact";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { setMetaTags, getCanonicalUrl } from "@/lib/metaTags";
 import type { Community } from "@shared/schema";
 import { 
@@ -22,6 +23,7 @@ import {
 } from "lucide-react";
 
 export default function Contact() {
+  const { companyPhoneDisplay, companyPhoneDial, companyEmail } = useSiteSettings();
   const [showCommunityModal, setShowCommunityModal] = useState(false);
   const [showContactForm, setShowContactForm] = useState(false);
   
@@ -84,8 +86,8 @@ export default function Contact() {
                   Speak directly with a senior living advisor
                 </p>
                 <Button asChild className="w-full">
-                  <a href="tel:+1-970-444-4689">
-                    (970) 444-4689
+                  <a href={`tel:${companyPhoneDial}`}>
+                    {companyPhoneDisplay}
                   </a>
                 </Button>
               </CardContent>
@@ -99,8 +101,8 @@ export default function Contact() {
                   Get answers to your questions via email
                 </p>
                 <Button asChild className="w-full" variant="outline">
-                  <a href="mailto:info@stagesenior.com">
-                    info@stagesenior.com
+                  <a href={`mailto:${companyEmail}`}>
+                    {companyEmail}
                   </a>
                 </Button>
               </CardContent>
@@ -165,14 +167,14 @@ export default function Contact() {
                     </div>
                     <div className="flex items-center gap-3">
                       <Phone className="w-5 h-5 text-primary" />
-                      <a href="tel:+1-970-444-4689" className="text-muted-foreground hover:text-primary">
-                        (970) 444-4689
+                      <a href={`tel:${companyPhoneDial}`} className="text-muted-foreground hover:text-primary">
+                        {companyPhoneDisplay}
                       </a>
                     </div>
                     <div className="flex items-center gap-3">
                       <Mail className="w-5 h-5 text-primary" />
-                      <a href="mailto:info@stagesenior.com" className="text-muted-foreground hover:text-primary">
-                        info@stagesenior.com
+                      <a href={`mailto:${companyEmail}`} className="text-muted-foreground hover:text-primary">
+                        {companyEmail}
                       </a>
                     </div>
                     <div className="flex items-center gap-3">
@@ -190,7 +192,7 @@ export default function Contact() {
                 <h3 className="text-xl font-bold mb-4">Quick Assistance</h3>
                 <div className="space-y-3">
                   <p className="text-muted-foreground">
-                    <strong>Urgent Placement:</strong> Call (970) 444-4689 for immediate assistance
+                    <strong>Urgent Placement:</strong> Call {companyPhoneDisplay} for immediate assistance
                   </p>
                   <p className="text-muted-foreground">
                     <strong>Weekend Tours:</strong> Available by appointment at all communities
@@ -290,9 +292,9 @@ export default function Contact() {
                   asChild
                   data-testid="button-call-now"
                 >
-                  <a href="tel:+1-970-444-4689">
+                  <a href={`tel:${companyPhoneDial}`}>
                     <Phone className="w-5 h-5 mr-2" />
-                    Call (970) 444‑4689
+                    Call {companyPhoneDisplay}
                   </a>
                 </Button>
                 <Button 

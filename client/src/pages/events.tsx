@@ -11,10 +11,12 @@ import EventCalendar from "@/components/EventCalendar";
 import EventDetailsModal from "@/components/EventDetailsModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHero } from "@/components/PageHero";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { setMetaTags, getCanonicalUrl } from "@/lib/metaTags";
 import type { Event, Community } from "@shared/schema";
 
 export default function Events() {
+  const { companyPhoneDisplay, companyPhoneDial } = useSiteSettings();
   const [location] = useLocation();
   const [selectedCommunity, setSelectedCommunity] = useState("all");
   const [timeFilter, setTimeFilter] = useState("upcoming");
@@ -303,8 +305,8 @@ export default function Events() {
                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                     data-testid="button-contact"
                   >
-                    <a href="tel:+1-970-444-4689">
-                      Call (970) 444-4689
+                    <a href={`tel:${companyPhoneDial}`}>
+                      Call {companyPhoneDisplay}
                     </a>
                   </Button>
                 </CardContent>

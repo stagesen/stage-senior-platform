@@ -23,10 +23,12 @@ import {
 } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { setMetaTags } from "@/lib/metaTags";
 import type { PageContentSection } from "@shared/schema";
 
 export default function CarePoints() {
+  const { companyPhoneDisplay, companyPhoneDial } = useSiteSettings();
   const [selectedCareType, setSelectedCareType] = useState<"assisted-living" | "memory-care">("assisted-living");
   const [selectedSuiteType, setSelectedSuiteType] = useState<"private" | "one-bedroom" | "two-bedroom">("private");
   
@@ -527,9 +529,9 @@ export default function CarePoints() {
           
           <div className="mt-8">
             <Button variant="link" size="lg" asChild data-testid="button-call-now">
-              <a href="tel:+1-970-444-4689" className="text-xl">
+              <a href={`tel:${companyPhoneDial}`} className="text-xl">
                 <Phone className="w-5 h-5 mr-2" />
-                (970) 444-4689
+                {companyPhoneDisplay}
               </a>
             </Button>
           </div>

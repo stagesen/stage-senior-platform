@@ -15,6 +15,7 @@ import CommunityCard from "@/components/CommunityCard";
 import FadeIn from "@/components/animations/FadeIn";
 import ScaleIn from "@/components/animations/ScaleIn";
 import { useToast } from "@/hooks/use-toast";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { setMetaTags } from "@/lib/metaTags";
 import { getUtmParams, getMetaCookies, getClickIdsFromUrl, generateEventId } from "@/lib/tracking";
@@ -58,6 +59,7 @@ interface QuizAnswer {
 }
 
 export default function CareNavigator() {
+  const { companyPhoneDisplay, companyPhoneDial } = useSiteSettings();
   const [, navigate] = useLocation();
   const { toast } = useToast();
   
@@ -434,13 +436,13 @@ export default function CareNavigator() {
                   Try Again
                 </Button>
                 <Button
-                  onClick={() => window.location.href = 'tel:+1-970-444-4689'}
+                  onClick={() => window.location.href = `tel:${companyPhoneDial}`}
                   size="lg"
                   className="px-6 h-12"
                   data-testid="button-call-support"
                 >
                   <Phone className="w-5 h-5 mr-2" />
-                  Call (970) 444-4689
+                  Call {companyPhoneDisplay}
                 </Button>
               </div>
             </CardContent>
@@ -588,12 +590,12 @@ export default function CareNavigator() {
                   <Button
                     size="lg"
                     variant="outline"
-                    onClick={() => window.location.href = 'tel:+1-970-444-4689'}
+                    onClick={() => window.location.href = `tel:${companyPhoneDial}`}
                     className="px-8 h-14 text-base font-semibold bg-white/10 hover:bg-white/20 border-2 border-white text-white backdrop-blur-sm transition-all hover:scale-105"
                     data-testid="button-call-now-results"
                   >
                     <Phone className="w-5 h-5 mr-2" />
-                    Call (970) 444-4689
+                    Call {companyPhoneDisplay}
                   </Button>
                 </div>
               </CardContent>
@@ -800,11 +802,11 @@ export default function CareNavigator() {
             </p>
             <p className="text-center mt-2">
               <a
-                href="tel:+1-970-444-4689"
+                href={`tel:${companyPhoneDial}`}
                 className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors"
               >
                 <Phone className="w-4 h-4" />
-                (970) 444-4689
+                {companyPhoneDisplay}
               </a>
             </p>
           </div>

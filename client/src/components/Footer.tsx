@@ -1,10 +1,12 @@
 import { Link } from "wouter";
 import { Linkedin, Phone, Mail, MapPin, ArrowRight, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import logoWhiteUrl from "@/assets/stage-logo-white.webp";
 import ashaLogoUrl from "@/assets/asha-logo-white.webp";
 
 export default function Footer() {
+  const { companyPhoneDisplay, companyPhoneDial, companyEmail } = useSiteSettings();
   const communities = [
     { name: "The Gardens at Columbine", slug: "the-gardens-at-columbine" },
     { name: "The Gardens on Quail", slug: "the-gardens-on-quail" }, 
@@ -155,7 +157,7 @@ export default function Footer() {
                     <Phone className="w-4 h-4 text-primary" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-background text-sm font-medium truncate">(970) 444-4689</div>
+                    <div className="text-background text-sm font-medium truncate">{companyPhoneDisplay}</div>
                     <div className="text-background/60 text-xs">Call us today</div>
                   </div>
                 </div>
@@ -165,7 +167,7 @@ export default function Footer() {
                     <Mail className="w-4 h-4 text-primary" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-background text-sm font-medium break-all">info@stagesenior.com</div>
+                    <div className="text-background text-sm font-medium break-all">{companyEmail}</div>
                     <div className="text-background/60 text-xs">Email us anytime</div>
                   </div>
                 </div>

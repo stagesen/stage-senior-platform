@@ -29,6 +29,7 @@ import {
   Loader2
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { apiRequest } from "@/lib/queryClient";
 import { insertTourRequestSchema, type InsertTourRequest, type Community } from "@shared/schema";
 import { 
@@ -66,6 +67,7 @@ export default function LeadCaptureForm({
   onSuccess,
   className = ""
 }: LeadCaptureFormProps) {
+  const { companyPhoneDisplay } = useSiteSettings();
   const [step, setStep] = useState(1);
   const [isSuccess, setIsSuccess] = useState(false);
   const [formLoadTime] = useState(Date.now());
@@ -158,7 +160,7 @@ export default function LeadCaptureForm({
     },
     onError: (error) => {
       console.error("Form submission error:", error);
-      const phoneNumber = community ? getPrimaryPhoneDisplay(community) : "(970) 444-4689";
+      const phoneNumber = community ? getPrimaryPhoneDisplay(community) : companyPhoneDisplay;
       toast({
         title: "Submission Failed",
         description: `Please try again or call us directly at ${phoneNumber}`,

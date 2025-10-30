@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import type { FloorPlan, FloorPlanImageWithDetails } from "@shared/schema";
 
@@ -43,6 +44,7 @@ export default function FloorPlanModal({
   isOpen, 
   onOpenChange 
 }: FloorPlanModalProps) {
+  const { companyPhoneDial } = useSiteSettings();
   const [showLeadCapture, setShowLeadCapture] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   
@@ -323,7 +325,7 @@ export default function FloorPlanModal({
                 asChild
                 data-testid={`button-call-${floorPlan.id}`}
               >
-                <a href="tel:+1-970-444-4689">
+                <a href={`tel:${companyPhoneDial}`}>
                   <Phone className="h-4 w-4 mr-2" />
                   Call Now
                 </a>

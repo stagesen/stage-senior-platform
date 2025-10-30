@@ -12,8 +12,10 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Shield, Mail, Phone, MapPin, Calendar } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export default function Privacy() {
+  const { companyPhoneDisplay, companyPhoneDial, companyEmail } = useSiteSettings();
   useEffect(() => {
     document.title = "Privacy Policy | Stage Senior";
     
@@ -79,14 +81,14 @@ export default function Privacy() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Phone className="w-4 h-4 text-primary" />
-                      <a href="tel:+1-970-444-4689" className="text-primary hover:underline" data-testid="company-phone">
-                        (970) 444-4689
+                      <a href={`tel:${companyPhoneDial}`} className="text-primary hover:underline" data-testid="company-phone">
+                        {companyPhoneDisplay}
                       </a>
                     </div>
                     <div className="flex items-center gap-2 md:col-span-2">
                       <Mail className="w-4 h-4 text-primary" />
-                      <a href="mailto:info@stagesenior.com" className="text-primary hover:underline" data-testid="company-email">
-                        info@stagesenior.com
+                      <a href={`mailto:${companyEmail}`} className="text-primary hover:underline" data-testid="company-email">
+                        {companyEmail}
                       </a>
                     </div>
                   </div>
@@ -261,14 +263,14 @@ export default function Privacy() {
                     </div>
                     <div className="flex items-center gap-3">
                       <Phone className="w-5 h-5 text-primary" />
-                      <a href="tel:+1-970-444-4689" className="text-primary hover:underline" data-testid="contact-phone">
-                        (970) 444-4689
+                      <a href={`tel:${companyPhoneDial}`} className="text-primary hover:underline" data-testid="contact-phone">
+                        {companyPhoneDisplay}
                       </a>
                     </div>
                     <div className="flex items-center gap-3">
                       <Mail className="w-5 h-5 text-primary" />
-                      <a href="mailto:info@stagesenior.com" className="text-primary hover:underline" data-testid="contact-email">
-                        info@stagesenior.com
+                      <a href={`mailto:${companyEmail}`} className="text-primary hover:underline" data-testid="contact-email">
+                        {companyEmail}
                       </a>
                     </div>
                   </div>

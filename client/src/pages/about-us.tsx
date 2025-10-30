@@ -11,6 +11,7 @@ import {
 import { PageHero } from "@/components/PageHero";
 import { TeamCarousel } from "@/components/TeamCarousel";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { setMetaTags, getCanonicalUrl } from "@/lib/metaTags";
 import EmphasizedHeading from "@/components/EmphasizedHeading";
@@ -216,7 +217,7 @@ function renderTextBlock(section: PageContentSection) {
   );
 }
 
-function renderCTA(section: PageContentSection, openScheduleTour: () => void) {
+function renderCTA(section: PageContentSection, openScheduleTour: () => void, companyPhoneDisplay: string, companyPhoneDial: string, companyEmail: string) {
   const content = section.content as { 
     heading?: string; 
     description?: string; 
@@ -252,9 +253,9 @@ function renderCTA(section: PageContentSection, openScheduleTour: () => void) {
             asChild
             data-testid="button-call-now"
           >
-            <a href="tel:+1-970-444-4689">
+            <a href={`tel:${companyPhoneDial}`}>
               <Phone className="w-5 h-5 mr-2" />
-              Call (970) 444-4689
+              Call {companyPhoneDisplay}
             </a>
           </Button>
         </div>
@@ -264,12 +265,12 @@ function renderCTA(section: PageContentSection, openScheduleTour: () => void) {
             <div data-testid="contact-phone">
               <Phone className="w-6 h-6 mx-auto mb-2" />
               <p className="font-semibold">Call Us</p>
-              <p className="text-primary-foreground/90">(970) 444-4689</p>
+              <p className="text-primary-foreground/90">{companyPhoneDisplay}</p>
             </div>
             <div data-testid="contact-email">
               <Mail className="w-6 h-6 mx-auto mb-2" />
               <p className="font-semibold">Email Us</p>
-              <p className="text-primary-foreground/90">info@stagesenior.com</p>
+              <p className="text-primary-foreground/90">{companyEmail}</p>
             </div>
             <div data-testid="contact-address">
               <MapPin className="w-6 h-6 mx-auto mb-2" />
@@ -288,6 +289,7 @@ function renderCTA(section: PageContentSection, openScheduleTour: () => void) {
 
 export default function AboutUs() {
   const { openScheduleTour } = useScheduleTour();
+  const { companyPhoneDisplay, companyPhoneDial, companyEmail } = useSiteSettings();
 
   // Fetch page content sections
   const { data: allSections = [] } = useQuery<PageContentSection[]>({
@@ -367,9 +369,9 @@ export default function AboutUs() {
                   </Link>
                 </Button>
                 <Button variant="outline" size="lg" asChild data-testid="button-call-us">
-                  <a href="tel:+1-970-444-4689">
+                  <a href={`tel:${companyPhoneDial}`}>
                     <Phone className="w-5 h-5 mr-2" />
-                    (970) 444-4689
+                    {companyPhoneDisplay}
                   </a>
                 </Button>
               </div>
@@ -421,7 +423,7 @@ export default function AboutUs() {
             return renderTextBlock(section);
           
           case "cta":
-            return renderCTA(section, openScheduleTour);
+            return renderCTA(section, openScheduleTour, companyPhoneDisplay, companyPhoneDial, companyEmail);
           
           default:
             return null;

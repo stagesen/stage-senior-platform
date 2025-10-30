@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MapPin, Calendar, Phone, Star, HelpCircle, Check } from "lucide-react";
 import CommunityCard from "@/components/CommunityCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 // Lazy load map component to reduce initial bundle size (~45 KiB savings)
 const CommunityMap = lazy(() => import("@/components/CommunityMap"));
@@ -24,6 +25,7 @@ const CARE_TYPES = [
 ];
 
 export default function Communities() {
+  const { companyPhoneDisplay, companyPhoneDial } = useSiteSettings();
   const [selectedCareType, setSelectedCareType] = useState("all");
   const [sortBy, setSortBy] = useState("relevance");
   const [selectedCommunityId, setSelectedCommunityId] = useState<string | undefined>();
@@ -99,12 +101,12 @@ export default function Communities() {
                 size="lg"
                 variant="outline"
                 className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg bg-transparent border-white text-white hover:bg-white hover:text-[var(--deep-blue)] backdrop-blur-sm"
-                onClick={() => window.open('tel:+1-970-444-4689', '_self')}
+                onClick={() => window.open(`tel:${companyPhoneDial}`, '_self')}
                 data-testid="button-quick-call"
               >
                 <Phone className="w-5 h-5 mr-2" />
                 <span className="sm:hidden">Call Now</span>
-                <span className="hidden sm:inline">(970) 444-4689</span>
+                <span className="hidden sm:inline">{companyPhoneDisplay}</span>
               </Button>
             </div>
 
@@ -292,12 +294,12 @@ export default function Communities() {
               size="lg"
               variant="outline"
               className="w-full sm:w-auto px-8 sm:px-10 py-5 sm:py-6 text-base sm:text-lg bg-transparent border-2 border-white text-white hover:bg-white hover:text-[var(--deep-blue)] transform hover:scale-105 transition-all duration-200 font-semibold"
-              onClick={() => window.open('tel:+1-970-444-4689', '_self')}
+              onClick={() => window.open(`tel:${companyPhoneDial}`, '_self')}
               data-testid="button-call-cta"
             >
               <Phone className="w-5 h-5 mr-2" />
               <span className="sm:hidden">Call Now</span>
-              <span className="hidden sm:inline">Call (970) 444-4689</span>
+              <span className="hidden sm:inline">Call {companyPhoneDisplay}</span>
             </Button>
           </div>
           

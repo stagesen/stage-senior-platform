@@ -10,10 +10,12 @@ import { useQuery } from "@tanstack/react-query";
 import CommunitiesCarousel from "@/components/CommunitiesCarousel";
 import { Skeleton } from "@/components/ui/skeleton";
 import PageSectionRenderer from "@/components/PageSectionRenderer";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { setMetaTags } from "@/lib/metaTags";
 import type { Community, PageContentSection } from "@shared/schema";
 
 export default function StageCares() {
+  const { companyPhoneDisplay, companyPhoneDial, companyEmail } = useSiteSettings();
   useEffect(() => {
     const baseUrl = window.location.origin;
     setMetaTags({
@@ -114,7 +116,7 @@ export default function StageCares() {
                   </a>
                 </Button>
                 <Button variant="outline" size="lg" asChild data-testid="button-contact">
-                  <a href="mailto:info@stagesenior.com">
+                  <a href={`mailto:${companyEmail}`}>
                     <Mail className="w-5 h-5 mr-2" />
                     Contact Foundation
                   </a>
@@ -225,7 +227,7 @@ export default function StageCares() {
               Want to learn more about our charitable initiatives or how you can contribute?
             </p>
             <Button size="lg" className="bg-blue-600 hover:bg-blue-700" asChild data-testid="button-get-involved">
-              <a href="mailto:info@stagesenior.com">
+              <a href={`mailto:${companyEmail}`}>
                 <Heart className="w-5 h-5 mr-2" />
                 Get Involved
               </a>
@@ -264,15 +266,15 @@ export default function StageCares() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-white hover:bg-gray-100 text-blue-600 hover:text-blue-700 font-semibold" asChild data-testid="button-email-foundation">
-              <a href="mailto:info@stagesenior.com">
+              <a href={`mailto:${companyEmail}`}>
                 <Mail className="w-5 h-5 mr-2" />
                 Email Foundation
               </a>
             </Button>
             <Button size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white" asChild data-testid="button-call-office">
-              <a href="tel:+1-970-444-4689">
+              <a href={`tel:${companyPhoneDial}`}>
                 <Phone className="w-5 h-5 mr-2" />
-                Call (970) 444-4689
+                Call {companyPhoneDisplay}
               </a>
             </Button>
           </div>

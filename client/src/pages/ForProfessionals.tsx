@@ -24,6 +24,7 @@ import { PageHero } from "@/components/PageHero";
 // Lazy load map component to reduce initial bundle size (~45 KiB savings)
 const CommunityMap = lazy(() => import("@/components/CommunityMap"));
 import { useToast } from "@/hooks/use-toast";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { apiRequest } from "@/lib/queryClient";
 import { getPrimaryPhoneDisplay, getPrimaryPhoneHref, getCityState } from "@/lib/communityContact";
 import { insertTourRequestSchema, type InsertTourRequest, type Community, type Testimonial } from "@shared/schema";
@@ -54,6 +55,7 @@ type FormData = InsertTourRequest & {
 };
 
 export default function ForProfessionals() {
+  const { companyPhoneDisplay, companyPhoneDial } = useSiteSettings();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isSuccess, setIsSuccess] = useState(false);
@@ -63,14 +65,14 @@ export default function ForProfessionals() {
     
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Partner with Stage Senior for patient placement. Real-time bed availability, clinical acceptance criteria, and streamlined referral process. Call (970) 444-4689 for immediate placement assistance.');
+      metaDescription.setAttribute('content', `Partner with Stage Senior for patient placement. Real-time bed availability, clinical acceptance criteria, and streamlined referral process. Call ${companyPhoneDisplay} for immediate placement assistance.`);
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Partner with Stage Senior for patient placement. Real-time bed availability, clinical acceptance criteria, and streamlined referral process. Call (970) 444-4689 for immediate placement assistance.';
+      meta.content = `Partner with Stage Senior for patient placement. Real-time bed availability, clinical acceptance criteria, and streamlined referral process. Call ${companyPhoneDisplay} for immediate placement assistance.`;
       document.head.appendChild(meta);
     }
-  }, []);
+  }, [companyPhoneDisplay]);
 
   const { data: communities = [], isLoading: communitiesLoading } = useQuery<Community[]>({
     queryKey: ["/api/communities", { active: true }],
@@ -140,7 +142,7 @@ ${data.message}
       console.error("Form submission error:", error);
       toast({
         title: "Submission Failed",
-        description: "Please try again or call us directly at (970) 444-4689",
+        description: `Please try again or call us directly at ${companyPhoneDisplay}`,
         variant: "destructive",
         duration: 8000,
       });
@@ -262,9 +264,9 @@ ${data.message}
                 asChild
                 data-testid="button-call-hotline"
               >
-                <a href="tel:+1-970-444-4689">
+                <a href={`tel:${companyPhoneDial}`}>
                   <Phone className="w-5 h-5 mr-2" />
-                  (970) 444-4689
+                  {companyPhoneDisplay}
                 </a>
               </Button>
               <Button
@@ -716,7 +718,7 @@ ${data.message}
                         asChild
                         data-testid="button-call-instead"
                       >
-                        <a href="tel:+1-970-444-4689">
+                        <a href={`tel:${companyPhoneDial}`}>
                           <Phone className="w-5 h-5 mr-2" />
                           Call Instead
                         </a>
@@ -849,9 +851,9 @@ ${data.message}
               asChild
               data-testid="button-cta-call"
             >
-              <a href="tel:+1-970-444-4689">
+              <a href={`tel:${companyPhoneDial}`}>
                 <Phone className="w-5 h-5 mr-2" />
-                Call (970) 444-4689
+                Call {companyPhoneDisplay}
               </a>
             </Button>
             <Button

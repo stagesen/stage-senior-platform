@@ -10,11 +10,13 @@ import { Link } from "wouter";
 import { MapPin, Phone, CheckCircle, Clock, Home } from "lucide-react";
 import { useResolveImageUrl } from "@/hooks/useResolveImageUrl";
 import { useScheduleTour } from "@/hooks/useScheduleTour";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { getPrimaryPhoneHref, getCityState } from "@/lib/communityContact";
 import type { Community, FloorPlan, PageContentSection } from "@shared/schema";
 
 export default function PricingAvailability() {
   const { openScheduleTour } = useScheduleTour();
+  const { companyPhoneDisplay, companyPhoneDial } = useSiteSettings();
 
   useEffect(() => {
     document.title = "Transparent Pricing & Current Availability | Stage Senior";
@@ -225,9 +227,9 @@ export default function PricingAvailability() {
               asChild
               data-testid="button-call"
             >
-              <a href="tel:+1-970-444-4689">
+              <a href={`tel:${companyPhoneDial}`}>
                 <Phone className="w-5 h-5 mr-2" />
-                Call (970) 444-4689
+                Call {companyPhoneDisplay}
               </a>
             </Button>
           </div>
