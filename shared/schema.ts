@@ -86,10 +86,10 @@ export const communities = pgTable("communities", {
   longitude: decimal("longitude", { precision: 11, scale: 8 }),
   lat: decimal("lat", { precision: 10, scale: 8 }), // Additional field from CSV
   lng: decimal("lng", { precision: 11, scale: 8 }), // Additional field from CSV
-  phoneDisplay: varchar("phone_display", { length: 20 }),
-  phoneDial: varchar("phone_dial", { length: 20 }),
-  secondaryPhoneDisplay: varchar("secondary_phone_display", { length: 20 }),
-  secondaryPhoneDial: varchar("secondary_phone_dial", { length: 20 }),
+  phoneDisplay: varchar("phone_display", { length: 50 }),
+  phoneDial: varchar("phone_dial", { length: 30 }),
+  secondaryPhoneDisplay: varchar("secondary_phone_display", { length: 50 }),
+  secondaryPhoneDial: varchar("secondary_phone_dial", { length: 30 }),
   email: varchar("email", { length: 255 }),
   instagramUrl: text("instagram_url"),
   facebookUrl: text("facebook_url"),
@@ -123,7 +123,7 @@ export const communities = pgTable("communities", {
   seoTitle: text("seo_title"),
   seoDescription: text("seo_description"),
   seoDesc: text("seo_desc"), // Additional field from CSV
-  phone: varchar("phone", { length: 20 }), // Keep for backwards compatibility
+  phone: varchar("phone", { length: 50 }), // Keep for backwards compatibility
   address: text("address"), // Keep for backwards compatibility
   mainColorHex: varchar("main_color_hex", { length: 7 }),
   ctaColorHex: varchar("cta_color_hex", { length: 7 }),
