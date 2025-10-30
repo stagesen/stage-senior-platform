@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { insertTourRequestSchema, type InsertTourRequest } from "@shared/schema";
+import { insertTourRequestSchema, type InsertTourRequest, type Community } from "@shared/schema";
 import { 
   getMetaCookies, 
   getClickIdsFromUrl, 
@@ -39,6 +39,7 @@ import {
   generateTransactionId,
   fireScheduleTour 
 } from "@/lib/tracking";
+import { getPrimaryPhoneDisplay } from "@/lib/communityContact";
 
 interface LeadCaptureFormProps {
   variant?: "inline" | "modal" | "sidebar" | "hero";
@@ -72,6 +73,12 @@ export default function LeadCaptureForm({
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch community data to get phone number for error messages
+  const { data: community } = useQuery<Community>({
+    queryKey: [`/api/communities/${communityId}`],
+    enabled: !!communityId,
+  });
 
   const form = useForm<FormData>({
     resolver: zodResolver(insertTourRequestSchema),
@@ -151,9 +158,10 @@ export default function LeadCaptureForm({
     },
     onError: (error) => {
       console.error("Form submission error:", error);
+      const phoneNumber = community ? getPrimaryPhoneDisplay(community) : "(970) 444-4689";
       toast({
         title: "Submission Failed",
-        description: "Please try again or call us directly at (970) 444-4689",
+        description: `Please try again or call us directly at ${phoneNumber}`,
         variant: "destructive",
         duration: 8000,
       });
