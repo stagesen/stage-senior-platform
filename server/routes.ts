@@ -65,6 +65,7 @@ import {
   insertQuizResponseSchema,
   insertContentAssetSchema,
   insertAssetDownloadSchema,
+  insertSiteSettingsSchema,
   googleAdsConversionActions,
   googleAdsCampaigns,
   googleAdsAdGroups,
@@ -4769,6 +4770,36 @@ Disallow: /admin/
     } catch (error) {
       console.error("Error tracking asset download:", error);
       res.status(400).json({ message: "Failed to track asset download" });
+    }
+  });
+
+  // Site Settings Routes
+  
+  // GET /api/site-settings - Get site settings (public)
+  app.get("/api/site-settings", async (_req, res) => {
+    try {
+      const settings = await storage.getSiteSettings();
+      res.json(settings || {
+        companyPhoneDisplay: "(970) 444-4689",
+        companyPhoneDial: "9704444689",
+        companyEmail: "info@stagesenior.com",
+        supportEmail: "info@stagesenior.com"
+      });
+    } catch (error) {
+      console.error("Error fetching site settings:", error);
+      res.status(500).json({ message: "Failed to fetch site settings" });
+    }
+  });
+
+  // PATCH /api/site-settings - Update site settings (requires auth)
+  app.patch("/api/site-settings", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertSiteSettingsSchema.partial().parse(req.body);
+      const updated = await storage.updateSiteSettings(validatedData);
+      res.json(updated);
+    } catch (error) {
+      console.error("Error updating site settings:", error);
+      res.status(400).json({ message: "Failed to update site settings" });
     }
   });
 
