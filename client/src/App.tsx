@@ -32,6 +32,7 @@ const Accessibility = lazy(() => import("@/pages/accessibility"));
 const AboutUs = lazy(() => import("@/pages/about-us"));
 const Services = lazy(() => import("@/pages/services"));
 const StageCares = lazy(() => import("@/pages/stage-cares"));
+const StageCaresApp = lazy(() => import("@/pages/stage-cares-app"));
 const CarePoints = lazy(() => import("@/pages/care-points"));
 const SafetyWithDignity = lazy(() => import("@/pages/safety-with-dignity"));
 const InHomeCare = lazy(() => import("@/pages/in-home-care"));
@@ -97,6 +98,7 @@ function Router() {
           <Route path="/courtyards-patios" component={CourtyardsPatios} />
           <Route path="/services" component={Services} />
           <Route path="/stage-cares" component={StageCares} />
+          <Route path="/stage-cares-app" component={StageCaresApp} />
           <Route path="/care-points" component={CarePoints} />
           <Route path="/safety-with-dignity" component={SafetyWithDignity} />
           <Route path="/in-home-care" component={InHomeCare} />
