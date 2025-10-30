@@ -322,12 +322,18 @@ export default function Team() {
     // If community filter is active, filter members by community tag
     if (displayCommunityName) {
       activeMembers = activeMembers.filter(member => 
-        member.tags && member.tags.some(tag => 
-          tag.toLowerCase() === displayCommunityName.toLowerCase() ||
-          // Also check for partial matches for communities with "The" prefix
-          (displayCommunityName.toLowerCase().includes('gardens') && tag.toLowerCase().includes('gardens')) ||
-          tag.toLowerCase() === communityName?.toLowerCase()
-        )
+        member.tags && member.tags.some(tag => {
+          // Exact match
+          if (tag.toLowerCase() === displayCommunityName.toLowerCase()) {
+            return true;
+          }
+          
+          // Match with or without "The" prefix for community names
+          const normalizedTag = tag.toLowerCase().replace(/^the\s+/, '');
+          const normalizedDisplayName = displayCommunityName.toLowerCase().replace(/^the\s+/, '');
+          
+          return normalizedTag === normalizedDisplayName;
+        })
       );
     }
     
@@ -344,9 +350,11 @@ export default function Team() {
           
           // If filtering by community, only show that community's tag
           if (displayCommunityName) {
-            if (tag.toLowerCase() === displayCommunityName.toLowerCase() ||
-                (displayCommunityName.toLowerCase().includes('gardens') && tag.toLowerCase().includes('gardens')) ||
-                tag.toLowerCase() === communityName?.toLowerCase()) {
+            // Exact match or match without "The" prefix
+            const normalizedTag = tag.toLowerCase().replace(/^the\s+/, '');
+            const normalizedDisplayName = displayCommunityName.toLowerCase().replace(/^the\s+/, '');
+            
+            if (tag.toLowerCase() === displayCommunityName.toLowerCase() || normalizedTag === normalizedDisplayName) {
               if (!tagMap.has(tag)) {
                 tagMap.set(tag, []);
               }
