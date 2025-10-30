@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,8 +55,8 @@ import {
   X
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import type { Community, Post, Event, TourRequest, Faq, Gallery, Testimonial, PageHero, FloorPlan, TeamMember, LandingPageTemplate, Quiz, QuizQuestion, QuizAnswerOption, QuizResponse, InsertQuiz, InsertQuizQuestion, InsertQuizAnswerOption, ContentAsset, InsertContentAsset, AssetDownload } from "@shared/schema";
-import { insertQuizSchema, insertContentAssetSchema } from "@shared/schema";
+import type { Community, Post, Event, TourRequest, Faq, Gallery, Testimonial, PageHero, FloorPlan, TeamMember, LandingPageTemplate, Quiz, QuizQuestion, QuizAnswerOption, QuizResponse, InsertQuiz, InsertQuizQuestion, InsertQuizAnswerOption, ContentAsset, InsertContentAsset, AssetDownload, SiteSettings, InsertSiteSettings } from "@shared/schema";
+import { insertQuizSchema, insertContentAssetSchema, insertSiteSettingsSchema } from "@shared/schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 
@@ -207,6 +210,9 @@ export default function Admin() {
             </TabsTrigger>
             <TabsTrigger value="database-sync" data-testid="tab-database-sync" className="bg-amber-500 text-white hover:bg-amber-600">
               Database Sync
+            </TabsTrigger>
+            <TabsTrigger value="site-settings" data-testid="tab-site-settings" className="bg-primary text-primary-foreground hover:bg-primary/90">
+              Site Settings
             </TabsTrigger>
           </TabsList>
 
@@ -634,6 +640,10 @@ export default function Admin() {
 
           <TabsContent value="database-sync">
             <AdminDashboard type="database-sync" />
+          </TabsContent>
+
+          <TabsContent value="site-settings" className="space-y-6">
+            <SiteSettingsManager />
           </TabsContent>
         </Tabs>
       </main>
@@ -2251,6 +2261,237 @@ function ResourceManagement() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </Card>
+  );
+}
+
+function SiteSettingsManager() {
+  const { toast } = useToast();
+  const [isEditing, setIsEditing] = useState(false);
+
+  const { data: siteSettings, isLoading } = useQuery<SiteSettings>({
+    queryKey: ["/api/site-settings"],
+  });
+
+  const form = useForm<Partial<InsertSiteSettings>>({
+    resolver: zodResolver(insertSiteSettingsSchema.partial()),
+    defaultValues: {
+      companyPhoneDisplay: "",
+      companyPhoneDial: "",
+      companyEmail: "",
+      supportEmail: "",
+    },
+  });
+
+  useEffect(() => {
+    if (siteSettings) {
+      form.reset({
+        companyPhoneDisplay: siteSettings.companyPhoneDisplay ?? "",
+        companyPhoneDial: siteSettings.companyPhoneDial ?? "",
+        companyEmail: siteSettings.companyEmail ?? "",
+        supportEmail: siteSettings.supportEmail ?? "",
+      });
+    }
+  }, [siteSettings, form]);
+
+  const updateSettingsMutation = useMutation({
+    mutationFn: async (data: Partial<InsertSiteSettings>) => {
+      const res = await apiRequest("PATCH", "/api/site-settings", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Site settings updated successfully" });
+      queryClient.invalidateQueries({ queryKey: ["/api/site-settings"] });
+      setIsEditing(false);
+    },
+    onError: () => {
+      toast({ title: "Failed to update site settings", variant: "destructive" });
+    },
+  });
+
+  const onSubmit = (data: Partial<InsertSiteSettings>) => {
+    updateSettingsMutation.mutate(data);
+  };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Site Settings</CardTitle>
+          <CardDescription>Loading site settings...</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Site Settings</CardTitle>
+            <CardDescription>
+              Manage company-wide contact information that displays across the entire website
+            </CardDescription>
+          </div>
+          {!isEditing && (
+            <Button
+              onClick={() => setIsEditing(true)}
+              data-testid="button-edit-settings"
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              Edit Settings
+            </Button>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        {!isEditing ? (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Display Phone Number</label>
+                <p className="text-lg font-semibold" data-testid="text-phone-display">
+                  {siteSettings?.companyPhoneDisplay || "Not set"}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Dial Phone Number</label>
+                <p className="text-lg font-semibold" data-testid="text-phone-dial">
+                  {siteSettings?.companyPhoneDial || "Not set"}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Company Email</label>
+                <p className="text-lg font-semibold" data-testid="text-email">
+                  {siteSettings?.companyEmail || "Not set"}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Support Email</label>
+                <p className="text-lg font-semibold" data-testid="text-support-email">
+                  {siteSettings?.supportEmail || "Not set"}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="companyPhoneDisplay"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Display Phone Number</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="(970) 444-4689"
+                          data-testid="input-phone-display"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Phone number as it should appear to users (with formatting)
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="companyPhoneDial"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Dial Phone Number</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="9704444689"
+                          data-testid="input-phone-dial"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Phone number for tel: links (digits only, no formatting)
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="companyEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Company Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          value={field.value ?? ""}
+                          type="email"
+                          placeholder="info@stagesenior.com"
+                          data-testid="input-email"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Primary company email address
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="supportEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Support Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          value={field.value ?? ""}
+                          type="email"
+                          placeholder="support@stagesenior.com"
+                          data-testid="input-support-email"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Customer support email address
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  type="submit"
+                  disabled={updateSettingsMutation.isPending}
+                  data-testid="button-save-settings"
+                >
+                  {updateSettingsMutation.isPending ? "Saving..." : "Save Changes"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setIsEditing(false);
+                    form.reset();
+                  }}
+                  data-testid="button-cancel-edit"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </Form>
+        )}
+      </CardContent>
     </Card>
   );
 }

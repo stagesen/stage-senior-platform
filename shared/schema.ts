@@ -34,6 +34,7 @@ export const siteSettings = pgTable("site_settings", {
   companyPhoneDisplay: varchar("company_phone_display", { length: 20 }).default("(970) 444-4689"),
   companyPhoneDial: varchar("company_phone_dial", { length: 20 }).default("+19704444689"),
   companyEmail: varchar("company_email", { length: 255 }),
+  supportEmail: varchar("support_email", { length: 255 }),
   companyAddress: text("company_address"),
   companyCity: varchar("company_city", { length: 100 }),
   companyState: varchar("company_state", { length: 2 }),
