@@ -60,6 +60,7 @@ const Resources = lazy(() => import("@/pages/resources"));
 const ResourceDetail = lazy(() => import("@/pages/ResourceDetail"));
 const LongTermCareColorado = lazy(() => import("@/pages/long-term-care-colorado"));
 const LTCWatch = lazy(() => import("@/pages/ltc-watch"));
+const AdditionalLTC = lazy(() => import("@/pages/additional-ltc"));
 
 function Router() {
   // Check if we're on a community detail page
@@ -123,6 +124,7 @@ function Router() {
           <Route path="/resources" component={Resources} />
           <Route path="/long-term-care-colorado" component={LongTermCareColorado} />
           <Route path="/ltc-watch" component={LTCWatch} />
+          <Route path="/additional-ltc" component={AdditionalLTC} />
           <Route path="/admin">
             <RequireAuth>
               <Admin />
