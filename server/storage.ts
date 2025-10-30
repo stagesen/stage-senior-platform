@@ -117,6 +117,9 @@ import {
   type InsertContentAsset,
   type AssetDownload,
   type InsertAssetDownload,
+  siteSettings,
+  type SiteSettings,
+  type InsertSiteSettings,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, and, like, isNull, or, sql, inArray } from "drizzle-orm";
@@ -486,6 +489,10 @@ export interface IStorage {
   // Asset download tracking operations
   getAssetDownloads(assetId?: string): Promise<AssetDownload[]>;
   createAssetDownload(download: InsertAssetDownload): Promise<AssetDownload>;
+  
+  // Site settings operations
+  getSiteSettings(): Promise<SiteSettings | undefined>;
+  updateSiteSettings(settings: Partial<InsertSiteSettings>): Promise<SiteSettings>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -3380,6 +3387,40 @@ export class DatabaseStorage implements IStorage {
       .values(download)
       .returning();
     return created;
+  }
+
+  // Site settings operations
+  async getSiteSettings(): Promise<SiteSettings | undefined> {
+    const [settings] = await db
+      .select()
+      .from(siteSettings)
+      .limit(1);
+    return settings;
+  }
+
+  async updateSiteSettings(settings: Partial<InsertSiteSettings>): Promise<SiteSettings> {
+    // Get the first (and only) settings record
+    const existingSettings = await this.getSiteSettings();
+    
+    if (existingSettings) {
+      // Update existing settings
+      const [updated] = await db
+        .update(siteSettings)
+        .set({
+          ...settings,
+          updatedAt: new Date(),
+        })
+        .where(eq(siteSettings.id, existingSettings.id))
+        .returning();
+      return updated;
+    } else {
+      // Create initial settings if none exist
+      const [created] = await db
+        .insert(siteSettings)
+        .values(settings as InsertSiteSettings)
+        .returning();
+      return created;
+    }
   }
 }
 
