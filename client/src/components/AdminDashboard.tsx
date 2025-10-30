@@ -2383,6 +2383,146 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       });
     }
     
+    // For care types
+    if (type === "care-types") {
+      const stringFields = ['description'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
+    // For posts
+    if (type === "posts") {
+      const stringFields = ['summary', 'heroImageUrl', 'seoTitle', 'seoDescription'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
+    // For events
+    if (type === "events") {
+      const stringFields = ['summary', 'description', 'imageUrl', 'locationText', 'rsvpUrl'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
+    // For FAQs
+    if (type === "faqs") {
+      const stringFields = ['category'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
+    // For team members
+    if (type === "team") {
+      const stringFields = ['role', 'department', 'bio', 'email', 'phone', 'linkedinUrl', 'twitterUrl'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
+    // For testimonials
+    if (type === "testimonials") {
+      const stringFields = ['authorRelation', 'highlight'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
+    // For social posts
+    if (type === "social-posts") {
+      const stringFields = ['linkUrl', 'author'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
+    // For page heroes
+    if (type === "page-heroes") {
+      const stringFields = ['subtitle', 'ctaText', 'ctaLink'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
+    // For floor plans
+    if (type === "floor-plans") {
+      const stringFields = ['description', 'imageUrl', 'planImageUrl', 'specPdfUrl', 'pdfUrl', 'startingRateDisplay'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
+    // For galleries
+    if (type === "galleries") {
+      const stringFields = ['description', 'gallerySlug', 'category'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
+    // For homepage sections
+    if (type === "homepage") {
+      const stringFields = ['title', 'subtitle', 'body', 'ctaLabel', 'ctaUrl'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
+    // For email recipients
+    if (type === "email-recipients") {
+      const stringFields = ['name'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
+    // For page content
+    if (type === "page-content") {
+      const stringFields = ['title', 'subtitle'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
+    // For landing page templates
+    if (type === "landing-pages") {
+      const stringFields = ['slug', 'urlPattern', 'title', 'metaDescription', 'h1Headline', 'subheadline', 'heroTitle', 'heroSubtitle', 'heroCtaText'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
     // For blog posts, ensure tags remain as array and fetch attachment if exists
     if (type === "blog-posts") {
       const blogPostData = {
