@@ -2373,6 +2373,16 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       setSelectedAmenities(item.amenityIds || []);
     }
     
+    // For amenities, ensure all nullable string fields are empty strings (not null/undefined) for controlled inputs
+    if (type === "amenities") {
+      const stringFields = ['category', 'description', 'icon', 'imageUrl'];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
+    }
+    
     // For blog posts, ensure tags remain as array and fetch attachment if exists
     if (type === "blog-posts") {
       const blogPostData = {
