@@ -2335,7 +2335,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
   };
 
   const handleEdit = (item: any) => {
-    // For communities, normalize lat/lng fields when editing
+    // For communities, normalize lat/lng fields and ensure all fields have proper values
     if (type === "communities") {
       // If lat/lng exist but latitude/longitude don't, copy them
       if (item.lat && !item.latitude) {
@@ -2351,6 +2351,22 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
       if (item.longitude && !item.lng) {
         item.lng = item.longitude;
       }
+      
+      // Ensure all nullable string fields are empty strings (not null/undefined) for controlled inputs
+      const stringFields = [
+        'phoneDisplay', 'phoneDial', 'secondaryPhoneDisplay', 'secondaryPhoneDial',
+        'street', 'zip', 'zipCode', 'email', 'instagramUrl', 'facebookUrl', 'linkedinUrl',
+        'heroImageUrl', 'brochureLink', 'calendarFile1ButtonText', 'calendarFile2ButtonText',
+        'overview', 'heading', 'subheading', 'description', 'shortDescription',
+        'startingRateDisplay', 'seoTitle', 'seoDescription', 'seoDesc', 'phone', 'address',
+        'mainColorHex', 'ctaColorHex', 'talkFurtherId', 'videoUrl', 'propertyMapUrl',
+        'licenseStatus', 'cluster'
+      ];
+      stringFields.forEach(field => {
+        if (item[field] === null || item[field] === undefined) {
+          item[field] = "";
+        }
+      });
       
       // Set selected care types and amenities
       setSelectedCareTypes(item.careTypeIds || []);
