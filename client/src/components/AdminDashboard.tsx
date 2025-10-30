@@ -2154,6 +2154,15 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
         data.lng = data.longitude;
       }
     }
+    // For page heroes, convert empty CTA fields to null
+    if (type === "page-heroes") {
+      if (data.ctaText === '') {
+        data.ctaText = null;
+      }
+      if (data.ctaLink === '') {
+        data.ctaLink = null;
+      }
+    }
     // For blog posts, generate slug if not provided
     if (type === "blog-posts") {
       if (!data.slug && data.title) {
@@ -5226,10 +5235,13 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   name="ctaText"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>CTA Text</FormLabel>
+                      <FormLabel>CTA Text (Optional)</FormLabel>
                       <FormControl>
-                        <Input {...field} value={field.value || ""} placeholder="Learn More" data-testid="input-cta-text" />
+                        <Input {...field} value={field.value || ""} placeholder="Leave empty for no button" data-testid="input-cta-text" />
                       </FormControl>
+                      <p className="text-sm text-muted-foreground">
+                        Leave both CTA fields empty to hide the button
+                      </p>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -5239,7 +5251,7 @@ export default function AdminDashboard({ type }: AdminDashboardProps) {
                   name="ctaLink"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>CTA Link</FormLabel>
+                      <FormLabel>CTA Link (Optional)</FormLabel>
                       <FormControl>
                         <Input {...field} value={field.value || ""} placeholder="/contact" data-testid="input-cta-link" />
                       </FormControl>

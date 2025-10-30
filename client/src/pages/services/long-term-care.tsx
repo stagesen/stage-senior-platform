@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Phone, Mail, Briefcase } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { PageHero } from "@/components/PageHero";
@@ -10,6 +11,8 @@ import { setMetaTags } from "@/lib/metaTags";
 import type { Community, PageContentSection } from "@shared/schema";
 
 export default function LongTermCare() {
+  const { companyPhoneDisplay, companyPhoneDial } = useSiteSettings();
+
   useEffect(() => {
     const baseUrl = window.location.origin;
     setMetaTags({
@@ -110,8 +113,8 @@ export default function LongTermCare() {
                       <Phone className="w-5 h-5 text-white/80" />
                       <div>
                         <p className="text-sm text-white/80">Phone</p>
-                        <a href="tel:3036473914" className="text-white font-semibold hover:underline" data-testid="contact-phone">
-                          (303) 647-3914
+                        <a href={`tel:${companyPhoneDial}`} className="text-white font-semibold hover:underline" data-testid="contact-phone">
+                          {companyPhoneDisplay}
                         </a>
                       </div>
                     </div>
