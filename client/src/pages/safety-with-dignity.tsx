@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
@@ -42,6 +43,8 @@ import { setMetaTags } from "@/lib/metaTags";
 import type { PageContentSection } from "@shared/schema";
 
 export default function SafetyWithDignity() {
+  const { companyPhoneDisplay, companyPhoneDial } = useSiteSettings();
+
   // Fetch page content sections from database
   const { data: pageSections = [], isLoading: sectionsLoading } = useQuery<PageContentSection[]>({
     queryKey: ['/api/page-content', { pagePath: '/safety-with-dignity', active: true }],
@@ -606,9 +609,9 @@ export default function SafetyWithDignity() {
               asChild
               data-testid="button-call-now"
             >
-              <a href="tel:+1-303-424-6116">
+              <a href={`tel:${companyPhoneDial}`}>
                 <Phone className="mr-2 w-5 h-5" />
-                Call (303) 424-6116
+                Call {companyPhoneDisplay}
               </a>
             </Button>
           </div>

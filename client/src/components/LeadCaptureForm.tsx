@@ -270,7 +270,7 @@ export default function LeadCaptureForm({
                 {...field}
                 type="tel"
                 inputMode="tel"
-                placeholder="(303) 555-0123"
+                placeholder="Your Phone Number"
                 className="h-12 text-base"
                 autoComplete="tel"
                 data-testid="input-lead-phone"
