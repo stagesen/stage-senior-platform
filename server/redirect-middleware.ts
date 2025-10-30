@@ -35,10 +35,7 @@ const redirectMap: Record<string, string> = {
   "/agents/troy-mcclymonds": "/team/troy-mcclymonds",
 
   // Other old URLs that may exist
-  "/stage-cares-app": "/stage-cares",
   "/ads": "/",
-  "/long-term-care-colorado": "/services/long-term-care",
-  "/additional-ltc": "/services/long-term-care",
 };
 
 export function redirectMiddleware(req: Request, res: Response, next: NextFunction) {
