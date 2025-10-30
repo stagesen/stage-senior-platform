@@ -266,53 +266,13 @@ export default function SafetyWithDignity() {
         </div>
       </div>
 
-      {/* Enhanced Hero Section with Image */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
-        <div 
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
-        />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-white">
-            <div className="inline-flex items-center justify-center p-3 mb-6 bg-white/20 backdrop-blur-sm rounded-full">
-              <Shield className="w-8 h-8" />
-            </div>
-            <h1 className="text-5xl md:text-6xl font-bold mb-6" data-testid="page-title">
-              Safety with Dignity
-            </h1>
-            <p className="text-xl max-w-3xl mx-auto mb-8 leading-relaxed text-white/95" data-testid="hero-subtitle">
-              Our program helps identify unwitnessed falls quickly, alerts staff immediately, and adapts care—without live streaming or audio.
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Button 
-                size="lg" 
-                onClick={scrollToHowItWorks}
-                className="px-8 py-6 text-lg bg-white text-primary hover:bg-white/90"
-                data-testid="button-see-how-it-works"
-              >
-                See how it works
-                <ChevronDown className="ml-2 w-5 h-5" />
-              </Button>
-              <Button 
-                size="lg"
-                variant="outline"
-                className="px-8 py-6 text-lg bg-transparent text-white border-white hover:bg-white/10"
-                asChild
-                data-testid="button-contact"
-              >
-                <Link href="/contact">
-                  <Phone className="mr-2 w-5 h-5" />
-                  Contact Us
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Hero Section - Loaded from Database */}
+      <PageHero 
+        pagePath="/safety-with-dignity"
+        defaultTitle="Safety with Dignity"
+        defaultSubtitle="Our program helps identify unwitnessed falls quickly, alerts staff immediately, and adapts care—without live streaming or audio."
+        defaultBackgroundImage="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070"
+      />
 
       {/* Render Database Content Sections */}
       {sectionsLoading ? (
