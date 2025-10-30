@@ -27,6 +27,25 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Site settings table - global site configuration
+export const siteSettings = pgTable("site_settings", {
+  id: serial("id").primaryKey(),
+  companyName: varchar("company_name", { length: 255 }).default("Stage Senior"),
+  companyPhoneDisplay: varchar("company_phone_display", { length: 20 }).default("(970) 444-4689"),
+  companyPhoneDial: varchar("company_phone_dial", { length: 20 }).default("+19704444689"),
+  companyEmail: varchar("company_email", { length: 255 }),
+  companyAddress: text("company_address"),
+  companyCity: varchar("company_city", { length: 100 }),
+  companyState: varchar("company_state", { length: 2 }),
+  companyZip: varchar("company_zip", { length: 10 }),
+  facebookUrl: text("facebook_url"),
+  instagramUrl: text("instagram_url"),
+  linkedinUrl: text("linkedin_url"),
+  twitterUrl: text("twitter_url"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Master tables
 export const careTypes = pgTable("care_types", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -1541,3 +1560,22 @@ export const insertAssetDownloadSchema = createInsertSchema(assetDownloads, {
 
 export type AssetDownload = typeof assetDownloads.$inferSelect;
 export type InsertAssetDownload = z.infer<typeof insertAssetDownloadSchema>;
+
+// Site settings schemas and types
+export const insertSiteSettingsSchema = createInsertSchema(siteSettings, {
+  companyName: z.string().min(1).max(255).default("Stage Senior"),
+  companyPhoneDisplay: z.string().max(20).default("(970) 444-4689"),
+  companyPhoneDial: z.string().max(20).default("+19704444689"),
+  companyEmail: z.string().email().optional().nullable(),
+  companyAddress: z.string().optional().nullable(),
+  companyCity: z.string().max(100).optional().nullable(),
+  companyState: z.string().length(2).optional().nullable(),
+  companyZip: z.string().max(10).optional().nullable(),
+  facebookUrl: z.string().url().optional().nullable(),
+  instagramUrl: z.string().url().optional().nullable(),
+  linkedinUrl: z.string().url().optional().nullable(),
+  twitterUrl: z.string().url().optional().nullable(),
+}).omit({ id: true, createdAt: true, updatedAt: true });
+
+export type SiteSettings = typeof siteSettings.$inferSelect;
+export type InsertSiteSettings = z.infer<typeof insertSiteSettingsSchema>;
