@@ -58,6 +58,7 @@ const PricingAvailability = lazy(() => import("@/pages/PricingAvailability"));
 const CareNavigator = lazy(() => import("@/pages/care-navigator"));
 const Resources = lazy(() => import("@/pages/resources"));
 const ResourceDetail = lazy(() => import("@/pages/ResourceDetail"));
+const LongTermCareColorado = lazy(() => import("@/pages/long-term-care-colorado"));
 
 function Router() {
   // Check if we're on a community detail page
@@ -119,6 +120,7 @@ function Router() {
           <Route path="/care-navigator" component={CareNavigator} />
           <Route path="/resources/:slug" component={ResourceDetail} />
           <Route path="/resources" component={Resources} />
+          <Route path="/long-term-care-colorado" component={LongTermCareColorado} />
           <Route path="/admin">
             <RequireAuth>
               <Admin />

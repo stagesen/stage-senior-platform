@@ -213,6 +213,7 @@ export const AVAILABLE_PAGES = [
   { path: '/safety-with-dignity', name: 'Safety with Dignity', emoji: '🛡️', description: 'Fall detection program' },
   { path: '/care-points', name: 'Care Points', emoji: '📊', description: 'Pricing system information' },
   { path: '/stage-cares', name: 'Stage Cares Foundation', emoji: '❤️', description: 'Foundation and charitable work' },
+  { path: '/stage-cares-app', name: 'Stage Cares Assistance', emoji: '📝', description: 'Financial assistance application' },
   { path: '/in-home-care', name: 'In-Home Care', emoji: '🏠', description: 'In-home care services' },
   { path: '/accessibility', name: 'Accessibility', emoji: '♿', description: 'Accessibility statement' },
   { path: '/services/management', name: 'Management Services', emoji: '🏢', description: 'Professional management' },
