@@ -81,6 +81,11 @@ function Router() {
         }>
           <Switch>
           <Route path="/" component={Home} />
+          {/* LTC pages - must be before wildcard routes */}
+          <Route path="/long-term-care-colorado" component={LongTermCareColorado} />
+          <Route path="/ltc-watch" component={LTCWatch} />
+          <Route path="/additional-ltc" component={AdditionalLTC} />
+          <Route path="/stage-cares-app" component={StageCaresApp} />
           <Route path="/properties/">{() => <Redirect to="/communities/" />}</Route>
           <Route path="/properties">{() => <Redirect to="/communities/" />}</Route>
           <Route path="/communities" component={Communities} />
@@ -101,7 +106,6 @@ function Router() {
           <Route path="/courtyards-patios" component={CourtyardsPatios} />
           <Route path="/services" component={Services} />
           <Route path="/stage-cares" component={StageCares} />
-          <Route path="/stage-cares-app" component={StageCaresApp} />
           <Route path="/care-points" component={CarePoints} />
           <Route path="/safety-with-dignity" component={SafetyWithDignity} />
           <Route path="/in-home-care" component={InHomeCare} />
@@ -122,9 +126,6 @@ function Router() {
           <Route path="/care-navigator" component={CareNavigator} />
           <Route path="/resources/:slug" component={ResourceDetail} />
           <Route path="/resources" component={Resources} />
-          <Route path="/long-term-care-colorado" component={LongTermCareColorado} />
-          <Route path="/ltc-watch" component={LTCWatch} />
-          <Route path="/additional-ltc" component={AdditionalLTC} />
           <Route path="/admin">
             <RequireAuth>
               <Admin />
